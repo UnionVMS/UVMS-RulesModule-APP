@@ -46,7 +46,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
@@ -139,7 +139,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
             // Validate xsd schema
             fluxResponseMessage = fluxMessageHelper.unMarshallFluxResponseMessage(requestStr);
             Collection<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage, new EnumMap<>(ExtraValueType.class), String.valueOf(fluxResponseMessage.getFLUXResponseDocument().getIDS()));
-            ValidationResultDto fluxResponseValidResults = ruleService.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
+            ValidationResult fluxResponseValidResults = ruleService.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
             exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(fluxResponseValidResults));
             if (fluxResponseValidResults != null && !fluxResponseValidResults.isError()) {
                 log.debug("The Validation of FLUXResponseMessage is successful, forwarding message to Exchange");
@@ -150,11 +150,11 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
 
         } catch (UnmarshalException e) {
             log.debug("Error while trying to parse FLUXResponseMessage received message! It is malformed!", e);
-            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
+            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(failure));
             throw new RulesServiceException(e.getMessage(), e);
         } catch (RulesValidationException e) {
             log.debug("Error during validation of the received FLUXResponseMessage!", e);
-            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(generateValidationResultDtoForFailure()));
+            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(failure));
         }
     }
 
@@ -188,12 +188,12 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
             extraValues.put(XML, fluxResponse);
 
             Collection<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValues);
-            ValidationResultDto fluxResponseValidationResult = ruleService.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
+            ValidationResult fluxResponseValidationResult = ruleService.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
             //Create Response
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, nationCode, onValue, status, destination, getExchangePluginType(pluginType), id);
+            String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, nationCode, null, status, destination, getExchangePluginType(pluginType), id);
             getRulesProducer().sendDataSourceMessage(fluxFAResponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
 
@@ -208,7 +208,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         }
     }
 
-    public void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage, Rule9998Or9999ErrorType type, String onValue, ValidationResultDto faQueryValidationReport) {
+    public void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage, Rule9998Or9999ErrorType type, String onValue, ValidationResult faQueryValidationReport) {
         if (request == null || type == null) {
             log.error("Could not send FLUXResponseMessage. Request is null or Rule9998Or9999ErrorType not provided.");
             return;
@@ -220,7 +220,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
             ruleWarning = new RuleError(ServiceConstants.PERMISSION_DENIED_RULE, ServiceConstants.PERMISSION_DENIED_RULE_MESSAGE, "L00", Collections.<String>singletonList(null));
         }
 
-        ValidationResultDto validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage,
+        ValidationResult validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage,
                 request.getLogGuid(), RawMsgType.FA_QUERY);
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
@@ -250,7 +250,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         xpaths.add(errorMessage);
         RuleError ruleError = new RuleError(ServiceConstants.INVALID_XML_RULE, ServiceConstants.INVALID_XML_RULE_MESSAGE, "L00", xpaths);
         RawMsgType messageType = getMessageType(request.getMethod());
-        ValidationResultDto validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, rawMessage, request.getLogGuid(), messageType);
+        ValidationResult validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, rawMessage, request.getLogGuid(), messageType);
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
         FLUXResponseMessage fluxResponseMessage = null;
@@ -290,7 +290,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         }
     }
 
-    public FLUXResponseMessage generateFluxResponseMessageForFaQuery(ValidationResultDto faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage, String onValue) {
+    public FLUXResponseMessage generateFluxResponseMessageForFaQuery(ValidationResult faReportValidationResult, FLUXFAQueryMessage fluxfaQueryMessage, String onValue) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
@@ -310,7 +310,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         return responseMessage;
     }
 
-    public FLUXResponseMessage generateFluxResponseMessageForFaResponse(ValidationResultDto faReportValidationResult, FLUXResponseMessage fluxResponseMessage) {
+    public FLUXResponseMessage generateFluxResponseMessageForFaResponse(ValidationResult faReportValidationResult, FLUXResponseMessage fluxResponseMessage) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
@@ -326,7 +326,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         return responseMessage;
     }
 
-    public FLUXResponseMessage generateFluxResponseMessageForFaReport(ValidationResultDto faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage) {
+    public FLUXResponseMessage generateFluxResponseMessageForFaReport(ValidationResult faReportValidationResult, FLUXFAReportMessage fluxfaReportMessage) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
@@ -366,7 +366,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         return msgType;
     }
 
-    private void populateFluxResponseDocument(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {
+    private void populateFluxResponseDocument(ValidationResult faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {
         setFluxResponseDocumentIDs(fluxResponseDocument);
         setFluxResponseCreationDate(fluxResponseDocument);
         setFluxResponseDocumentResponseCode(faReportValidationResult, fluxResponseDocument);
@@ -380,11 +380,11 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set movement party in the response
     }
 
-    private void setFluxResponseDocumentRelatedValidationResultDocuments(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {
+    private void setFluxResponseDocumentRelatedValidationResultDocuments(ValidationResult faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {
         fluxResponseDocument.setRelatedValidationResultDocuments(getValidationResultDocument(faReportValidationResult)); // Set validation result
     }
 
-    private void setFluxResponseDocumentResponseCode(ValidationResultDto faReportValidationResult, FLUXResponseDocument fluxResponseDocument) {
+    private void setFluxResponseDocumentResponseCode(ValidationResult faReportValidationResult, FLUXResponseDocument fluxResponseDocument) {
         CodeType responseCode = new CodeType();
         if (faReportValidationResult.isError()) {
             responseCode.setValue("NOK");
@@ -416,7 +416,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         return fluxParty;
     }
 
-    private FLUXResponseMessage generateFluxResponseMessage(ValidationResultDto faReportValidationResult) {
+    private FLUXResponseMessage generateFluxResponseMessage(ValidationResult faReportValidationResult) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
@@ -429,7 +429,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         return responseMessage;
     }
 
-    private List<ValidationResultDocument> getValidationResultDocument(ValidationResultDto faReportValidationResult) throws DatatypeConfigurationException {
+    private List<ValidationResultDocument> getValidationResultDocument(ValidationResult faReportValidationResult) throws DatatypeConfigurationException {
         ValidationResultDocument validationResultDocument = new ValidationResultDocument();
 
         GregorianCalendar date = DateTime.now(DateTimeZone.UTC).toGregorianCalendar();

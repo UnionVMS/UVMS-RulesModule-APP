@@ -59,7 +59,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -118,7 +118,7 @@ public class SalesRulesMessageServiceBean {
 
             //validate
             Collection<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_QUERY_MSG, salesQueryMessage, extraValues);
-            ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesQueryMessageAsString, logGuid, RawMsgType.SALES_QUERY);
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesQueryMessageAsString, logGuid, RawMsgType.SALES_QUERY);
 
             //send to sales
             if (validationResult.isError()) {
@@ -177,7 +177,7 @@ public class SalesRulesMessageServiceBean {
             stopWatch.reset();
             stopWatch.start();
 
-            ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString, logGuid, RawMsgType.SALES_REPORT);
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString, logGuid, RawMsgType.SALES_REPORT);
 
             log.info("Flow Report, Updating validation results took: {} ms", stopWatch.getTime());
             stopWatch.reset();
@@ -241,7 +241,7 @@ public class SalesRulesMessageServiceBean {
             stopWatch.reset();
             stopWatch.start();
 
-            ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString, logGuid, RawMsgType.SALES_RESPONSE);
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString, logGuid, RawMsgType.SALES_RESPONSE);
             log.info("Flow Response, Updating validation results took: {} ms", stopWatch.getTime());
             stopWatch.reset();
             stopWatch.start();
@@ -290,7 +290,7 @@ public class SalesRulesMessageServiceBean {
             stopWatch.reset();
             stopWatch.start();
 
-            ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString, logGuid, RawMsgType.SALES_RESPONSE);
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesResponseMessageAsString, logGuid, RawMsgType.SALES_RESPONSE);
             log.info("Flow Response, Updating validation results took: {} ms", stopWatch.getTime());
             stopWatch.reset();
             stopWatch.start();
@@ -334,7 +334,7 @@ public class SalesRulesMessageServiceBean {
 
             //validate
             Collection<AbstractFact> facts = rulesEngine.evaluate(FLUX_SALES_REPORT_MSG, report, extraValues);
-            ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString, logGuid, RawMsgType.SALES_REPORT);
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(facts, salesReportMessageAsString, logGuid, RawMsgType.SALES_REPORT);
             ExchangeLogStatusTypeType validationStatus = calculateMessageValidationStatus(validationResult);
 
             //send to exchange
@@ -374,18 +374,18 @@ public class SalesRulesMessageServiceBean {
         return uuidIsCorrect;
     }
 
-    private ValidationResultDto generateValidationResultDtoForFailure() {
-        ValidationResultDto resultDto = new ValidationResultDto();
+    private ValidationResult generateValidationResultDtoForFailure() {
+        ValidationResult resultDto = new ValidationResult();
         resultDto.setOk(false);
         resultDto.setError(true);
         return resultDto;
     }
 
-    private void updateRequestMessageStatusInExchange(String logGuid, ValidationResultDto validationResult) {
+    private void updateRequestMessageStatusInExchange(String logGuid, ValidationResult validationResult) {
         updateRequestMessageStatusInExchange(logGuid, validationResult, false);
     }
 
-    private void updateRequestMessageStatusInExchange(String logGuid, ValidationResultDto validationResult, Boolean duplicate) {
+    private void updateRequestMessageStatusInExchange(String logGuid, ValidationResult validationResult, Boolean duplicate) {
         updateRequestMessageStatusInExchange(logGuid, calculateMessageValidationStatus(validationResult), duplicate);
     }
 
@@ -403,7 +403,7 @@ public class SalesRulesMessageServiceBean {
         }
     }
 
-    private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
+    private ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResult validationResult) {
         if (validationResult != null) {
             if (validationResult.isError()) {
                 return ExchangeLogStatusTypeType.FAILED;
@@ -425,7 +425,7 @@ public class SalesRulesMessageServiceBean {
         producer.sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
     }
 
-    private String createInvalidSalesResponseMessage(ReceiveSalesReportRequest receiveSalesReportRequest, ValidationResultDto validationResult) throws SalesMarshallException {
+    private String createInvalidSalesResponseMessage(ReceiveSalesReportRequest receiveSalesReportRequest, ValidationResult validationResult) throws SalesMarshallException {
         if (shouldUseFluxOn(validationResult)) {
             return salesMessageFactory.createRespondToInvalidMessageRequest(receiveSalesReportRequest.getOnValue(), validationResult,
                     receiveSalesReportRequest.getPluginType(), receiveSalesReportRequest.getSender(), SalesIdType.FLUXTL_ON);
@@ -435,7 +435,7 @@ public class SalesRulesMessageServiceBean {
         }
     }
 
-    public boolean shouldUseFluxOn(ValidationResultDto validationResult) {
+    public boolean shouldUseFluxOn(ValidationResult validationResult) {
         for (ValidationMessageType validationMessage : validationResult.getValidationMessages()) {
             if (RULES_TO_USE_ON_VALUE.contains(validationMessage.getBrId())) {
                 return true;

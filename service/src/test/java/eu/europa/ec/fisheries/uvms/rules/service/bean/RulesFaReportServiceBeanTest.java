@@ -46,7 +46,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FaResponseServiceBeanTest {
+public class RulesFaReportServiceBeanTest {
 
     @Mock private RulesMessageProducer producer;
     @Mock private RulesExchangeServiceBean exchangeServiceBean;

@@ -29,7 +29,7 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -39,6 +39,8 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 @Slf4j
 abstract class AbstractFLUXService {
+
+    static ValidationResult failure = new ValidationResult(true, false, false, null);
 
     boolean isCorrectUUID(List<IDType> ids) {
         boolean uuidIsCorrect = false;
@@ -61,11 +63,7 @@ abstract class AbstractFLUXService {
         return uuidIsCorrect;
     }
 
-    ValidationResultDto generateValidationResultDtoForFailure() {
-        return new ValidationResultDto(true, false, false, null);
-    }
-
-    protected void updateRequestMessageStatusInExchange(String logGuid, ExchangeLogStatusTypeType statusType) {
+    void updateRequestMessageStatusInExchange(String logGuid, ExchangeLogStatusTypeType statusType) {
         try {
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, statusType);
             log.debug("Message to exchange to update status : {}", statusMsg);
@@ -75,7 +73,7 @@ abstract class AbstractFLUXService {
         }
     }
 
-    public ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResultDto validationResult) {
+    ExchangeLogStatusTypeType calculateMessageValidationStatus(ValidationResult validationResult) {
         if (validationResult != null) {
             if (validationResult.isError()) {
                 return ExchangeLogStatusTypeType.FAILED;
@@ -105,7 +103,7 @@ abstract class AbstractFLUXService {
         getRulesProducer().sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
     }
 
-    public IDType collectFaQueryId(FLUXFAQueryMessage faQueryMessage) {
+    IDType collectFaQueryId(FLUXFAQueryMessage faQueryMessage) {
         IDType faQueryGUID = null;
         if (faQueryMessage.getFAQuery() != null) {
             faQueryGUID = faQueryMessage.getFAQuery().getID();

@@ -13,25 +13,21 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.util.ArrayList;
+import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ValidationResultDto {
+public class ValidationResult {
 
     private boolean isError;
-
     private boolean isWarning;
-
     private boolean isOk;
-
     private List<ValidationMessageType> validationMessages = new ArrayList<>();
 
 }
