@@ -52,5 +52,11 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4034" author="emrinalgr">
+        <update tableName="rule">
+            <column name="disabled" value="true"/>
+            <where>BR_ID = 'FA-L02-00-0253'</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>
