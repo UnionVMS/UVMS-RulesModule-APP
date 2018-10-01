@@ -11,12 +11,16 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.xml.bind.UnmarshalException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
@@ -24,9 +28,11 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapperImpl;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,19 +40,20 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anySet;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RulesFaReportServiceBeanTest {
+public class RulesFAReportServiceBeanTest {
 
     @Mock private RulesMessageProducer producer;
     @Mock private RulesExchangeServiceBean exchangeServiceBean;
@@ -70,6 +77,8 @@ public class RulesFaReportServiceBeanTest {
     public void before(){
         faResponseRulesMessageServiceBean.init();
         Whitebox.setInternalState(faResponseRulesMessageServiceBean, "fluxMessageHelper", fluxMessageHelper);
+        Whitebox.setInternalState(faResponseRulesMessageServiceBean, "codeTypeMapper", new CodeTypeMapperImpl());
+
         fluxResponseMessage.setFLUXResponseDocument(fluxResponseDocument);
     }
 
@@ -146,6 +155,36 @@ public class RulesFaReportServiceBeanTest {
         inOrder.verify(rulesEngine, times(1)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap());
        inOrder.verify(rulesService, times(1)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
         inOrder.verify(rulesDaoBean, times(1)).createFaDocumentIdEntity(anySet());
+
+    }
+
+    @Test
+    public void testGenerateFluxResponseMessageForFaReport(){
+
+        FLUXReportDocument fluxReportDocument = new FLUXReportDocument();
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType idType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType();
+        idType.setValue("idValue");
+        List<IDType> idTypes = Collections.singletonList(idType);
+        fluxReportDocument.setIDS(idTypes);
+        FLUXFAReportMessage fluxfaReportMessage = new FLUXFAReportMessage();
+        fluxfaReportMessage.setFLUXReportDocument(fluxReportDocument);
+
+        ValidationResult validationResult = new ValidationResult();
+        validationResult.setError(true);
+        ValidationMessageType validationMessageType = new ValidationMessageType();
+        validationMessageType.setBrId("123");
+        validationMessageType.setErrorType(ErrorType.ERROR);
+        validationResult.setValidationMessages(Collections.singletonList(validationMessageType));
+        FLUXResponseMessage outgoingFluxResponseMessage = faResponseRulesMessageServiceBean.generateFluxResponseMessageForFaReport(validationResult, fluxfaReportMessage);
+
+        assertEquals(outgoingFluxResponseMessage.getFLUXResponseDocument().getReferencedID().getValue(), idTypes.get(0).getValue());
+        assertEquals("UUID", outgoingFluxResponseMessage.getFLUXResponseDocument().getIDS().get(0).getSchemeID());
+        assertNotNull(outgoingFluxResponseMessage.getFLUXResponseDocument().getIDS().get(0).getValue());
+        assertNotNull(outgoingFluxResponseMessage.getFLUXResponseDocument().getCreationDateTime());
+        assertEquals("NOK", outgoingFluxResponseMessage.getFLUXResponseDocument().getResponseCode().getValue());
+        assertEquals("FLUX_GP_RESPONSE", outgoingFluxResponseMessage.getFLUXResponseDocument().getResponseCode().getListID());
+        assertEquals("123", outgoingFluxResponseMessage.getFLUXResponseDocument().getRelatedValidationResultDocuments().get(0).getRelatedValidationQualityAnalysises().get(0).getID().getValue());
+        assertEquals("FA_BR", outgoingFluxResponseMessage.getFLUXResponseDocument().getRelatedValidationResultDocuments().get(0).getRelatedValidationQualityAnalysises().get(0).getID().getSchemeID());
 
     }
 }

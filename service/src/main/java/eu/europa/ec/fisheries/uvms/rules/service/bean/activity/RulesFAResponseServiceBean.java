@@ -40,10 +40,10 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
@@ -73,6 +73,9 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_QUERY;
+import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_REPORT;
+import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_RESPONSE;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
@@ -139,7 +142,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
             // Validate xsd schema
             fluxResponseMessage = fluxMessageHelper.unMarshallFluxResponseMessage(requestStr);
             Collection<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage, new EnumMap<>(ExtraValueType.class), String.valueOf(fluxResponseMessage.getFLUXResponseDocument().getIDS()));
-            ValidationResult fluxResponseValidResults = ruleService.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, RawMsgType.FA_RESPONSE);
+            ValidationResult fluxResponseValidResults = ruleService.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, FA_RESPONSE);
             exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(fluxResponseValidResults));
             if (fluxResponseValidResults != null && !fluxResponseValidResults.isError()) {
                 log.debug("The Validation of FLUXResponseMessage is successful, forwarding message to Exchange");
@@ -188,7 +191,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
             extraValues.put(XML, fluxResponse);
 
             Collection<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValues);
-            ValidationResult fluxResponseValidationResult = ruleService.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, RawMsgType.FA_RESPONSE);
+            ValidationResult fluxResponseValidationResult = ruleService.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, FA_RESPONSE);
             ExchangeLogStatusTypeType status = calculateMessageValidationStatus(fluxResponseValidationResult);
             //Create Response
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
@@ -221,7 +224,7 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         }
 
         ValidationResult validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage,
-                request.getLogGuid(), RawMsgType.FA_QUERY);
+                request.getLogGuid(), FA_QUERY);
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
 
@@ -232,13 +235,6 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         FLUXResponseMessage fluxResponseMessage = generateFluxResponseMessageForFaQuery(validationResultDto, queryMessage, onValue);
         log.debug("FLUXResponseMessage has been generated after exception: " + fluxResponseMessage);
         evaluateAndSendToExchange(fluxResponseMessage, request, PluginType.FLUX, true, MDC.getCopyOfContextMap());
-    }
-
-    private void fillFluxTLOnValue(FLUXResponseMessage fluxResponseMessage, String onValue) {
-        IDType idType = new IDType();
-        idType.setSchemeID("FLUXTL_ON");
-        idType.setValue(onValue);
-        fluxResponseMessage.getFLUXResponseDocument().setReferencedID(idType);
     }
 
     public void sendFLUXResponseMessageOnException(String errorMessage, String rawMessage, RulesBaseRequest request, Object message) {
@@ -253,35 +249,19 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         ValidationResult validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, rawMessage, request.getLogGuid(), messageType);
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
-        FLUXResponseMessage fluxResponseMessage = null;
-        if (messageType != null){
-            switch (messageType) {
-                case MOVEMENT:
-                    break;
-                case POLL:
-                    break;
-                case ALARM:
-                    break;
-                case UNKNOWN:
-                    break;
-                case SALES_QUERY:
-                    break;
-                case SALES_REPORT:
-                    break;
-                case SALES_RESPONSE:
-                    break;
-                case FA_QUERY:
-                    fluxResponseMessage = generateFluxResponseMessageForFaQuery(validationResultDto, message != null ? (FLUXFAQueryMessage) message : null, request.getOnValue());
-                    break;
-                case FA_REPORT:
-                    fluxResponseMessage = generateFluxResponseMessageForFaReport(validationResultDto, message != null ? (FLUXFAReportMessage) message : null);
-                    break;
-                case FA_RESPONSE:
-                    fluxResponseMessage = generateFluxResponseMessageForFaResponse(validationResultDto, message != null ? (FLUXResponseMessage) message : null);
-                    break;
-                default:
-                    fluxResponseMessage = generateFluxResponseMessage(validationResultDto);
-            }
+        FLUXResponseMessage fluxResponseMessage;
+        if (FA_QUERY.equals(messageType)){
+            FLUXFAQueryMessage fluxfaQueryMessage = message != null ? (FLUXFAQueryMessage) message : null;
+            String onValue = request.getOnValue(); // Is this needed?
+            fluxResponseMessage = generateFluxResponseMessageForFaQuery(validationResultDto, fluxfaQueryMessage, onValue);
+        } else if (FA_REPORT.equals(messageType)){
+            FLUXFAReportMessage fluxfaReportMessage = message != null ? (FLUXFAReportMessage) message : null;
+            fluxResponseMessage = generateFluxResponseMessageForFaReport(validationResultDto, fluxfaReportMessage);
+        } else if (FA_RESPONSE.equals(messageType)){
+            FLUXResponseMessage fluxResponsMsg = message != null ? (FLUXResponseMessage) message : null;
+            fluxResponseMessage = generateFluxResponseMessageForFaResponse(validationResultDto, fluxResponsMsg);
+        } else {
+            fluxResponseMessage = generateFluxResponseMessage(validationResultDto);
         }
         if (fluxResponseMessage != null) {
             fillFluxTLOnValue(fluxResponseMessage, request.getOnValue());
@@ -331,13 +311,33 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         try {
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
             if (fluxfaReportMessage != null && fluxfaReportMessage.getFLUXReportDocument() != null) {
-                List<IDType> requestId = fluxfaReportMessage.getFLUXReportDocument().getIDS();
-                fluxResponseDocument.setReferencedID((requestId != null && !requestId.isEmpty()) ? requestId.get(0) : null); // Set Request Id
+                List<IDType> ids = fluxfaReportMessage.getFLUXReportDocument().getIDS();
+                fluxResponseDocument.setReferencedID((CollectionUtils.isNotEmpty(ids)) ? ids.get(0) : null);
             }
             populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
             responseMessage.setFLUXResponseDocument(fluxResponseDocument);
             return responseMessage;
 
+        } catch (DatatypeConfigurationException e) {
+            log.error(e.getMessage(), e);
+        }
+        return responseMessage;
+    }
+
+    private void fillFluxTLOnValue(FLUXResponseMessage fluxResponseMessage, String onValue) {
+        IDType idType = new IDType();
+        idType.setSchemeID("FLUXTL_ON");
+        idType.setValue(onValue);
+        fluxResponseMessage.getFLUXResponseDocument().setReferencedID(idType);
+    }
+
+    private FLUXResponseMessage generateFluxResponseMessage(ValidationResult faReportValidationResult) {
+        FLUXResponseMessage responseMessage = new FLUXResponseMessage();
+        try {
+            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
+            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
+            responseMessage.setFLUXResponseDocument(fluxResponseDocument);
+            return responseMessage;
         } catch (DatatypeConfigurationException e) {
             log.error(e.getMessage(), e);
         }
@@ -357,11 +357,11 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         }
         RawMsgType msgType = null;
         if (RulesModuleMethod.SET_FLUX_FA_REPORT.equals(method) || RulesModuleMethod.SEND_FLUX_FA_REPORT.equals(method)) {
-            msgType = RawMsgType.FA_REPORT;
+            msgType = FA_REPORT;
         } else if (RulesModuleMethod.SET_FLUX_FA_QUERY.equals(method) || RulesModuleMethod.SEND_FLUX_FA_QUERY.equals(method)) {
-            msgType = RawMsgType.FA_QUERY;
+            msgType = FA_QUERY;
         } else if (RulesModuleMethod.SET_FLUX_RESPONSE.equals(method) || RulesModuleMethod.RCV_FLUX_RESPONSE.equals(method)) {
-            msgType = RawMsgType.FA_RESPONSE;
+            msgType = FA_RESPONSE;
         }
         return msgType;
     }
@@ -372,16 +372,8 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         setFluxResponseDocumentResponseCode(faReportValidationResult, fluxResponseDocument);
         // INFO : From IMPL DOC 2.2 This tag (RejectionReason) will not be there! Requested by DG MAre
         //setFluxResponseDocumentRejectionReason(faReportValidationResult, fluxResponseDocument);
-        setFluxResponseDocumentRelatedValidationResultDocuments(faReportValidationResult, fluxResponseDocument);
-        setFluxReportDocumentRespondentFluxParty(fluxResponseDocument);
-    }
-
-    private void setFluxReportDocumentRespondentFluxParty(FLUXResponseDocument fluxResponseDocument) {
-        fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set movement party in the response
-    }
-
-    private void setFluxResponseDocumentRelatedValidationResultDocuments(ValidationResult faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {
         fluxResponseDocument.setRelatedValidationResultDocuments(getValidationResultDocument(faReportValidationResult)); // Set validation result
+        fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set movement party in the response
     }
 
     private void setFluxResponseDocumentResponseCode(ValidationResult faReportValidationResult, FLUXResponseDocument fluxResponseDocument) {
@@ -416,19 +408,6 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
         return fluxParty;
     }
 
-    private FLUXResponseMessage generateFluxResponseMessage(ValidationResult faReportValidationResult) {
-        FLUXResponseMessage responseMessage = new FLUXResponseMessage();
-        try {
-            FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
-            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
-            responseMessage.setFLUXResponseDocument(fluxResponseDocument);
-            return responseMessage;
-        } catch (DatatypeConfigurationException e) {
-            log.error(e.getMessage(), e);
-        }
-        return responseMessage;
-    }
-
     private List<ValidationResultDocument> getValidationResultDocument(ValidationResult faReportValidationResult) throws DatatypeConfigurationException {
         ValidationResultDocument validationResultDocument = new ValidationResultDocument();
 
@@ -460,10 +439,12 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
 
             eu.europa.ec.fisheries.uvms.rules.service.constants.ErrorType errorType = codeTypeMapper.mapErrorType(validationMessage.getErrorType());
 
-            CodeType type = new CodeType();
-            type.setValue(errorType.name());
-            type.setListID("FLUX_GP_VALIDATION_TYPE");
-            analysis.setTypeCode(type);
+            if (errorType != null){
+                CodeType type = new CodeType();
+                type.setValue(errorType.name());
+                type.setListID("FLUX_GP_VALIDATION_TYPE");
+                analysis.setTypeCode(type);
+            }
 
             TextType text = new TextType();
             text.setValue(validationMessage.getMessage());
@@ -500,7 +481,6 @@ public class RulesFAResponseServiceBean extends AbstractFLUXService {
             return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.FLUX;
         }
     }
-
 
     @Override
     RulesMessageProducer getRulesProducer() {
