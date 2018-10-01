@@ -755,10 +755,6 @@ public abstract class AbstractFact {
         return isPositive(Collections.singletonList(value));
     }
 
-    public boolean isPositive(BigDecimal value) {
-        return value == null || value.compareTo(BigDecimal.ZERO) > 0;
-    }
-
     public boolean isPositive(List<MeasureType> value) {
         if (CollectionUtils.isEmpty(value)) {
             return false;
@@ -773,6 +769,58 @@ public abstract class AbstractFact {
         return false;
     }
 
+    public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {
+        return bigDecimal != null && bigDecimal.signum() != -1 && isInteger(bigDecimal);
+    }
+
+    public boolean isStrictPositiveInteger(BigDecimal bigDecimal) {
+        return bigDecimal != null && bigDecimal.signum() > 0 && isInteger(bigDecimal);
+    }
+
+    public boolean isStrictPositive(MeasureType value) {
+        return isStrictPositive(Collections.singletonList(value));
+    }
+
+    public boolean isStrictPositive(List<MeasureType> value) {
+        if (CollectionUtils.isEmpty(value)) {
+            return false;
+        }
+        value.removeAll(Collections.singleton(null));
+        for (MeasureType type : value) {
+            BigDecimal val = type.getValue();
+            if (val == null || BigDecimal.ZERO.compareTo(val) != 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isStrictPositiveInteger(MeasureType value) { // TODO Test
+        return isStrictPositiveInteger(Collections.singletonList(value));
+    }
+
+    public boolean isStrictPositiveInteger(List<MeasureType> value) {
+        if (CollectionUtils.isEmpty(value)) {
+            return true;
+        }
+        value.removeAll(Collections.singleton(null));
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
+            if (!isStrictPositiveInteger(type.getValue())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isPositive(BigDecimal value) {
+        return value == null || value.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    private boolean isInteger(BigDecimal bigDecimal) {
+        return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0) && !(bigDecimal.toPlainString().indexOf(".") > 0);
+    }
+
     public boolean isPositiveNumeric(List<NumericType> numericList) {
         if (CollectionUtils.isEmpty(numericList)) {
             return false;
@@ -781,52 +829,24 @@ public abstract class AbstractFact {
         for (NumericType type : removeNull) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) > 0) {
-                return false;
+                return true;
             }
         }
         return true;
     }
 
-    public boolean isPositiveInteger(List<MeasureType> value) {
-        if (CollectionUtils.isEmpty(value)) {
-            return true;
-        }
-        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
-        for (MeasureType type : removeNull) {
-            if (!isPositiveIntegerValue(type.getValue())) {
-                return false;
-            }
-        }
-        return true;
+    public boolean isStrictPositiveNumeric(NumericType numericType){
+        return isStrictPositiveNumeric(Collections.singletonList(numericType));
     }
 
-    private boolean isIntegerValue(BigDecimal bigDecimal) {
-        return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0) && !(bigDecimal.toPlainString().indexOf(".") > 0);
-    }
-
-    public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {
-        return bigDecimal != null && bigDecimal.signum() != -1 && isIntegerValue(bigDecimal);
-    }
-
-    public boolean isGreaterThanZero(MeasureType value){
-        return isGreaterThanZero(Collections.singletonList(value));
-    }
-
-    /**
-     * This method will check if all values passed  to this method are greater than zero.
-     *
-     * @param values
-     * @return TRUE : If all values are greater than zero
-     * FALSE: If any one value is null OR less than OR equal to zero
-     */
-    public boolean isGreaterThanZero(List<MeasureType> values) {
-        if (CollectionUtils.isEmpty(values)) {
+    public boolean isStrictPositiveNumeric(List<NumericType> numericList) {
+        if (CollectionUtils.isEmpty(numericList)) {
             return false;
         }
-        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(values, Predicates.notNull()));
-        for (MeasureType type : removeNull) {
+        ImmutableList<NumericType> removeNull = ImmutableList.copyOf(Iterables.filter(numericList, Predicates.notNull()));
+        for (NumericType type : removeNull) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) > -1) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) >= 0) {
                 return false;
             }
         }

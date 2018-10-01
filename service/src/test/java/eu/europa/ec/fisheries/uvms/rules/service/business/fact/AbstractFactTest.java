@@ -235,6 +235,32 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testIsStrictPositiveIntegerValueWithZero() {
+        assertFalse(fact.isStrictPositiveInteger(new BigDecimal(0)));
+    }
+
+    @Test
+    public void testIsStrictPositiveNumericWith1() {
+        NumericType numericType = new NumericType();
+        numericType.setValue(new BigDecimal("1"));
+        assertTrue(fact.isStrictPositiveNumeric(numericType));
+    }
+
+    @Test
+    public void testIsStrictPositiveNumericWithMinus() {
+        NumericType numericType = new NumericType();
+        numericType.setValue(new BigDecimal("-1"));
+        assertFalse(fact.isStrictPositiveNumeric(numericType));
+    }
+
+    @Test
+    public void testIsStrictPositiveNumericWithZero() {
+        NumericType numericType = new NumericType();
+        numericType.setValue(new BigDecimal("0"));
+        assertFalse(fact.isStrictPositiveNumeric(numericType));
+    }
+
+    @Test
     public void testUnitCodeContainsAllShouldReturnFalseWhenValuesToMachSame() {
         MeasureType measureType = new MeasureType();
         measureType.setValue(new BigDecimal("200"));
@@ -406,6 +432,35 @@ public class AbstractFactTest {
         measureTypes.add(measureType);
         assertTrue(fact.isPositive(measureTypes));
     }
+
+    @Test
+    public void testIsPositiveListOfMeasureWithZer() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("0"));
+        assertTrue(fact.isPositive(measureType));
+    }
+
+    @Test
+    public void testIsStrictPositiveListOfMeasureHappy() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("1292"));
+        assertTrue(fact.isStrictPositive(measureType));
+    }
+
+    @Test
+    public void testIsStrictPositiveListOfMeasureWithZero() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("0"));
+        assertFalse(fact.isStrictPositive(measureType));
+    }
+
+    @Test
+    public void testIsPositiveListOfMeasureWithZero() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("0"));
+        assertTrue(fact.isPositive(measureType));
+    }
+
 
 
     @Test
@@ -1303,8 +1358,8 @@ public class AbstractFactTest {
 
     @Test
     public void testIsGreaterThanZero() {
-        List<MeasureType> measureTypeList = Collections.singletonList(objectsHelper.generateMeasureType(new BigDecimal(1), "km"));
-        assertTrue(fact.isGreaterThanZero(measureTypeList));
+        MeasureType measureType = objectsHelper.generateMeasureType(new BigDecimal(1), "km");
+        assertTrue(fact.isStrictPositive(measureType));
     }
 
     @Test
@@ -1462,13 +1517,6 @@ public class AbstractFactTest {
     @Test
     public void testIsBlankWhenTextTypeAndTextIsNotBlank() {
         assertFalse(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("findHistoryOfAssetBy")));
-    }
-
-    @Test
-    public void testisPositiveInteger() {
-
-        boolean result = fact.isPositiveInteger(Collections.singletonList(objectsHelper.generateMeasureType(new BigDecimal(22), null)));
-        assertTrue(result);
     }
 
     @Test
