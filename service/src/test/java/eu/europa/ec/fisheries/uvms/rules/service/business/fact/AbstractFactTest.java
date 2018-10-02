@@ -151,38 +151,19 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidFormatHappy() {
+    public void testValidFormat() {
         assertTrue(fact.validateFormat("2000-123", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertTrue(fact.validateFormat("1999-142", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertTrue(fact.validateFormat("2018-115", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertFalse(fact.validateFormat("208-115", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertFalse(fact.validateFormat("2018-15", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertFalse(fact.validateFormat("999-1154", AbstractFact.FORMATS.JFO.getFormatStr()));
-    }
-
-    @Test
-    public void testUUIDShouldPass() {
-        assertTrue(fact.validateFormat("c56a4180-65aA-42ec-a945-5fd21dec0538", AbstractFact.FORMATS.UUID.getFormatStr()));
-    }
-
-    @Test
-    public void testUUIDShouldFail() {
-        assertFalse(fact.validateFormat("a9a42a57-f372-4ca3-9277-9e5faa59f8cn", AbstractFact.FORMATS.UUID.getFormatStr()));
-    }
-
-    @Test
-    public void testFLUXTLONShouldFail() {
-        assertFalse(fact.validateFormat("33EKLELKLE", AbstractFact.FORMATS.FLUXTL_ON.getFormatStr()));
-    }
-
-    @Test
-    public void testFLUXTLONShouldPass() {
         assertTrue(fact.validateFormat("33EKLELKLEGFHDJjsks1", AbstractFact.FORMATS.FLUXTL_ON.getFormatStr()));
-    }
-
-    @Test
-    public void testEXtMarking() {
         assertTrue(fact.validateFormat("P-446", AbstractFact.FORMATS.EXT_MARK.getFormatStr()));
+        assertFalse(fact.validateFormat("a9a42a57-f372-4ca3-9277-9e5faa59f8cn", AbstractFact.FORMATS.UUID.getFormatStr()));
+        assertTrue(fact.validateFormat("c56a4180-65aA-42ec-a945-5fd21dec0538", AbstractFact.FORMATS.UUID.getFormatStr()));
+        assertFalse(fact.validateFormat("33EKLELKLE", AbstractFact.FORMATS.FLUXTL_ON.getFormatStr()));
+        assertFalse(fact.validateFormat("2018-07-31T08:27:00.1234567Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
     }
 
     @Test
@@ -194,12 +175,6 @@ public class AbstractFactTest {
         assertTrue(fact.validateFormat("2018-07-31T08:27:00.4213Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
         assertTrue(fact.validateFormat("2018-07-31T08:27:00.123456Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
         assertTrue(fact.validateFormat("2018-07-31T08:27:00Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
-
-    }
-
-    @Test
-    public void testDateShouldFail() {
-        assertFalse(fact.validateFormat("2018-07-31T08:27:00.1234567Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
     }
 
     @Test
