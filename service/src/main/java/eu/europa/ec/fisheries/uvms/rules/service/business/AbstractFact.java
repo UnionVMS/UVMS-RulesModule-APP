@@ -48,10 +48,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
@@ -1011,6 +1008,15 @@ public abstract class AbstractFact {
 
     public boolean isEmpty( MeasureType measureType ){
         return measureType == null || isEmpty(measureType.getValue());
+    }
+
+    public boolean isEmpty( VesselStorageCharacteristic vesselStorageCharacteristic ){
+        if (vesselStorageCharacteristic == null){
+            return true;
+        }
+        ArrayList<VesselStorageCharacteristic> vesselStorageCharacteristics = new ArrayList<>();
+        vesselStorageCharacteristics.add(vesselStorageCharacteristic);
+        return isEmpty(vesselStorageCharacteristics);
     }
 
     /**

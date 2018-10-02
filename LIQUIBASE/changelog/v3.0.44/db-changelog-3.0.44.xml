@@ -117,6 +117,7 @@
     <changeSet id="UNIONVMS-4043" author="emrinalgr">
         <update tableName="rule">
             <column name="expression" value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(destinationVesselStorageCharacteristic)"/>
+            <column name="property_names" value="destinationVesselStorageCharacteristic"/>
             <where>BR_ID = 'FA-L02-00-0269'</where>
         </update>
     </changeSet>
