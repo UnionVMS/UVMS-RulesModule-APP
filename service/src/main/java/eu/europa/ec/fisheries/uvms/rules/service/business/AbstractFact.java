@@ -759,8 +759,8 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(value)) {
             return false;
         }
-        value.removeAll(Collections.singleton(null));
-        for (MeasureType type : value) {
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
                 return true;
@@ -785,8 +785,8 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(value)) {
             return false;
         }
-        value.removeAll(Collections.singleton(null));
-        for (MeasureType type : value) {
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) != 0) {
                 return true;
@@ -803,7 +803,6 @@ public abstract class AbstractFact {
         if (CollectionUtils.isEmpty(value)) {
             return true;
         }
-        value.removeAll(Collections.singleton(null));
         ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
         for (MeasureType type : removeNull) {
             if (!isStrictPositiveInteger(type.getValue())) {
