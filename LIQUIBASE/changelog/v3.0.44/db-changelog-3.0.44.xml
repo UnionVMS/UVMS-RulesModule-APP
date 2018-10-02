@@ -108,8 +108,10 @@
             <column name="property_names" value="specifiedFLAPDocuments"/>
             <column name="disabled" value="false"/>
         </insert>
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(specifiedFLAPDocuments) &amp;&amp; isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+            <where>BR_ID = 'FA-L02-00-0339'</where>
+        </update>
     </changeSet>
-
-
 
 </databaseChangeLog>
