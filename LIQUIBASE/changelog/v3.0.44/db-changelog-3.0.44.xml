@@ -93,5 +93,23 @@
             <where>BR_ID = 'FA-L02-00-0338'</where>
         </update>
     </changeSet>
+    
+    <changeSet id="UNIONVMS-4033" author="emrinalgr">
+        <dropNotNullConstraint columnName="note" tableName="rule"/>
+        <insert tableName="rule">
+            <column name="rule_id" value="449"/>
+            <column name="br_id" value="FA-L02-00-0449"/>
+            <column name="expression" value="isEmpty(specifiedFLAPDocuments)"/>
+            <column name="message" value="Check presence. Must be present if the activity is a relocation or transhipment declaration and SpecifiedFACatch/SpeciesCode = BFT"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on" valueDate="2018-10-02 00:00:00.0"/>
+            <column name="template_id" value="28"/>
+            <column name="property_names" value="specifiedFLAPDocuments"/>
+            <column name="disabled" value="false"/>
+        </insert>
+    </changeSet>
+
+
 
 </databaseChangeLog>
