@@ -3400,10 +3400,8 @@
             <column name="rule_id" value="269"/>
             <column name="br_id" value="FA-L02-00-0269"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp;
-                           isEmpty(destinationVesselStorageCharacteristicTypeCodes)"/>
-            <column name="note"
-                    value="DestinationVesselStorageCharacteristic's TypeCode must be present if SpecifiedFACAtch's TypeCode is UNLOADED and SpeciesCode is BFT"/>
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(destinationVesselStorageCharacteristicTypeCodes)"/>
+            <column name="note" value="DestinationVesselStorageCharacteristic's TypeCode must be present if SpecifiedFACAtch's TypeCode is UNLOADED and SpeciesCode is BFT"/>
             <column name="message" value="Destination vessel storage information is missing."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
