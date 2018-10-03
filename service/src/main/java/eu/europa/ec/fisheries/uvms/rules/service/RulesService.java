@@ -15,7 +15,6 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsResponse;
-import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
@@ -137,15 +136,9 @@ public interface RulesService {
      */
     CustomRuleType getCustomRuleByGuid(String guid) throws RulesServiceException, RulesModelMapperException, RulesFaultException;
 
-    AlarmReportType updateAlarmStatus(AlarmReportType ticket) throws RulesServiceException, RulesFaultException;
-
     List<PreviousReportType> getPreviousMovementReports() throws RulesServiceException, RulesFaultException;
 
     void timerRuleTriggered(String ruleName, PreviousReportFact fact) throws RulesServiceException, RulesFaultException;
-
-    String reprocessAlarm(List<String> alarms, String username) throws RulesServiceException, RulesFaultException;
-
-    void setMovementReportReceived(RawMovementType rawMovementType, String pluginType, String username) throws RulesServiceException;
 
     /**
      * @param guid the GUID of an alarm
@@ -166,4 +159,5 @@ public interface RulesService {
     long getNumberOfAssetsNotSending() throws RulesServiceException, RulesFaultException;
 
     GetTicketsAndRulesByMovementsResponse getTicketsAndRulesByMovements(List<String> movements) throws RulesServiceException;
+
 }

@@ -17,7 +17,7 @@ import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class RulesPreProcessBeanTest {
     public void testGetValidationResultNotExist() throws RulesModelException {
         Mockito.doReturn(Collections.emptyList()).when(rulesDomainModel).getValidationMessagesById(Mockito.anyList());
 
-        ValidationResultDto validationResultDto = rulesPreProcessBean.loadValidationResults(Arrays.asList("123", "456"));
+        ValidationResult validationResultDto = rulesPreProcessBean.loadValidationResults(Arrays.asList("123", "456"));
         assertTrue(validationResultDto.isOk());
     }
 
@@ -64,7 +64,7 @@ public class RulesPreProcessBeanTest {
     public void testGetValidationResultExist() throws RulesModelException {
         Mockito.doReturn(getMockValidationMessage()).when(rulesDomainModel).getValidationMessagesById(Mockito.anyList());
 
-        ValidationResultDto validationResultDto = rulesPreProcessBean.loadValidationResults(Arrays.asList("123", "456"));
+        ValidationResult validationResultDto = rulesPreProcessBean.loadValidationResults(Arrays.asList("123", "456"));
         assertTrue(validationResultDto.isError());
         assertEquals(1, validationResultDto.getValidationMessages().size());
     }
@@ -73,7 +73,7 @@ public class RulesPreProcessBeanTest {
     public void testDuplicateIdNotExistInRequest() throws RulesModelException, RulesServiceException {
         Mockito.doReturn(Collections.emptyList()).when(rulesDomainModel).getValidationMessagesById(Mockito.anyList());
 
-        Map<Boolean, ValidationResultDto> map = rulesPreProcessBean.checkDuplicateIdInRequest(getFluxFaReportMessage());
+        Map<Boolean, ValidationResult> map = rulesPreProcessBean.checkDuplicateIdInRequest(getFluxFaReportMessage());
         assertTrue(map.entrySet().iterator().next().getKey());
     }
 
@@ -81,7 +81,7 @@ public class RulesPreProcessBeanTest {
     public void testDuplicateIdExistInFluxMsg() throws RulesModelException, RulesServiceException {
         Mockito.doReturn(getMockValidationMessage()).when(rulesDomainModel).getValidationMessagesById(Mockito.anyList());
 
-        Map<Boolean, ValidationResultDto> map = rulesPreProcessBean.checkDuplicateIdInRequest(getFluxFaReportMessage());
+        Map<Boolean, ValidationResult> map = rulesPreProcessBean.checkDuplicateIdInRequest(getFluxFaReportMessage());
         assertFalse(map.entrySet().iterator().next().getKey());
     }
 

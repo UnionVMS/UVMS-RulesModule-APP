@@ -24,7 +24,7 @@ public interface EventService {
 
     void pingReceived(@Observes @PingReceivedEvent EventMessage eventMessage);
 
-    void setMovementReportReceived(@Observes @SetMovementReportReceivedEvent EventMessage message);
+    void setMovementReportReceived(@Observes @SetMovementBatchReportReceivedEvent EventMessage message);
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     void getCustomRule(@Observes @GetCustomRuleReceivedEvent EventMessage message);

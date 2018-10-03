@@ -17,7 +17,7 @@ import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -46,9 +46,9 @@ public class RulesPreProcessBean {
     @EJB
     private RulesDomainModel rulesDomainModel;
 
-    public ValidationResultDto loadValidationResults(List<String> ids) throws RulesModelException {
+    public ValidationResult loadValidationResults(List<String> ids) throws RulesModelException {
         List<ValidationMessageType> validationMessages = rulesDomainModel.getValidationMessagesById(ids);
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+        ValidationResult validationResultDto = new ValidationResult();
         if (CollectionUtils.isEmpty(validationMessages)) {
             validationResultDto.setOk(true);
         } else {
@@ -64,9 +64,9 @@ public class RulesPreProcessBean {
         return validationResultDto;
     }
 
-    public Map<Boolean, ValidationResultDto> checkDuplicateIdInRequest(FLUXFAQueryMessage faQueryMessage) throws RulesServiceException {
-        Map<Boolean, ValidationResultDto> validationResultMap = new HashMap<>();
-        ValidationResultDto validationResult;
+    public Map<Boolean, ValidationResult> checkDuplicateIdInRequest(FLUXFAQueryMessage faQueryMessage) throws RulesServiceException {
+        Map<Boolean, ValidationResult> validationResultMap = new HashMap<>();
+        ValidationResult validationResult;
         try {
             FAQuery faQuery = faQueryMessage.getFAQuery();
             if (faQuery != null) {
@@ -86,10 +86,10 @@ public class RulesPreProcessBean {
      * @return
      * @throws RulesServiceException
      */
-    public Map<Boolean, ValidationResultDto> checkDuplicateIdInRequest(FLUXFAReportMessage fluxFaReportMessage) throws RulesServiceException {
+    public Map<Boolean, ValidationResult> checkDuplicateIdInRequest(FLUXFAReportMessage fluxFaReportMessage) throws RulesServiceException {
         boolean isContinueValidation = true;
-        Map<Boolean, ValidationResultDto> validationResultMap = new HashMap<>();
-        ValidationResultDto validationResult;
+        Map<Boolean, ValidationResult> validationResultMap = new HashMap<>();
+        ValidationResult validationResult;
         try {
             validationResult = loadValidationResults(getFLUXReportDocumentIDs(fluxFaReportMessage));
             if (validationResult != null && !validationResult.isOk()) {
@@ -98,7 +98,7 @@ public class RulesPreProcessBean {
                 Iterator it = fluxFaReportMessage.getFAReportDocuments().iterator();
                 while (it.hasNext()) {
                     FAReportDocument faReportDocument = (FAReportDocument) it.next();
-                    ValidationResultDto validationResultFa = loadValidationResults(getIdsFromFluxFaReportDocument(faReportDocument.getRelatedFLUXReportDocument()));
+                    ValidationResult validationResultFa = loadValidationResults(getIdsFromFluxFaReportDocument(faReportDocument.getRelatedFLUXReportDocument()));
                     if (validationResultFa != null && !validationResultFa.isOk()) {
                         it.remove();
                         addToValidationResult(validationResult, validationResultFa);
@@ -123,9 +123,9 @@ public class RulesPreProcessBean {
         return mapToIdsStrList(fluxReportDocument.getIDS());
     }
 
-    public Map<Boolean, ValidationResultDto> checkDuplicateIdInRequest(FLUXResponseMessage fluxResponseMessage) throws RulesServiceException {
-        Map<Boolean, ValidationResultDto> validationResultMap = new HashMap<>();
-        ValidationResultDto validationResult;
+    public Map<Boolean, ValidationResult> checkDuplicateIdInRequest(FLUXResponseMessage fluxResponseMessage) throws RulesServiceException {
+        Map<Boolean, ValidationResult> validationResultMap = new HashMap<>();
+        ValidationResult validationResult;
         try {
             FLUXResponseDocument fluxRespDoc = fluxResponseMessage.getFLUXResponseDocument();
             if (fluxRespDoc != null) {
@@ -138,7 +138,7 @@ public class RulesPreProcessBean {
         return validationResultMap;
     }
 
-    private void addToValidationResult(ValidationResultDto globalValidationResult, ValidationResultDto validationResultFa) {
+    private void addToValidationResult(ValidationResult globalValidationResult, ValidationResult validationResultFa) {
         if (globalValidationResult == null) {
             globalValidationResult = validationResultFa;
         }

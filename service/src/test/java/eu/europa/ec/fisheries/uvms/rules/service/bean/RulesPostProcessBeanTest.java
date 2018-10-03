@@ -19,7 +19,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -58,7 +58,7 @@ public class RulesPostProcessBeanTest {
         fact.addWarningOrError("WARNING", "Test Warning", "br02", "L01", "null");
         fact.setOk(false);
 
-        ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(Collections.singletonList(fact), "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
+        ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(Collections.singletonList(fact), "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
         assertTrue(validationResult.isError());
         assertTrue(validationResult.isWarning());
         assertFalse(validationResult.isOk());
@@ -71,7 +71,7 @@ public class RulesPostProcessBeanTest {
         AbstractFact fact = new FaReportDocumentFact();
         fact.setOk(true);
 
-        ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResult(Arrays.asList(fact), "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
+        ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(Arrays.asList(fact), "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
         assertFalse(validationResult.isError());
         assertFalse(validationResult.isWarning());
         assertTrue(validationResult.isOk());
@@ -85,7 +85,7 @@ public class RulesPostProcessBeanTest {
         AbstractFact fact = new FaReportDocumentFact();
         fact.setOk(true);
         RuleError ruleError= new RuleError(ServiceConstants.INVALID_XML_RULE,  ServiceConstants.INVALID_XML_RULE_MESSAGE,  "L00", null);;
-        ValidationResultDto validationResult = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
+        ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
         assertFalse(validationResult.isError());
         assertFalse(validationResult.isWarning());
         assertFalse(validationResult.isOk());

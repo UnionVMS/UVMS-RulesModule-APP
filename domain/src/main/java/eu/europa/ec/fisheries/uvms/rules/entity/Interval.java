@@ -73,22 +73,19 @@ public class Interval implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Interval) {
-            Interval other = (Interval) obj;
-            if (start != null && start.getTime() != other.start.getTime()) {
-                return false;
-            } else if (start == null && other.start != null) {
-                return false;
-            }
-            if (end != null && end.getTime() != other.end.getTime()) {
-                return false;
-            } else if (end == null && other.end != null) {
-                return false;
-            }
+    public int hashCode() {
+        int result = start.hashCode();
+        result = 31 * result + end.hashCode();
+        return result;
+    }
 
-            return true;
-        }
-        return false;
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Interval interval = (Interval) o;
+
+        if (start != null ? !start.equals(interval.start) : interval.start != null) return false;
+        return end != null ? end.equals(interval.end) : interval.end == null;
     }
 }

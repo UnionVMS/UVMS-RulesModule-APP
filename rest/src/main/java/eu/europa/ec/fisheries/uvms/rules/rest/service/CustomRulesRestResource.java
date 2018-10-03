@@ -17,12 +17,11 @@ import eu.europa.ec.fisheries.uvms.movement.model.util.DateUtil;
 import eu.europa.ec.fisheries.uvms.rest.security.RequiresFeature;
 import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeature;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.rest.error.ErrorHandler;
-import eu.europa.ec.fisheries.uvms.rules.service.RulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,12 +42,16 @@ public class CustomRulesRestResource {
     private final static Logger LOG = LoggerFactory.getLogger(CustomRulesRestResource.class);
 
     private static String UNION_VMS_APPLICATION = "Union-VMS";
+
     @EJB
-    RulesService rulesService;
+    private RulesMovementProcessorBean rulesService;
+
     @EJB
-    ValidationService validationService;
+    private ValidationService validationService;
+
     @Context
     private ServletContext servletContext;
+
     @Context
     private HttpServletRequest request;
     /**
@@ -142,7 +145,7 @@ public class CustomRulesRestResource {
         LOG.info("Get custom rule by guid invoked in rest layer");
         try {
             return new ResponseDto(rulesService.getCustomRuleByGuid(guid), ResponseCode.OK);
-        } catch (RulesFaultException | RulesModelMapperException | RulesServiceException | NullPointerException ex) {
+        } catch (RulesServiceException | NullPointerException ex) {
             LOG.error("[ Error when getting custom rule by guid. ] {} ", ex.getStackTrace());
             return ErrorHandler.getFault(ex);
         }

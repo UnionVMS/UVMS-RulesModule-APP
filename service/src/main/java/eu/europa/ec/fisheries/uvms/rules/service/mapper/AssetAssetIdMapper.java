@@ -19,24 +19,24 @@ import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 public class AssetAssetIdMapper {
 
     public static AssetId mapAssetToAssetId(eu.europa.ec.fisheries.wsdl.asset.types.Asset asset) {
+        if(asset == null){
+            return null;
+        }
         AssetId newAssetId = new AssetId();
         AssetIdList assetIdList = mapAssetAssetId(asset);
         newAssetId.getAssetIdList().add(assetIdList);
-
         if (asset.getIrcs() != null) {
             AssetIdList ircs = new AssetIdList();
             ircs.setIdType(AssetIdType.IRCS);
             ircs.setValue(asset.getIrcs());
             newAssetId.getAssetIdList().add(ircs);
         }
-
         if (asset.getCfr() != null) {
             AssetIdList cfr = new AssetIdList();
             cfr.setValue(asset.getCfr());
             cfr.setIdType(AssetIdType.CFR);
             newAssetId.getAssetIdList().add(cfr);
         }
-
         return newAssetId;
     }
 

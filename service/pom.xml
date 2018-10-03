@@ -9,7 +9,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.0.42-SNAPSHOT</version>
+        <version>3.0.44-SNAPSHOT</version>
     </parent>
 
     <!-- PROPERTIES USED FOR LOGBACK -->
@@ -181,6 +181,11 @@
             <groupId>eu.europa.ec.fisheries.uvms.subscription</groupId>
             <artifactId>subscription-model</artifactId>
             <version>${subscription.model.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.service.client.flux</groupId>
+            <artifactId>flux-movement</artifactId>
+            <version>${flux.movement.client.version}</version>
         </dependency>
         <dependency>
             <groupId>pl.pragmatists</groupId>
