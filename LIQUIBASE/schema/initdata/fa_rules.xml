@@ -1626,7 +1626,7 @@
             <column name="rule_id" value="129"/>
             <column name="br_id" value="FA-L00-00-0129"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; valueIndicator == null "/>
+                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; valueIndicator == null "/>
             <column name="note" value="valueIndicator must be present. "/>
             <column name="message" value="Expected indicator type missing. "/>
             <column name="level" value="L00"/>
@@ -5337,7 +5337,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="218"/>
             <column name="br_id" value="FA-L02-00-0218"/>
-            <column name="expression" value="typeCode != null &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot; || typeCode.value == &quot;GEAR_SHOT&quot; || typeCode.value == &quot;GEAR_RETRIEVAL&quot; || typeCode.value == &quot;DISCARD&quot; || typeCode.value == &quot;RELOCATION&quot; ) &amp;&amp; isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !rfmoProvided(relatedFLUXLocations)"/>
+            <column name="expression" value="typeCode != null &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot; || typeCode.value == &quot;GEAR_SHOT&quot; || typeCode.value == &quot;GEAR_RETRIEVED&quot; || typeCode.value == &quot;DISCARD&quot; || typeCode.value == &quot;RELOCATION&quot; ) &amp;&amp; isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !rfmoProvided(relatedFLUXLocations)"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code missing."/>
             <column name="level" value="L02"/>
