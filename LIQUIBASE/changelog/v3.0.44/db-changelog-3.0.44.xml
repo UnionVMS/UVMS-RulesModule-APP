@@ -122,4 +122,12 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4031" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="!valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; (fishingActivityTypeCode.value == &quot;RELOCATION&quot; &amp;&amp; isEmpty(fluxCharacteristicTypeCodes))"/>
+            <where>BR_ID = 'FA-L02-00-0335'</where>
+        </update>
+    </changeSet>
+
+
 </databaseChangeLog>

@@ -4315,8 +4315,7 @@
             <column name="rule_id" value="336"/>
             <column name="br_id" value="FA-L02-00-0336"/>
             <column name="expression"
-                    value="fishingActivityTypeCode != null &amp;&amp;  fishingActivityTypeCode.value == &quot;RELOCATION&quot; &amp;&amp;
-                           containsAnyFaCatch(specifiedFACatches,&quot;BFT&quot;,&quot;UNLOADED&quot;) &amp;&amp; valueCodeTypeContainsAny(fluxCharacteristicTypeCodes, &quot;NB_CAGES_TOWED&quot;)"/>
+                    value="fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot; &amp;&amp; containsAnyFaCatch(specifiedFACatches,&quot;BFT&quot;,&quot;UNLOADED&quot;) &amp;&amp; valueCodeTypeContainsAny(fluxCharacteristicTypeCodes, &quot;NB_CAGES_TOWED&quot;)"/>
             <column name="note" value="If transhipment declaration (FA-L02-00-0330)"/>
             <column name="message" value="FLUX Characteristic NB_CAGES_TOWED is missing."/>
             <column name="level" value="L02"/>
@@ -5338,7 +5337,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="218"/>
             <column name="br_id" value="FA-L02-00-0218"/>
-            <column name="expression" value="typeCode != null &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot; || typeCode.value == &quot;GEAR_SHOT&quot; || typeCode.value == &quot;GEAR_RETRIEVED&quot; || typeCode.value == &quot;DISCARD&quot; || typeCode.value == &quot;RELOCATION&quot; ) &amp;&amp; isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !rfmoProvided(relatedFLUXLocations)"/>
+            <column name="expression" value="typeCode != null &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot; || typeCode.value == &quot;GEAR_SHOT&quot; || typeCode.value == &quot;GEAR_RETRIEVAL&quot; || typeCode.value == &quot;DISCARD&quot; || typeCode.value == &quot;RELOCATION&quot; ) &amp;&amp; isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !rfmoProvided(relatedFLUXLocations)"/>
             <column name="note" value="If provided"/>
             <column name="message" value="RFMO code missing."/>
             <column name="level" value="L02"/>
