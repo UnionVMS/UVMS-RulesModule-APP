@@ -159,6 +159,23 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4037" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="typeCode != null &amp;&amp; (mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;NUMBER&quot; || mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;MEASURE&quot;) &amp;&amp; valueMeasure == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="If UN_DATA_TYPE for the characteristic (specified in FLUXCharacteristic/TypeCode) is MEASURE or NUMBER, ValueMeasure must be present and have a value"/>
+            <where>BR_ID = 'FA-L00-00-0223'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value !=null &amp;&amp; (mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;NUMBER&quot; || mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;MEASURE&quot;) &amp;&amp; valueMeasure == null"/>
+            <column name="note" value=""/>
+            <column name="message" value="If UN_DATA_TYPE for the characteristic (specified in FLUXCharacteristic/TypeCode) is MEASURE or NUMBER, ValueMeasure must be present and have a value"/>
+            <where>BR_ID = 'FA-L00-00-0128'</where>
+        </update>
+    </changeSet>
+
+
+
     <changeSet id="UNIONVMS-4038" author="emrinalgr">
         <update tableName="rule">
             <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; valueIndicator == null "/>
