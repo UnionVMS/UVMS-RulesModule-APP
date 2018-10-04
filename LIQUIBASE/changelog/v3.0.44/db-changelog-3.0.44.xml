@@ -8,7 +8,6 @@
   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
   details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
   -->
-
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
@@ -57,6 +56,19 @@
             <column name="disabled" value="true"/>
             <where>BR_ID = 'FA-L02-00-0253'</where>
         </update>
+        <update tableName="template">
+            <column name="template_name" value="Fa notification of transhipment or relocation"/>
+            <column name="fact_template" value="FA_NOTIFICATION_OF_TRANSHIPMENT_OR_RELOCATION"/>
+            <where>TEMPLATE_ID = '28'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4038" author="koviand">
+        <insert tableName="template">
+            <column name="template_id" value="32"/>
+            <column name="template_name" value="Fa declaration of transhipment or relocation"/>
+            <column name="fact_template" value="FA_DECLARATION_OF_TRANSHIPMENT_OR_RELOCATION"/>
+        </insert>
     </changeSet>
 
     <changeSet id="UNIONVMS-4035" author="emrinalgr">
@@ -92,6 +104,20 @@
             <column name="expression" value="fluxCharacteristicType == &quot;SpecifiedFLUXCharacteristic&quot; &amp;&amp; codeTypeValueEquals(typeCode, &quot;NB_CAGES_TOWED&quot;) &amp;&amp; (valueQuantity == null || !isStrictPositiveInteger(valueQuantity.value))"/>
             <where>BR_ID = 'FA-L02-00-0338'</where>
         </update>
+
+        <update tableName="rule">
+            <column name="template_id" value="32"/>
+            <where>BR_ID = 'FA-L02-00-0339'</where>
+        </update>
+        <update tableName="rule">
+            <column name="template_id" value="32"/>
+            <where>BR_ID = 'FA-L02-00-0340'</where>
+        </update>
+        <update tableName="rule">
+            <column name="template_id" value="32"/>
+            <where>BR_ID = 'FA-L02-00-0448'</where>
+        </update>
+
     </changeSet>
     
     <changeSet id="UNIONVMS-4033" author="emrinalgr">
@@ -104,7 +130,7 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2018-10-02 00:00:00.0"/>
-            <column name="template_id" value="28"/>
+            <column name="template_id" value="32"/>
             <column name="property_names" value="specifiedFLAPDocuments"/>
             <column name="disabled" value="false"/>
         </insert>
@@ -119,6 +145,10 @@
             <column name="expression" value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(destinationVesselStorageCharacteristic)"/>
             <column name="property_names" value="destinationVesselStorageCharacteristic"/>
             <where>BR_ID = 'FA-L02-00-0269'</where>
+        </update>
+        <update tableName="rule">
+            <column name="template_id" value="32"/>
+            <where>BR_ID = 'FA-L02-00-0449'</where>
         </update>
     </changeSet>
 
@@ -143,8 +173,5 @@
             <where>BR_ID = 'FA-L02-00-0218'</where>
         </update>
     </changeSet>
-
-
-
 
 </databaseChangeLog>

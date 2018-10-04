@@ -17,20 +17,20 @@ import org.junit.Test;
 /**
  * Created by sanera on 24/07/2017.
  */
-public class FaNotificationOfTranshipmentFactTest {
+public class FaNotificationOfRelocationOrTranshipmentFactTest {
 
-    FaNotificationOfTranshipmentFact faNotificationOfTranshipmentFact = new FaNotificationOfTranshipmentFact();
+    FaNotificationOfRelocationOrTranshipmentFact faNotificationOfRelocationOrTranshipmentFact = new FaNotificationOfRelocationOrTranshipmentFact();
     @Test
     public void testIfFLUXLocationForFACatchIsAREA(){
 
-       boolean result= faNotificationOfTranshipmentFact.ifFLUXLocationForFACatchIsAREA(ActivityObjectsHelper.generateFACatchList());
+       boolean result= faNotificationOfRelocationOrTranshipmentFact.ifFLUXLocationForFACatchIsAREA(ActivityObjectsHelper.generateFACatchList());
         assertTrue(result);
     }
 
     @Test
     public void testContainsAnyFaCatch(){
 
-        boolean result= faNotificationOfTranshipmentFact.containsAnyFaCatch(ActivityObjectsHelper.generateFACatchList(),"BFT","LOADED");
+        boolean result= faNotificationOfRelocationOrTranshipmentFact.containsAnyFaCatch(ActivityObjectsHelper.generateFACatchList(),"BFT","LOADED");
         assertTrue(result);
     }
 }
