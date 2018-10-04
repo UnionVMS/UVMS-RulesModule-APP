@@ -125,7 +125,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="449"/>
             <column name="br_id" value="FA-L02-00-0449"/>
-            <column name="expression" value="isEmpty(specifiedFLAPDocuments)"/>
+            <column name="expression" value="isEmpty(specifiedFLAPDocuments) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <column name="message" value="Check presence. Must be present if the activity is a relocation or transhipment declaration and SpecifiedFACatch/SpeciesCode = BFT"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>

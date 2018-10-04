@@ -340,9 +340,9 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                     case RELOCATION:
                         if (DECLARATION_STR.equals(faRepTypeCodeVal)) {
                             if(RELOCATION.equals(fishingActivityType)){
-                                abstractFacts.add(activityFactMapper.generateFactsForTranshipment(activity, faReportDocument));
-                            } else {
                                 abstractFacts.add(activityFactMapper.generateFactsForRelocation(activity, faReportDocument, isSubActivity));
+                            } else {
+                                abstractFacts.add(activityFactMapper.generateFactsForTranshipment(activity, faReportDocument));
                             }
                         }
                         // We create also the FaDeclarationOfRelocationOrTranshipmentFact or FaNotificationOfRelocationOrTranshipmentFact for the entity 8.29
