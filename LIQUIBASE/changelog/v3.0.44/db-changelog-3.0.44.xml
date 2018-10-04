@@ -129,5 +129,22 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4038" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; valueIndicator == null "/>
+            <where>BR_ID = 'FA-L00-00-0129'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; (valueIndicator == null || valueIndicator.indicatorString == null || isEmpty(valueIndicator.indicatorString.value))"/>
+            <where>BR_ID = 'FA-L00-00-0225'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression" value="typeCode != null &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot; || typeCode.value == &quot;GEAR_SHOT&quot; || typeCode.value == &quot;GEAR_RETRIEVAL&quot; || typeCode.value == &quot;DISCARD&quot; || typeCode.value == &quot;RELOCATION&quot; ) &amp;&amp; isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !rfmoProvided(relatedFLUXLocations)"/>
+            <where>BR_ID = 'FA-L02-00-0218'</where>
+        </update>
+    </changeSet>
+
+
+
 
 </databaseChangeLog>
