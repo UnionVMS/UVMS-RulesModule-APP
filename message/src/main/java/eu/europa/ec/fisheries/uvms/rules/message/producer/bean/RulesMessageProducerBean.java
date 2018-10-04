@@ -32,6 +32,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
+import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Queue;
@@ -72,17 +73,19 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException  {
-        return sendDataSourceMessage(text, queue, Message.DEFAULT_TIME_TO_LIVE);
+        return sendDataSourceMessage(text, queue, Message.DEFAULT_TIME_TO_LIVE, DeliveryMode.PERSISTENT);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public String sendDataSourceMessage(String text, DataSourceQueue queue, long timeToLiveInMillis) throws MessageException  {
-        LOG.debug("Sending message to {}", queue.name());
+    public String sendDataSourceMessage(String text, DataSourceQueue queue, long timeToLiveInMillis, int deliveryMode) throws MessageException  {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Sending message to {}", queue.name());
+        }
         try {
             Queue destination = getDestinationQueue(queue);
             if(destination != null){
-                return sendMessageToSpecificQueue(text, destination, rulesResponseQueue, timeToLiveInMillis);
+                return sendMessageToSpecificQueue(text, destination, rulesResponseQueue, timeToLiveInMillis, deliveryMode);
             }
             return null;
         } catch (Exception e) {
@@ -156,6 +159,7 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
     public String getDestinationName() {
         return MessageConstants.QUEUE_RULES;
     }
+
 
 }
 

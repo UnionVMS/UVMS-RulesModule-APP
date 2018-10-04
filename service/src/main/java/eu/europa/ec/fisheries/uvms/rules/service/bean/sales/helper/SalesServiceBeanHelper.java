@@ -20,6 +20,7 @@ import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.util.List;
@@ -46,7 +47,7 @@ public class SalesServiceBeanHelper {
 
     @Lock(LockType.READ)
     protected String sendMessageToSales(String request) throws MessageException {
-        return messageProducer.sendDataSourceMessage(request, DataSourceQueue.SALES, TIME_TO_WAIT_FOR_A_RESPONSE + 1000L);
+        return messageProducer.sendDataSourceMessage(request, DataSourceQueue.SALES, TIME_TO_WAIT_FOR_A_RESPONSE + 1000L, DeliveryMode.NON_PERSISTENT);
     }
 
     @Lock(LockType.READ)

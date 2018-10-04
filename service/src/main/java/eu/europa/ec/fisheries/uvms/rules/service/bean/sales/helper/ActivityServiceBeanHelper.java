@@ -21,6 +21,7 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.util.Arrays;
@@ -71,7 +72,7 @@ public class ActivityServiceBeanHelper {
 
         String request = activityMapper.mapToActivityGetFishingTripRequest(listFilter, singleFilters);
         log.debug("Send FishingTripRequest message to Activity");
-        String correlationId = messageProducer.sendDataSourceMessage(request, DataSourceQueue.ACTIVITY, TIME_TO_WAIT_FOR_A_RESPONSE + 1000L);
+        String correlationId = messageProducer.sendDataSourceMessage(request, DataSourceQueue.ACTIVITY, TIME_TO_WAIT_FOR_A_RESPONSE + 1000L, DeliveryMode.NON_PERSISTENT);
         return receiveMessageFromActivity(correlationId);
     }
 }
