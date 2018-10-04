@@ -17,7 +17,7 @@ import java.util.List;
 
 public enum ContainerType {
 
-    FA_REPORT("faReport", "ec.europa.eu.faResport", FactType.FA_REPORT_DOCUMENT,
+    FA_REPORT("faReport", "ec.europa.eu.faReport", FactType.FA_REPORT_DOCUMENT,
             FactType.FLUX_FA_REPORT_MESSAGE, FactType.VESSEL_TRANSPORT_MEANS, FactType.STRUCTURED_ADDRESS,
             FactType.FISHING_GEAR, FactType.GEAR_CHARACTERISTIC, FactType.GEAR_PROBLEM, FactType.FA_CATCH,
             FactType.FISHING_TRIP, FactType.FLUX_LOCATION, FactType.FLUX_CHARACTERISTIC,
@@ -25,7 +25,8 @@ public enum ContainerType {
             FactType.FA_ENTRY_TO_SEA, FactType.FA_FISHING_OPERATION, FactType.FA_JOINT_FISHING_OPERATION,
             FactType.FA_RELOCATION, FactType.FA_DISCARD, FactType.FA_EXIT_FROM_SEA,
             FactType.FA_NOTIFICATION_OF_ARRIVAL, FactType.FA_ARRIVAL, FactType.FA_LANDING,
-            FactType.FA_TRANSHIPMENT, FactType.FA_NOTIFICATION_OF_TRANSHIPMENT, FactType.SIMPLE_ID_TYPE_FACT),
+            FactType.FA_TRANSHIPMENT, FactType.FA_NOTIFICATION_OF_TRANSHIPMENT_OR_RELOCATION,
+            FactType.FA_DECLARATION_OF_TRANSHIPMENT_OR_RELOCATION, FactType.SIMPLE_ID_TYPE_FACT),
 
     FA_QUERY("faQuery", "ec.europa.eu.faQuery", FactType.FA_QUERY,
             FactType.FA_QUERY_PARAMETER),
