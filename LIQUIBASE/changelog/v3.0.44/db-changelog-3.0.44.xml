@@ -174,4 +174,13 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4040" author="emkoviand">
+        <delete tableName="rule">
+            <where>BR_ID = 'FA-L01-00-0073'</where>
+        </delete>
+        <delete tableName="rule">
+            <where>BR_ID = 'FA-L01-00-0075'</where>
+        </delete>
+    </changeSet>
+
 </databaseChangeLog>
