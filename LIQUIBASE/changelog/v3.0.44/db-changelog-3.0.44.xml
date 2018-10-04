@@ -111,10 +111,14 @@
         </update>
         <update tableName="rule">
             <column name="template_id" value="32"/>
+            <column name="expression"
+                    value="!subActivity &amp;&amp; !isEmpty(flapDocumentIdTypes) &amp;&amp; !mdrService.isAllSchemeIdsPresentInMDRList(&quot;FLAP_ID_TYPE&quot; , flapDocumentIdTypes, creationDateOfMessage) "/>
             <where>BR_ID = 'FA-L02-00-0340'</where>
         </update>
         <update tableName="rule">
             <column name="template_id" value="32"/>
+            <column name="expression"
+                    value="!subActivity &amp;&amp; !isEmpty(specifiedFLAPDocuments) &amp;&amp; !isEmpty(faCatchSpeciesCodes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes,&quot;BFT&quot;) &amp;&amp; schemeIdContainsAny(flapDocumentIdTypes, &quot;ICCAT_AUTHORIZATION&quot;)"/>
             <where>BR_ID = 'FA-L02-00-0448'</where>
         </update>
 
@@ -125,7 +129,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="449"/>
             <column name="br_id" value="FA-L02-00-0449"/>
-            <column name="expression" value="isEmpty(specifiedFLAPDocuments) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+            <column name="expression" value="!subActivity &amp;&amp; isEmpty(specifiedFLAPDocuments) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <column name="message" value="Check presence. Must be present if the activity is a relocation or transhipment declaration and SpecifiedFACatch/SpeciesCode = BFT"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
@@ -135,7 +139,7 @@
             <column name="disabled" value="false"/>
         </insert>
         <update tableName="rule">
-            <column name="expression" value="!isEmpty(specifiedFLAPDocuments) &amp;&amp; isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+            <column name="expression" value="!subActivity &amp;&amp; !isEmpty(specifiedFLAPDocuments) &amp;&amp; isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <where>BR_ID = 'FA-L02-00-0339'</where>
         </update>
     </changeSet>
