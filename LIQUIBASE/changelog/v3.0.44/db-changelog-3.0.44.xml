@@ -125,7 +125,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="449"/>
             <column name="br_id" value="FA-L02-00-0449"/>
-            <column name="expression" value="isEmpty(specifiedFLAPDocuments)"/>
+            <column name="expression" value="isEmpty(specifiedFLAPDocuments) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <column name="message" value="Check presence. Must be present if the activity is a relocation or transhipment declaration and SpecifiedFACatch/SpeciesCode = BFT"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
@@ -189,6 +189,15 @@
             <column name="expression" value="typeCode != null &amp;&amp; (typeCode.value == &quot;FISHING_OPERATION&quot; || typeCode.value == &quot;JOINT_FISHING_OPERATION&quot; || typeCode.value == &quot;GEAR_SHOT&quot; || typeCode.value == &quot;GEAR_RETRIEVAL&quot; || typeCode.value == &quot;DISCARD&quot; || typeCode.value == &quot;RELOCATION&quot; ) &amp;&amp; isEmpty(relatedFluxLocationRFMOCodeList) &amp;&amp; !rfmoProvided(relatedFLUXLocations)"/>
             <where>BR_ID = 'FA-L02-00-0218'</where>
         </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4040" author="emkoviand">
+        <delete tableName="rule">
+            <where>BR_ID = 'FA-L01-00-0073'</where>
+        </delete>
+        <delete tableName="rule">
+            <where>BR_ID = 'FA-L01-00-0075'</where>
+        </delete>
     </changeSet>
 
 </databaseChangeLog>
