@@ -1862,7 +1862,8 @@ public class ActivityFactMapper {
         return faLandingFact;
     }
 
-    public AbstractRelocationOrTranshipmentFact generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
+    public AbstractRelocationOrTranshipmentFact generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(FishingActivity fishingActivity, FAReportDocument faReportDocument,
+                                                                                                                    boolean isSubActivity) {
         if (fishingActivity == null && faReportDocument == null) {
             return null;
         }
@@ -1872,6 +1873,7 @@ public class ActivityFactMapper {
         } else {
             faNotificationOfRelocationOrTranshipmentFact = new FaNotificationOfRelocationOrTranshipmentFact();
         }
+        faNotificationOfRelocationOrTranshipmentFact.setSubActivity(isSubActivity);
         String partialXpath = xPathUtil.getValue();
         if (fishingActivity != null) {
             faNotificationOfRelocationOrTranshipmentFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));

@@ -12,6 +12,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public abstract class AbstractRelocationOrTranshipmentFact extends AbstractFact {
 
+    protected boolean isSubActivity;
     protected CodeType fishingActivityTypeCode;
     protected CodeType faReportDocumentTypeCode;
     protected List<CodeType> faCatchTypeCode;

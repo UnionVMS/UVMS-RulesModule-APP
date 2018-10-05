@@ -346,7 +346,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                             }
                         }
                         // We create also the FaDeclarationOfRelocationOrTranshipmentFact or FaNotificationOfRelocationOrTranshipmentFact for the entity 8.29
-                        abstractFacts.add(activityFactMapper.generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(activity, faReportDocument));
+                        abstractFacts.add(activityFactMapper.generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(activity, faReportDocument, isSubActivity));
                         break;
                     case FISHING_OPERATION:
                         if (DECLARATION_STR.equals(faRepTypeCodeVal)) {

@@ -218,7 +218,7 @@ public class ActivityFactMapperTest {
     public void testGenerateFactsForDeclarationOfTranshipment() {
         final FAReportDocument farep = fluxFaTestMessage.getFAReportDocuments().iterator().next();
         final FishingActivity fishAct = farep.getSpecifiedFishingActivities().iterator().next();
-        final FaDeclarationOfRelocationOrTranshipmentFact faNotificationOfRelocationOrTranshipmentFact = (FaDeclarationOfRelocationOrTranshipmentFact) activityMapper.generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(fishAct, farep);
+        final FaDeclarationOfRelocationOrTranshipmentFact faNotificationOfRelocationOrTranshipmentFact = (FaDeclarationOfRelocationOrTranshipmentFact) activityMapper.generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(fishAct, farep, false);
         assertNotNull(faNotificationOfRelocationOrTranshipmentFact);
     }
 
@@ -227,7 +227,7 @@ public class ActivityFactMapperTest {
         final FAReportDocument farep = fluxFaTestMessage.getFAReportDocuments().iterator().next();
         farep.getTypeCode().setValue("NOTIFICATION");
         final FishingActivity fishAct = farep.getSpecifiedFishingActivities().iterator().next();
-        final FaNotificationOfRelocationOrTranshipmentFact faNotificationOfRelocationOrTranshipmentFact = (FaNotificationOfRelocationOrTranshipmentFact) activityMapper.generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(fishAct, farep);
+        final FaNotificationOfRelocationOrTranshipmentFact faNotificationOfRelocationOrTranshipmentFact = (FaNotificationOfRelocationOrTranshipmentFact) activityMapper.generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(fishAct, farep, false);
         assertNotNull(faNotificationOfRelocationOrTranshipmentFact);
     }
 
@@ -734,7 +734,7 @@ public class ActivityFactMapperTest {
         final FluxCharacteristicsFact fluxCharacteristicsFact = activityMapper.generateFactForFluxCharacteristic(null, "");
         final FaExitFromSeaFact faExitFromSeaFact = activityMapper.generateFactsForExitArea(null, null);
         final FaTranshipmentFact faTranshipmentFact = activityMapper.generateFactsForTranshipment(null, null);
-        final FaNotificationOfRelocationOrTranshipmentFact faNotificationOfRelocationOrTranshipmentFact = (FaNotificationOfRelocationOrTranshipmentFact) activityMapper.generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(null, null);
+        final FaNotificationOfRelocationOrTranshipmentFact faNotificationOfRelocationOrTranshipmentFact = (FaNotificationOfRelocationOrTranshipmentFact) activityMapper.generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(null, null, false);
 
         assertTrue(isEmpty(vesselStorageCharacteristicsFacts));
         assertTrue(isEmpty(fluxCharacteristicsFacts));
