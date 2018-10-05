@@ -2792,9 +2792,9 @@
             <column name="rule_id" value="11704"/>
             <column name="br_id" value="SALE-BEL-01"/>
             <column name="expression"
-                    value="isAuction() &amp;&amp; (!valueCodeTypeContainsAny(roleCodes, &quot;PROVIDER&quot;) &amp;&amp; (ID != null &amp;&amp; ID.value != null &amp;&amp; !ID.value.startsWith(&quot;RB-&quot;)))"/>
+                    value="isAuction() &amp;&amp; (!valueCodeTypeContainsAny(roleCodes, &quot;SENDER&quot;) &amp;&amp; (ID != null &amp;&amp; ID.value != null &amp;&amp; !ID.value.startsWith(&quot;RB-&quot;)))"/>
             <column name="note" value=""/>
-            <column name="message" value="ID of Sales Party must start with RB- when the party is a provider"/>
+            <column name="message" value="ID of Sales Party must start with RB- when the party is a sender"/>
             <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="template_id" value="1005"/>
