@@ -212,8 +212,10 @@
             &amp;&amp; (typeCode != null &amp;&amp; !valueContainsAny(typeCode,&quot;LOADED&quot;,&quot;UNLOADED&quot;))"/>
             <where>BR_ID = 'FA-L00-00-0171'</where>
         </update>
+        <update tableName="rule">
+            <column name="note" value="If it exists already, the contents are considered identical and the report may be ignored by the receiving party."/>
+            <where>BR_ID = 'FA-L03-00-0031'</where>
+        </update>
     </changeSet>
-
-
 
 </databaseChangeLog>
