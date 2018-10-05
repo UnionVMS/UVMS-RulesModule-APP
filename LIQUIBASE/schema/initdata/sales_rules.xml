@@ -1520,7 +1520,7 @@
             <column name="rule_id" value="10211"/>
             <column name="br_id" value="SALE-L02-00-0040"/>
             <column name="expression"
-                    value="roleCodes != null &amp;&amp; !valueContainsAny(roleCodes, &quot;SENDER&quot;) &amp;&amp; ID == null || (ID != null &amp;&amp; isEmpty(ID.getValue()))"/>
+                    value="roleCodes != null &amp;&amp; !valueContainsAny(roleCodes, &quot;SENDER&quot;) &amp;&amp; (ID == null || (ID != null &amp;&amp; isEmpty(ID.getValue())))"/>
             <column name="note" value=""/>
             <column name="message" value="Identification mandatory when role=SENDER"/>
             <column name="level" value="L02"/>
