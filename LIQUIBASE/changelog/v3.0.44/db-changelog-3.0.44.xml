@@ -228,6 +228,13 @@
             <column name="expression" value="weightMeasure != null &amp;&amp; weightMeasure.value != null &amp;&amp; (isNegative(weightMeasure.value) || (getNumberOfDecimalPlaces(weightMeasure.value, true) &gt; 2))"/>
             <where>BR_ID = 'FA-L01-00-0161'</where>
         </update>
+        <update tableName="rule">
+            <column name="expression"
+                    value="isEmpty(appliedAAPProcess) &amp;&amp;
+                     (codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) || codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;)) &amp;&amp;
+                     (codeTypeValueEquals(typeCode, &quot;UNLOADED&quot;) || codeTypeValueEquals(typeCode, &quot;LOADED&quot;))"/>
+            <where>BR_ID = 'FA-L02-00-0189'</where>
+        </update>
     </changeSet>
 
 </databaseChangeLog>
