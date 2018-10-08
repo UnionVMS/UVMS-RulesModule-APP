@@ -216,6 +216,14 @@
             <column name="note" value="If it exists already, the contents are considered identical and the report may be ignored by the receiving party."/>
             <where>BR_ID = 'FA-L03-00-0031'</where>
         </update>
+        <update tableName="rule">
+            <column name="expression" value="!subActivity &amp;&amp;
+                    !(codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; (codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) ||
+                    codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;))) &amp;&amp;
+                    (codeTypeValueEquals(typeCode, &quot;UNLOADED&quot;) || codeTypeValueEquals(typeCode, &quot;LOADED&quot;)) &amp;&amp;
+                    (weightMeasure == null || weightMeasure.value == null)"/>
+            <where>BR_ID = 'FA-L00-00-0159'</where>
+        </update>
     </changeSet>
 
 </databaseChangeLog>
