@@ -1120,6 +1120,10 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public boolean isNegative(BigDecimal bigDecimal) {
+        return bigDecimal != null && bigDecimal.signum() < 0;
+    }
+
     public int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
         return getNumberOfDecimalPlaces(bigDecimal, true);
     }

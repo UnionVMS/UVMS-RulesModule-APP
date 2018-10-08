@@ -224,6 +224,10 @@
                     (weightMeasure == null || weightMeasure.value == null)"/>
             <where>BR_ID = 'FA-L00-00-0159'</where>
         </update>
+        <update tableName="rule">
+            <column name="expression" value="weightMeasure != null &amp;&amp; weightMeasure.value != null &amp;&amp; (isNegative(weightMeasure.value) || (getNumberOfDecimalPlaces(weightMeasure.value, true) &gt; 2))"/>
+            <where>BR_ID = 'FA-L01-00-0161'</where>
+        </update>
     </changeSet>
 
 </databaseChangeLog>
