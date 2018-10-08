@@ -785,7 +785,7 @@ public abstract class AbstractFact {
         ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
         for (MeasureType type : removeNull) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) != 0) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) < 0) {
                 return true;
             }
         }
@@ -807,6 +807,10 @@ public abstract class AbstractFact {
             }
         }
         return true;
+    }
+
+    public boolean isPositiveOrZero(BigDecimal value) {
+        return (value == null || value.compareTo(BigDecimal.ZERO) >= 0);
     }
 
     public boolean isPositive(BigDecimal value) {
