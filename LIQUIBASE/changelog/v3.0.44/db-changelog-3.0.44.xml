@@ -101,7 +101,7 @@
             <where>BR_ID = 'FA-L01-00-0185'</where>
         </update>
         <update tableName="rule">
-            <column name="expression" value="fluxCharacteristicType == &quot;SpecifiedFLUXCharacteristic&quot; &amp;&amp; codeTypeValueEquals(typeCode, &quot;NB_CAGES_TOWED&quot;) &amp;&amp; (isInteger(valueQuantity.value) || !isPositiveOrZero(valueQuantity.value))"/>
+            <column name="expression" value="fluxCharacteristicType == &quot;SpecifiedFLUXCharacteristic&quot; &amp;&amp; codeTypeValueEquals(typeCode, &quot;NB_CAGES_TOWED&quot;) &amp;&amp; (!isInteger(valueQuantity.value) || !isPositiveOrZero(valueQuantity.value))"/>
             <where>BR_ID = 'FA-L02-00-0338'</where>
         </update>
 
