@@ -817,7 +817,7 @@ public abstract class AbstractFact {
         return value == null || value.compareTo(BigDecimal.ZERO) > 0;
     }
 
-    private boolean isInteger(BigDecimal bigDecimal) {
+    public boolean isInteger(BigDecimal bigDecimal) {
         return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0) && !(bigDecimal.toPlainString().indexOf(".") > 0);
     }
 
