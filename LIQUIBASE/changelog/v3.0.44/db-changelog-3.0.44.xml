@@ -101,7 +101,7 @@
             <where>BR_ID = 'FA-L01-00-0185'</where>
         </update>
         <update tableName="rule">
-            <column name="expression" value="fluxCharacteristicType == &quot;SpecifiedFLUXCharacteristic&quot; &amp;&amp; codeTypeValueEquals(typeCode, &quot;NB_CAGES_TOWED&quot;) &amp;&amp; (valueQuantity == null || !isStrictPositiveInteger(valueQuantity.value))"/>
+            <column name="expression" value="fluxCharacteristicType == &quot;SpecifiedFLUXCharacteristic&quot; &amp;&amp; codeTypeValueEquals(typeCode, &quot;NB_CAGES_TOWED&quot;) &amp;&amp; (!isInteger(valueQuantity.value) || !isPositiveOrZero(valueQuantity.value))"/>
             <where>BR_ID = 'FA-L02-00-0338'</where>
         </update>
 
@@ -247,6 +247,14 @@
                     value="(!isEmpty(resultAAPProduct) &amp;&amp; isEmpty(resultAAPProductWeightMeasure)) ||
                     (!isEmpty(resultAAPProduct) &amp;&amp; !isEmpty(resultAAPProductWeightMeasure) &amp;&amp; resultAAPProduct.size() != resultAAPProductWeightMeasure.size())"/>
             <where>BR_ID = 'FA-L00-00-0181'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression" value="checkContactListContainsAny(specifiedContactPersons, true, true)"/>
+            <where>BR_ID = 'FA-L00-00-0072'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression" value="checkContactListContainsAny(specifiedContactPersons, true, false)"/>
+            <where>BR_ID = 'FA-L00-00-0074'</where>
         </update>
     </changeSet>
 
