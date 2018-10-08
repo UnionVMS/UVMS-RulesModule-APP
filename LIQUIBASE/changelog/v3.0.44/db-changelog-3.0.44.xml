@@ -242,6 +242,12 @@
                      ((unitQuantity == null || unitQuantity.value == null) &amp;&amp; (weightMeasure == null || weightMeasure.value == null)))"/>
             <where>BR_ID = 'FA-L02-00-0219'</where>
         </update>
+        <update tableName="rule">
+            <column name="expression"
+                    value="(!isEmpty(resultAAPProduct) &amp;&amp; isEmpty(resultAAPProductWeightMeasure)) ||
+                    (!isEmpty(resultAAPProduct) &amp;&amp; !isEmpty(resultAAPProductWeightMeasure) &amp;&amp; resultAAPProduct.size() != resultAAPProductWeightMeasure.size())"/>
+            <where>BR_ID = 'FA-L00-00-0181'</where>
+        </update>
     </changeSet>
 
 </databaseChangeLog>
