@@ -235,6 +235,13 @@
                      (codeTypeValueEquals(typeCode, &quot;UNLOADED&quot;) || codeTypeValueEquals(typeCode, &quot;LOADED&quot;))"/>
             <where>BR_ID = 'FA-L02-00-0189'</where>
         </update>
+        <update tableName="rule">
+            <column name="expression"
+                    value="isEmpty(resultAAPProduct) &amp;&amp; ((codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) || codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;)) &amp;&amp;
+                     (codeTypeValueEquals(typeCode, &quot;UNLOADED&quot;) || codeTypeValueEquals(typeCode, &quot;LOADED&quot;)) ||
+                     ((unitQuantity == null || unitQuantity.value == null) &amp;&amp; (weightMeasure == null || weightMeasure.value == null)))"/>
+            <where>BR_ID = 'FA-L02-00-0219'</where>
+        </update>
     </changeSet>
 
 </databaseChangeLog>
