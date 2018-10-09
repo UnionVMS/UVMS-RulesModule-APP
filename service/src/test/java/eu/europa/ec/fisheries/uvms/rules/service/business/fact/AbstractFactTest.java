@@ -1339,6 +1339,10 @@ public class AbstractFactTest {
     public void testIsGreaterThanZero() {
         MeasureType measureType = objectsHelper.generateMeasureType(new BigDecimal(1), "km");
         assertTrue(fact.isStrictPositive(measureType));
+        MeasureType measureType2 = objectsHelper.generateMeasureType(new BigDecimal(0), "km");
+        assertFalse(fact.isStrictPositive(measureType2));
+        MeasureType measureType3 = objectsHelper.generateMeasureType(new BigDecimal(-1), "km");
+        assertFalse(fact.isStrictPositive(measureType3));
     }
 
     @Test

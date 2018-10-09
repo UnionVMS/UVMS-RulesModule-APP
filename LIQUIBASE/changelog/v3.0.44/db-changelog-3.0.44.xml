@@ -129,7 +129,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="449"/>
             <column name="br_id" value="FA-L02-00-0449"/>
-            <column name="expression" value="!subActivity &amp;&amp; isEmpty(specifiedFLAPDocuments) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+            <column name="expression" value="!subActivity &amp;&amp; specifiedFLAPDocuments != null &amp;&amp; specifiedFLAPDocuments.size == 0 &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <column name="message" value="Check presence. Must be present if the activity is a relocation or transhipment declaration and SpecifiedFACatch/SpeciesCode = BFT"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
@@ -139,7 +139,7 @@
             <column name="disabled" value="false"/>
         </insert>
         <update tableName="rule">
-            <column name="expression" value="!subActivity &amp;&amp; !isEmpty(specifiedFLAPDocuments) &amp;&amp; isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+            <column name="expression" value="!subActivity &amp;&amp; (specifiedFLAPDocuments != null  &amp;&amp; specifiedFLAPDocuments.size != 0 ) &amp;&amp; isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <where>BR_ID = 'FA-L02-00-0339'</where>
         </update>
     </changeSet>
