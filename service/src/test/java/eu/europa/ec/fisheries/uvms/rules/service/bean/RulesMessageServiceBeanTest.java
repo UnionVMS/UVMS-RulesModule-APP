@@ -13,44 +13,27 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-
 import javax.xml.datatype.DatatypeFactory;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
+import java.util.*;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
-import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapperImpl;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -64,16 +47,15 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQueryParameter;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 
 /**
  * Created by kovian on 6/7/2017.
@@ -121,6 +103,8 @@ public class RulesMessageServiceBeanTest {
     private FAQuery faQuery;
     private List<FAQueryParameter> faQueryParameterList;
     private FLUXFAQueryMessage fluxfaQueryMessage;
+
+    private RulesFLUXMessageHelper helper;
 
     @Before
     @SneakyThrows
@@ -174,30 +158,6 @@ public class RulesMessageServiceBeanTest {
 
     }
 
-    @Test
-    public void testGenerateFluxResponseMessage() {
-        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
-        FLUXResponseMessage fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaReport(getValidationResult(), getFluxFaReportMessage());
-        assertNotNull(fluxResponseMessage);
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getReferencedID());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRelatedValidationResultDocuments());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRespondentFLUXParty());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getResponseCode());
-    }
-
-    @Test
-    public void testGenerateFluxResponseMessageForFaQuery() {
-        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
-        FLUXResponseMessage fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaQuery(getValidationResult(), fluxfaQueryMessage, "onValue");
-        assertNotNull(fluxResponseMessage);
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getIDS());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getReferencedID());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRelatedValidationResultDocuments());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getRespondentFLUXParty());
-        assertNotNull(fluxResponseMessage.getFLUXResponseDocument().getResponseCode());
-    }
-
     @Test(expected = NullPointerException.class)
     public void testSetFLUXFAReportMessageReceivedNULL(){
         messageServiceBean.evaluateIncomingFLUXFAReport(null);
@@ -220,17 +180,6 @@ public class RulesMessageServiceBeanTest {
     public void testSendRequestToActivity() throws RulesServiceException, MessageException {
         Mockito.doReturn("abc-def").when(producer).sendDataSourceMessage(Mockito.anyString(), any(DataSourceQueue.class));
         //messageServiceBean.sendRequestToActivity("<FLUXFaReportMessage></FLUXFaReportMessage>", "findHistoryOfAssetBy", PluginType.FLUX, MessageType.FLUX_FA_REPORT_MESSAGE);
-    }
-
-    @Test
-    public void testSendResponseToExchange() throws RulesServiceException, RulesValidationException {
-        when(ruleModuleCache.getSingleConfig(any(String.class))).thenReturn("XEU");
-        FLUXResponseMessage fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaReport(getValidationResult(), getFluxFaReportMessage());
-        Mockito.doReturn(emptyList()).when(rulesEngine).evaluate(BusinessObjectType.SENDING_FA_RESPONSE_MSG, fluxResponseMessage, null);
-        Mockito.doReturn(getValidationResult()).when(rulePostprocessBean).checkAndUpdateValidationResult(Mockito.anyList(), Mockito.anyString(), Mockito.anyString(), Mockito.any(RawMsgType.class));
-        RulesBaseRequest request = new SetFLUXFAReportMessageRequest();
-        request.setUsername("USER1");
-        //messageServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, PluginType.FLUX, false);
     }
 
     @Test

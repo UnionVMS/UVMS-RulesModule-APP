@@ -22,7 +22,6 @@ import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMa
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
@@ -33,9 +32,10 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -56,12 +56,17 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 @LocalBean
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class RulesFaReportServiceBean extends AbstractFLUXService {
+public class RulesFaReportServiceBean {
+
+    private static ValidationResult failure = new ValidationResult(true, false, false, null);
 
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
     @EJB
     private RulesMessageProducer rulesProducer;
+
+    @EJB
+    private RulesConfigurationCache rulesConfigurationCache;
 
     @EJB
     private RulesEngineBean rulesEngine;
@@ -77,6 +82,9 @@ public class RulesFaReportServiceBean extends AbstractFLUXService {
 
     @EJB
     private RulesExchangeServiceBean exchangeServiceBean;
+
+    @EJB
+    private FAResponseToExchangeServiceBean faResponseToExchangeServiceBean;
 
     @EJB
     private AssetService assetService;
@@ -95,7 +103,7 @@ public class RulesFaReportServiceBean extends AbstractFLUXService {
     @PostConstruct
     public void init() {
         faIdsMapper = FAReportQueryResponseIdsMapper.INSTANCE;
-        fluxMessageHelper = new RulesFLUXMessageHelper();
+        fluxMessageHelper = new RulesFLUXMessageHelper(rulesConfigurationCache);
     }
 
     public void evaluateIncomingFLUXFAReport(SetFLUXFAReportMessageRequest request) {
@@ -122,7 +130,7 @@ public class RulesFaReportServiceBean extends AbstractFLUXService {
             rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
 
             ValidationResult faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, exchangeLogGuid, RawMsgType.FA_REPORT);
-            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, calculateMessageValidationStatus(faReportValidationResult));
+            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult));
 
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                 log.debug(" The Validation of Report is successful, forwarding message to Activity.");
@@ -137,19 +145,19 @@ public class RulesFaReportServiceBean extends AbstractFLUXService {
                 log.debug("Validation resulted in errors.");
             }
 
-            FLUXResponseMessage fluxResponseMessage = faResponseValidatorAndSender.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
+            FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
             XPathRepository.INSTANCE.clear(faReportFacts);
 
-            faResponseValidatorAndSender.evaluateAndSendToExchange(fluxResponseMessage, request, request.getType(), isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
+            faResponseToExchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, request.getType(), fluxMessageHelper.isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
 
         } catch (UnmarshalException e) {
             log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
-            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, calculateMessageValidationStatus(failure));
-            faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
+            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
+            faResponseToExchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);
-            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, calculateMessageValidationStatus(failure));
-            faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
+            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
+            faResponseToExchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         }
         log.debug("Finished eval of FLUXFAReportMessage " + exchangeLogGuid);
     }
@@ -186,15 +194,19 @@ public class RulesFaReportServiceBean extends AbstractFLUXService {
 
         } catch (UnmarshalException e) {
             log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
-            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(failure));
-            faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
+            exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
+            faResponseToExchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);
-            exchangeServiceBean.updateExchangeMessage(logGuid, calculateMessageValidationStatus(failure));
-            faResponseValidatorAndSender.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
+            exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
+            faResponseToExchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         } catch (MessageException | ExchangeModelMarshallException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);
         }
+    }
+
+    private void sendToExchange(String message) throws MessageException {
+        rulesProducer.sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
     }
 
     private Map<ExtraValueType, Object> fetchExtraValues(String senderReceiver, FLUXFAReportMessage fluxfaReportMessage,
@@ -225,22 +237,6 @@ public class RulesFaReportServiceBean extends AbstractFLUXService {
             reportGUID = fluxfaReportMessage.getFLUXReportDocument().getIDS();
         }
         return reportGUID;
-    }
-
-
-    @Override
-    RulesMessageProducer getRulesProducer() {
-        return rulesProducer;
-    }
-
-    @Override
-    AbstractConsumer getActivityConsumer() {
-        return activityConsumer;
-    }
-
-    @Override
-    RulesFAResponseServiceBean getResponseValidator() {
-        return faResponseValidatorAndSender;
     }
 
 }
