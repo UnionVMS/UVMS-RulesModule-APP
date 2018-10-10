@@ -81,9 +81,6 @@ public class RulesFaQueryServiceBean {
     private RulesDao rulesDaoBean;
 
     @EJB
-    private FAResponseToExchangeServiceBean faResponseToExchangeServiceBean;
-
-    @EJB
     private RulesExchangeServiceBean exchangeServiceBean;
 
     @EJB
@@ -152,7 +149,7 @@ public class RulesFaQueryServiceBean {
             // A Response won't be sent only in the case of permissionDenied from Subscription,
             // since in this particular case a response will be send in the spot, and there's no need to send it here also.
             if (needToSendToExchange) {
-                faResponseToExchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessageType, request, request.getType(), fluxMessageHelper.isCorrectUUID(Collections.singletonList(faQueryGUID)), MDC.getCopyOfContextMap());
+                exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessageType, request, request.getType(), fluxMessageHelper.isCorrectUUID(Collections.singletonList(faQueryGUID)), MDC.getCopyOfContextMap());
             }
 
             // We have received a SetFLUXFAReportMessageRequest (from activity) and it contains reports so needs to be processed (validated/sent through the normal flow).
@@ -162,11 +159,11 @@ public class RulesFaQueryServiceBean {
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFAQueryMessage received message! It is malformed!");
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
-            faResponseToExchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
+            exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
             log.error("Error during validation of the received FLUXFAQueryMessage!", e);
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
-            faResponseToExchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
+            exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
         }
     }
 
@@ -214,11 +211,11 @@ public class RulesFaQueryServiceBean {
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFaQueryMessage received message! It is malformed!");
             exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
-            faResponseToExchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
+            exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException e) {
             log.error("Error during validation of the received FLUXFaQueryMessage!", e);
             exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
-            faResponseToExchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
+            exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, faQueryMessage);
         } catch (MessageException | ExchangeModelMarshallException | ServiceException e) {
             log.error("Error during validation of the received FLUXFaQueryMessage!", e);
         }

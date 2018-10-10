@@ -19,7 +19,6 @@ import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FAResponseToExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
@@ -39,7 +38,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FAResponseToExchangeServiceBeanTest {
+public class RulesExchangeServiceBeanTest {
 
     @Mock private RulesMessageProducer producer;
     @Mock private RulesExchangeServiceBean exchangeServiceBean;
@@ -51,7 +50,7 @@ public class FAResponseToExchangeServiceBeanTest {
     @Mock private RulesConfigurationCache ruleModuleCache;
     @Mock private RulesDao rulesDaoBean;
     @Mock private RulesFaReportServiceBean faReportRulesMessageBean;
-    @InjectMocks private FAResponseToExchangeServiceBean faResponseToExchangeServiceBean;
+    @InjectMocks private RulesExchangeServiceBean rulesExchangeServiceBean;
     @Mock private RulesFLUXMessageHelper fluxMessageHelper;
 
     private SetFluxFaResponseMessageRequest responseMessageRequest;
@@ -61,14 +60,14 @@ public class FAResponseToExchangeServiceBeanTest {
 
     @Before
     public void before(){
-        faResponseToExchangeServiceBean.init();
-        Whitebox.setInternalState(faResponseToExchangeServiceBean, "fluxMessageHelper", fluxMessageHelper);
+        rulesExchangeServiceBean.init();
+        Whitebox.setInternalState(rulesExchangeServiceBean, "fluxMessageHelper", fluxMessageHelper);
         fluxResponseMessage.setFLUXResponseDocument(fluxResponseDocument);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testEvaluateAndSendToExchangeWithNullID(){
-        faResponseToExchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, new SetFaQueryMessageRequest(), PluginType.FLUX, true, mdc);
+        rulesExchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, new SetFaQueryMessageRequest(), PluginType.FLUX, true, mdc);
     }
 
     @Test
@@ -76,7 +75,7 @@ public class FAResponseToExchangeServiceBeanTest {
 
         Mockito.when(fluxMessageHelper.getIDs(fluxResponseMessage)).thenReturn("value");
 
-        faResponseToExchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, new SetFaQueryMessageRequest(), PluginType.FLUX, true, mdc);
+        rulesExchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, new SetFaQueryMessageRequest(), PluginType.FLUX, true, mdc);
 
         InOrder inOrder = inOrder(ruleModuleCache, rulesDaoBean, fluxMessageHelper, rulesEngine, rulesService);
         inOrder.verify(fluxMessageHelper, times(1)).getIDs(any(FLUXResponseMessage.class));

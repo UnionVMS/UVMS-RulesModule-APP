@@ -18,7 +18,6 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.FAResponseToExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
@@ -48,7 +47,6 @@ public class RulesFAResponseServiceBeanTest {
     @Mock private RulesEngineBean rulesEngine;
     @Mock private RulePostProcessBean rulesService;
     @Mock private RulesFLUXMessageHelper fluxMessageHelper;
-    @Mock private FAResponseToExchangeServiceBean faResponseToExchangeServiceBean;
     @InjectMocks private RulesFAResponseServiceBean faResponseRulesMessageServiceBean;
 
     private SetFluxFaResponseMessageRequest responseMessageRequest;
@@ -131,7 +129,7 @@ public class RulesFAResponseServiceBeanTest {
 
         faResponseRulesMessageServiceBean.sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(null, rulesBaseRequest, null, Rule9998Or9999ErrorType.PERMISSION_DENIED, null, validationResult);
 
-        Mockito.verify(faResponseToExchangeServiceBean, times(1)).evaluateAndSendToExchange(any(FLUXResponseMessage.class), any(eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest.class), any(PluginType.class), anyBoolean(), anyMap());
+        Mockito.verify(exchangeServiceBean, times(1)).evaluateAndSendToExchange(any(FLUXResponseMessage.class), any(eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest.class), any(PluginType.class), anyBoolean(), anyMap());
 
     }
 

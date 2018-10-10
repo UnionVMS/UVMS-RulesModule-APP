@@ -68,8 +68,6 @@ public class RulesFAResponseServiceBean {
     private RulesExchangeServiceBean exchangeServiceBean;
 
     @EJB
-    private FAResponseToExchangeServiceBean faResponseToExchangeServiceBean;
-    @EJB
     private RulesConfigurationCache ruleModuleCache;
 
     @EJB
@@ -140,6 +138,6 @@ public class RulesFAResponseServiceBean {
 
         FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaQuery(validationResultDto, queryMessage, onValue);
         log.debug("FLUXResponseMessage has been generated after exception: " + fluxResponseMessage);
-        faResponseToExchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, PluginType.FLUX, true, MDC.getCopyOfContextMap());
+        exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, PluginType.FLUX, true, MDC.getCopyOfContextMap());
     }
 }
