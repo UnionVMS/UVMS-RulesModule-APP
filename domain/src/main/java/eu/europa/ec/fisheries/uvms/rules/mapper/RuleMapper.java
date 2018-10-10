@@ -13,17 +13,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.mapper;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
+import java.util.Collection;
+import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
-import eu.europa.ec.fisheries.uvms.rules.entity.ExternalRule;
 import eu.europa.ec.fisheries.uvms.rules.entity.Rule;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Created by padhyad on 4/10/2017.
@@ -40,10 +37,4 @@ public interface RuleMapper {
 
     List<RuleType> mapToAllFactRuleType(Collection<Rule> factRules);
 
-    @Mappings({
-            @Mapping(target = "createdOn", source = "audit.createdOn")
-    })
-    ExternalRuleType mapToExternalFactRuleType(ExternalRule factRule);
-
-    List<ExternalRuleType> mapToAllExternalFactRuleType(Collection<ExternalRule> factRules);
 }
