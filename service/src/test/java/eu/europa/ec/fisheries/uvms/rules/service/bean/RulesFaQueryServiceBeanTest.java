@@ -22,6 +22,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaQueryServi
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -47,19 +48,21 @@ public class RulesFaQueryServiceBeanTest {
     @InjectMocks
     private RulesFaQueryServiceBean rulesFaQueryServiceBean;
 
-    @Test
-    public void testEvaluateIncomingFAQuery() throws UnmarshalException, RulesValidationException {
+    private FLUXFAQueryMessage fluxfaQueryMessage = new FLUXFAQueryMessage();
 
-        FLUXFAQueryMessage fluxfaQueryMessage = new FLUXFAQueryMessage();
+    @Before
+    public void before(){
         FAQuery faQuery = new FAQuery();
         faQuery.setID(new IDType());
         fluxfaQueryMessage.setFAQuery(faQuery);
+    }
+
+    @Test
+    public void testEvaluateIncomingFAQuery() throws UnmarshalException, RulesValidationException {
 
         Mockito.when(fluxMessageHelper.unMarshallFaQueryMessage(null)).thenReturn(fluxfaQueryMessage);
 
-        SetFaQueryMessageRequest setFaQueryMessageRequest = new SetFaQueryMessageRequest();
-
-        rulesFaQueryServiceBean.evaluateIncomingFAQuery(setFaQueryMessageRequest);
+        rulesFaQueryServiceBean.evaluateIncomingFAQuery(new SetFaQueryMessageRequest());
 
         InOrder inOrder = inOrder(rulesDaoBean, rulesEngine, rulePostProcessBean, exchangeServiceBean, activityService);
 
@@ -67,6 +70,21 @@ public class RulesFaQueryServiceBeanTest {
         inOrder.verify(rulesEngine, times(1)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), anyString());
         inOrder.verify(rulePostProcessBean, times(1)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
         inOrder.verify(exchangeServiceBean, times(1)).evaluateAndSendToExchange(any(FLUXResponseMessage.class), any(RulesBaseRequest.class), any(PluginType.class),anyBoolean(), anyMap());
+        inOrder.verify(activityService, times(0)).checkSubscriptionPermissions(anyString(), any(MessageType.class));
+
+    }
+
+    @Test
+    public void testEvaluateOutgoingFAQuery() throws RulesValidationException {
+
+        rulesFaQueryServiceBean.evaluateOutgoingFAQuery(new SetFaQueryMessageRequest());
+
+        InOrder inOrder = inOrder(rulesDaoBean, rulesEngine, rulePostProcessBean, exchangeServiceBean, activityService);
+
+        inOrder.verify(rulesDaoBean, times(1)).loadFADocumentIDByIdsByIds(anySet());
+        inOrder.verify(rulesEngine, times(1)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap());
+        inOrder.verify(rulePostProcessBean, times(1)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
+        inOrder.verify(exchangeServiceBean, times(0)).evaluateAndSendToExchange(any(FLUXResponseMessage.class), any(RulesBaseRequest.class), any(PluginType.class),anyBoolean(), anyMap());
         inOrder.verify(activityService, times(0)).checkSubscriptionPermissions(anyString(), any(MessageType.class));
 
     }
