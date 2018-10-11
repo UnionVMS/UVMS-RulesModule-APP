@@ -10,27 +10,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 import javax.annotation.PostConstruct;
-import javax.ejb.AccessTimeout;
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
@@ -52,6 +37,7 @@ import org.kie.api.builder.Results;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
 import org.kie.api.runtime.KieContainer;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Singleton
 @Startup
@@ -113,7 +99,6 @@ public class RulesKieContainerInitializer {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
             String templateName = template.getTemplateType().getTemplateName();
             drlsAndRules.putAll(generateRulesFromTemplate(templateName, templateFile, template.getRules()));
-            drlsAndRules.putAll(generateExternalRulesFromTemplate(template.getExternalRules()));
         }
 
         KieServices kieServices = KieServices.Factory.get();
@@ -160,19 +145,6 @@ public class RulesKieContainerInitializer {
         String drl = listener.renderDRL();
         log.debug(drl);
         drlsAndBrId.put(drl, templateName);
-        return drlsAndBrId;
-    }
-
-    private Map<String, String> generateExternalRulesFromTemplate(List<ExternalRuleType> externalRules) {
-        if (CollectionUtils.isEmpty(externalRules)) {
-            return Collections.emptyMap();
-        }
-        Map<String, String> drlsAndBrId = new HashMap<>();
-        for (ExternalRuleType extRuleType : externalRules) {
-            String drl = extRuleType.getDrl();
-            log.debug("DRL for BR Id {} : {} ", extRuleType.getBrId(), drl);
-            drlsAndBrId.put(drl, extRuleType.getBrId());
-        }
         return drlsAndBrId;
     }
 

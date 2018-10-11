@@ -258,4 +258,7 @@
         </update>
     </changeSet>
 
+    <changeSet author="externalrule" id="emrinalgr">
+        <dropTable tableName="externalrule"/>
+    </changeSet>
 </databaseChangeLog>
