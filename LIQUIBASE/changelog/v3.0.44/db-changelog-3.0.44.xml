@@ -178,15 +178,15 @@
         </update>
     </changeSet>
 
-
-
     <changeSet id="UNIONVMS-4038" author="emrinalgr">
         <update tableName="rule">
             <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; valueIndicator == null "/>
             <where>BR_ID = 'FA-L00-00-0129'</where>
         </update>
         <update tableName="rule">
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; (valueIndicator == null || valueIndicator.indicatorString == null || isEmpty(valueIndicator.indicatorString.value))"/>
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; (valueIndicator == null || valueIndicator.isIndicator() == null)"/>
+            <column name="note" value=""/>
+            <column name="message" value="If UN_DATA_TYPE23 for the characteristic (specified in FLUXCharacteristic/TypeCode) is BOOLEAN, ValueIndicator must be present and have a value."/>
             <where>BR_ID = 'FA-L00-00-0225'</where>
         </update>
         <update tableName="rule">

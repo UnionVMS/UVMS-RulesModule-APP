@@ -104,7 +104,7 @@ public class RulesFaQueryServiceBean {
         try {
             faQueryMessage = fluxMessageHelper.unMarshallFaQueryMessage(requestStr);
             IDType faQueryGUID = collectFaQueryId(faQueryMessage);
-            log.info("Evaluate FAQuery with ID " + faQueryGUID);
+            log.info("Evaluate FAQuery with ID {}", faQueryGUID);
             boolean needToSendToExchange = true;
             Set<FADocumentID> idsFromIncomingMessage = fluxMessageHelper.mapQueryToFADocumentID(faQueryMessage);
             List<FADocumentID> faQueryIdsFromDb = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);
