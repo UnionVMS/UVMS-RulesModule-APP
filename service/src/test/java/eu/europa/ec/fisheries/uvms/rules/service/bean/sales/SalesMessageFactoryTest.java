@@ -3,7 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.sales.ValidationQualityAnalysisType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResultDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ public class SalesMessageFactoryTest {
 
     @Test
     public void getMessageStatusWhenErrorsAndWarnings() throws Exception {
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+        ValidationResult validationResultDto = new ValidationResult();
         validationResultDto.setError(true);
         validationResultDto.setWarning(true);
         assertEquals("NOK", salesMessageFactory.getMessageStatus(validationResultDto));
@@ -32,7 +32,7 @@ public class SalesMessageFactoryTest {
 
     @Test
     public void getMessageStatusWhenErrors() throws Exception {
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+        ValidationResult validationResultDto = new ValidationResult();
         validationResultDto.setError(true);
         validationResultDto.setWarning(false);
         assertEquals("NOK", salesMessageFactory.getMessageStatus(validationResultDto));
@@ -40,7 +40,7 @@ public class SalesMessageFactoryTest {
 
     @Test
     public void getMessageStatuspWhenWarnings() throws Exception {
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+        ValidationResult validationResultDto = new ValidationResult();
         validationResultDto.setError(false);
         validationResultDto.setWarning(true);
         assertEquals("WOK", salesMessageFactory.getMessageStatus(validationResultDto));
@@ -48,7 +48,7 @@ public class SalesMessageFactoryTest {
 
     @Test
     public void getMessageStatusWhenOK() throws Exception {
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+        ValidationResult validationResultDto = new ValidationResult();
         validationResultDto.setError(false);
         validationResultDto.setWarning(false);
         assertEquals("OK", salesMessageFactory.getMessageStatus(validationResultDto));
@@ -66,7 +66,7 @@ public class SalesMessageFactoryTest {
 
     @Test
     public void mapToValidationQualityAnalysisWhenNoValidationMessagesAndListIsNull() {
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+        ValidationResult validationResultDto = new ValidationResult();
         validationResultDto.setValidationMessages(null);
 
         assertEquals(new ArrayList<>(), salesMessageFactory.mapToValidationQualityAnalysis(validationResultDto));
@@ -74,7 +74,7 @@ public class SalesMessageFactoryTest {
 
     @Test
     public void mapToValidationQualityAnalysisWhenNoValidationMessagesAndListIsEmpty() {
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+        ValidationResult validationResultDto = new ValidationResult();
         validationResultDto.setValidationMessages(new ArrayList<ValidationMessageType>());
 
         assertEquals(new ArrayList<>(), salesMessageFactory.mapToValidationQualityAnalysis(validationResultDto));
@@ -97,7 +97,7 @@ public class SalesMessageFactoryTest {
         validationMessage2.setLevel("L02");
         validationMessage2.setMessage("message2");
 
-        ValidationResultDto validationResultDto = new ValidationResultDto();
+        ValidationResult validationResultDto = new ValidationResult();
         validationResultDto.setValidationMessages(Arrays.asList(validationMessage1, validationMessage2));
 
         //execute

@@ -48,10 +48,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
@@ -118,19 +115,6 @@ public abstract class AbstractFact {
         return xpathsList;
     }
 
-    public boolean idListContainsValue(List<IdType> idTypes, String valueToMatch, String schemeIdToSearchFor) {
-        if (StringUtils.isEmpty(valueToMatch) || StringUtils.isEmpty(schemeIdToSearchFor)) {
-            return false;
-        }
-        String flagStateToMatch = StringUtils.EMPTY;
-        for (IdType idType : idTypes) {
-            if (schemeIdToSearchFor.equals(idType.getSchemeId())) {
-                flagStateToMatch = idType.getValue();
-            }
-        }
-        return StringUtils.equals(valueToMatch, flagStateToMatch);
-    }
-
     public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
@@ -171,18 +155,6 @@ public abstract class AbstractFact {
     }
 
     /**
-     * Checks if the schemeId Contains Any then it checks if it contains all.
-     * Otherwise it means that it contains none.
-     *
-     * @param idTypes
-     * @param valuesToMatch
-     * @return
-     */
-    public boolean schemeIdContainsAllOrNone(List<IdType> idTypes, String... valuesToMatch) {
-        return !schemeIdContainsAny(idTypes, valuesToMatch) && schemeIdContainsAll(idTypes, valuesToMatch);
-    }
-
-    /**
      * Checks if one of the String... array elements exists in the idType.
      *
      * @param idType
@@ -190,7 +162,7 @@ public abstract class AbstractFact {
      * @return
      */
     public boolean schemeIdContainsAny(IdType idType, String... values) {
-        return schemeIdContainsAny(Arrays.asList(idType), values);
+        return schemeIdContainsAny(Collections.singletonList(idType), values);
     }
 
     /**
@@ -216,26 +188,6 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean schemeIdContainsOnly(List<IdType> idTypes, String... valuesToMatch) {
-        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
-            return false;
-        }
-        int hits = 0;
-        for (String val : valuesToMatch) {
-            for (IdType IdType : idTypes) {
-                if (IdType != null && val.equals(IdType.getSchemeId())) {
-                    hits++;
-                }
-            }
-        }
-        return idTypes.size() == hits;
-    }
-
-    public boolean schemeIdContains(List<IdType> idTypes, String... valuesToMatch) {
-        return !schemeIdContainsAll(idTypes, valuesToMatch);
-    }
-
-    @Deprecated
     public boolean schemeIdContainsAll(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
@@ -252,6 +204,7 @@ public abstract class AbstractFact {
         return valLength > hits;
     }
 
+    @Deprecated
     public boolean isAllSchemeIdsPresent(List<IdType> idTypes) {
         if (CollectionUtils.isEmpty(idTypes)) {
             return false;
@@ -266,6 +219,7 @@ public abstract class AbstractFact {
         return false;
     }
 
+    @Deprecated
     private boolean isSchemeIdPresent(IdType idType) {
         return idType == null || StringUtils.isNotBlank(idType.getSchemeId());
     }
@@ -382,7 +336,7 @@ public abstract class AbstractFact {
     public boolean validateFormat(IdType id) {
         boolean isInvalid = false;
         if (id == null || id.getSchemeId() == null) {
-            return isInvalid;
+            return false;
         }
         try {
             String schemeId = id.getSchemeId();
@@ -798,22 +752,73 @@ public abstract class AbstractFact {
         return isPositive(Collections.singletonList(value));
     }
 
-    public boolean isPositive(BigDecimal value) {
-        return value == null || value.compareTo(BigDecimal.ZERO) > 0;
-    }
-
     public boolean isPositive(List<MeasureType> value) {
         if (CollectionUtils.isEmpty(value)) {
             return false;
         }
-        value.removeAll(Collections.singleton(null));
-        for (MeasureType type : value) {
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) <= 0) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {
+        return bigDecimal != null && bigDecimal.signum() != -1 && isInteger(bigDecimal);
+    }
+
+    public boolean isStrictPositiveInteger(BigDecimal bigDecimal) {
+        return bigDecimal != null && bigDecimal.signum() > 0 && isInteger(bigDecimal);
+    }
+
+    public boolean isStrictPositive(MeasureType value) {
+        return isStrictPositive(Collections.singletonList(value));
+    }
+
+    public boolean isStrictPositive(List<MeasureType> value) {
+        if (CollectionUtils.isEmpty(value)) {
+            return false;
+        }
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
+            BigDecimal val = type.getValue();
+            if (val == null || BigDecimal.ZERO.compareTo(val) < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isStrictPositiveInteger(MeasureType value) { // TODO Test
+        return isStrictPositiveInteger(Collections.singletonList(value));
+    }
+
+    public boolean isStrictPositiveInteger(List<MeasureType> value) {
+        if (CollectionUtils.isEmpty(value)) {
+            return true;
+        }
+        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
+        for (MeasureType type : removeNull) {
+            if (!isStrictPositiveInteger(type.getValue())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isPositiveOrZero(BigDecimal value) {
+        return (value == null || value.compareTo(BigDecimal.ZERO) >= 0);
+    }
+
+    public boolean isPositive(BigDecimal value) {
+        return value == null || value.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    public boolean isInteger(BigDecimal bigDecimal) {
+        return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0) && !(bigDecimal.toPlainString().indexOf(".") > 0);
     }
 
     public boolean isPositiveNumeric(List<NumericType> numericList) {
@@ -824,53 +829,24 @@ public abstract class AbstractFact {
         for (NumericType type : removeNull) {
             BigDecimal val = type.getValue();
             if (val == null || BigDecimal.ZERO.compareTo(val) > 0) {
-                return false;
+                return true;
             }
         }
         return true;
     }
 
-    public boolean isPositiveInteger(List<MeasureType> value) {
-        if (CollectionUtils.isEmpty(value)) {
-            return true;
-        }
-        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(value, Predicates.notNull()));
-        for (MeasureType type : removeNull) {
-            if (!isPositiveIntegerValue(type.getValue())) {
-                return false;
-            }
-        }
-        return true;
+    public boolean isStrictPositiveNumeric(NumericType numericType){
+        return isStrictPositiveNumeric(Collections.singletonList(numericType));
     }
 
-    private boolean isIntegerValue(BigDecimal bigDecimal) {
-        return bigDecimal != null && (bigDecimal.signum() == 0 || bigDecimal.scale() <= 0 || bigDecimal.stripTrailingZeros().scale() <= 0)
-                && !(bigDecimal.toPlainString().indexOf(".") > 0);
-    }
-
-    public boolean isPositiveIntegerValue(BigDecimal bigDecimal) {
-        return bigDecimal != null && bigDecimal.signum() != -1 && isIntegerValue(bigDecimal);
-    }
-
-    public boolean isGreaterThanZero(MeasureType value){
-        return isGreaterThanZero(Collections.singletonList(value));
-    }
-
-    /**
-     * This method will check if all values passed  to this method are greater than zero.
-     *
-     * @param values
-     * @return TRUE : If all values are greater than zero
-     * FALSE: If any one value is null OR less than OR equal to zero
-     */
-    public boolean isGreaterThanZero(List<MeasureType> values) {
-        if (CollectionUtils.isEmpty(values)) {
+    public boolean isStrictPositiveNumeric(List<NumericType> numericList) {
+        if (CollectionUtils.isEmpty(numericList)) {
             return false;
         }
-        ImmutableList<MeasureType> removeNull = ImmutableList.copyOf(Iterables.filter(values, Predicates.notNull()));
-        for (MeasureType type : removeNull) {
+        ImmutableList<NumericType> removeNull = ImmutableList.copyOf(Iterables.filter(numericList, Predicates.notNull()));
+        for (NumericType type : removeNull) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) > -1) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) >= 0) {
                 return false;
             }
         }
@@ -1038,6 +1014,15 @@ public abstract class AbstractFact {
         return measureType == null || isEmpty(measureType.getValue());
     }
 
+    public boolean isEmpty( VesselStorageCharacteristic vesselStorageCharacteristic ){
+        if (vesselStorageCharacteristic == null){
+            return true;
+        }
+        ArrayList<VesselStorageCharacteristic> vesselStorageCharacteristics = new ArrayList<>();
+        vesselStorageCharacteristics.add(vesselStorageCharacteristic);
+        return isEmpty(vesselStorageCharacteristics);
+    }
+
     /**
      * Checks if the list of strings contains empty (null / "") elements.
      *
@@ -1139,6 +1124,10 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public boolean isNegative(BigDecimal bigDecimal) {
+        return bigDecimal != null && bigDecimal.signum() < 0;
+    }
+
     public int getNumberOfDecimalPlaces(BigDecimal bigDecimal) {
         return getNumberOfDecimalPlaces(bigDecimal, true);
     }
@@ -1214,7 +1203,7 @@ public abstract class AbstractFact {
         FLUX_SALES_TYPE("(SN\\+TOD|SN|TOD|TRD)"),
         FLUX_SALES_QUERY_PARAM("(VESSEL|FLAG|ROLE|PLACE|SALES_ID|TRIP_ID)"),
         FLUX_GP_RESPONSE("(OK|NOK|WOK)"),
-        ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{1,3})?Z"),
+        ISO_8601_WITH_OPT_MILLIS("\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2]\\d|3[0-1])T(?:[0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d([\\.]\\d{0,6})?Z"),
         FLUXTL_ON("[a-zA-Z0-9]{20}");
 
         String formatStr;

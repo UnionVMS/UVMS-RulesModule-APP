@@ -1626,7 +1626,7 @@
             <column name="rule_id" value="129"/>
             <column name="br_id" value="FA-L00-00-0129"/>
             <column name="expression"
-                    value="typeCode != null &amp;&amp;  typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; valueIndicator == null "/>
+                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;INDICATOR&quot; &amp;&amp; valueIndicator == null "/>
             <column name="note" value="valueIndicator must be present. "/>
             <column name="message" value="Expected indicator type missing. "/>
             <column name="level" value="L00"/>
@@ -2138,8 +2138,7 @@
             <column name="rule_id" value="189"/>
             <column name="br_id" value="FA-L02-00-0189"/>
             <column name="expression"
-                    value="fishingActivityTypeCode !=null &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot; )
-                          &amp;&amp; isEmpty(appliedAAPProcess)"/>
+                    value="fishingActivityTypeCode !=null &amp;&amp; (fishingActivityTypeCode.value == &quot;LANDING&quot; || fishingActivityTypeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; isEmpty(appliedAAPProcess)"/>
             <column name="note" value="If provided."/>
             <column name="message" value="Catch processing information missing."/>
             <column name="level" value="L02"/>
@@ -3401,10 +3400,8 @@
             <column name="rule_id" value="269"/>
             <column name="br_id" value="FA-L02-00-0269"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp;
-                           isEmpty(destinationVesselStorageCharacteristicTypeCodes)"/>
-            <column name="note"
-                    value="DestinationVesselStorageCharacteristic's TypeCode must be present if SpecifiedFACAtch's TypeCode is UNLOADED and SpeciesCode is BFT"/>
+                    value="!subActivity &amp;&amp; !valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;) &amp;&amp; !valueContainsAny(specifiedFACatchSpeciesCodes, &quot;BFT&quot;) &amp;&amp; isEmpty(destinationVesselStorageCharacteristicTypeCodes)"/>
+            <column name="note" value="DestinationVesselStorageCharacteristic's TypeCode must be present if SpecifiedFACAtch's TypeCode is UNLOADED and SpeciesCode is BFT"/>
             <column name="message" value="Destination vessel storage information is missing."/>
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
@@ -4318,8 +4315,7 @@
             <column name="rule_id" value="336"/>
             <column name="br_id" value="FA-L02-00-0336"/>
             <column name="expression"
-                    value="fishingActivityTypeCode != null &amp;&amp;  fishingActivityTypeCode.value == &quot;RELOCATION&quot; &amp;&amp;
-                           containsAnyFaCatch(specifiedFACatches,&quot;BFT&quot;,&quot;UNLOADED&quot;) &amp;&amp; valueCodeTypeContainsAny(fluxCharacteristicTypeCodes, &quot;NB_CAGES_TOWED&quot;)"/>
+                    value="fishingActivityTypeCode != null &amp;&amp; fishingActivityTypeCode.value == &quot;RELOCATION&quot; &amp;&amp; containsAnyFaCatch(specifiedFACatches,&quot;BFT&quot;,&quot;UNLOADED&quot;) &amp;&amp; valueCodeTypeContainsAny(fluxCharacteristicTypeCodes, &quot;NB_CAGES_TOWED&quot;)"/>
             <column name="note" value="If transhipment declaration (FA-L02-00-0330)"/>
             <column name="message" value="FLUX Characteristic NB_CAGES_TOWED is missing."/>
             <column name="level" value="L02"/>

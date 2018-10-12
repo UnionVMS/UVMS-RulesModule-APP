@@ -11,20 +11,16 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
-import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton
@@ -48,12 +44,12 @@ public class RulesTimerBean {
 
     @PostConstruct
     public void postConstruct() {
-        LOG.debug("RulesTimerBean init");
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
-        CheckCommunicationTask checkCommunicationTask = new CheckCommunicationTask(rulesService);
-        comm = executorService.scheduleWithFixedDelay(checkCommunicationTask, 10, 10, TimeUnit.MINUTES);
-        CheckRulesChangesTask checkRulesChangesTask = new CheckRulesChangesTask(validationService, rulesValidator, rulesService);
-        checkRulesChangesTask.run();
+        //LOG.debug("RulesTimerBean init");
+        //ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
+        //CheckCommunicationTask checkCommunicationTask = new CheckCommunicationTask(rulesService);
+        //comm = executorService.scheduleWithFixedDelay(checkCommunicationTask, 10, 10, TimeUnit.MINUTES);
+        //CheckRulesChangesTask checkRulesChangesTask = new CheckRulesChangesTask(validationService, rulesValidator, rulesService);
+        //checkRulesChangesTask.run();
         //changes = executorService.scheduleWithFixedDelay(checkRulesChangesTask, 10, 10, TimeUnit.MINUTES);
     }
 

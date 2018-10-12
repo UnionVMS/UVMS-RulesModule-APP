@@ -1,6 +1,6 @@
 /*
  *
- * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries European Union, 2015-2016.
+ * Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries © European Union, 2015-2016.
  *
  * This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
  * and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
@@ -11,27 +11,19 @@
  *
  */
 
-package eu.europa.ec.fisheries.uvms.rules.service.business;
+package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import lombok.AllArgsConstructor;
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.EqualsAndHashCode;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ValidationResultDto {
+@EqualsAndHashCode(callSuper = false)
+public class FaNotificationOfRelocationOrTranshipmentFact extends AbstractRelocationOrTranshipmentFact {
 
-    private boolean isError;
-
-    private boolean isWarning;
-
-    private boolean isOk;
-
-    private List<ValidationMessageType> validationMessages = new ArrayList<>();
+    @Override
+    public void setFactType() {
+        this.factType = FactType.FA_NOTIFICATION_OF_TRANSHIPMENT_OR_RELOCATION;
+    }
 
 }

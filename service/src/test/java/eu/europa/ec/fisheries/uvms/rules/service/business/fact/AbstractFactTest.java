@@ -10,28 +10,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import java.util.*;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
@@ -52,15 +36,12 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.*;
 
 public class AbstractFactTest {
 
@@ -170,51 +151,30 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidFormatHappy() {
+    public void testValidFormat() {
         assertTrue(fact.validateFormat("2000-123", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertTrue(fact.validateFormat("1999-142", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertTrue(fact.validateFormat("2018-115", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertFalse(fact.validateFormat("208-115", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertFalse(fact.validateFormat("2018-15", AbstractFact.FORMATS.JFO.getFormatStr()));
         assertFalse(fact.validateFormat("999-1154", AbstractFact.FORMATS.JFO.getFormatStr()));
-    }
-
-    @Test
-    public void testUUIDShouldPass() {
-        assertTrue(fact.validateFormat("c56a4180-65aA-42ec-a945-5fd21dec0538", AbstractFact.FORMATS.UUID.getFormatStr()));
-    }
-
-    @Test
-    public void testUUIDShouldFail() {
-        assertFalse(fact.validateFormat("a9a42a57-f372-4ca3-9277-9e5faa59f8cn", AbstractFact.FORMATS.UUID.getFormatStr()));
-    }
-
-    @Test
-    public void testFLUXTLONShouldFail() {
-        assertFalse(fact.validateFormat("33EKLELKLE", AbstractFact.FORMATS.FLUXTL_ON.getFormatStr()));
-    }
-
-    @Test
-    public void testFLUXTLONShouldPass() {
         assertTrue(fact.validateFormat("33EKLELKLEGFHDJjsks1", AbstractFact.FORMATS.FLUXTL_ON.getFormatStr()));
-    }
-
-    @Test
-    public void testEXtMarking() {
         assertTrue(fact.validateFormat("P-446", AbstractFact.FORMATS.EXT_MARK.getFormatStr()));
+        assertFalse(fact.validateFormat("a9a42a57-f372-4ca3-9277-9e5faa59f8cn", AbstractFact.FORMATS.UUID.getFormatStr()));
+        assertTrue(fact.validateFormat("c56a4180-65aA-42ec-a945-5fd21dec0538", AbstractFact.FORMATS.UUID.getFormatStr()));
+        assertFalse(fact.validateFormat("33EKLELKLE", AbstractFact.FORMATS.FLUXTL_ON.getFormatStr()));
+        assertFalse(fact.validateFormat("2018-07-31T08:27:00.1234567Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
     }
 
     @Test
     public void testDateShouldPass() {
         assertTrue(fact.validateFormat("2018-07-31T08:27:00.421Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
         assertTrue(fact.validateFormat("2018-07-31T08:27:00.4Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
-        assertTrue(fact.validateFormat("2018-07-31T08:27:00.949Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
+        assertTrue(fact.validateFormat("2018-07-31T08:27:00.000Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
         assertTrue(fact.validateFormat("2018-07-31T08:27:00.99Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
-    }
-
-    @Test
-    public void testDateShouldFail() {
-        assertFalse(fact.validateFormat("2018-07-31T08:27:00.4213Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
+        assertTrue(fact.validateFormat("2018-07-31T08:27:00.4213Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
+        assertTrue(fact.validateFormat("2018-07-31T08:27:00.123456Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
+        assertTrue(fact.validateFormat("2018-07-31T08:27:00Z", AbstractFact.FORMATS.ISO_8601_WITH_OPT_MILLIS.getFormatStr()));
     }
 
     @Test
@@ -251,6 +211,32 @@ public class AbstractFactTest {
     @Test
     public void testIsPositiveIntegerValueWithZero() {
         assertTrue(fact.isPositiveIntegerValue(new BigDecimal(0)));
+    }
+
+    @Test
+    public void testIsStrictPositiveIntegerValueWithZero() {
+        assertFalse(fact.isStrictPositiveInteger(new BigDecimal(0)));
+    }
+
+    @Test
+    public void testIsStrictPositiveNumericWith1() {
+        NumericType numericType = new NumericType();
+        numericType.setValue(new BigDecimal("1"));
+        assertTrue(fact.isStrictPositiveNumeric(numericType));
+    }
+
+    @Test
+    public void testIsStrictPositiveNumericWithMinus() {
+        NumericType numericType = new NumericType();
+        numericType.setValue(new BigDecimal("-1"));
+        assertFalse(fact.isStrictPositiveNumeric(numericType));
+    }
+
+    @Test
+    public void testIsStrictPositiveNumericWithZero() {
+        NumericType numericType = new NumericType();
+        numericType.setValue(new BigDecimal("0"));
+        assertFalse(fact.isStrictPositiveNumeric(numericType));
     }
 
     @Test
@@ -425,6 +411,35 @@ public class AbstractFactTest {
         measureTypes.add(measureType);
         assertTrue(fact.isPositive(measureTypes));
     }
+
+    @Test
+    public void testIsPositiveListOfMeasureWithZer() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("0"));
+        assertTrue(fact.isPositive(measureType));
+    }
+
+    @Test
+    public void testIsStrictPositiveListOfMeasureHappy() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("1292"));
+        assertTrue(fact.isStrictPositive(measureType));
+    }
+
+    @Test
+    public void testIsStrictPositiveListOfMeasureWithZero() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("0"));
+        assertFalse(fact.isStrictPositive(measureType));
+    }
+
+    @Test
+    public void testIsPositiveListOfMeasureWithZero() {
+        MeasureType measureType = new MeasureType();
+        measureType.setValue(new BigDecimal("0"));
+        assertTrue(fact.isPositive(measureType));
+    }
+
 
 
     @Test
@@ -627,30 +642,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testSchemeIdContainsOnly() {
-        IdType idType = new IdType();
-        idType.setSchemeId("CFR");
-        IdType idType2 = new IdType();
-        idType2.setSchemeId("IRCS");
-        List<IdType> idTypes = Arrays.asList(idType, idType2);
-        boolean result = fact.schemeIdContainsOnly(idTypes, "IRCS", "CFR");
-        assertTrue(result);
-    }
-
-    @Test
-    public void testSchemeIdContainsOnly2() {
-        IdType idType = new IdType();
-        idType.setSchemeId("CFR");
-        IdType idType2 = new IdType();
-        idType2.setSchemeId("IRCS");
-        IdType idType3 = new IdType();
-        idType3.setSchemeId("EXT");
-        List<IdType> idTypes = Arrays.asList(idType, idType2, idType3);
-        boolean result = fact.schemeIdContainsOnly(idTypes, "IRCS", "CFR");
-        assertFalse(result);
-    }
-
-    @Test
     public void testContainsSchemeIdSad() {
 
         IdType idType = new IdType();
@@ -793,17 +784,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIdListContainsValue() {
-
-        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
-        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "IRCS");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-        boolean result = fact.idListContainsValue(idTypes, "value1", "CFR");
-        assertTrue(result);
-    }
-
-    @Test
     public void testSchemeIdContainsAny() {
 
         IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
@@ -814,16 +794,30 @@ public class AbstractFactTest {
         assertFalse(result);
     }
 
+
     @Test
-    public void testSchemeIdContainsAllOrNone() {
+    public void testSchemeIdContainsAnyWith1EU_TRIP_IDShouldReturnFalse() {
 
-        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
-        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "IRCS");
+        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "EU_TRIP_ID");
+        IdType idType3 = ActivityObjectsHelper.generateIdType("value3", "EU_TRIP_ID");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "EU");
 
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-        boolean result = fact.schemeIdContainsAllOrNone(idTypes, "CFR1");
+        List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
+        boolean result = fact.schemeIdContainsAny(idTypes, "EU_TRIP_ID");
         assertFalse(result);
     }
+
+    @Test
+    public void testSchemeIdContainsAnyWith0EU_TRIP_IDShouldReturnTrue() {
+
+        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "EU_ID");
+        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "EU");
+
+        List<IdType> idTypes = Arrays.asList(idType1, idType2);
+        boolean result = fact.schemeIdContainsAny(idTypes, "EU_TRIP_ID");
+        assertTrue(result);
+    }
+
 
     @Test
     public void testSchemeIdContainsAllWithNull() {
@@ -1343,8 +1337,12 @@ public class AbstractFactTest {
 
     @Test
     public void testIsGreaterThanZero() {
-        List<MeasureType> measureTypeList = Collections.singletonList(objectsHelper.generateMeasureType(new BigDecimal(1), "km"));
-        assertTrue(fact.isGreaterThanZero(measureTypeList));
+        MeasureType measureType = objectsHelper.generateMeasureType(new BigDecimal(1), "km");
+        assertTrue(fact.isStrictPositive(measureType));
+        MeasureType measureType2 = objectsHelper.generateMeasureType(new BigDecimal(0), "km");
+        assertFalse(fact.isStrictPositive(measureType2));
+        MeasureType measureType3 = objectsHelper.generateMeasureType(new BigDecimal(-1), "km");
+        assertFalse(fact.isStrictPositive(measureType3));
     }
 
     @Test
@@ -1502,13 +1500,6 @@ public class AbstractFactTest {
     @Test
     public void testIsBlankWhenTextTypeAndTextIsNotBlank() {
         assertFalse(fact.isBlank(new eu.europa.ec.fisheries.schema.sales.TextType().withValue("findHistoryOfAssetBy")));
-    }
-
-    @Test
-    public void testisPositiveInteger() {
-
-        boolean result = fact.isPositiveInteger(Collections.singletonList(objectsHelper.generateMeasureType(new BigDecimal(22), null)));
-        assertTrue(result);
     }
 
     @Test

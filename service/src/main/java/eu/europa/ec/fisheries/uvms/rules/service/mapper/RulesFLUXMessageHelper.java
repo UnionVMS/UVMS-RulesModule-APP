@@ -10,26 +10,34 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
+import javax.xml.XMLConstants;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.xml.sax.SAXException;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import static eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType.FA_QUERY_ID;
 
-public class FishingActivityRulesHelper {
+public class RulesFLUXMessageHelper {
 
+    private static final String FLUXFAREPORT_MESSAGE_3P1_XSD = "xsd/contract/fa/data/standard/FLUXFAReportMessage_3p1.xsd";
+    private static final String FLUXFAQUERY_MESSAGE_3P0_XSD = "xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd";
+    private static final String FLUXFARESPONSE_MESSAGE_6P0_XSD = "xsd/contract/fa/data/standard/FLUXResponseMessage_6p0.xsd";
     private static final String DASH = "-";
 
     public Set<FADocumentID> mapToFADocumentID(FLUXFAReportMessage fluxfaReportMessage) {
@@ -134,5 +142,56 @@ public class FishingActivityRulesHelper {
             }
         }
         return faDocumentID;
+    }
+
+    public FLUXFAReportMessage unMarshallAndValidateSchema(String request) throws UnmarshalException {
+        try {
+            return JAXBUtils.unMarshallMessage(request, FLUXFAReportMessage.class, loadXSDSchema(FLUXFAREPORT_MESSAGE_3P1_XSD));
+        } catch (Exception e) {
+            throw new UnmarshalException(e.getMessage());
+        }
+    }
+
+    public FLUXFAQueryMessage unMarshallFaQueryMessage(String request) throws UnmarshalException {
+        try {
+            return JAXBUtils.unMarshallMessage(request, FLUXFAQueryMessage.class, loadXSDSchema(FLUXFAQUERY_MESSAGE_3P0_XSD));
+        } catch (Exception e) {
+            throw new UnmarshalException(e.getMessage());
+        }
+    }
+
+    public FLUXResponseMessage unMarshallFluxResponseMessage(String request) throws UnmarshalException {
+        try {
+            return JAXBUtils.unMarshallMessage(request, FLUXResponseMessage.class, loadXSDSchema(FLUXFARESPONSE_MESSAGE_6P0_XSD));
+        } catch (Exception e) {
+            throw new UnmarshalException(e.getMessage());
+        }
+    }
+
+    public Schema loadXSDSchema(String xsdLocation) throws UnmarshalException {
+        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        URL resource = RulesFLUXMessageHelper.class.getClassLoader().getResource(xsdLocation);
+        if (resource != null) {
+            try {
+                return sf.newSchema(resource);
+            } catch (SAXException e) {
+                throw new UnmarshalException(e.getMessage(), e);
+            }
+        }
+        throw new UnmarshalException("ERROR WHILE TRYING TO LOOKUP XSD SCHEMA");
+    }
+
+    public String getIDs(FLUXResponseMessage fluxResponseMessageObj) {
+        String id = null;
+        if (fluxResponseMessageObj != null){
+            FLUXResponseDocument fluxResponseDocument = fluxResponseMessageObj.getFLUXResponseDocument();
+            if (fluxResponseDocument != null){
+                List<IDType> ids = fluxResponseMessageObj.getFLUXResponseDocument().getIDS();
+                if (CollectionUtils.isNotEmpty(ids)){
+                    id = ids.get(0).getValue();
+                }
+            }
+        }
+        return id;
     }
 }

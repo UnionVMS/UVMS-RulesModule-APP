@@ -11,14 +11,13 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import java.math.BigDecimal;
-import java.util.*;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
@@ -32,6 +31,10 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.util.*;
+
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
@@ -1859,64 +1862,70 @@ public class ActivityFactMapper {
         return faLandingFact;
     }
 
-    public FaNotificationOfTranshipmentFact generateFactsForNotificationOfTranshipment(FishingActivity fishingActivity, FAReportDocument faReportDocument) {
+    public AbstractRelocationOrTranshipmentFact generateFactsForNotificationOrDeclarationOfRelocationOrTranshipment(FishingActivity fishingActivity, FAReportDocument faReportDocument,
+                                                                                                                    boolean isSubActivity) {
         if (fishingActivity == null && faReportDocument == null) {
             return null;
         }
-
-        FaNotificationOfTranshipmentFact faNotificationOfTranshipmentFact = new FaNotificationOfTranshipmentFact();
+        AbstractRelocationOrTranshipmentFact faNotificationOfRelocationOrTranshipmentFact;
+        if(FaReportDocumentType.DECLARATION.name().equals(faReportDocument.getTypeCode().getValue())){
+            faNotificationOfRelocationOrTranshipmentFact = new FaDeclarationOfRelocationOrTranshipmentFact();
+        } else {
+            faNotificationOfRelocationOrTranshipmentFact = new FaNotificationOfRelocationOrTranshipmentFact();
+        }
+        faNotificationOfRelocationOrTranshipmentFact.setSubActivity(isSubActivity);
         String partialXpath = xPathUtil.getValue();
         if (fishingActivity != null) {
-            faNotificationOfTranshipmentFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faNotificationOfTranshipmentFact, FISHING_ACTIVITY_TYPE_CODE_PROP);
+            faNotificationOfRelocationOrTranshipmentFact.setFishingActivityTypeCode(mapToCodeType(fishingActivity.getTypeCode()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, FISHING_ACTIVITY_TYPE_CODE_PROP);
 
-            faNotificationOfTranshipmentFact.setRelatedFLUXLocations(fishingActivity.getRelatedFLUXLocations());
-            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faNotificationOfTranshipmentFact, RELATED_FLUX_LOCATIONS_PROP);
+            faNotificationOfRelocationOrTranshipmentFact.setRelatedFLUXLocations(fishingActivity.getRelatedFLUXLocations());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, RELATED_FLUX_LOCATIONS_PROP);
 
 
-            faNotificationOfTranshipmentFact.setFluxLocationTypeCode(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faNotificationOfTranshipmentFact, FLUX_LOCATION_TYPE_CODE_PROP);
+            faNotificationOfRelocationOrTranshipmentFact.setFluxLocationTypeCode(getFLUXLocationTypeCodes(fishingActivity.getRelatedFLUXLocations()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, TYPE_CODE).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, FLUX_LOCATION_TYPE_CODE_PROP);
 
-            faNotificationOfTranshipmentFact.setFluxCharacteristicValueQuantity(getApplicableFLUXCharacteristicsValueQuantity(fishingActivity.getSpecifiedFLUXCharacteristics()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, VALUE_QUANTITY).storeInRepo(faNotificationOfTranshipmentFact, "fluxCharacteristicValueQuantity");
+            faNotificationOfRelocationOrTranshipmentFact.setFluxCharacteristicValueQuantity(getApplicableFLUXCharacteristicsValueQuantity(fishingActivity.getSpecifiedFLUXCharacteristics()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, VALUE_QUANTITY).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, "fluxCharacteristicValueQuantity");
 
             if (fishingActivity.getRelatedVesselTransportMeans() != null) {
-                faNotificationOfTranshipmentFact.setRelatedVesselTransportMeans(new ArrayList<>(fishingActivity.getRelatedVesselTransportMeans()));
-                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VESSEL_TRANSPORT_MEANS).storeInRepo(faNotificationOfTranshipmentFact, RELATED_VESSEL_TRANSPORT_MEANS_PROP);
+                faNotificationOfRelocationOrTranshipmentFact.setRelatedVesselTransportMeans(new ArrayList<>(fishingActivity.getRelatedVesselTransportMeans()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VESSEL_TRANSPORT_MEANS).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, RELATED_VESSEL_TRANSPORT_MEANS_PROP);
 
-                faNotificationOfTranshipmentFact.setVesselTransportMeansRoleCodes(getVesselTransportMeansRoleCodes(fishingActivity.getRelatedVesselTransportMeans()));
-                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VESSEL_TRANSPORT_MEANS, ROLE_CODE).storeInRepo(faNotificationOfTranshipmentFact, "vesselTransportMeansRoleCodes");
+                faNotificationOfRelocationOrTranshipmentFact.setVesselTransportMeansRoleCodes(getVesselTransportMeansRoleCodes(fishingActivity.getRelatedVesselTransportMeans()));
+                xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VESSEL_TRANSPORT_MEANS, ROLE_CODE).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, "vesselTransportMeansRoleCodes");
             }
 
-            faNotificationOfTranshipmentFact.setSpecifiedFACatches(fishingActivity.getSpecifiedFACatches());
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH).storeInRepo(faNotificationOfTranshipmentFact, SPECIFIED_FA_CATCHES_PROP);
+            faNotificationOfRelocationOrTranshipmentFact.setSpecifiedFACatches(fishingActivity.getSpecifiedFACatches());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, SPECIFIED_FA_CATCHES_PROP);
 
-            faNotificationOfTranshipmentFact.setFaCatchTypeCode(getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(), CODE_TYPE_FOR_FACATCH_PROP));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(faNotificationOfTranshipmentFact, "faCatchTypeCode");
+            faNotificationOfRelocationOrTranshipmentFact.setFaCatchTypeCode(getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(), CODE_TYPE_FOR_FACATCH_PROP));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, "faCatchTypeCode");
 
-            faNotificationOfTranshipmentFact.setFaCatchSpeciesCodes(getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(), SPECIES_CODE_FOR_FACATCH_PROP));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, SPECIES_CODE).storeInRepo(faNotificationOfTranshipmentFact, "faCatchSpeciesCodes");
+            faNotificationOfRelocationOrTranshipmentFact.setFaCatchSpeciesCodes(getCodeTypesFromFaCatch(fishingActivity.getSpecifiedFACatches(), SPECIES_CODE_FOR_FACATCH_PROP));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, SPECIES_CODE).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, "faCatchSpeciesCodes");
 
-            faNotificationOfTranshipmentFact.setSpecifiedFLUXCharacteristics(fishingActivity.getSpecifiedFLUXCharacteristics());
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC).storeInRepo(faNotificationOfTranshipmentFact, "specifiedFLUXCharacteristics");
+            faNotificationOfRelocationOrTranshipmentFact.setSpecifiedFLUXCharacteristics(fishingActivity.getSpecifiedFLUXCharacteristics());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, "specifiedFLUXCharacteristics");
 
-            faNotificationOfTranshipmentFact.setFluxCharacteristicTypeCodes(getApplicableFLUXCharacteristicsTypeCode(fishingActivity.getSpecifiedFLUXCharacteristics()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faNotificationOfTranshipmentFact, "fluxCharacteristicTypeCodes");
+            faNotificationOfRelocationOrTranshipmentFact.setFluxCharacteristicTypeCodes(getApplicableFLUXCharacteristicsTypeCode(fishingActivity.getSpecifiedFLUXCharacteristics()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, "fluxCharacteristicTypeCodes");
 
-            faNotificationOfTranshipmentFact.setSpecifiedFLAPDocuments(fishingActivity.getSpecifiedFLAPDocuments());
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLAP_DOCUMENT).storeInRepo(faNotificationOfTranshipmentFact, "specifiedFLAPDocuments");
+            faNotificationOfRelocationOrTranshipmentFact.setSpecifiedFLAPDocuments(fishingActivity.getSpecifiedFLAPDocuments());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLAP_DOCUMENT).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, "specifiedFLAPDocuments");
 
-            faNotificationOfTranshipmentFact.setFlapDocumentIdTypes(getFLAPDocumentIds(fishingActivity.getSpecifiedFLAPDocuments()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLAP_DOCUMENT, ID).storeInRepo(faNotificationOfTranshipmentFact, "flapDocumentIdTypes");
+            faNotificationOfRelocationOrTranshipmentFact.setFlapDocumentIdTypes(getFLAPDocumentIds(fishingActivity.getSpecifiedFLAPDocuments()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLAP_DOCUMENT, ID).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, "flapDocumentIdTypes");
 
 
         }
         if (faReportDocument != null) {
-            faNotificationOfTranshipmentFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
-            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faNotificationOfTranshipmentFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
+            faNotificationOfRelocationOrTranshipmentFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
+            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faNotificationOfRelocationOrTranshipmentFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
         }
 
-        return faNotificationOfTranshipmentFact;
+        return faNotificationOfRelocationOrTranshipmentFact;
     }
 
     public ValidationQualityAnalysisFact generateFactsForValidationQualityAnalysis(ValidationQualityAnalysis validationQualityAnalysis) {
