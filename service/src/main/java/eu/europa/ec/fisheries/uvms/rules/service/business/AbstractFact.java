@@ -846,7 +846,7 @@ public abstract class AbstractFact {
         ImmutableList<NumericType> removeNull = ImmutableList.copyOf(Iterables.filter(numericList, Predicates.notNull()));
         for (NumericType type : removeNull) {
             BigDecimal val = type.getValue();
-            if (val == null || BigDecimal.ZERO.compareTo(val) >= 0) {
+            if (val == null || BigDecimal.ZERO.compareTo(val) > 0) {
                 return false;
             }
         }
