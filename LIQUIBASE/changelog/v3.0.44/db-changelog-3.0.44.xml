@@ -101,7 +101,7 @@
             <where>BR_ID = 'FA-L01-00-0185'</where>
         </update>
         <update tableName="rule">
-            <column name="expression" value="fluxCharacteristicType == &quot;SpecifiedFLUXCharacteristic&quot; &amp;&amp; codeTypeValueEquals(typeCode, &quot;NB_CAGES_TOWED&quot;) &amp;&amp; (valueQuantity == null || !isStrictPositiveInteger(valueQuantity.value))"/>
+            <column name="expression" value="fluxCharacteristicType == &quot;SpecifiedFLUXCharacteristic&quot; &amp;&amp; codeTypeValueEquals(typeCode, &quot;NB_CAGES_TOWED&quot;) &amp;&amp; (!isInteger(valueQuantity.value) || !isPositiveOrZero(valueQuantity.value))"/>
             <where>BR_ID = 'FA-L02-00-0338'</where>
         </update>
 
@@ -129,7 +129,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="449"/>
             <column name="br_id" value="FA-L02-00-0449"/>
-            <column name="expression" value="!subActivity &amp;&amp; isEmpty(specifiedFLAPDocuments) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+            <column name="expression" value="!subActivity &amp;&amp; specifiedFLAPDocuments != null &amp;&amp; specifiedFLAPDocuments.size == 0 &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <column name="message" value="Check presence. Must be present if the activity is a relocation or transhipment declaration and SpecifiedFACatch/SpeciesCode = BFT"/>
             <column name="level" value="L02"/>
             <column name="error_type" value="WARNING"/>
@@ -139,7 +139,7 @@
             <column name="disabled" value="false"/>
         </insert>
         <update tableName="rule">
-            <column name="expression" value="!subActivity &amp;&amp; !isEmpty(specifiedFLAPDocuments) &amp;&amp; isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+            <column name="expression" value="!subActivity &amp;&amp; (specifiedFLAPDocuments != null  &amp;&amp; specifiedFLAPDocuments.size != 0 ) &amp;&amp; isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
             <where>BR_ID = 'FA-L02-00-0339'</where>
         </update>
     </changeSet>
@@ -178,15 +178,15 @@
         </update>
     </changeSet>
 
-
-
     <changeSet id="UNIONVMS-4038" author="emrinalgr">
         <update tableName="rule">
             <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; valueIndicator == null "/>
             <where>BR_ID = 'FA-L00-00-0129'</where>
         </update>
         <update tableName="rule">
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; (valueIndicator == null || valueIndicator.indicatorString == null || isEmpty(valueIndicator.indicatorString.value))"/>
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; (valueIndicator == null || valueIndicator.isIndicator() == null)"/>
+            <column name="note" value=""/>
+            <column name="message" value="If UN_DATA_TYPE23 for the characteristic (specified in FLUXCharacteristic/TypeCode) is BOOLEAN, ValueIndicator must be present and have a value."/>
             <where>BR_ID = 'FA-L00-00-0225'</where>
         </update>
         <update tableName="rule">
@@ -204,4 +204,74 @@
         </delete>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4048" author="emkoviand">
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp;
+            (listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;) || listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;))
+            &amp;&amp; (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;))
+            &amp;&amp; (typeCode != null &amp;&amp; !valueContainsAny(typeCode,&quot;LOADED&quot;,&quot;UNLOADED&quot;))"/>
+            <where>BR_ID = 'FA-L00-00-0171'</where>
+        </update>
+        <update tableName="rule">
+            <column name="note" value="If it exists already, the contents are considered identical and the report may be ignored by the receiving party."/>
+            <where>BR_ID = 'FA-L03-00-0031'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression" value="!subActivity &amp;&amp;
+                    !(codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; (codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) ||
+                    codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;))) &amp;&amp;
+                    (codeTypeValueEquals(typeCode, &quot;UNLOADED&quot;) || codeTypeValueEquals(typeCode, &quot;LOADED&quot;)) &amp;&amp;
+                    (weightMeasure == null || weightMeasure.value == null)"/>
+            <where>BR_ID = 'FA-L00-00-0159'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression" value="weightMeasure != null &amp;&amp; weightMeasure.value != null &amp;&amp; (isNegative(weightMeasure.value) || (getNumberOfDecimalPlaces(weightMeasure.value, true) &gt; 2))"/>
+            <where>BR_ID = 'FA-L01-00-0161'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression"
+                    value="isEmpty(appliedAAPProcess) &amp;&amp;
+                     (codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) || codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;)) &amp;&amp;
+                     (codeTypeValueEquals(typeCode, &quot;UNLOADED&quot;) || codeTypeValueEquals(typeCode, &quot;LOADED&quot;))"/>
+            <where>BR_ID = 'FA-L02-00-0189'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression"
+                    value="isEmpty(resultAAPProduct) &amp;&amp; ((codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) || codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;)) &amp;&amp;
+                     (codeTypeValueEquals(typeCode, &quot;UNLOADED&quot;) || codeTypeValueEquals(typeCode, &quot;LOADED&quot;)) ||
+                     ((unitQuantity == null || unitQuantity.value == null) &amp;&amp; (weightMeasure == null || weightMeasure.value == null)))"/>
+            <where>BR_ID = 'FA-L02-00-0219'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression"
+                    value="(!isEmpty(resultAAPProduct) &amp;&amp; isEmpty(resultAAPProductWeightMeasure)) ||
+                    (!isEmpty(resultAAPProduct) &amp;&amp; !isEmpty(resultAAPProductWeightMeasure) &amp;&amp; resultAAPProduct.size() != resultAAPProductWeightMeasure.size())"/>
+            <where>BR_ID = 'FA-L00-00-0181'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression" value="checkContactListContainsAny(specifiedContactPersons, true, true)"/>
+            <where>BR_ID = 'FA-L00-00-0072'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression" value="checkContactListContainsAny(specifiedContactPersons, true, false)"/>
+            <where>BR_ID = 'FA-L00-00-0074'</where>
+        </update>
+    </changeSet>
+
+    <changeSet author="externalrule" id="emrinalgr">
+        <dropTable tableName="externalrule"/>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4070" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="(typeCode != null &amp;&amp; id != null) &amp;&amp;
+                            ((typeCode.value == &quot;AREA&quot; &amp;&amp; id.schemeId != &quot;FAO_AREA&quot; &amp;&amp; id.schemeId != &quot;STAT_RECTANGLE&quot; &amp;&amp;
+                             id.schemeId != &quot;MANAGEMENT_AREA&quot; &amp;&amp; id.schemeId != &quot;TERRITORY&quot; &amp;&amp; id.schemeId != &quot;EFFORT_ZONE&quot; &amp;&amp;
+                             id.schemeId != &quot;GFCM_GSA&quot; &amp;&amp; id.schemeId != &quot;STAT_RECTANGLE&quot; &amp;&amp; id.schemeId != &quot;GFCM_STAT_RECTANGLE&quot;)
+                             ||
+                            (typeCode.value == &quot;LOCATION&quot; &amp;&amp; id.schemeId != &quot;LOCATION&quot; &amp;&amp; id.schemeId != &quot;FARM&quot;))"/>
+            <column name="message" value="Check attribute schemeID of ID. In case TypeCode= AREA the schemeID must be FAO_AREA, STAT_RECTANGLE, TERRITORY, EFFORT_ZONE, GFCM_GSA, MANAGEMENT_AREA. In case TypeCode= LOCATION: the schemeID must be LOCATION or FARM" />
+            <where>BR_ID = 'FA-L01-00-0202'</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>

@@ -226,16 +226,16 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsStrictPositiveNumericWithMinus() {
-        NumericType numericType = new NumericType();
-        numericType.setValue(new BigDecimal("-1"));
-        assertFalse(fact.isStrictPositiveNumeric(numericType));
-    }
-
-    @Test
     public void testIsStrictPositiveNumericWithZero() {
         NumericType numericType = new NumericType();
         numericType.setValue(new BigDecimal("0"));
+        assertTrue(fact.isStrictPositiveNumeric(numericType));
+    }
+
+    @Test
+    public void testIsStrictPositiveNumericWithNegative() {
+        NumericType numericType = new NumericType();
+        numericType.setValue(new BigDecimal("-1"));
         assertFalse(fact.isStrictPositiveNumeric(numericType));
     }
 
@@ -1339,6 +1339,10 @@ public class AbstractFactTest {
     public void testIsGreaterThanZero() {
         MeasureType measureType = objectsHelper.generateMeasureType(new BigDecimal(1), "km");
         assertTrue(fact.isStrictPositive(measureType));
+        MeasureType measureType2 = objectsHelper.generateMeasureType(new BigDecimal(0), "km");
+        assertFalse(fact.isStrictPositive(measureType2));
+        MeasureType measureType3 = objectsHelper.generateMeasureType(new BigDecimal(-1), "km");
+        assertFalse(fact.isStrictPositive(measureType3));
     }
 
     @Test

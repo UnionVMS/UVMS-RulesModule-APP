@@ -13,6 +13,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.*;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
@@ -21,19 +25,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.*;
 
 /**
  * Created by padhyad on 5/8/2017.
@@ -62,22 +57,6 @@ public class RulesPreProcessBean {
             validationResultDto.setValidationMessages(validationMessages);
         }
         return validationResultDto;
-    }
-
-    public Map<Boolean, ValidationResult> checkDuplicateIdInRequest(FLUXFAQueryMessage faQueryMessage) throws RulesServiceException {
-        Map<Boolean, ValidationResult> validationResultMap = new HashMap<>();
-        ValidationResult validationResult;
-        try {
-            FAQuery faQuery = faQueryMessage.getFAQuery();
-            if (faQuery != null) {
-                IDType idType = faQuery.getID();
-                validationResult = loadValidationResults(idType != null ? Collections.singletonList(idType.getValue()) : Collections.<String>emptyList());
-                validationResultMap.put(!(validationResult != null && !validationResult.isOk()), validationResult);
-            }
-        } catch (RulesModelException e) {
-            throw new RulesServiceException(e.getMessage(), e);
-        }
-        return validationResultMap;
     }
 
     /**
@@ -121,21 +100,6 @@ public class RulesPreProcessBean {
             return Collections.emptyList();
         }
         return mapToIdsStrList(fluxReportDocument.getIDS());
-    }
-
-    public Map<Boolean, ValidationResult> checkDuplicateIdInRequest(FLUXResponseMessage fluxResponseMessage) throws RulesServiceException {
-        Map<Boolean, ValidationResult> validationResultMap = new HashMap<>();
-        ValidationResult validationResult;
-        try {
-            FLUXResponseDocument fluxRespDoc = fluxResponseMessage.getFLUXResponseDocument();
-            if (fluxRespDoc != null) {
-                validationResult = loadValidationResults(mapToIdsStrList(fluxRespDoc.getIDS()));
-                validationResultMap.put(!(validationResult != null && !validationResult.isOk()), validationResult);
-            }
-        } catch (RulesModelException e) {
-            throw new RulesServiceException(e.getMessage(), e);
-        }
-        return validationResultMap;
     }
 
     private void addToValidationResult(ValidationResult globalValidationResult, ValidationResult validationResultFa) {

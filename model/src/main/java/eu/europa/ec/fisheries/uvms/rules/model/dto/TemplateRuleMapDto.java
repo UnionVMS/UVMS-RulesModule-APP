@@ -51,11 +51,4 @@ public class TemplateRuleMapDto implements Serializable {
         this.rules = rules;
     }
 
-    public List<ExternalRuleType> getExternalRules() {
-        return externalRules;
-    }
-
-    public void setExternalRules(List<ExternalRuleType> externalRules) {
-        this.externalRules = externalRules;
-    }
 }
