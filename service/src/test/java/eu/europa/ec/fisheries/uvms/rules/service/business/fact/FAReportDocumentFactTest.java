@@ -10,15 +10,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.*;
-
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class FAReportDocumentFactTest {
 
@@ -109,6 +107,16 @@ public class FAReportDocumentFactTest {
     @Test
     public void testWithOneDeparturesOnSameDayShouldPass(){
         FishingActivity departure1 = objectsHelper.generateActivity("31-08-1982 10:20:56","DEPARTURE");
+        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
+        assertTrue(reportDocumentFact.isValid(Collections.singletonList(departure1)));
+    }
+
+    @Test
+    public void testWithOneDeparturesOnSameDayShouldPassRelated(){
+        FishingActivity departure1 = objectsHelper.generateActivity(null,"FISHING_OPERATION");
+        FishingActivity related = objectsHelper.generateActivity("31-08-1982 10:20:56","DEPARTURE");
+        departure1.setRelatedFishingActivities(Collections.singletonList(related));
+
         FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
         assertTrue(reportDocumentFact.isValid(Collections.singletonList(departure1)));
     }
