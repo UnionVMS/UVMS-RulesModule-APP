@@ -256,6 +256,18 @@
             <column name="expression" value="checkContactListContainsAny(specifiedContactPersons, true, false)"/>
             <where>BR_ID = 'FA-L00-00-0074'</where>
         </update>
+
+        <update tableName="rule">
+            <column name="expression" value="!subActivity &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !validDelimitedPeriod(delimitedPeriod, true, false)"/>
+            <column name="property_names" value="delimitedPeriodStartTime"/>
+            <where>BR_ID = 'FA-L02-00-0107'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="property_names" value="delimitedPeriodEndTime"/>
+            <where>BR_ID = 'FA-L02-00-0108'</where>
+        </update>
+
     </changeSet>
 
     <changeSet author="externalrule" id="emrinalgr">

@@ -564,8 +564,8 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateDelimitedPeriodShouldReturnTrueWhenNull() {
-        assertTrue(fact.validDelimitedPeriod(null, true, false));
+    public void testValidateDelimitedPeriodShouldReturnFalseWhenNull() {
+        assertFalse(fact.validDelimitedPeriod(null, true, false));
     }
 
     @Test

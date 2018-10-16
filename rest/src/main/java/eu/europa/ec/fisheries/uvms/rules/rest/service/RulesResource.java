@@ -10,19 +10,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Map;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
@@ -43,11 +33,19 @@ import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Map;
+
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ASSET;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 
 @Path("/rules")
 @Slf4j
@@ -90,7 +88,7 @@ public class RulesResource {
     @Consumes(value = {MediaType.APPLICATION_XML})
     @Produces(value = {MediaType.APPLICATION_XML})
     @Path("/evaluate/fluxfareportmessage")
-    public Response evaluate(FLUXFAReportMessage request) throws AssetModelMarshallException, MessageException {
+    public Response evaluate(FLUXFAReportMessage request) {
         FLUXResponseMessage fluxResponseMessage = null;
         try {
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
