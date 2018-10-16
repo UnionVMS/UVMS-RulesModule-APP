@@ -13,14 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -72,16 +65,18 @@ public class FaReportDocumentFact extends AbstractFact {
         }
         Set<String> notFishingOps =  new HashSet<>();
         Set<DayMonthYearType> fishingOps =  new HashSet<>();
-
         try {
             for (FishingActivity activity : specifiedFishingActivities) {
                 String value = activity.getTypeCode().getValue();
-                if (("FISHING_OPERATION".equals(value) || "JOINED_FISHING_OPERATION".equals(value)) && activity.getOccurrenceDateTime() != null) {
-                    DayMonthYearType operation = new DayMonthYearType(activity.getOccurrenceDateTime());
-                    if (CollectionUtils.isNotEmpty(fishingOps) && !fishingOps.contains(operation)) {
-                        return false;
+                if (("FISHING_OPERATION".equals(value) || "JOINED_FISHING_OPERATION".equals(value))){
+                    DateTimeType occurrence = findOccurrence(activity);
+                    if (occurrence != null){
+                        DayMonthYearType operation = new DayMonthYearType(occurrence);
+                        if (CollectionUtils.isNotEmpty(fishingOps) && !fishingOps.contains(operation)) {
+                            return false;
+                        }
+                        fishingOps.add(operation);
                     }
-                    fishingOps.add(operation);
                 } else {
                     if (CollectionUtils.isNotEmpty(notFishingOps) && notFishingOps.contains(value)) {
                         return false;
@@ -95,6 +90,19 @@ public class FaReportDocumentFact extends AbstractFact {
             return true;
         }
         return true;
+    }
+
+    private DateTimeType findOccurrence(FishingActivity activity) {
+        DateTimeType occurrence = activity.getOccurrenceDateTime();
+        if (occurrence == null){
+            List<DateTimeType> occurrences = new ArrayList<>();
+            List<FishingActivity> relatedFishingActivities = activity.getRelatedFishingActivities();
+            for (FishingActivity relatedFishingActivity : relatedFishingActivities) {
+                occurrences.add(relatedFishingActivity.getOccurrenceDateTime());
+            }
+            occurrence = Collections.min(occurrences, new DateTimeTypeComparator());
+        }
+        return occurrence;
     }
 
     @Data
