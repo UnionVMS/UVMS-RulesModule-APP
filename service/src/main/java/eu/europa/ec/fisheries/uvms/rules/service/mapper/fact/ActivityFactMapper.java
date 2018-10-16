@@ -280,23 +280,26 @@ public class ActivityFactMapper {
         return faType;
     }
 
-    public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, String partialXpath, boolean isSubActivity,
+    public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, boolean isSubActivity,
                                                            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faReportType,
                                                            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType mainActivityType) {
         FishingActivityFact fishingActivityFact = new FishingActivityFact();
         fishingActivityFact.setSubActivity(isSubActivity);
         fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportType));
 
+        String partialXpath = xPathUtil.getValue();
+
         if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedDelimitedPeriods())) {
             fishingActivityFact.setDelimitedPeriod(fishingActivity.getSpecifiedDelimitedPeriods().get(0));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD).storeInRepo(fishingActivityFact, "delimitedPeriod");
         }
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD, START_DATE).storeInRepo(fishingActivityFact, "delimitedPeriodStartTime");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD, END_DATE).storeInRepo(fishingActivityFact, "delimitedPeriodEndTime");
 
         if(mainActivityType != null){
             fishingActivityFact.setMainActivityType(mainActivityType.getValue());
             fishingActivityFact.setSpecifiedFaCatch(fishingActivity.getSpecifiedFACatches());
-            xPathUtil.append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(fishingActivityFact, "specifiedFaCatch");
         }
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(fishingActivityFact, "specifiedFaCatch");
 
         fishingActivityFact.setRelatedFishingTrip(mapRelatedFishingTrips(fishingActivity.getRelatedFishingActivities()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY, SPECIFIED_FISHING_TRIP).storeInRepo(fishingActivityFact, "relatedFishingTrip");

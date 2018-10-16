@@ -581,11 +581,13 @@ public abstract class AbstractFact {
 
     public boolean validDelimitedPeriod(DelimitedPeriod delimitedPeriod, boolean start, boolean end) {
         if (delimitedPeriod == null) {
-            return true;
+            return false;
         }
-        if ((start && end && ((delimitedPeriod.getStartDateTime() != null && delimitedPeriod.getStartDateTime().getDateTime() != null) && (delimitedPeriod.getEndDateTime() != null && delimitedPeriod.getEndDateTime().getDateTime() != null)))
-                || (start && !end && delimitedPeriod.getStartDateTime() != null && delimitedPeriod.getStartDateTime().getDateTime() != null)
-                || (end && !start && delimitedPeriod.getEndDateTime() != null && delimitedPeriod.getEndDateTime().getDateTime() != null)) {
+        DateTimeType startDateTime = delimitedPeriod.getStartDateTime();
+        DateTimeType endDateTime = delimitedPeriod.getEndDateTime();
+        if ((start && end && ((startDateTime != null && startDateTime.getDateTime() != null) && (endDateTime != null && endDateTime.getDateTime() != null)))
+                || (start && !end && startDateTime != null && startDateTime.getDateTime() != null)
+                || (end && !start && endDateTime != null && endDateTime.getDateTime() != null)) {
             return true;
         }
         return false;

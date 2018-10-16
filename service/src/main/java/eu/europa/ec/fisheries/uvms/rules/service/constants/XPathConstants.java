@@ -46,6 +46,8 @@ public class XPathConstants {
     public static final String OPERATIONS_QUANTITY = "OperationsQuantity";
     public static final String RELATED_FLUX_LOCATION = "RelatedFLUXLocation";
     public static final String OCCURRENCE_DATE_TIME = "OccurrenceDateTime";
+    public static final String START_DATE = "StartDateTime";
+    public static final String END_DATE = "EndDateTime";
     public static final String SPECIFIED_FLUX_CHARACTERISTIC = "SpecifiedFLUXCharacteristic";
     public static final String REASON_CODE = "ReasonCode";
     public static final String FISHERY_TYPE_CODE = "FisheryTypeCode";
