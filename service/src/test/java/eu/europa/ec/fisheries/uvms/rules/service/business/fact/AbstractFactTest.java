@@ -226,16 +226,16 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testIsStrictPositiveNumericWithMinus() {
-        NumericType numericType = new NumericType();
-        numericType.setValue(new BigDecimal("-1"));
-        assertFalse(fact.isStrictPositiveNumeric(numericType));
-    }
-
-    @Test
     public void testIsStrictPositiveNumericWithZero() {
         NumericType numericType = new NumericType();
         numericType.setValue(new BigDecimal("0"));
+        assertTrue(fact.isStrictPositiveNumeric(numericType));
+    }
+
+    @Test
+    public void testIsStrictPositiveNumericWithNegative() {
+        NumericType numericType = new NumericType();
+        numericType.setValue(new BigDecimal("-1"));
         assertFalse(fact.isStrictPositiveNumeric(numericType));
     }
 
@@ -564,8 +564,8 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValidateDelimitedPeriodShouldReturnTrueWhenNull() {
-        assertTrue(fact.validDelimitedPeriod(null, true, false));
+    public void testValidateDelimitedPeriodShouldReturnFalseWhenNull() {
+        assertFalse(fact.validDelimitedPeriod(null, true, false));
     }
 
     @Test

@@ -16,32 +16,19 @@ import javax.ejb.Stateless;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
-import java.util.*;
+import java.util.HashMap;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMapperException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleResponseMapper;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.*;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesResponseQueueProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionAnswer;
 import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionResponse;
 import eu.europa.fisheries.uvms.subscription.model.mapper.SubscriptionModuleResponseMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 /**
  * Created by kovian on 17/07/2016.
@@ -83,172 +70,4 @@ public class RulesActivityServiceBean {
         return false;
     }
 
-    /**
-     * Not used anymore cause the trip ids are getting saved here in rules!
-     * When ready remove this method from here and from Activity module!
-     *
-     * @param requestMessage
-     * @return
-     */
-    @Deprecated
-    public Map<ActivityTableType, List<IdType>> getNonUniqueIdsList(Object requestMessage) {
-        Map<ActivityTableType, List<IdType>> nonUniqueIdsMap = new EnumMap<>(ActivityTableType.class);
-        GetNonUniqueIdsResponse getNonUniqueIdsResponse = null;
-        FLUXFAReportMessage fluxFaRepMessage;
-        if (requestMessage != null && requestMessage instanceof FLUXFAReportMessage) {
-            fluxFaRepMessage = (FLUXFAReportMessage) requestMessage;
-        } else {
-            log.error("Either FLUXFAReportMessage is null or is not of the right type!");
-            return nonUniqueIdsMap;
-        }
-        try {
-            String strReq = ActivityModuleRequestMapper.mapToGetNonUniqueIdRequest(collectAllIdsFromMessage(fluxFaRepMessage));
-            if (StringUtils.isEmpty(strReq)) {
-                log.warn("No IDs were found to issue request for in method RulesActivityServiceBean.getNonUniqueIdsList(..){...}. Empty list will be returned");
-                return nonUniqueIdsMap;
-            }
-            log.debug("Send GetNonUniqueIdsRequest message to Activity");
-            String jmsCorrelationId = producer.sendDataSourceMessage(strReq, DataSourceQueue.ACTIVITY);
-            TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class);
-            log.debug("Received response message");
-            getNonUniqueIdsResponse = ActivityModuleResponseMapper.mapToGetUniqueIdResponseFromResponse(message, jmsCorrelationId);
-        } catch (ActivityModelMapperException | MessageException e) {
-            log.error("ERROR when sending/consuming message from ACTIVITY module. Service : RulesActivityServiceBean.getNonUniqueIdsList(Object requestMessage){...}", e);
-        }
-
-        if (getNonUniqueIdsResponse != null && CollectionUtils.isNotEmpty(getNonUniqueIdsResponse.getActivityUniquinessLists())) {
-            mapGetUniqueIdResponseToIdsMap(nonUniqueIdsMap, getNonUniqueIdsResponse.getActivityUniquinessLists());
-        }
-
-        return nonUniqueIdsMap;
-    }
-
-    /**
-     * Not used anymore cause the trip ids are getting saved here in rules!
-     * When ready remove this method from here and from Activity module!
-     *
-     * @param requestMessage
-     * @return
-     */
-    @Deprecated
-    public Map<String, List<FishingActivityWithIdentifiers>> getFishingActivitiesForTrips(Object requestMessage) {
-        GetFishingActivitiesForTripResponse response = null;
-        FLUXFAReportMessage fluxFaRepMessage;
-        if (requestMessage instanceof FLUXFAReportMessage) {
-            fluxFaRepMessage = (FLUXFAReportMessage) requestMessage;
-        } else {
-            log.error("Either FLUXFAReportMessage is null or is not of the right type!");
-            return MapUtils.EMPTY_MAP;
-        }
-        try {
-            String strReq = ActivityModuleRequestMapper.mapToGetFishingActivitiesForTripRequest(collectFaIdsAndTripIdsFromMessage(fluxFaRepMessage));
-            if (StringUtils.isEmpty(strReq)) {
-                log.warn("The request resulted empty in method RulesActivityServiceBean.getFishingActivitiesForTrips(..){...}. Empty list will be returned");
-                return MapUtils.EMPTY_MAP;
-            }
-            log.debug("Send GetFishingActivitiesForTripRequest message to Activity");
-            String jmsCorrelationId = producer.sendDataSourceMessage(strReq, DataSourceQueue.ACTIVITY);
-            TextMessage message = consumer.getMessage(jmsCorrelationId, TextMessage.class);
-            log.debug("Received response message");
-            response = ActivityModuleResponseMapper.mapToGetFishingActivitiesForTripResponse(message, jmsCorrelationId);
-        } catch (ActivityModelMapperException | MessageException e) {
-            log.error("when sending/consuming message from ACTIVITY module. Service : RulesActivityServiceBean.getNonUniqueIdsList(Object requestMessage){...}", e);
-        }
-
-        return transformResponse(response);
-    }
-
-    private Map<String, List<FishingActivityWithIdentifiers>> transformResponse(GetFishingActivitiesForTripResponse response) {
-        Map<String, List<FishingActivityWithIdentifiers>> trsfResponse = new HashMap<>();
-        if (response == null) {
-            return trsfResponse;
-        }
-        List<FaIdsListWithTripIdMap> faWithIdentifiersList = response.getFaWithIdentifiers();
-        if (CollectionUtils.isNotEmpty(faWithIdentifiersList)) {
-            for (FaIdsListWithTripIdMap ident : faWithIdentifiersList) {
-                trsfResponse.put(ident.getTripId(), ident.getFaIdentifierLists());
-            }
-        }
-        return trsfResponse;
-    }
-
-    private void mapGetUniqueIdResponseToIdsMap(Map<ActivityTableType, List<IdType>> nonUniqueIdsMap, List<ActivityUniquinessList> activityUniquinessLists) {
-        for (ActivityUniquinessList uniquenessListType : activityUniquinessLists) {
-            List<IdType> idTypeList = new ArrayList<>();
-            nonUniqueIdsMap.put(uniquenessListType.getActivityTableType(), idTypeList);
-            if (CollectionUtils.isNotEmpty(uniquenessListType.getIds())) {
-                mapActivityIdTypesToIdType(idTypeList, uniquenessListType.getIds());
-            }
-        }
-    }
-
-    private void mapActivityIdTypesToIdType(List<IdType> idTypeList, List<ActivityIDType> activityIdTypes) {
-        for (ActivityIDType activityIdType : activityIdTypes) {
-            idTypeList.add(new IdType(activityIdType.getValue(), activityIdType.getIdentifierSchemeId()));
-        }
-    }
-
-    private Map<ActivityTableType, List<IDType>> collectAllIdsFromMessage(FLUXFAReportMessage request) {
-        Map<ActivityTableType, List<IDType>> idsmap = new EnumMap<>(ActivityTableType.class);
-        idsmap.put(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY, new ArrayList<IDType>());
-        if (request == null) {
-            return idsmap;
-        }
-        // FLUXReportDocument IDs
-        FLUXReportDocument fluxReportDocument = request.getFLUXReportDocument();
-        if (fluxReportDocument != null && CollectionUtils.isNotEmpty(fluxReportDocument.getIDS())) {
-            idsmap.put(ActivityTableType.FLUX_REPORT_DOCUMENT_ENTITY, fluxReportDocument.getIDS());
-        }
-        // FAReportDocument.RelatedFLUXReportDocument IDs and ReferencedID
-        List<FAReportDocument> faReportDocuments = request.getFAReportDocuments();
-        if (CollectionUtils.isNotEmpty(faReportDocuments)) {
-            for (FAReportDocument faRepDoc : faReportDocuments) {
-                FLUXReportDocument relatedFLUXReportDocument = faRepDoc.getRelatedFLUXReportDocument();
-                if (relatedFLUXReportDocument != null) {
-                    List<IDType> idTypes = new ArrayList<>();
-                    idTypes.addAll(relatedFLUXReportDocument.getIDS());
-                    idTypes.add(relatedFLUXReportDocument.getReferencedID());
-                    idTypes.removeAll(Collections.singletonList(null));
-                    idsmap.get(ActivityTableType.RELATED_FLUX_REPORT_DOCUMENT_ENTITY).addAll(idTypes);
-                }
-            }
-        }
-        return idsmap;
-    }
-
-    private List<FishingActivityForTripIds> collectFaIdsAndTripIdsFromMessage(FLUXFAReportMessage fluxFaRepMessage) {
-        List<FishingActivityForTripIds> idsReqList = new ArrayList<>();
-        FLUXReportDocument fluxReportDocument = fluxFaRepMessage.getFLUXReportDocument();
-        List<FAReportDocument> faReportDocuments = fluxFaRepMessage.getFAReportDocuments();
-        if (fluxReportDocument == null || CollectionUtils.isEmpty(faReportDocuments)) {
-            return idsReqList;
-        }
-
-        // Purpose code
-        CodeType purposeCode = fluxReportDocument.getPurposeCode();
-        List<String> purposeCodes = purposeCode != null && StringUtils.isNotEmpty(purposeCode.getValue()) ?
-                Arrays.asList(purposeCode.getValue()) : Arrays.asList("1", "3", "5", "9");
-
-        // FishinActivity type, tripId, tripSchemeId
-        for (FAReportDocument faRepDoc : faReportDocuments) {
-            collectFromActivityList(idsReqList, purposeCodes, faRepDoc.getSpecifiedFishingActivities());
-        }
-        return idsReqList;
-    }
-
-    private void collectFromActivityList(List<FishingActivityForTripIds> idsReqList, List<String> purposeCodes, List<FishingActivity> specifiedFishingActivities) {
-        if (CollectionUtils.isEmpty(specifiedFishingActivities)) {
-            return;
-        }
-        for (FishingActivity fishAct : specifiedFishingActivities) {
-            CodeType typeCode = fishAct.getTypeCode();
-            FishingTrip fishTrip = fishAct.getSpecifiedFishingTrip();
-            if (typeCode == null || StringUtils.isEmpty(typeCode.getValue()) || fishTrip == null || CollectionUtils.isEmpty(fishTrip.getIDS())) {
-                continue;
-            }
-            for (IDType tripId : fishTrip.getIDS()) {
-                idsReqList.add(new FishingActivityForTripIds(typeCode.getValue(), tripId.getValue(), tripId.getSchemeID(), purposeCodes));
-            }
-        }
-    }
 }

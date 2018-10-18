@@ -10,18 +10,14 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.mapper;
 
+import java.util.Arrays;
+import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ExternalRuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
-import eu.europa.ec.fisheries.uvms.rules.entity.ExternalRule;
 import eu.europa.ec.fisheries.uvms.rules.entity.Rule;
 import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -63,32 +59,5 @@ public class RuleMapperTest {
         assertEquals("ID_2291", ruleType.getBrId());
         assertEquals("Some Notes", ruleType.getNote());
         assertEquals(ErrorType.ERROR.toString(), ruleType.getErrorType().toString());
-    }
-
-    @Test
-    @SneakyThrows
-    public void testExternalRuleMapper(){
-        ExternalRule extRuleEntity = new ExternalRule();
-
-        extRuleEntity.setDrl(testDRL);
-        extRuleEntity.setLevel("001");
-        extRuleEntity.setMessage("Result message");
-        extRuleEntity.setBrId("ID_2291");
-        extRuleEntity.setErrorType(ErrorType.ERROR);
-        extRuleEntity.setNote("Some Notes");
-
-        List<ExternalRuleType> externalRuleTypes = RuleMapper.INSTANCE.mapToAllExternalFactRuleType(Arrays.asList(extRuleEntity));
-
-        assertNotNull(externalRuleTypes);
-
-        ExternalRuleType externalRuleType = externalRuleTypes.get(0);
-
-        assertNotNull(externalRuleType);
-        assertEquals(testDRL, externalRuleType.getDrl());
-        assertEquals("001", externalRuleType.getLevel());
-        assertEquals("Result message", externalRuleType.getMessage());
-        assertEquals("ID_2291", externalRuleType.getBrId());
-        assertEquals("Some Notes", externalRuleType.getNote());
-        assertEquals(ErrorType.ERROR.toString(), externalRuleType.getErrorType().toString());
     }
 }

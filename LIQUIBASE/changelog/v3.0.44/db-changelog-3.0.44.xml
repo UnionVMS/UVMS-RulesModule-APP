@@ -178,15 +178,15 @@
         </update>
     </changeSet>
 
-
-
     <changeSet id="UNIONVMS-4038" author="emrinalgr">
         <update tableName="rule">
             <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; valueIndicator == null "/>
             <where>BR_ID = 'FA-L00-00-0129'</where>
         </update>
         <update tableName="rule">
-            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; (valueIndicator == null || valueIndicator.indicatorString == null || isEmpty(valueIndicator.indicatorString.value))"/>
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; (valueIndicator == null || valueIndicator.isIndicator() == null)"/>
+            <column name="note" value=""/>
+            <column name="message" value="If UN_DATA_TYPE23 for the characteristic (specified in FLUXCharacteristic/TypeCode) is BOOLEAN, ValueIndicator must be present and have a value."/>
             <where>BR_ID = 'FA-L00-00-0225'</where>
         </update>
         <update tableName="rule">
@@ -206,7 +206,7 @@
 
     <changeSet id="UNIONVMS-4048" author="emkoviand">
         <update tableName="rule">
-            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp;
+            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; isEmpty(appliedAAPProcessTypeCodes) || 
             (listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;) || listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;))
             &amp;&amp; (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;))
             &amp;&amp; (typeCode != null &amp;&amp; !valueContainsAny(typeCode,&quot;LOADED&quot;,&quot;UNLOADED&quot;))"/>
@@ -256,6 +256,34 @@
             <column name="expression" value="checkContactListContainsAny(specifiedContactPersons, true, false)"/>
             <where>BR_ID = 'FA-L00-00-0074'</where>
         </update>
+
+        <update tableName="rule">
+            <column name="expression" value="!subActivity &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !validDelimitedPeriod(delimitedPeriod, true, false)"/>
+            <column name="property_names" value="delimitedPeriodStartTime"/>
+            <where>BR_ID = 'FA-L02-00-0107'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="property_names" value="delimitedPeriodEndTime"/>
+            <where>BR_ID = 'FA-L02-00-0108'</where>
+        </update>
+
     </changeSet>
 
+    <changeSet author="externalrule" id="emrinalgr">
+        <dropTable tableName="externalrule"/>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4070" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="(typeCode != null &amp;&amp; id != null) &amp;&amp;
+                            ((typeCode.value == &quot;AREA&quot; &amp;&amp; id.schemeId != &quot;FAO_AREA&quot; &amp;&amp; id.schemeId != &quot;STAT_RECTANGLE&quot; &amp;&amp;
+                             id.schemeId != &quot;MANAGEMENT_AREA&quot; &amp;&amp; id.schemeId != &quot;TERRITORY&quot; &amp;&amp; id.schemeId != &quot;EFFORT_ZONE&quot; &amp;&amp;
+                             id.schemeId != &quot;GFCM_GSA&quot; &amp;&amp; id.schemeId != &quot;STAT_RECTANGLE&quot; &amp;&amp; id.schemeId != &quot;GFCM_STAT_RECTANGLE&quot;)
+                             ||
+                            (typeCode.value == &quot;LOCATION&quot; &amp;&amp; id.schemeId != &quot;LOCATION&quot; &amp;&amp; id.schemeId != &quot;FARM&quot;))"/>
+            <column name="message" value="Check attribute schemeID of ID. In case TypeCode= AREA the schemeID must be FAO_AREA, STAT_RECTANGLE, TERRITORY, EFFORT_ZONE, GFCM_GSA, MANAGEMENT_AREA. In case TypeCode= LOCATION: the schemeID must be LOCATION or FARM" />
+            <where>BR_ID = 'FA-L01-00-0202'</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>
