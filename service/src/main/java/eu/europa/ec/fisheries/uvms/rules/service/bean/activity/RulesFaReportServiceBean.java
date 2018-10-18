@@ -58,7 +58,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class RulesFaReportServiceBean {
 
-    private static ValidationResult failure = new ValidationResult(true, false, false, null);
+    private static final ValidationResult FAILURE = new ValidationResult(true, false, false, null);
 
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
@@ -149,11 +149,11 @@ public class RulesFaReportServiceBean {
 
         } catch (UnmarshalException e) {
             log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
-            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
+            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
             exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);
-            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
+            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
             exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         }
         log.debug("Finished eval of FLUXFAReportMessage " + exchangeLogGuid);
@@ -183,7 +183,7 @@ public class RulesFaReportServiceBean {
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                 log.info(" The Validation of FLUXFAReportMessage is successful, forwarding message to Exchange");
                 sendToExchange(ExchangeModuleRequestMapper.createSendFaReportMessageRequest(request.getRequest(), "movement", logGuid, request.getFluxDataFlow(),
-                        request.getSenderOrReceiver(), request.getOnValue(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST"));
+                        request.getSenderOrReceiver(), request.getOnValue(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST"));
             } else {
                 log.info(" Validation resulted in errors. Not going to send msg to Exchange module..");
             }
@@ -191,11 +191,11 @@ public class RulesFaReportServiceBean {
 
         } catch (UnmarshalException e) {
             log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
-            exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
+            exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
             exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);
-            exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
+            exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
             exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         } catch (MessageException | ExchangeModelMarshallException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);

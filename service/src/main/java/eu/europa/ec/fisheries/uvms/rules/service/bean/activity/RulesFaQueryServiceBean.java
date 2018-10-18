@@ -199,7 +199,7 @@ public class RulesFaQueryServiceBean {
             if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
                 log.debug("The Validation of FaQueryMessage is successful, forwarding message to Exchange");
                 String exchangeReq = ExchangeModuleRequestMapper.createSendFaQueryMessageRequest(request.getRequest(),
-                        "movement", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST");
+                        "movement", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST");
                 sendToExchange(exchangeReq);
             } else {
                 log.debug("Validation resulted in errors. Not going to send msg to Exchange module..");
