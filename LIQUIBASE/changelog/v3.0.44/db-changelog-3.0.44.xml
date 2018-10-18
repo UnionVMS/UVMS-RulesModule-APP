@@ -206,7 +206,7 @@
 
     <changeSet id="UNIONVMS-4048" author="emkoviand">
         <update tableName="rule">
-            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp;
+            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; isEmpty(appliedAAPProcessTypeCodes) || 
             (listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;) || listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;))
             &amp;&amp; (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;))
             &amp;&amp; (typeCode != null &amp;&amp; !valueContainsAny(typeCode,&quot;LOADED&quot;,&quot;UNLOADED&quot;))"/>
