@@ -229,7 +229,7 @@ public class AbstractFactTest {
     public void testIsStrictPositiveNumericWithZero() {
         NumericType numericType = new NumericType();
         numericType.setValue(new BigDecimal("0"));
-        assertTrue(fact.isStrictPositiveNumeric(numericType));
+        assertFalse(fact.isStrictPositiveNumeric(numericType));
     }
 
     @Test
