@@ -13,19 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -33,11 +20,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.NumericType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesPartyFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.ToString;
@@ -51,6 +34,12 @@ import org.joda.time.DateTimeZone;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 @Slf4j
 @ToString
@@ -242,21 +231,19 @@ public abstract class AbstractFact {
             TextType familyName = contPers.getFamilyName();
             TextType nameToConsider = isGivenName ? givenName : familyName;
             TextType alias = contPers.getAlias();
-            if (checkWithEmptyness(checkEmptyness, nameToConsider, alias) || checkWithoutEmptyness(nameToConsider, alias, checkEmptyness)) {
+            if (checkWithEmptiness(checkEmptyness, nameToConsider, alias) || checkWithoutEmptiness(nameToConsider, alias, checkEmptyness)) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean checkWithoutEmptyness(TextType nameToConsider, TextType alias, boolean checkEmptyness) {
-        return !checkEmptyness && (nameToConsider == null || nameToConsider.getValue() == null)
-                && (alias == null || alias.getValue() == null);
+    private boolean checkWithoutEmptiness(TextType nameToConsider, TextType alias, boolean checkEmptyness) {
+        return !checkEmptyness && (nameToConsider == null || nameToConsider.getValue() == null) && (alias == null || alias.getValue() == null);
     }
 
-    private boolean checkWithEmptyness(boolean checkEmptyness, TextType nameToConsider, TextType alias) {
-        return checkEmptyness && ((nameToConsider != null && StringUtils.isEmpty(nameToConsider.getValue()))
-                && (alias == null || StringUtils.isEmpty(alias.getValue())));
+    private boolean checkWithEmptiness(boolean checkEmptyness, TextType nameToConsider, TextType alias) {
+        return checkEmptyness && ((nameToConsider == null || StringUtils.isEmpty(nameToConsider.getValue())) && (alias == null || StringUtils.isEmpty(alias.getValue())));
     }
 
     public boolean checkAliasFromContactList(List<ContactPerson> contactPersons, boolean checkAliasEmptyness) {
