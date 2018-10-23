@@ -286,4 +286,5 @@
             <where>BR_ID = 'FA-L01-00-0202'</where>
         </update>
     </changeSet>
+
 </databaseChangeLog>

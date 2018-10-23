@@ -321,7 +321,7 @@ public abstract class AbstractFact {
      */
     public boolean validateFormat(IdType id) {
         boolean isInvalid = false;
-        if (id == null || id.getSchemeId() == null) {
+        if (id == null || id.getSchemeId() == null || StringUtils.isEmpty(id.getValue()) ) {
             return false;
         }
         try {
