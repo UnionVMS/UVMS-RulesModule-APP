@@ -1,12 +1,18 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl;
 
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.*;
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.uvms.asset.ejb.client.IAssetFacade;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
@@ -14,11 +20,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.*;
 
 @Slf4j
 @Singleton
@@ -62,7 +63,14 @@ public class AssetClientBean implements IAssetClient {
 
         while (iterator.hasNext()) {
             VesselTransportMeansDto vesselTransportMeansDto = iterator.next();
-            String reportDate = vesselTransportMeansDto.getAcceptanceDateTime();
+
+            String acceptanceDateTime = vesselTransportMeansDto.getAcceptanceDateTime();
+
+            String reportDate = DateUtils.END_OF_TIME.toString();
+            if (StringUtils.isNotEmpty(acceptanceDateTime)){
+                reportDate = acceptanceDateTime;
+            }
+
             String regCountry = vesselTransportMeansDto.getRegistrationVesselCountry();
             Map<String, String> ids = vesselTransportMeansDto.getIds();
 
