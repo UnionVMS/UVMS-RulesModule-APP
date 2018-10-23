@@ -157,7 +157,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="12"/>
             <column name="br_id" value="FA-L01-00-0012"/>
-            <column name="expression" value="referencedID == null || validateFormat(referencedID)"/>
+            <column name="expression" value="referencedID != null &amp;&amp; validateFormat(referencedID)"/>
             <column name="note" value="SchemeID must be UUID."/>
             <column name="message" value="Referenced Message ID value not according to schemeID."/>
             <column name="level" value="L01"/>

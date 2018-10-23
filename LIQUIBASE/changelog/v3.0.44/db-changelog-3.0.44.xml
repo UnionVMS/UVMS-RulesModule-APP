@@ -287,4 +287,11 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4098" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="referencedID == null || validateFormat(referencedID)"/>
+            <where>BR_ID = 'FA-L01-00-0012'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
