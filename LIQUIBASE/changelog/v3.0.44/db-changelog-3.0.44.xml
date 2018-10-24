@@ -294,4 +294,18 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4099" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; validateFormat(referencedID) &amp;&amp; isEmpty(relatedFaQueryIDs)"/>
+            <where>BR_ID = 'FA-L03-00-0013'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4100" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="referencedID == null || schemeIdContainsAll(referencedID, &quot;UUID&quot;)"/>
+            <where>BR_ID = 'FA-L00-00-0011'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
