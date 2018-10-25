@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIde
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
@@ -682,7 +683,7 @@ public class AbstractFactTest {
         uuidIdType.setValue("ballshjshdhdfhsgfd");
         List<IdType> idTypes = Arrays.asList(uuidIdType);
         boolean result = fact.validateFormat(idTypes);
-        assertFalse(result);
+        assertTrue(result);
     }
 
     @Test
@@ -1448,6 +1449,7 @@ public class AbstractFactTest {
         assertTrue(result);
     }
 
+
     @Test
     public void testMatchWithFluxTL() {
         IdType idType = new IdType();
@@ -1683,7 +1685,7 @@ public class AbstractFactTest {
     public void testIsEmptyCollectionsReflective(){
         FLUXFAReportMessage message = JAXBMarshaller.unMarshallMessage(
                 IOUtils.toString(new FileInputStream("src/test/resources/testData/faRepDocForEmptynessCheck.xml")), FLUXFAReportMessage.class);
-        ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator();
+        ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator(MessageType.PUSH);
         generator.setBusinessObjectMessage(message);
         for (AbstractFact abstractFact : generator.generateAllFacts()) {
             if(abstractFact instanceof FaReportDocumentFact){

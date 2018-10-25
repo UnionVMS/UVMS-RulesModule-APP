@@ -331,7 +331,7 @@ public abstract class AbstractFact {
             }
         } catch (IllegalArgumentException ex) {
             log.debug("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
-            isInvalid = false;
+            isInvalid = true;
         }
         return isInvalid;
     }
@@ -340,7 +340,7 @@ public abstract class AbstractFact {
      * Validate the format of the value depending on the codeType for single CodeType
      *
      * @param codeType CodeType
-     * @return
+     * @return true if format is invalid, return false if format is valid
      */
     public boolean validateFormat(CodeType codeType) {
         boolean isInvalid = false;
@@ -363,6 +363,12 @@ public abstract class AbstractFact {
      *
      */
     public boolean containsAny(Collection col1, Collection col2) {
+        if (CollectionUtils.isEmpty(col1)){
+            col1 = new ArrayList();
+        }
+        if (CollectionUtils.isEmpty(col2)){
+            col2 = new ArrayList();
+        }
         return CollectionUtils.containsAny(col1, col2);
     }
 
@@ -1150,8 +1156,8 @@ public abstract class AbstractFact {
         return value != null && ((value.compareTo(new BigDecimal(lowBound)) >= 0) && (value.compareTo(new BigDecimal(upperBound)) <= 0));
     }
 
-    public MessageType getMessageType() {
-        return messageType;
+    public String getMessageType() {
+        return messageType.name();
     }
 
     public void setCreationDateOfMessage(DateTime creationDateOfMessage) {

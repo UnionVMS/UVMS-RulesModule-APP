@@ -17,6 +17,7 @@ import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
@@ -224,7 +225,7 @@ public class ActivityFactMapper {
         return null;
     }
 
-    public List<FaReportDocumentFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments) {
+    public List<FaReportDocumentFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments, MessageType messageType) {
         if (faReportDocuments == null) {
             return emptyList();
         }
@@ -234,6 +235,7 @@ public class ActivityFactMapper {
         for (FAReportDocument fAReportDocument : faReportDocuments) {
             xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
             FaReportDocumentFact faReportDocumentFact = generateFactForFaReportDocument(fAReportDocument);
+            faReportDocumentFact.setMessageType(messageType);
             if(fAReportDocument.getRelatedFLUXReportDocument() != null){
                 faReportDocumentFact.setCreationDateOfMessage(mapToJodaDateTime(fAReportDocument.getRelatedFLUXReportDocument().getCreationDateTime()));
             }
@@ -246,8 +248,8 @@ public class ActivityFactMapper {
 
     private Map<FishingActivityType, List<String>> collectTripsPerFaTypeFromMessage(List<FAReportDocument> faReportDocuments) {
         HashMap<FishingActivityType, List<String>> tripsPerFaTypeFromFasInReports = new HashMap<>();
-        tripsPerFaTypeFromFasInReports.put(FishingActivityType.ARRIVAL, new ArrayList<String>());
-        tripsPerFaTypeFromFasInReports.put(FishingActivityType.DEPARTURE, new ArrayList<String>());
+        tripsPerFaTypeFromFasInReports.put(FishingActivityType.ARRIVAL, new ArrayList<>());
+        tripsPerFaTypeFromFasInReports.put(FishingActivityType.DEPARTURE, new ArrayList<>());
         if (CollectionUtils.isEmpty(faReportDocuments)){
             return tripsPerFaTypeFromFasInReports;
         }
@@ -2797,4 +2799,9 @@ public class ActivityFactMapper {
     public  List<VesselTransportMeansDto> getTransportMeansDtos(){
         return transportMeans;
     }
+
+    public void setFaRelatedReportIds(List<IdType> faRelatedReportIds) {
+        this.faRelatedReportIds = faRelatedReportIds;
+    }
+
 }

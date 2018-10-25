@@ -289,7 +289,7 @@
 
     <changeSet id="UNIONVMS-4098" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="referencedID == null || validateFormat(referencedID)"/>
+            <column name="expression" value="referencedID != null &amp;&amp; !isEmpty(referencedID.value) &amp;&amp; !validateFormat(referencedID)"/>
             <where>BR_ID = 'FA-L01-00-0012'</where>
         </update>
     </changeSet>
@@ -303,8 +303,16 @@
 
     <changeSet id="UNIONVMS-4100" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="referencedID == null || schemeIdContainsAll(referencedID, &quot;UUID&quot;)"/>
+            <column name="expression" value="referencedID != null &amp;&amp; !isEmpty(referencedID.schemeId) &amp;&amp; schemeIdContainsAll(referencedID, &quot;UUID&quot;)"/>
             <where>BR_ID = 'FA-L00-00-0011'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="FA-L03-00-0038" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="&quot;PULL&quot;.equals(messageType) &amp;&amp; (referencedID != null || (purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; !validateFormat(referencedID) &amp;&amp; !containsAny(nonUniqueIdsList, Arrays.asList(referencedID))"/>
+            <column name="note" value="Must be an identifier of an acknowledged report."/>
+            <where>BR_ID = 'FA-L03-00-0038'</where>
         </update>
     </changeSet>
 
