@@ -151,7 +151,7 @@ public class ActivityFactMapper {
 
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, UNIQUE_IDS_PROP);
 
-        faReportDocumentFact.setRelatedFLUXReportDocumentReferencedID(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentReferencedID(faReportDocument)));
+        faReportDocumentFact.setReferencedID(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentReferencedID(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, REFERENCED_ID).storeInRepo(faReportDocumentFact, RELATED_FLUX_REPORT_DOCUMENT_REFERENCED_ID_PROP);
 
         faReportDocumentFact.setRelatedFLUXReportDocumentIDs(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentIDS(faReportDocument)));
@@ -222,7 +222,7 @@ public class ActivityFactMapper {
         if (relatedFLUXReportDocument != null && relatedFLUXReportDocument.getReferencedID() != null) {
             return mapToIdType(relatedFLUXReportDocument.getReferencedID());
         }
-        return null;
+        return new IdType();
     }
 
     public List<FaReportDocumentFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments, MessageType messageType) {

@@ -331,17 +331,28 @@ public abstract class AbstractFact {
             }
         } catch (IllegalArgumentException ex) {
             log.debug("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            isInvalid = false;
+        }
+        return isInvalid;
+    }
+
+    public boolean validateSchemeId(String schemeId) {
+        boolean isInvalid = false;
+        try{
+            FORMATS.valueOf(schemeId);
+        }
+        catch (Exception ex) {
             isInvalid = true;
         }
         return isInvalid;
     }
 
-    /**
-     * Validate the format of the value depending on the codeType for single CodeType
-     *
-     * @param codeType CodeType
-     * @return true if format is invalid, return false if format is valid
-     */
+        /**
+         * Validate the format of the value depending on the codeType for single CodeType
+         *
+         * @param codeType CodeType
+         * @return true if format is invalid, return false if format is valid
+         */
     public boolean validateFormat(CodeType codeType) {
         boolean isInvalid = false;
         if (codeType == null) {

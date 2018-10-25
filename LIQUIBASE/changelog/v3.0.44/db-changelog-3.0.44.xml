@@ -289,15 +289,23 @@
 
     <changeSet id="UNIONVMS-4098" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="referencedID != null &amp;&amp; !isEmpty(referencedID.value) &amp;&amp; !validateFormat(referencedID)"/>
+            <column name="expression" value="referencedID != null &amp;&amp; !validateSchemeId(referencedID.schemeId) &amp;&amp; !isEmpty(referencedID.value) &amp;&amp; validateFormat(referencedID)"/>
             <where>BR_ID = 'FA-L01-00-0012'</where>
         </update>
     </changeSet>
 
     <changeSet id="UNIONVMS-4099" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; validateFormat(referencedID) &amp;&amp; isEmpty(relatedFaQueryIDs)"/>
+            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; !validateFormat(referencedID) &amp;&amp; isEmpty(relatedFaQueryIDs)"/>
             <where>BR_ID = 'FA-L03-00-0013'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-41022" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="referencedID != null &amp;&amp; !isEmpty(referencedID.value) &amp;&amp; validateFormat(referencedID)"/>
+            <column name="property_names" value="referencedID"/>
+            <where>BR_ID = 'FA-L01-00-0037'</where>
         </update>
     </changeSet>
 
@@ -305,6 +313,14 @@
         <update tableName="rule">
             <column name="expression" value="referencedID != null &amp;&amp; !isEmpty(referencedID.schemeId) &amp;&amp; schemeIdContainsAll(referencedID, &quot;UUID&quot;)"/>
             <where>BR_ID = 'FA-L00-00-0011'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4102" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="referencedID != null &amp;&amp; !isEmpty(referencedID.schemeId) &amp;&amp; schemeIdContainsAll(referencedID, &quot;UUID&quot;)"/>
+            <column name="property_names" value="referencedID"/>
+            <where>BR_ID = 'FA-L01-00-0036'</where>
         </update>
     </changeSet>
 

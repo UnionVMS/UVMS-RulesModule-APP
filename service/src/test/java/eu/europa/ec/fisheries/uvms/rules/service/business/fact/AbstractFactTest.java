@@ -683,7 +683,7 @@ public class AbstractFactTest {
         uuidIdType.setValue("ballshjshdhdfhsgfd");
         List<IdType> idTypes = Arrays.asList(uuidIdType);
         boolean result = fact.validateFormat(idTypes);
-        assertTrue(result);
+        assertFalse(result);
     }
 
     @Test
