@@ -73,7 +73,6 @@ public class RulesSalesReportEventConsumerBean implements MessageListener {
                 LOG.error("[ Request method '{}' is not implemented ]", methodName);
                 errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + methodName)));
             }
-
         } catch (NullPointerException | RulesModelMarshallException e) {
             LOG.error("[ Error when receiving message in rules: {}]", e.getMessage());
             errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Error when receiving message in rules:" + e.getMessage())));
@@ -85,7 +84,6 @@ public class RulesSalesReportEventConsumerBean implements MessageListener {
     private int getTimesRedelivered(Message message) {
         try {
             return (message.getIntProperty("JMSXDeliveryCount") - 1);
-
         } catch (Exception e) {
             return 0;
         }
