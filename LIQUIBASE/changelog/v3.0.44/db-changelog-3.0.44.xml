@@ -336,15 +336,15 @@
 
     <changeSet id="UNIONVMS-4105" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="!subActivity &amp;&amp; (!valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; (!validDelimitedPeriod(delimitedPeriod, false, true)) || (occurrenceDateTime == null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true)))"/>
+            <column name="expression" value="!subActivity &amp;&amp; typeCode != null &amp;&amp; (typeCode.value == &quot;LANDING&quot; || typeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; (!validDelimitedPeriod(delimitedPeriod, false, true) || (occurrenceDateTime == null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true)))"/>
             <where>BR_ID = 'FA-L02-00-0108'</where>
         </update>
     </changeSet>
 
-    <changeSet id="UNIONVMS-4105" author="emrinalgr">
+    <changeSet id="UNIONVMS-4105bb" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="!subActivity &amp;&amp; (!valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; (!validDelimitedPeriod(delimitedPeriod, true, false)) || (occurrenceDateTime == null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, true, false)))"/>
-            <where>BR_ID = 'FA-L02-00-0108'</where>
+            <column name="expression" value="!subActivity &amp;&amp; typeCode != null &amp;&amp; (typeCode.value == &quot;LANDING&quot; || typeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; (!validDelimitedPeriod(delimitedPeriod, true, false) || (occurrenceDateTime == null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, true, false)))"/>
+            <where>BR_ID = 'FA-L02-00-0107'</where>
         </update>
     </changeSet>
 
