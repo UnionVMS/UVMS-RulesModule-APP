@@ -314,7 +314,7 @@
 
     <changeSet id="UNIONVMS-4100" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="referencedID != null &amp;&amp; !isEmpty(referencedID.schemeId) &amp;&amp; schemeIdContainsAll(referencedID, &quot;UUID&quot;)"/>
+            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId != &quot;UUID&quot;"/>
             <column name="property_names" value="referencedID"/>
             <where>BR_ID = 'FA-L00-00-0011'</where>
         </update>
@@ -322,7 +322,7 @@
 
     <changeSet id="UNIONVMS-4102" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="referencedID != null &amp;&amp; !isEmpty(referencedID.schemeId) &amp;&amp; schemeIdContainsAll(referencedID, &quot;UUID&quot;)"/>
+            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId != &quot;UUID&quot;"/>
             <column name="property_names" value="referencedID"/>
             <where>BR_ID = 'FA-L01-00-0036'</where>
         </update>
