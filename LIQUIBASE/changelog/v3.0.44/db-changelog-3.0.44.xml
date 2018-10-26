@@ -306,7 +306,7 @@
 
     <changeSet id="UNIONVMS-41022" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="referencedID != null &amp;&amp; !isEmpty(referencedID.value) &amp;&amp; validateFormat(referencedID)"/>
+            <column name="expression" value="validateFormat(referencedID)"/>
             <column name="property_names" value="referencedID"/>
             <where>BR_ID = 'FA-L01-00-0037'</where>
         </update>
