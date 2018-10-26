@@ -762,6 +762,14 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testValidateFormatEmptyValue() {
+        IdType id = new IdType();
+        id.setSchemeId("UUID");
+        boolean result = fact.validateFormat(id);
+        assertTrue(result);
+    }
+
+    @Test
     public void testSchemeIdContainsAny() {
 
         IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");

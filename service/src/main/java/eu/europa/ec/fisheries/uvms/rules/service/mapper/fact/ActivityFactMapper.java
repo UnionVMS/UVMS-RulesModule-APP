@@ -2016,7 +2016,7 @@ public class ActivityFactMapper {
     }
 
     public IdType mapToIdType(IDType idType) {
-        return (idType != null && StringUtils.isNotBlank(idType.getValue())) ? new IdType(idType.getValue(), idType.getSchemeID()) : null;
+        return idType == null ? null : new IdType(idType.getValue(), idType.getSchemeID());
     }
 
     private List<IdType> mapToIdType(List<IDType> idTypes) {

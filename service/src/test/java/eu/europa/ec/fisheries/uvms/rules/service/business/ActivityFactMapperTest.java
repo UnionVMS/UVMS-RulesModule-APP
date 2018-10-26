@@ -372,9 +372,8 @@ public class ActivityFactMapperTest {
         ActivityFactMapper activityFactMapper = new ActivityFactMapper();
         IDType idType = ActivityObjectsHelper.generateIDTypeModel( null, null);
         IdType idType1 = activityFactMapper.mapToIdType(idType);
-        assertNull(idType1);
+        assertNotNull(idType1);
     }
-
 
     @Test
     public void testGenerateFactsForFaLanding() {
