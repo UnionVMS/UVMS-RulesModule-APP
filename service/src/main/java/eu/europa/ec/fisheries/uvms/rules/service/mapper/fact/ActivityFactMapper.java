@@ -222,7 +222,7 @@ public class ActivityFactMapper {
         if (relatedFLUXReportDocument != null && relatedFLUXReportDocument.getReferencedID() != null) {
             return mapToIdType(relatedFLUXReportDocument.getReferencedID());
         }
-        return new IdType();
+        return null;
     }
 
     public List<FaReportDocumentFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments, MessageType messageType) {
