@@ -356,4 +356,11 @@
         </update>
     </changeSet>
 
+    <changeSet id="FA-L03-00-0357" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="submittedDateTime != null &amp;&amp; !dateNotInPast(submittedDateTime, 10)"/>
+            <where>BR_ID = 'FA-L03-00-0357'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
