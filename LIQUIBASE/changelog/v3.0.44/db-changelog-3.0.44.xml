@@ -287,24 +287,79 @@
         </update>
     </changeSet>
 
+
     <changeSet id="UNIONVMS-4098" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="referencedID == null || validateFormat(referencedID)"/>
+            <column name="expression" value="validateFormat(referencedID)"/>
+            <column name="property_names" value="referencedID"/>
             <where>BR_ID = 'FA-L01-00-0012'</where>
         </update>
     </changeSet>
 
     <changeSet id="UNIONVMS-4099" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; validateFormat(referencedID) &amp;&amp; isEmpty(relatedFaQueryIDs)"/>
+            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; !validateFormat(referencedID) &amp;&amp; isEmpty(relatedFaQueryIDs)"/>
+            <column name="property_names" value="referencedID"/>
             <where>BR_ID = 'FA-L03-00-0013'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-41022" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="validateFormat(referencedID)"/>
+            <column name="property_names" value="referencedID"/>
+            <where>BR_ID = 'FA-L01-00-0037'</where>
         </update>
     </changeSet>
 
     <changeSet id="UNIONVMS-4100" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="referencedID == null || schemeIdContainsAll(referencedID, &quot;UUID&quot;)"/>
+            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId != &quot;UUID&quot;"/>
+            <column name="property_names" value="referencedID"/>
             <where>BR_ID = 'FA-L00-00-0011'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4102" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="referencedID != null &amp;&amp; referencedID.schemeId != &quot;UUID&quot;"/>
+            <column name="property_names" value="referencedID"/>
+            <where>BR_ID = 'FA-L01-00-0036'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4105" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="!subActivity &amp;&amp; typeCode != null &amp;&amp; (typeCode.value == &quot;LANDING&quot; || typeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; (!validDelimitedPeriod(delimitedPeriod, false, true) || (occurrenceDateTime == null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true)))"/>
+            <where>BR_ID = 'FA-L02-00-0108'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4105bb" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="!subActivity &amp;&amp; typeCode != null &amp;&amp; (typeCode.value == &quot;LANDING&quot; || typeCode.value == &quot;TRANSHIPMENT&quot;) &amp;&amp; (!validDelimitedPeriod(delimitedPeriod, true, false) || (occurrenceDateTime == null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, true, false)))"/>
+            <where>BR_ID = 'FA-L02-00-0107'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4103" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(ownerFluxPartyIds) &amp;&amp; idTypeValueContainsAny(ownerFluxPartyIds, &quot;XEU&quot;, &quot;XFA&quot;) &amp;&amp; !matchWithFluxTL(ownerFluxPartyIds)"/>
+            <where>BR_ID = 'FA-L03-00-0045'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="FA-L03-00-0038" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="&quot;PULL&quot;.equals(messageType) &amp;&amp; (referencedID != null || (purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; !validateFormat(referencedID) &amp;&amp; !containsAny(nonUniqueIdsList, Arrays.asList(referencedID))"/>
+            <where>BR_ID = 'FA-L03-00-0038'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="FA-L03-00-0357" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="submittedDateTime != null &amp;&amp; !dateNotInPast(submittedDateTime, 10)"/>
+            <where>BR_ID = 'FA-L03-00-0357'</where>
         </update>
     </changeSet>
 

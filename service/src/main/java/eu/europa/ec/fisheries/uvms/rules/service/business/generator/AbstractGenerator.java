@@ -13,12 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-
 import java.util.List;
 import java.util.Map;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 
 /**
  * @author padhyad
@@ -28,6 +28,12 @@ import java.util.Map;
 public abstract class AbstractGenerator<T> {
 
     Map<ExtraValueType, Object> extraValueMap;
+
+    protected MessageType messageType;
+
+    public AbstractGenerator( MessageType messageType ) {
+        this.messageType = messageType;
+    }
 
     public abstract List<AbstractFact> generateAllFacts();
 

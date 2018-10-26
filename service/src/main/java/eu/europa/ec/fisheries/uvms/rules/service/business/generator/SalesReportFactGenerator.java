@@ -13,12 +13,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.FactCandidate;
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.Source;
+import eu.europa.ec.fisheries.uvms.rules.service.business.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -30,17 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.commons.lang3.time.StopWatch;
 import org.joda.time.DateTime;
-
-import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.CREATION_DATE_OF_MESSAGE;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.ORIGINATING_PLUGIN;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 @Slf4j
 @Singleton
@@ -54,15 +51,19 @@ public class SalesReportFactGenerator extends AbstractGenerator<Report> {
 
     private XPathStringWrapper xPathUtil;
 
+    public SalesReportFactGenerator(){
+        this(MessageType.PULL);
+    }
 
-    public SalesReportFactGenerator() {
+    public SalesReportFactGenerator(MessageType messageType) {
+        super(messageType);
         this.mapper = new DefaultOrikaMapper().getMapper();
         this.mappingsToFacts = new HashMap<>();
         fillMap();
     }
 
-    public SalesReportFactGenerator(FactGeneratorHelper factGeneratorHelper, MapperFacade mapperFacade) {
-        this();
+    public SalesReportFactGenerator(FactGeneratorHelper factGeneratorHelper, MapperFacade mapperFacade, MessageType messageType) {
+        this(messageType);
         this.factGeneratorHelper = factGeneratorHelper;
         this.mapper = mapperFacade;
     }

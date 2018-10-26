@@ -50,7 +50,6 @@ public class FaReportDocumentFact extends AbstractFact {
     private List<FishingActivity> specifiedFishingActivities;
     private List<String> specifiedFishingActivitiesTypes;
     private List<IdType> relatedFLUXReportDocumentIDs;
-    private IdType relatedFLUXReportDocumentReferencedID;
     private List<IdType> nonUniqueIdsList;
     private List<IdType> faSpecifiedFishingTripIds;
     private List<String> faTypesPerTrip;
