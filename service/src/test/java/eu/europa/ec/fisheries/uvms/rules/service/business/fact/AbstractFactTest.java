@@ -752,29 +752,6 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValueContainsAll() {
-
-        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
-        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "IRCS");
-        IdType idType3 = ActivityObjectsHelper.generateIdType("value13", "UUID");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
-        boolean result = fact.valueContainsAll(idTypes, "value1");
-        assertFalse(result);
-    }
-
-    @Test
-    public void testValueContainsAll_1() {
-
-        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "XEU");
-        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "XFA");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-        boolean result = fact.valueContainsAll(idTypes, "XEU","XFA");
-        assertTrue(result);
-    }
-
-    @Test
     public void testIsNumeric() {
         NumericType numericType1 = ActivityObjectsHelper.generateNumericType(new BigDecimal(12), "XXX");
         NumericType numericType2 = ActivityObjectsHelper.generateNumericType(new BigDecimal(12), "XXX");
@@ -824,12 +801,6 @@ public class AbstractFactTest {
     public void testSchemeIdContainsAllWithNull() {
 
         assertTrue(fact.schemeIdContainsAll(new ArrayList<IdType>(), null));
-    }
-
-    @Test
-    public void testValueContainsAllWithNull() {
-
-        assertTrue(fact.valueContainsAll(new ArrayList<IdType>(), null));
     }
 
     @Test

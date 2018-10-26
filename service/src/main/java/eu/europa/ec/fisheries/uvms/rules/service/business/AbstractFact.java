@@ -103,22 +103,6 @@ public abstract class AbstractFact {
         return xpathsList;
     }
 
-    public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
-        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
-            return true;
-        }
-        int valLength = valuesToMatch.length;
-        int hits = 0;
-        for (String val : valuesToMatch) {
-            for (IdType IdType : idTypes) {
-                if (IdType != null && val.equals(IdType.getValue())) {
-                    hits++;
-                }
-            }
-        }
-        return valLength > hits;
-    }
-
     public boolean valueStartsWith(List<IdType> idTypes, String... valuesToMatch) {
         if (isEmpty(idTypes) || ArrayUtils.isEmpty(valuesToMatch)) {
             return false;
@@ -745,6 +729,23 @@ public abstract class AbstractFact {
         for (String val : valuesToMatch) {
             for (CodeType CodeTypes : removeNull) {
                 if (val.equals(CodeTypes.getValue())) {
+                    isMatchFound = true;
+                    break;
+                }
+            }
+        }
+        return !isMatchFound;
+    }
+
+    public boolean idTypeValueContainsAny(List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypes, String... valuesToMatch) { // FIXME change logic true false
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+        ImmutableList<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> removeNull = ImmutableList.copyOf(Iterables.filter(idTypes, Predicates.notNull()));
+        boolean isMatchFound = false;
+        for (String val : valuesToMatch) {
+            for (eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType idType : removeNull) {
+                if (val.equals(idType.getValue())) {
                     isMatchFound = true;
                     break;
                 }

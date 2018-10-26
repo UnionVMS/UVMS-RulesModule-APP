@@ -348,4 +348,11 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4103" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(ownerFluxPartyIds) &amp;&amp; idTypeValueContainsAny(ownerFluxPartyIds, &quot;XEU&quot;, &quot;XFA&quot;) &amp;&amp; !matchWithFluxTL(ownerFluxPartyIds)"/>
+            <where>BR_ID = 'FA-L03-00-0045'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
