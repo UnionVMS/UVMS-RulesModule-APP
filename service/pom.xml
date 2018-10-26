@@ -113,10 +113,23 @@
             <version>4.0.0</version>
         </dependency>
 
-        <!-- drools dependencies -->
+        <!-- START Drools dependencies -->
+
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-core</artifactId>
+            <version>${drools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-bom</artifactId>
+            <type>pom</type>
+            <version>${drools.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.kie</groupId>
             <artifactId>kie-api</artifactId>
+            <version>${drools.version}</version>
         </dependency>
         <dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
@@ -126,15 +139,21 @@
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-compiler</artifactId>
+            <version>${drools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kie</groupId>
             <artifactId>kie-internal</artifactId>
+            <version>${drools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-templates</artifactId>
+            <version>${drools.version}</version>
         </dependency>
+
+        <!-- END DROOLS Dependencies -->
+
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-message</artifactId>

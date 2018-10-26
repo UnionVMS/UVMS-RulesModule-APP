@@ -72,7 +72,7 @@ public class RulesKieContainerInitializer {
             KieContainer faRespContainer = createContainer(faResponseTemplatesAndRules);
 
             log.info("Initializing templates and rules for FA-Query facts. Nr. of Rules : {}", faQueryTemplatesAndRules.size());
-            KieContainer faQueryContainer =  createContainer(faQueryTemplatesAndRules);
+            KieContainer faQueryContainer = createContainer(faQueryTemplatesAndRules);
 
             log.info("Initializing templates and rules for Sales facts. Nr. of Rules : {}", salesTemplatesAndRules.size());
             KieContainer salesContainer = createContainer(salesTemplatesAndRules);
@@ -88,8 +88,9 @@ public class RulesKieContainerInitializer {
                 throw new RuntimeException("Please include all the <code>FactType</code> in the KieContainers");
             }
             log.info("It took " + stopwatch + " to initialize the rules.");
-        } catch (RulesModelException e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
+            throw new RuntimeException("Couldn't initialize rules engine!!");
         }
     }
 

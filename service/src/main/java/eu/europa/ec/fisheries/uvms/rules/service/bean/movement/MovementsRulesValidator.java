@@ -67,12 +67,10 @@ public class MovementsRulesValidator {
     private KieFileSystem customKfs;
     private KieContainer customKcontainer;
 
-
-
-    @PostConstruct
+    //@PostConstruct
     public void initMovementRules(){
         log.info("Initializing SanityRules for Movemement.");
-        updateSanityRules();
+        //updateSanityRules();
     }
 
     @Lock(LockType.WRITE)
