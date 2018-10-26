@@ -363,4 +363,11 @@
         </update>
     </changeSet>
 
+    <changeSet id="FA-L00-00-0058" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="registrationVesselCountryId != null  &amp;&amp; isEmpty(registrationVesselCountryId.value)"/>
+            <where>BR_ID = 'FA-L00-00-0058'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
