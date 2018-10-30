@@ -11,10 +11,13 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
+import java.math.BigDecimal;
+import java.util.*;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
@@ -31,10 +34,6 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
-
-import java.math.BigDecimal;
-import java.util.*;
-
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
@@ -152,7 +151,7 @@ public class ActivityFactMapper {
 
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, UNIQUE_IDS_PROP);
 
-        faReportDocumentFact.setRelatedFLUXReportDocumentReferencedID(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentReferencedID(faReportDocument)));
+        faReportDocumentFact.setReferencedID(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentReferencedID(faReportDocument)));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, REFERENCED_ID).storeInRepo(faReportDocumentFact, RELATED_FLUX_REPORT_DOCUMENT_REFERENCED_ID_PROP);
 
         faReportDocumentFact.setRelatedFLUXReportDocumentIDs(mapToIdType(faReportDocumentsRelatedFLUXReportDocumentIDS(faReportDocument)));
@@ -226,7 +225,7 @@ public class ActivityFactMapper {
         return null;
     }
 
-    public List<FaReportDocumentFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments) {
+    public List<FaReportDocumentFact> generateFactForFaReportDocuments(List<FAReportDocument> faReportDocuments, MessageType messageType) {
         if (faReportDocuments == null) {
             return emptyList();
         }
@@ -236,6 +235,7 @@ public class ActivityFactMapper {
         for (FAReportDocument fAReportDocument : faReportDocuments) {
             xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
             FaReportDocumentFact faReportDocumentFact = generateFactForFaReportDocument(fAReportDocument);
+            faReportDocumentFact.setMessageType(messageType);
             if(fAReportDocument.getRelatedFLUXReportDocument() != null){
                 faReportDocumentFact.setCreationDateOfMessage(mapToJodaDateTime(fAReportDocument.getRelatedFLUXReportDocument().getCreationDateTime()));
             }
@@ -248,8 +248,8 @@ public class ActivityFactMapper {
 
     private Map<FishingActivityType, List<String>> collectTripsPerFaTypeFromMessage(List<FAReportDocument> faReportDocuments) {
         HashMap<FishingActivityType, List<String>> tripsPerFaTypeFromFasInReports = new HashMap<>();
-        tripsPerFaTypeFromFasInReports.put(FishingActivityType.ARRIVAL, new ArrayList<String>());
-        tripsPerFaTypeFromFasInReports.put(FishingActivityType.DEPARTURE, new ArrayList<String>());
+        tripsPerFaTypeFromFasInReports.put(FishingActivityType.ARRIVAL, new ArrayList<>());
+        tripsPerFaTypeFromFasInReports.put(FishingActivityType.DEPARTURE, new ArrayList<>());
         if (CollectionUtils.isEmpty(faReportDocuments)){
             return tripsPerFaTypeFromFasInReports;
         }
@@ -2016,20 +2016,7 @@ public class ActivityFactMapper {
     }
 
     public IdType mapToIdType(IDType idType) {
-        if (idType == null) {
-            return null;
-        }
-
-        boolean notBlankValue = StringUtils.isNotBlank(idType.getValue());
-
-        if (notBlankValue){
-            IdType idType1 = new IdType();
-            idType1.setSchemeId(idType.getSchemeID());
-            idType1.setValue(idType.getValue());
-
-            return idType1;
-        }
-        return null;
+        return idType == null ? null : new IdType(idType.getValue(), idType.getSchemeID());
     }
 
     private List<IdType> mapToIdType(List<IDType> idTypes) {
@@ -2812,4 +2799,9 @@ public class ActivityFactMapper {
     public  List<VesselTransportMeansDto> getTransportMeansDtos(){
         return transportMeans;
     }
+
+    public void setFaRelatedReportIds(List<IdType> faRelatedReportIds) {
+        this.faRelatedReportIds = faRelatedReportIds;
+    }
+
 }
