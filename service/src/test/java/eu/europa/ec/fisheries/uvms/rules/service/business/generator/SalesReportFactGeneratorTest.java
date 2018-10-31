@@ -1,9 +1,11 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import java.util.*;
 import eu.europa.ec.fisheries.schema.sales.AuctionSaleType;
 import eu.europa.ec.fisheries.schema.sales.Report;
 import eu.europa.ec.fisheries.schema.sales.SalesCategoryType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
@@ -18,9 +20,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.*;
-
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.CREATION_DATE_OF_MESSAGE;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static org.junit.Assert.assertEquals;
@@ -46,7 +45,7 @@ public class SalesReportFactGeneratorTest {
         helper = new SalesObjectsHelper();
 
         mapper = defaultOrikaMapper.getMapper();
-        salesReportFactGenerator = new SalesReportFactGenerator(factGeneratorHelper, mapper);
+        salesReportFactGenerator = new SalesReportFactGenerator(factGeneratorHelper, mapper, MessageType.PULL);
     }
 
     @Test

@@ -13,12 +13,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.schema.sales.*;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.FactCandidate;
-import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.Source;
+import eu.europa.ec.fisheries.uvms.rules.service.business.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.FactGeneratorHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -28,12 +29,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWr
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.joda.time.DateTime;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.CREATION_DATE_OF_MESSAGE;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
@@ -47,8 +42,12 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
     private FactGeneratorHelper factGeneratorHelper;
     private XPathStringWrapper xPathUtil;
 
+    public SalesQueryFactGenerator(){
+        this(MessageType.PULL);
+    }
 
-    public SalesQueryFactGenerator() {
+    public SalesQueryFactGenerator(MessageType messageType) {
+        super(messageType);
         this.xPathUtil = new XPathStringWrapper();
         this.mapper = new DefaultOrikaMapper().getMapper();
         this.mappingsToFacts = new HashMap<>();
@@ -56,8 +55,8 @@ public class SalesQueryFactGenerator extends AbstractGenerator<FLUXSalesQueryMes
         fillMap();
     }
 
-    public SalesQueryFactGenerator(FactGeneratorHelper factGeneratorHelper, MapperFacade mapperFacade) {
-        this();
+    public SalesQueryFactGenerator(FactGeneratorHelper factGeneratorHelper, MapperFacade mapperFacade, MessageType messageType) {
+        this(messageType);
         this.factGeneratorHelper = factGeneratorHelper;
         this.mapper = mapperFacade;
     }

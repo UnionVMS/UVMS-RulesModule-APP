@@ -10,20 +10,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-
 import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheService;
@@ -31,13 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesQueryFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesReportFactGenerator;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.*;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
@@ -49,6 +35,11 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import static eu.europa.ec.fisheries.uvms.rules.service.business.MessageType.PULL;
+import static eu.europa.ec.fisheries.uvms.rules.service.business.MessageType.PUSH;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 
 @Stateless
 @Slf4j
@@ -90,7 +81,7 @@ public class RulesEngineBean {
 
             if (businessObjectType == BusinessObjectType.RECEIVING_FA_REPORT_MSG || businessObjectType == BusinessObjectType.SENDING_FA_REPORT_MSG) {
 
-                AbstractGenerator generator = new ActivityFaReportFactGenerator();
+                AbstractGenerator generator = new ActivityFaReportFactGenerator(businessObjectType == BusinessObjectType.RECEIVING_FA_REPORT_MSG ? PULL : PUSH);
                 generator.setBusinessObjectMessage(businessObject);
                 generator.setExtraValueMap(extraValues);
                 generator.setAdditionalValidationObject();
@@ -106,7 +97,7 @@ public class RulesEngineBean {
                 faResponseFactMapper.setFaResponseIds(idsFromDb);
                 faResponseFactMapper.setFrom(from);
                 faResponseFactMapper.setMessageType(MessageType.PUSH);
-                AbstractGenerator generator = new ActivityResponseFactGenerator((FLUXResponseMessage) businessObject, faResponseFactMapper);
+                AbstractGenerator generator = new ActivityResponseFactGenerator((FLUXResponseMessage) businessObject, faResponseFactMapper, PUSH);
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
@@ -118,8 +109,8 @@ public class RulesEngineBean {
                 List<IdType> idsFromDb = (List<IdType>) extraValues.get(RESPONSE_IDS);
                 faResponseFactMapper.setFaResponseIds(idsFromDb);
                 faResponseFactMapper.setFrom(from);
-                faResponseFactMapper.setMessageType(MessageType.PULL);
-                AbstractGenerator generator = new ActivityResponseFactGenerator((FLUXResponseMessage) businessObject, faResponseFactMapper);
+                faResponseFactMapper.setMessageType(PULL);
+                AbstractGenerator generator = new ActivityResponseFactGenerator((FLUXResponseMessage) businessObject, faResponseFactMapper, PULL);
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
@@ -127,7 +118,7 @@ public class RulesEngineBean {
 
             } else if (businessObjectType == BusinessObjectType.RECEIVING_FA_QUERY_MSG || businessObjectType == BusinessObjectType.SENDING_FA_QUERY_MSG) {
 
-                AbstractGenerator generator = new ActivityQueryFactGenerator();
+                AbstractGenerator generator = new ActivityQueryFactGenerator(businessObjectType == BusinessObjectType.RECEIVING_FA_QUERY_MSG ? PULL : PUSH);
                 generator.setBusinessObjectMessage(businessObject);
                 generator.setExtraValueMap(extraValues);
                 generator.setAdditionalValidationObject();
@@ -138,7 +129,7 @@ public class RulesEngineBean {
 
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_QUERY_MSG) {
 
-                AbstractGenerator generator = new SalesQueryFactGenerator();
+                AbstractGenerator generator = new SalesQueryFactGenerator(businessObjectType == BusinessObjectType.FLUX_SALES_QUERY_MSG ? PULL : PUSH);
                 generator.setBusinessObjectMessage(businessObject);
                 generator.setExtraValueMap(extraValues);
                 generator.setAdditionalValidationObject();
