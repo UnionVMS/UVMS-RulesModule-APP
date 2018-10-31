@@ -246,8 +246,8 @@ public class ActivityFactMapper {
 
     private Map<FishingActivityType, List<String>> collectTripsPerFaTypeFromMessage(List<FAReportDocument> faReportDocuments) {
         HashMap<FishingActivityType, List<String>> tripsPerFaTypeFromFasInReports = new HashMap<>();
-        tripsPerFaTypeFromFasInReports.put(FishingActivityType.ARRIVAL, new ArrayList<String>());
-        tripsPerFaTypeFromFasInReports.put(FishingActivityType.DEPARTURE, new ArrayList<String>());
+        tripsPerFaTypeFromFasInReports.put(FishingActivityType.ARRIVAL, new ArrayList<>());
+        tripsPerFaTypeFromFasInReports.put(FishingActivityType.DEPARTURE, new ArrayList<>());
         if (CollectionUtils.isEmpty(faReportDocuments)){
             return tripsPerFaTypeFromFasInReports;
         }
@@ -2766,12 +2766,12 @@ public class ActivityFactMapper {
         this.xPathUtil = xPathUtil1;
     }
 
-    public void setFishingActivitiesWithTripIds(List<String> fishingActivitiesWithTripIds) {
-        this.fishingActivitiesWithTripIds = fishingActivitiesWithTripIds;
-    }
-
     public void setSenderReceiver(String value) {
         senderReceiver = value;
+    }
+
+    public void setFishingActivitiesWithTripIds(List<String> fishingActivitiesWithTripIds) {
+        this.fishingActivitiesWithTripIds = fishingActivitiesWithTripIds;
     }
 
     public List<IdType> getFaReportMessageIds() {
