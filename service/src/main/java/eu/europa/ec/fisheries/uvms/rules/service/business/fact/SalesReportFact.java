@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
+@ToString
 public class SalesReportFact extends SalesAbstractFact {
 
     public static final String MDR_FISH_FRESHNESS = "FISH_FRESHNESS";

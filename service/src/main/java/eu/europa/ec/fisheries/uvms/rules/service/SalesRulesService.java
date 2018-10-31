@@ -102,4 +102,6 @@ public interface SalesRulesService {
      * @return
      */
     boolean isCFRInFleetUnderFlagStateOnLandingDate(SalesFishingActivityFact fact);
+
+    boolean sale_L02_00_0183(SalesFLUXLocationFact fact);
 }

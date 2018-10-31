@@ -4,10 +4,12 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
 
+@ToString
 public class SalesFishingActivityFact extends SalesAbstractFact {
 
     private List<IdType> ids;
