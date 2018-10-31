@@ -714,7 +714,16 @@ public abstract class AbstractFact {
             return true;
         }
         ImmutableList<CodeType> removeNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
-        return !Collections.disjoint(removeNull, Arrays.asList(valuesToMatch));
+        boolean isMatchFound = false;
+        for (String val : valuesToMatch) {
+            for (CodeType CodeTypes : removeNull) {
+                if (val.equals(CodeTypes.getValue())) {
+                    isMatchFound = true;
+                    break;
+                }
+            }
+        }
+        return !isMatchFound;
     }
 
     public boolean idTypeValueContainsAny(List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypes, String... valuesToMatch) { // FIXME change logic true false
