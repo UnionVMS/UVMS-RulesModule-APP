@@ -200,13 +200,13 @@ public class RulesFaQueryServiceBean {
                 log.debug("The Validation of FaQueryMessage is successful, forwarding message to Exchange");
                 String exchangeReq = ExchangeModuleRequestMapper.createSendFaQueryMessageRequest(request.getRequest(),
                         "movement", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST");
+                rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
                 sendToExchange(exchangeReq);
             } else {
                 log.debug("Validation resulted in errors. Not going to send msg to Exchange module..");
             }
             XPathRepository.INSTANCE.clear(faQueryFacts);
             idsFromIncommingMessage.removeAll(faQueryIdsFromDb);
-            rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
 
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFaQueryMessage received message! It is malformed!");
