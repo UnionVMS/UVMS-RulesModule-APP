@@ -116,7 +116,6 @@ public class RulesFaQueryServiceBean {
             Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues, String.valueOf(faQueryMessage.getFAQuery().getID()));
 
             idsFromIncomingMessage.removeAll(faQueryIdsFromDb);
-            rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
 
             ValidationResult faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, exchangeLogGuid, RawMsgType.FA_QUERY);
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faQueryValidationReport));
@@ -126,6 +125,7 @@ public class RulesFaQueryServiceBean {
                 log.debug("The Validation of FaQueryMessage is successful, going to check permissions (Subscriptions)..");
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_QUERY_MESSAGE);
                 if (hasPermissions) { // Send query to activity.
+                    rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
                     log.debug("Request has permissions. Going to send FaQuery to Activity Module...");
                     setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getType(), exchangeLogGuid);
                     if (setFLUXFAReportMessageRequest.isIsEmptyReport()) {

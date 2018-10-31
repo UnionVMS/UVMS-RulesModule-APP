@@ -377,4 +377,11 @@
         </update>
     </changeSet>
 
+    <changeSet id="FA-L01-00-0247" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="reasonCode != null &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; listIdContainsAll(reasonCode, &quot;FA_REASON_ENTRY&quot;)"/>
+            <where>BR_ID = 'FA-L01-00-0247'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
