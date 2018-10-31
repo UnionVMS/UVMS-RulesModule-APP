@@ -698,32 +698,23 @@ public abstract class AbstractFact {
         return found;
     }
 
-    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) { // FIXME change logic true false
+    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
         return codeType == null || valueContainsAny(Collections.singletonList(codeType), valuesToMatch);
     }
 
     /**
-     * Returns true when value is not found.
+     * Returns true if at least one element is in both collections.
      *
      * @param codeTypes
      * @param valuesToMatch
      * @return
      */
-    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) { // FIXME change logic true false
+    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
         ImmutableList<CodeType> removeNull = ImmutableList.copyOf(Iterables.filter(codeTypes, Predicates.notNull()));
-        boolean isMatchFound = false;
-        for (String val : valuesToMatch) {
-            for (CodeType CodeTypes : removeNull) {
-                if (val.equals(CodeTypes.getValue())) {
-                    isMatchFound = true;
-                    break;
-                }
-            }
-        }
-        return !isMatchFound;
+        return !Collections.disjoint(removeNull, Arrays.asList(valuesToMatch));
     }
 
     public boolean idTypeValueContainsAny(List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypes, String... valuesToMatch) { // FIXME change logic true false
