@@ -47,7 +47,6 @@
 		<dispatcher>ASYNC</dispatcher>
 	</filter-mapping>
 
-    
 	<filter>
 		<filter-name>AuthenticationFilter</filter-name>
 		<filter-class>eu.europa.ec.fisheries.uvms.rest.security.AuthenticationFilter</filter-class>

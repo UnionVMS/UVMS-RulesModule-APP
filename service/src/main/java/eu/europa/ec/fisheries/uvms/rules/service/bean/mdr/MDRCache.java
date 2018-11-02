@@ -135,6 +135,8 @@ public class MDRCache {
             for (SingleCodeListRappresentation codeList : allMdrCodeLists.getCodeLists()) {
                 cache.put(MDRAcronymType.valueOf(codeList.getAcronym()), codeList.getDataSets());
             }
+        } else {
+            log.warn("Mdr Response resulted null/empty! Check if MDR is deployed!");
         }
         log.info("Nr. {} lists were cached.", cache.size());
         alreadyLoadedOnce = true;
@@ -156,6 +158,7 @@ public class MDRCache {
             }
         } catch (MdrModelMarshallException | JMSException | ActivityModelMarshallException | MessageException e) {
             log.error("Some very bad error happened while trying to get the MDR Codelists {}", e);
+            throw new RuntimeException(e.getMessage());
         }
         return null;
     }
@@ -217,6 +220,7 @@ public class MDRCache {
             }
         } catch (MessageException e) {
             log.error(" Couldn't populate MDR Refresh date.. MDR Module is deployed?");
+            throw new RuntimeException(e.getMessage());
         }
         return cacheDateChanged;
     }
