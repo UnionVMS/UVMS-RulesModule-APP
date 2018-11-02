@@ -13,12 +13,6 @@
     </parent>
 
     <dependencies>
-        <!-- RestEasy Dependency for new Servlet api v.4.0 -->
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-servlet-initializer</artifactId>
-            <version>3.6.1.Final</version>
-        </dependency>
         <!-- EJB DEPENDENCIES -->
         <dependency>
             <groupId>${project.groupId}</groupId>
