@@ -119,13 +119,12 @@ public class RulesFaQueryServiceBean {
 
             ValidationResult faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, exchangeLogGuid, RawMsgType.FA_QUERY);
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faQueryValidationReport));
-
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
             SetFLUXFAReportMessageRequest setFLUXFAReportMessageRequest = null;
             if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
                 log.debug("The Validation of FaQueryMessage is successful, going to check permissions (Subscriptions)..");
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_QUERY_MESSAGE);
                 if (hasPermissions) { // Send query to activity.
-                    rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
                     log.debug("Request has permissions. Going to send FaQuery to Activity Module...");
                     setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getType(), exchangeLogGuid);
                     if (setFLUXFAReportMessageRequest.isIsEmptyReport()) {
@@ -200,14 +199,13 @@ public class RulesFaQueryServiceBean {
                 log.debug("The Validation of FaQueryMessage is successful, forwarding message to Exchange");
                 String exchangeReq = ExchangeModuleRequestMapper.createSendFaQueryMessageRequest(request.getRequest(),
                         "movement", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST");
-                rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
                 sendToExchange(exchangeReq);
             } else {
                 log.debug("Validation resulted in errors. Not going to send msg to Exchange module..");
             }
             XPathRepository.INSTANCE.clear(faQueryFacts);
             idsFromIncommingMessage.removeAll(faQueryIdsFromDb);
-
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFaQueryMessage received message! It is malformed!");
             exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));

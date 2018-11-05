@@ -123,6 +123,7 @@ public class RulesFaReportServiceBean {
 
             idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
 
             ValidationResult faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, exchangeLogGuid, RawMsgType.FA_REPORT);
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult));
@@ -131,7 +132,6 @@ public class RulesFaReportServiceBean {
                 log.debug(" The Validation of Report is successful, forwarding message to Activity.");
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
                 if (hasPermissions) {
-                    rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
                     rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
                     log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
                     sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid);
