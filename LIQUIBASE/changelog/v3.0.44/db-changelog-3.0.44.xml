@@ -365,7 +365,7 @@
 
     <changeSet id="FA-L00-00-0058" author="emrinalgr">
         <update tableName="rule">
-            <column name="expression" value="registrationVesselCountryId != null &amp;&amp; isEmpty(registrationVesselCountryId.value)"/>
+            <column name="expression" value="registrationVesselCountryId == null || (registrationVesselCountryId != null &amp;&amp; isEmpty(registrationVesselCountryId.value))"/>
             <where>BR_ID = 'FA-L00-00-0058'</where>
         </update>
     </changeSet>
@@ -374,6 +374,13 @@
         <update tableName="rule">
             <column name="expression" value="reasonCode != null &amp;&amp; listIdContainsAll(reasonCode, &quot;FA_REASON_DEPARTURE&quot;)"/>
             <where>BR_ID = 'FA-L01-00-0235'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="FA-L01-00-0247" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="reasonCode != null &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; listIdContainsAll(reasonCode, &quot;FA_REASON_ENTRY&quot;)"/>
+            <where>BR_ID = 'FA-L01-00-0247'</where>
         </update>
     </changeSet>
 

@@ -50,6 +50,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.AS
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FA_QUERY_AND_REPORT_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FISHING_GEAR_TYPE_CHARACTERISTICS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.TRIP_ID;
 
 @Path("/rules")
 @Slf4j
@@ -111,6 +112,13 @@ public class RulesResource {
             Set<FADocumentID> idsFromIncomingMessage = helper.mapToFADocumentID(request);
             List<FADocumentID> faDocumentIDS = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);
             extraValues.put(FA_QUERY_AND_REPORT_IDS, faIdsMapper.mapToFishingActivityIdDto(faDocumentIDS));
+
+            List<String> faIdsPerTripsFromMessage = helper.collectFaIdsAndTripIds(request);
+            List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
+
+            if (msgType == null || "PULL".equals(msgType)) {
+                extraValues.put(TRIP_ID, faIdsPerTripsListFromDb);
+            }
 
             BusinessObjectType objectType = (msgType == null || "PULL".equals(msgType)) ? RECEIVING_FA_REPORT_MSG : SENDING_FA_REPORT_MSG;
             Collection<AbstractFact> facts = rulesEngine.evaluate(objectType, request, extraValues, String.valueOf(request.getFLUXReportDocument().getIDS()));

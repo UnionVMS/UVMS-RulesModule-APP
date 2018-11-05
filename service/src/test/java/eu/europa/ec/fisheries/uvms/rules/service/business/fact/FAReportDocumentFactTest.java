@@ -137,21 +137,4 @@ public class FAReportDocumentFactTest {
         boolean shouldntFail1 = reportDocumentFact.containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.ARRIVAL);
         assertFalse(shouldntFail1);
     }
-
-    @Test
-    public void containsMoreThenOneTimeTripInTheMessageItselfSad(){
-        FaReportDocumentFact reportDocumentFact = new FaReportDocumentFact();
-        HashMap<FishingActivityType, List<String>> faMap = new HashMap<>();
-        faMap.put(FishingActivityType.DEPARTURE, new ArrayList<String>(){{add("ID_1");add("ID_1");}});
-        reportDocumentFact.setTripsPerFaTypeFromMessage(faMap);
-
-        boolean shouldFail = reportDocumentFact.containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.DEPARTURE);
-        assertTrue(shouldFail);
-
-        faMap.put(FishingActivityType.ARRIVAL, new ArrayList<String>(){{add("ID_1");add("ID_1");}});
-        reportDocumentFact.setTripsPerFaTypeFromMessage(faMap);
-
-        boolean shouldfail1 = reportDocumentFact.containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.ARRIVAL);
-        assertTrue(shouldfail1);
-    }
 }
