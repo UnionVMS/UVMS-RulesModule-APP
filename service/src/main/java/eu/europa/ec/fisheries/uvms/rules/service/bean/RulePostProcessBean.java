@@ -13,15 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
@@ -36,6 +27,12 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
+import javax.ejb.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 @Stateless
 @LocalBean
 @Slf4j
@@ -44,7 +41,6 @@ public class RulePostProcessBean {
     @EJB
     private RulesDomainModel rulesDomainModel;
 
-    @Transactional(Transactional.TxType.REQUIRED)
     public ValidationResult checkAndUpdateValidationResult(Collection<AbstractFact> facts, String rawMessage, String rawMsgGuid, RawMsgType type) {
         try {
             boolean isError = false;
@@ -73,7 +69,7 @@ public class RulePostProcessBean {
         }
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public ValidationResult checkAndUpdateValidationResultForGeneralBusinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
         try {
             final ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());

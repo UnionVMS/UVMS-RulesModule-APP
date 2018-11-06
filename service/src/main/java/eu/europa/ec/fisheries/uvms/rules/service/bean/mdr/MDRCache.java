@@ -219,7 +219,7 @@ public class MDRCache {
                 cacheDateChanged = true;
             }
         } catch (MessageException e) {
-            log.error(" Couldn't populate MDR Refresh date.. MDR Module is deployed?");
+            log.error(" Couldn't populate MDR Refresh date.. MDR Module is deployed?", e);
             throw new RuntimeException(e.getMessage());
         }
         return cacheDateChanged;
@@ -241,7 +241,7 @@ public class MDRCache {
             }
             throw new MessageException("[FATAL-ERROR] Couldn't get LastRefreshDate from MDR Module! Mdr is deployed?");
         } catch (MdrModelMarshallException | JAXBException | JMSException e) {
-            throw new MessageException("[FATAL-ERROR] Couldn't get LastRefreshDate from MDR Module! Mdr is deployed?");
+            throw new MessageException("[FATAL-ERROR] Couldn't get LastRefreshDate from MDR Module! Mdr is deployed?", e);
         }
     }
 
