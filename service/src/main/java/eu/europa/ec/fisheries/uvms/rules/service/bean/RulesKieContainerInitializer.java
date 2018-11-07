@@ -204,7 +204,13 @@ public class RulesKieContainerInitializer {
     }
 
     private void enrichRulesWithMDR(List<TemplateRuleMapDto> templatesAndRules) {
-        cacheService.loadCacheForFailureMessages();
+        try {
+            log.info("Loading error messages from MDR..");
+            cacheService.loadCacheForFailureMessages();
+        } catch(Exception ex){
+            log.error("Couldn't load the error messages for the rule (failures)! {}", ex.getMessage());
+            return;
+        }
         for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
             for (RuleType ruleType : templatesAndRule.getRules()) {
                 EnrichedBRMessage enrichedBRMessage = cacheService.getErrorMessageForBrId(ruleType.getBrId());
