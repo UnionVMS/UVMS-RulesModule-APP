@@ -11,7 +11,6 @@
     <artifactId>rules</artifactId>
     <version>3.0.46-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <description>Maven projekt-archetype for UnionVms modules</description>
 
     <properties>
         <release.branch.name>uvms-3.0.5-C3PO</release.branch.name>
@@ -52,6 +51,11 @@
         <flux.movement.client.version>2.0.1</flux.movement.client.version>
         <project.scm.id>github</project.scm.id>
         <dozer.version>5.5.1</dozer.version>
+
+        <docker.dev.version>3.29.2.w14</docker.dev.version>
+        <docker.liquibase.changeLogFile>LIQUIBASE/changelog/db-changelog-master.xml</docker.liquibase.changeLogFile>
+        <docker.liquibase.db.user>rules</docker.liquibase.db.user>
+        <docker.liquibase.db.passwd>rules</docker.liquibase.db.passwd>
 
         <!-- Packages that need to be excluded from sonar coverage -->
         <sonar.exclusions>

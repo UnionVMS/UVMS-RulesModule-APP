@@ -171,7 +171,7 @@
 							<images>
 								<image>
 									<alias>postgres</alias>
-									<name>uvms/postgres-base:3.22.0</name>
+									<name>uvms/postgres-base:${docker.dev.version}</name>
 									<run>
 										<net>bridge</net>
 										<namingStrategy>none</namingStrategy>
@@ -297,7 +297,7 @@
 				<version>2.4.1</version>
 				<configuration>
 					<descriptor>assembly.xml</descriptor>
-					<finalName>${artifactId}</finalName>
+					<finalName>${project.artifactId}</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 				<executions>
