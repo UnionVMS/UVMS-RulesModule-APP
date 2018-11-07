@@ -9,7 +9,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.0.45-SNAPSHOT</version>
+        <version>3.0.46-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -35,7 +35,7 @@
 				</exclusion>
 				<exclusion>
 				    <groupId>net.sf.ehcache</groupId>
-  					<artifactId>ehcache</artifactId>				
+  					<artifactId>ehcache</artifactId>
 				</exclusion>
                 <exclusion>
                     <groupId>com.google.guava</groupId>

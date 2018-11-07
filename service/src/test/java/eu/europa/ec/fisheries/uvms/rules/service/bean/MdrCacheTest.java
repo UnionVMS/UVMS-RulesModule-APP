@@ -83,13 +83,9 @@ public class MdrCacheTest {
     public void testGetListFromCache() {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.MDR_EVENT))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class), anyLong())).thenReturn(textMessage);
-        //doNothing().when(mdrCache).loadAllMdrCodeLists(true);
-        try{
-            mdrCache.init();
-        }catch(RuntimeException ignored){
-        }
-        List<ObjectRepresentation> faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
 
+        mdrCache.init();
+        List<ObjectRepresentation> faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
         assertTrue(CollectionUtils.isNotEmpty(faCatchTypeEntries));
     }
 
@@ -98,12 +94,8 @@ public class MdrCacheTest {
     public void testGetListFromCacheNull() {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.MDR_EVENT))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(null);
-
         List<ObjectRepresentation> faCatchTypeEntries = null;
-        try{
-            mdrCache.init();
-        }catch(RuntimeException ignored){
-        }
+        mdrCache.init();
         try {
             faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
         } catch (CacheLoader.InvalidCacheLoadException ex) {

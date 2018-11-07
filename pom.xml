@@ -9,7 +9,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.0.45-SNAPSHOT</version>
+    <version>3.0.46-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Maven projekt-archetype for UnionVms modules</description>
 
@@ -31,11 +31,11 @@
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <uvms.test.version>0.0.8</uvms.test.version>
 
-        <usm4uvms.version>4.0.13-SNAPSHOT</usm4uvms.version>
-        <uvms.config.version>4.0.2-SNAPSHOT</uvms.config.version>
+        <usm4uvms.version>4.0.13</usm4uvms.version>
+        <uvms.config.version>4.0.2</uvms.config.version>
         <uvms.common.version>3.0.29</uvms.common.version>
         <movement.model.version>4.0.15</movement.model.version>
-        <exchange.model.version>4.0.23-SNAPSHOT</exchange.model.version>
+        <exchange.model.version>4.0.23</exchange.model.version>
         <mobileterminal.model.version>4.0.13</mobileterminal.model.version>
         <user.model.version>2.0.6</user.model.version>
 

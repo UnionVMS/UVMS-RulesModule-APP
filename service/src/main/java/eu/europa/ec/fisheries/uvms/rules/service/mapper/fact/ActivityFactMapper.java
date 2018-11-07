@@ -200,6 +200,7 @@ public class ActivityFactMapper {
         faReportDocumentFact.setNonUniqueIdsList(faRelatedReportIds);
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_REPORT_DOCUMENT, ID).storeInRepo(faReportDocumentFact, "nonUniqueIdsList");
 
+        faReportDocumentFact.setTripsPerFaTypeFromThisReport(collectTripsPerFaTypeFromMessage(Collections.singletonList(faReportDocument)));
         return faReportDocumentFact;
     }
 
