@@ -1785,7 +1785,7 @@
             <column name="rule_id" value="10241"/>
             <column name="br_id" value="SALE-L02-00-0183"/>
             <column name="expression"
-                    value="ID == null &amp;&amp; (typeCode == null || !(typeCode.getValue().equals(&quot;POSITION&quot;) || typeCode.getValue().equals(&quot;ADDRESS&quot;)))"/>
+                    value="salesService.sale_L02_00_0183($fact)"/>
             <column name="note" value="Optional for geographical location"/>
             <column name="message" value="Check presence. Must be present, unless type is 'POSITION' or 'ADDRESS'"/>
             <column name="level" value="L02"/>

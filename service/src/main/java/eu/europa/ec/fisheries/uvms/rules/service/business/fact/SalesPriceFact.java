@@ -4,10 +4,12 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.AmountType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.SalesFactHelper;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
 
+@ToString
 public class SalesPriceFact extends SalesAbstractFact {
 
     private List<AmountType> chargeAmounts;

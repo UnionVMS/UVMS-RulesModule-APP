@@ -5,10 +5,12 @@ import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
 
+@ToString
 public class SalesEventFact extends SalesAbstractFact {
 
     private DateTimeType occurrenceDateTime;

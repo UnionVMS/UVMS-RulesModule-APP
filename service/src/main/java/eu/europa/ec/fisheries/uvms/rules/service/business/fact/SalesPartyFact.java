@@ -5,10 +5,12 @@ import eu.europa.ec.fisheries.schema.sales.FLUXOrganizationType;
 import eu.europa.ec.fisheries.schema.sales.StructuredAddressType;
 import eu.europa.ec.fisheries.schema.sales.TextType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
 
+@ToString
 public class SalesPartyFact extends SalesAbstractFact {
 
     private IdType id;
