@@ -31,8 +31,8 @@
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <uvms.test.version>0.0.8</uvms.test.version>
 
-        <usm4uvms.version>4.0.13</usm4uvms.version>
-        <uvms.config.version>4.0.2</uvms.config.version>
+        <usm4uvms.version>4.0.14-WILDFLY14-JEE8</usm4uvms.version>
+        <uvms.config.version>4.0.2-WILDFLY14-JEE8</uvms.config.version>
         <uvms.common.version>3.0.29</uvms.common.version>
         <movement.model.version>4.0.15</movement.model.version>
         <exchange.model.version>4.0.23</exchange.model.version>
