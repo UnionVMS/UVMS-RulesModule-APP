@@ -271,8 +271,13 @@ public class MDRCache {
         final List<ObjectRepresentation> objRapprList = new ArrayList<>();
         List<ObjectRepresentation> brDef = getEntry(MDRAcronymType.FA_BR_DEF);
         List<ObjectRepresentation> saleBrDef = getEntry(MDRAcronymType.SALE_BR_DEF);
-        objRapprList.addAll(brDef);
-        objRapprList.addAll(saleBrDef);
+        // For start up non reachable MDR purposes :)
+        if(CollectionUtils.isNotEmpty(brDef)){
+            objRapprList.addAll(brDef);
+        }
+        if(CollectionUtils.isNotEmpty(saleBrDef)){
+            objRapprList.addAll(saleBrDef);
+        }
         objRapprList.removeAll(Collections.singleton(null));
         if(CollectionUtils.isEmpty(objRapprList)){
             return;
