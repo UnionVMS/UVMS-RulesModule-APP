@@ -72,6 +72,9 @@ public class MDRCache {
 
     private static final int MB = 1024 * 1024;
 
+    private static final long TIME_TO_LIVE_IN_MILLIS = 300000L;
+    private static final long TIME_TO_CONSUME_IN_MILLIS = 60000L;
+
     @PostConstruct
     public void init() {
         cache = new ConcurrentHashMap<>();
@@ -157,8 +160,8 @@ public class MDRCache {
         String request;
         try {
             request = MdrModuleMapper.createFluxMdrGetAllCodeListRequest();
-            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, 300000L, DeliveryMode.NON_PERSISTENT);
-            TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
+            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, TIME_TO_LIVE_IN_MILLIS, DeliveryMode.NON_PERSISTENT);
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class, TIME_TO_CONSUME_IN_MILLIS);
             if (message != null) {
                 response = unmarshallTextMessage(message.getText(), MdrGetAllCodeListsResponse.class);
                 return response;
@@ -204,8 +207,8 @@ public class MDRCache {
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronymType.name());
-            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, 300000L, DeliveryMode.NON_PERSISTENT);
-            TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
+            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, TIME_TO_LIVE_IN_MILLIS, DeliveryMode.NON_PERSISTENT);
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class, TIME_TO_CONSUME_IN_MILLIS);
             long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
             if (elapsed > 100) {
                 log.info("Loading {} took {} ", acronymType, stopwatch);
