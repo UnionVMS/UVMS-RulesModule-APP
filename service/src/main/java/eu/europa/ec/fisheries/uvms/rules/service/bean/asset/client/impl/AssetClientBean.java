@@ -71,6 +71,7 @@ public class AssetClientBean implements IAssetClient {
                 reportDate = reportCreationDateTime;
             }
 
+            String reportDate = vesselTransportMeansDto.getReportCreationDateTime();
             String regCountry = vesselTransportMeansDto.getRegistrationVesselCountry();
             Map<String, String> ids = vesselTransportMeansDto.getIds();
 
@@ -114,7 +115,6 @@ public class AssetClientBean implements IAssetClient {
         }
         mapVesselTransportMeansToDto(vesselTransportMeansFactCollectedList, faReportDocument, faReportDocument.getSpecifiedVesselTransportMeans());
     }
-
 
     private void mapVesselTransportMeansToDto(List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList, FAReportDocument faReportDocument, VesselTransportMeans transportMeans) {
         if (transportMeans != null) {
