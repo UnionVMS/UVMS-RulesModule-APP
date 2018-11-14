@@ -64,11 +64,11 @@ public class AssetClientBean implements IAssetClient {
         while (iterator.hasNext()) {
             VesselTransportMeansDto vesselTransportMeansDto = iterator.next();
 
-            String acceptanceDateTime = vesselTransportMeansDto.getReportCreationDateTime();
+            String reportCreationDateTime = vesselTransportMeansDto.getReportCreationDateTime();
 
             String reportDate = DateUtils.END_OF_TIME.toString();
-            if (StringUtils.isNotEmpty(acceptanceDateTime)){
-                reportDate = acceptanceDateTime;
+            if (StringUtils.isNotEmpty(reportCreationDateTime)){
+                reportDate = reportCreationDateTime;
             }
 
             String regCountry = vesselTransportMeansDto.getRegistrationVesselCountry();
@@ -119,7 +119,7 @@ public class AssetClientBean implements IAssetClient {
     private void mapVesselTransportMeansToDto(List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList, FAReportDocument faReportDocument, VesselTransportMeans transportMeans) {
         if (transportMeans != null) {
             VesselTransportMeansDto relatedMeansDto = new VesselTransportMeansDto();
-            setAcceptanceDateTime(faReportDocument, relatedMeansDto);
+            setReportCreationDateTime(faReportDocument, relatedMeansDto);
 
             List<IDType> relatedIds = transportMeans.getIDS();
             for (IDType id : relatedIds) {
@@ -133,7 +133,7 @@ public class AssetClientBean implements IAssetClient {
         }
     }
 
-    private void setAcceptanceDateTime(FAReportDocument faReportDocument, VesselTransportMeansDto vesselTransportMeansFactCollected) {
+    private void setReportCreationDateTime(FAReportDocument faReportDocument, VesselTransportMeansDto vesselTransportMeansFactCollected) {
         if (faReportDocument != null && faReportDocument.getRelatedFLUXReportDocument() != null) {
             DateTimeType creationDateTime = faReportDocument.getRelatedFLUXReportDocument().getCreationDateTime();
             XMLGregorianCalendar dateTime = creationDateTime.getDateTime();
