@@ -149,7 +149,7 @@ public class FaReportDocumentFact extends AbstractFact {
 
         if (CollectionUtils.isNotEmpty(declaredInFaReportList)){
             for (String s : declaredInFaReportList) {
-                if (Collections.frequency(declaredInMessageList, s) >= 2){
+                if (Collections.frequency(declaredInMessageList, s) > 2){
                     return true;
                 }
             }
