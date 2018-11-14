@@ -90,8 +90,6 @@ public class AssetClientBean implements IAssetClient {
         return vesselTransportMeansFactCollectedList;
     }
 
-
-
     private void collectAndMap(List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList, FAReportDocument faReportDocument) {
         List<FishingActivity> specifiedFishingActivities = faReportDocument.getSpecifiedFishingActivities();
         for (FishingActivity specifiedFishingActivity : specifiedFishingActivities) {
@@ -159,8 +157,7 @@ public class AssetClientBean implements IAssetClient {
 
         return Optional.fromNullable(historyOnDate);
     }
-
-
+    
     protected Comparator<Asset> assetComparator() {
         return new Comparator<Asset>() {
             @Override
