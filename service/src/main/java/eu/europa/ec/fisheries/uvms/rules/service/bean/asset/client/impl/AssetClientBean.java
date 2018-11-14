@@ -71,7 +71,6 @@ public class AssetClientBean implements IAssetClient {
                 reportDate = reportCreationDateTime;
             }
 
-            String reportDate = vesselTransportMeansDto.getReportCreationDateTime();
             String regCountry = vesselTransportMeansDto.getRegistrationVesselCountry();
             Map<String, String> ids = vesselTransportMeansDto.getIds();
 
