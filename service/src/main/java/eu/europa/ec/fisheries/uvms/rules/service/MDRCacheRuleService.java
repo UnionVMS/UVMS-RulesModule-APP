@@ -10,6 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service;
 
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
@@ -58,6 +59,8 @@ public interface MDRCacheRuleService {
 
     List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym);
 
-    void loadCacheForFailureMessages();
+    String getErrorMessageStrForBrId(String brid);
+
+    String getErrorTypeStrForBrId(String brid);
 
 }

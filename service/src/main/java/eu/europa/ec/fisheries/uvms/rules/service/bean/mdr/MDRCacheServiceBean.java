@@ -49,11 +49,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         cache.loadAllMdrCodeLists(isFromReport);
     }
 
-    @Override
-    public EnrichedBRMessage getErrorMessageForBrId(String brId) {
-        return cache.getErrorMessage(brId);
-    }
-
     /**
      * Check if value passed is present in the MDR list speified
      *
@@ -391,6 +386,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return null;
     }
 
+
     @Override
     public boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage) {
         List<ObjectRepresentation> faoAreas = cache.getEntry(MDRAcronymType.FAO_AREA);
@@ -406,14 +402,29 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                 id.getValue(), "placesCode", countryID.getValue(), locations, creationDateOfMessage);
     }
 
+
     @Override
     public List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym) {
         return cache.getEntry(mdrAcronym);
     }
 
+
     @Override
-    public void loadCacheForFailureMessages() {
-        cache.loadCacheForFailureMessages();
+    public EnrichedBRMessage getErrorMessageForBrId(String brId) {
+        return cache.getErrorMessage(brId);
+    }
+
+
+    @Override
+    public String getErrorMessageStrForBrId(String brid) {
+        EnrichedBRMessage errorMessage = cache.getErrorMessage(brid);
+        return errorMessage != null ? errorMessage.getMessage() : StringUtils.EMPTY;
+    }
+
+    @Override
+    public String getErrorTypeStrForBrId(String brid) {
+        EnrichedBRMessage errorMessage = cache.getErrorMessage(brid);
+        return errorMessage != null ? errorMessage.getType() : StringUtils.EMPTY;
     }
 
 

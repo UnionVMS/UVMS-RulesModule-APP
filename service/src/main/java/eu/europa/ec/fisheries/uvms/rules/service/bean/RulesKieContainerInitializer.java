@@ -16,11 +16,9 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
@@ -59,7 +57,6 @@ public class RulesKieContainerInitializer {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             List<TemplateRuleMapDto> allTemplates = rulesDb.getAllFactTemplatesAndRules();
-            enrichRulesWithMDR(allTemplates);
 
             List<TemplateRuleMapDto> faResponseTemplatesAndRules = getFaResponseRules(allTemplates);
             List<TemplateRuleMapDto> faTemplatesAndRules = getFaMessageRules(allTemplates);
@@ -202,29 +199,6 @@ public class RulesKieContainerInitializer {
         }
         allTemplates.removeAll(faQueryTemplates);
         return faQueryTemplates;
-    }
-
-    private void enrichRulesWithMDR(List<TemplateRuleMapDto> templatesAndRules) {
-        try {
-            log.info("Loading error messages from MDR..");
-            cacheService.loadCacheForFailureMessages();
-        } catch(Exception ex){
-            log.error("Couldn't load the error messages for the rule (failures)! {}", ex.getMessage());
-            return;
-        }
-        for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
-            for (RuleType ruleType : templatesAndRule.getRules()) {
-                EnrichedBRMessage enrichedBRMessage = cacheService.getErrorMessageForBrId(ruleType.getBrId());
-                if (enrichedBRMessage != null) {
-                    String errorMessageForBrId = enrichedBRMessage.getMessage();
-                    if (StringUtils.isNotEmpty(errorMessageForBrId)) {
-                        ruleType.setMessage(errorMessageForBrId.replaceAll("\"", "&quot;"));
-                        enrichedBRMessage.setTemplateEntityName(templatesAndRule.getTemplateType().getType().name());
-                        enrichedBRMessage.setExpression(ruleType.getExpression());
-                    }
-                }
-            }
-        }
     }
 
     public KieContainer getContainerByType(ContainerType containerType) {
