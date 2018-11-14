@@ -64,7 +64,7 @@ public class AssetClientBean implements IAssetClient {
         while (iterator.hasNext()) {
             VesselTransportMeansDto vesselTransportMeansDto = iterator.next();
 
-            String acceptanceDateTime = vesselTransportMeansDto.getAcceptanceDateTime();
+            String acceptanceDateTime = vesselTransportMeansDto.getReportCreationDateTime();
 
             String reportDate = DateUtils.END_OF_TIME.toString();
             if (StringUtils.isNotEmpty(acceptanceDateTime)){
@@ -134,11 +134,11 @@ public class AssetClientBean implements IAssetClient {
     }
 
     private void setAcceptanceDateTime(FAReportDocument faReportDocument, VesselTransportMeansDto vesselTransportMeansFactCollected) {
-        if (faReportDocument != null && faReportDocument.getAcceptanceDateTime() != null) {
-            DateTimeType acceptanceDateTime1 = faReportDocument.getAcceptanceDateTime();
-            XMLGregorianCalendar dateTime = acceptanceDateTime1.getDateTime();
+        if (faReportDocument != null && faReportDocument.getRelatedFLUXReportDocument() != null) {
+            DateTimeType creationDateTime = faReportDocument.getRelatedFLUXReportDocument().getCreationDateTime();
+            XMLGregorianCalendar dateTime = creationDateTime.getDateTime();
             if (dateTime != null) {
-                vesselTransportMeansFactCollected.setAcceptanceDateTime(dateTime.toString());
+                vesselTransportMeansFactCollected.setReportCreationDateTime(dateTime.toString());
             }
         }
     }
