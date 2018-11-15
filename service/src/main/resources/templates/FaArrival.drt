@@ -26,7 +26,7 @@ when
 
 then
     $fact.setOk(false);
-    $fact.addWarningOrError(mdrService.getErrorTypeStrForBrId(mdrService.getErrorTypeStrForBrId("@{brid}")), mdrService.getErrorMessageStrForBrId("@{brid}"), "@{brid}", "@{level}", "@{propertyNames}");
+    $fact.addWarningOrError(mdrService.getErrorTypeStrForBrId("@{brid}"), mdrService.getErrorMessageStrForBrId("@{brid}"), "@{brid}", "@{level}", "@{propertyNames}");
 
 end
 
