@@ -150,20 +150,22 @@ public class FaReportDocumentFact extends AbstractFact {
             declaredDepartureInFaReportList = tripsPerFaTypeFromThisReport.get(FishingActivityType.DEPARTURE);
         }
 
-        if (frequency(declaredArrivalInMessageList, declaredArrivalInFaReportList, 2)) return true;
-        if (frequency(declaredDepartureInMessageList, declaredDepartureInFaReportList, 2)) return true;
-
-        return false;
-    }
-
-    private boolean frequency(List<String> declaredArrivalInMessageList, List<String> declaredArrivalInFaReportList, int frequency) {
         if (CollectionUtils.isNotEmpty(declaredArrivalInFaReportList)){
             for (String s : declaredArrivalInFaReportList) {
-                if (Collections.frequency(declaredArrivalInMessageList, s) > frequency){
+                if (Collections.frequency(declaredArrivalInMessageList, s) >= 2){
                     return true;
                 }
             }
         }
+
+        if (CollectionUtils.isNotEmpty(declaredDepartureInFaReportList)){
+            for (String s : declaredDepartureInFaReportList) {
+                if (Collections.frequency(declaredDepartureInMessageList, s) >= 2){
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
