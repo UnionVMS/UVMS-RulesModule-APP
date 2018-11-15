@@ -114,7 +114,6 @@ public class RulesFAResponseServiceBean {
         }
     }
 
-
     public void sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(String rawMessage, RulesBaseRequest request, FLUXFAQueryMessage queryMessage, Rule9998Or9999ErrorType type, String onValue, ValidationResult faQueryValidationReport) {
         if (request == null || type == null) {
             log.error("Could not send FLUXResponseMessage. Request is null or Rule9998Or9999ErrorType not provided.");
