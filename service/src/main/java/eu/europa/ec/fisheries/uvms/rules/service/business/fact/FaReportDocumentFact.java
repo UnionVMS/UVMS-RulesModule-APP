@@ -137,24 +137,33 @@ public class FaReportDocumentFact extends AbstractFact {
     }
 
     public boolean containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType type) {
-        List<String> declaredInMessageList = new ArrayList<>();
-        List<String> declaredInFaReportList = new ArrayList<>();
+        List<String> declaredArrivalInMessageList = new ArrayList<>();
+        List<String> declaredDepartureInMessageList = new ArrayList<>();
+        List<String> declaredArrivalInFaReportList = new ArrayList<>();
+        List<String> declaredDepartureInFaReportList = new ArrayList<>();
+
         if (FishingActivityType.ARRIVAL.equals(type)) {
-            declaredInMessageList = tripsPerFaTypeFromMessage.get(FishingActivityType.ARRIVAL);
-            declaredInFaReportList = tripsPerFaTypeFromThisReport.get(FishingActivityType.ARRIVAL);
+            declaredArrivalInMessageList = tripsPerFaTypeFromMessage.get(FishingActivityType.ARRIVAL);
+            declaredArrivalInFaReportList = tripsPerFaTypeFromThisReport.get(FishingActivityType.ARRIVAL);
         } else if (FishingActivityType.DEPARTURE.equals(type)) {
-            declaredInMessageList = tripsPerFaTypeFromMessage.get(FishingActivityType.DEPARTURE);
-            declaredInFaReportList = tripsPerFaTypeFromThisReport.get(FishingActivityType.DEPARTURE);
+            declaredDepartureInMessageList = tripsPerFaTypeFromMessage.get(FishingActivityType.DEPARTURE);
+            declaredDepartureInFaReportList = tripsPerFaTypeFromThisReport.get(FishingActivityType.DEPARTURE);
         }
 
-        if (CollectionUtils.isNotEmpty(declaredInFaReportList)){
-            for (String s : declaredInFaReportList) {
-                if (Collections.frequency(declaredInMessageList, s) > 2){
+        if (frequency(declaredArrivalInMessageList, declaredArrivalInFaReportList, 2)) return true;
+        if (frequency(declaredDepartureInMessageList, declaredDepartureInFaReportList, 2)) return true;
+
+        return false;
+    }
+
+    private boolean frequency(List<String> declaredArrivalInMessageList, List<String> declaredArrivalInFaReportList, int frequency) {
+        if (CollectionUtils.isNotEmpty(declaredArrivalInFaReportList)){
+            for (String s : declaredArrivalInFaReportList) {
+                if (Collections.frequency(declaredArrivalInMessageList, s) > frequency){
                     return true;
                 }
             }
         }
-
         return false;
     }
 
