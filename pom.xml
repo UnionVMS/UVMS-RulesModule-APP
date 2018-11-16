@@ -31,9 +31,6 @@
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <uvms.test.version>0.0.8</uvms.test.version>
 
-        <usm4uvms.version>4.0.14-W14-J8</usm4uvms.version>
-        <uvms.config.version>4.0.2-W14-J8</uvms.config.version>
-        <uvms.common.version>3.0.29</uvms.common.version>
         <movement.model.version>4.0.15</movement.model.version>
         <exchange.model.version>4.0.23</exchange.model.version>
         <mobileterminal.model.version>4.0.13</mobileterminal.model.version>
@@ -52,6 +49,11 @@
         <flux.movement.client.version>2.0.1</flux.movement.client.version>
         <project.scm.id>github</project.scm.id>
         <dozer.version>5.5.1</dozer.version>
+
+        <!-- UVMS Libraries -->
+        <usm4uvms.version>4.0.14-W14-J8</usm4uvms.version>
+        <uvms.config.version>4.0.2-W14-J8</uvms.config.version>
+        <uvms.common.version>3.0.29</uvms.common.version>
 
         <!-- Packages that need to be excluded from sonar coverage -->
         <sonar.exclusions>
