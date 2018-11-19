@@ -23,14 +23,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
 @Stateless
 @LocalBean
 public class RulesResponseConsumerBean extends AbstractConsumer implements RulesResponseConsumer, ConfigMessageConsumer {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
 
     @Override
     public String getDestinationName() {
@@ -38,7 +36,6 @@ public class RulesResponseConsumerBean extends AbstractConsumer implements Rules
     }
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public <T> T getConfigMessage(String correlationId, Class type) throws ConfigMessageException {
         try {
             return getMessage(correlationId, type);

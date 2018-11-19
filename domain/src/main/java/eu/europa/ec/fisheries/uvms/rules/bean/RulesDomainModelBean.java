@@ -11,12 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.bean;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
@@ -48,6 +42,12 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Stateless
 public class RulesDomainModelBean implements RulesDomainModel {
 
@@ -74,7 +74,6 @@ public class RulesDomainModelBean implements RulesDomainModel {
     }
 
     @Override
-    @Transactional(Transactional.TxType.REQUIRED)
     public void saveValidationMessages(RawMessageType rawMessageType) throws RulesModelException {
         try {
             RawMessage rawMessage = RawMessageMapper.INSTANCE.mapToRawMessageEntity(rawMessageType);

@@ -5,24 +5,22 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <!-- set DB specific properties, like sysdate vs now() -->
-    <include file="changelog\properties.xml"/>
+    <include file="properties.xml" relativeToChangelogFile="true"/>
 
-    <include file="changelog\v0.1\db-changelog-createTables_0.1.xml" />
+    <include file="v0.1\db-changelog-createTables_0.1.xml" relativeToChangelogFile="true" />
 
-    <include file="changelog\v3.1\db-changelog-insertIdTypeTemplate.xml" />
+    <include file="v3.1\db-changelog-insertIdTypeTemplate.xml" relativeToChangelogFile="true" />
 
-    <include file="changelog\v0.1\db-changelog-insertInitData_0.1.xml" />
+    <include file="v0.1\db-changelog-insertInitData_0.1.xml" relativeToChangelogFile="true" />
 
-    <include file="changelog\v3.0.37\db-changelog-createFaIdsPerTripTable_0.2.xml" />
+    <include file="v3.0.37\db-changelog-createFaIdsPerTripTable_0.2.xml" relativeToChangelogFile="true" />
 
-    <include file="changelog\v3.0.37\db-changelog-drop-tables.xml" />
+    <include file="v3.0.37\db-changelog-drop-tables.xml" relativeToChangelogFile="true" />
+
+    <include file="v3.0.44\db-changelog-3.0.44.xml" relativeToChangelogFile="true" />
 
     <include file="changelog\v3.0.44\db-changelog-3.0.44.xml" />
 
     <include file="changelog\v3.0.45\db-changelog-3.0.45.xml" />
-
-    <!-- testdata, run with parameter -Dliquibase.contexts=test
-    <include file="changelog\v0.1\db-changelog-insertTestData_0.1.xml"/>
-    -->
 
 </databaseChangeLog>
