@@ -4,7 +4,7 @@
     <parent>
         <groupId>fish.focus.uvms.maven</groupId>
         <artifactId>uvms-pom</artifactId>
-        <version>1.21</version>
+        <version>1.20</version>
     </parent>
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
