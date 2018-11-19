@@ -183,7 +183,7 @@ public class RulesEngineBean {
     public Collection<AbstractFact> validateFacts(Collection<AbstractFact> facts, KieContainer container, Map<String, Object> globals, Map<ExtraValueType, Object> extraValues) {
         KieSession ksession = container.newKieSession();
         if(CollectionUtils.isEmpty(container.getKieBase().getKiePackages())){
-            log.warn("No Rules defined for this container! Check rules.rule table, might be that everything is disbaled?");
+            log.warn("No Rules defined for this container! Check rules.rule table, might be that everything is disabled?");
             return Collections.emptyList();
         }
         try {
