@@ -11,6 +11,10 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import java.io.InputStream;
+import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
@@ -31,18 +35,14 @@ import org.kie.api.builder.KieFileSystem;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import java.io.InputStream;
-import java.util.List;
-
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 @Slf4j
 public class MovementsRulesValidator {
     //    private static final String SANITY_RESOURCE_DRL_FILE = "/rules/SanityRules.drl";
     private static final String CUSTOM_RULE_DRL_FILE = "src/main/resources/rules/CustomRules.drl";
-    private static final String CUSTOM_RULE_TEMPLATE = "/templates/CustomRulesTemplate.drt";
+    private static final String CUSTOM_RULE_TEMPLATE = "/templates/CustomRulesTemplate." +
+            "drt";
 
     private static final String SANITY_RULES_DRL_FILE = "src/main/resources/rules/SanityRules.drl";
     private static final String SANITY_RULES_TEMPLATE = "/templates/SanityRulesTemplate.drt";

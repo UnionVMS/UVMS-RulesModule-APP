@@ -18,7 +18,7 @@
         <powermock.version>1.6.2</powermock.version>
         <junit.version>4.10</junit.version>
         <joda-time.version>2.9.9</joda-time.version>
-        <javaee.version>7.0</javaee.version>
+        <javaee.version>8.0</javaee.version>
         <swagger.version>1.3.1</swagger.version>
         <sl4j.version>1.7.25</sl4j.version>
         <logback.version>1.2.3</logback.version>
@@ -30,9 +30,6 @@
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <uvms.test.version>0.0.8</uvms.test.version>
 
-        <usm4uvms.version>4.0.13</usm4uvms.version>
-        <uvms.config.version>4.0.2</uvms.config.version>
-        <uvms.common.version>3.0.29</uvms.common.version>
         <movement.model.version>4.0.15</movement.model.version>
         <exchange.model.version>4.0.23</exchange.model.version>
         <mobileterminal.model.version>4.0.13</mobileterminal.model.version>
@@ -56,6 +53,11 @@
         <docker.liquibase.changeLogFile>LIQUIBASE/changelog/db-changelog-master.xml</docker.liquibase.changeLogFile>
         <docker.liquibase.db.user>rules</docker.liquibase.db.user>
         <docker.liquibase.db.passwd>rules</docker.liquibase.db.passwd>
+
+        <!-- UVMS Libraries -->
+        <usm4uvms.version>4.0.14-W14-J8</usm4uvms.version>
+        <uvms.config.version>4.0.2-W14-J8</uvms.config.version>
+        <uvms.common.version>3.0.29</uvms.common.version>
 
         <!-- Packages that need to be excluded from sonar coverage -->
         <sonar.exclusions>
@@ -150,7 +152,13 @@
 			    <groupId>com.fasterxml.jackson.core</groupId>
 			    <artifactId>jackson-core</artifactId>
 			    <version>2.7.9</version>
-			</dependency>            
+			</dependency>
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>${javaee.version}</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

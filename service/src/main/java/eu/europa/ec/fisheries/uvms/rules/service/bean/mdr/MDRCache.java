@@ -11,6 +11,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
 import com.google.common.base.Stopwatch;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -72,6 +73,10 @@ public class MDRCache {
 
     private static final int MB = 1024 * 1024;
 
+    private static final long TIME_TO_LIVE_IN_MILLIS = 300000L;
+    private static final long TIME_TO_CONSUME_IN_MILLIS = 60000L;
+
+
     @PostConstruct
     public void init() {
         cache = new ConcurrentHashMap<>();
@@ -86,9 +91,11 @@ public class MDRCache {
     public void loadAllMdrCodeLists(boolean isFromReport) {
         try {
             if (!alreadyLoadedOnce) {
+                log.info("MDR Cache was never loaded, loading now..");
                 populateMdrCacheDateAndCheckIfRefreshDateChanged();
                 populateMdrCache();
             } else if (isFromReport && oneMinuteHasPassed() && populateMdrCacheDateAndCheckIfRefreshDateChanged()) { // We fetch MdrCacheDate only once per minute.
+                log.info("MDR Cache in MDR was updated.. Going to refresh Rules mdr cahce now...");
                 populateMdrCache();
             }
         } catch (MdrLoadingException e) {
@@ -108,6 +115,7 @@ public class MDRCache {
         } else {
             populateAllMdrAtOnce();
         }
+        loadCacheForFailureMessages();
     }
 
     private boolean oneMinuteHasPassed() {
@@ -157,8 +165,8 @@ public class MDRCache {
         String request;
         try {
             request = MdrModuleMapper.createFluxMdrGetAllCodeListRequest();
-            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, 300000L, DeliveryMode.NON_PERSISTENT);
-            TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
+            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, TIME_TO_LIVE_IN_MILLIS, DeliveryMode.NON_PERSISTENT);
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class, TIME_TO_CONSUME_IN_MILLIS);
             if (message != null) {
                 response = unmarshallTextMessage(message.getText(), MdrGetAllCodeListsResponse.class);
                 return response;
@@ -204,8 +212,8 @@ public class MDRCache {
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronymType.name());
-            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, 300000L, DeliveryMode.NON_PERSISTENT);
-            TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
+            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, TIME_TO_LIVE_IN_MILLIS, DeliveryMode.NON_PERSISTENT);
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class, TIME_TO_CONSUME_IN_MILLIS);
             long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
             if (elapsed > 100) {
                 log.info("Loading {} took {} ", acronymType, stopwatch);
@@ -214,7 +222,7 @@ public class MDRCache {
                 MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
                 return response.getDataSets();
             }
-        } catch (MessageException | MdrModelMarshallException | JMSException | ActivityModelMarshallException ex){
+        } catch (MessageException | MdrModelMarshallException | JMSException | ActivityModelMarshallException ex) {
             throw new MdrLoadingException("Error while trying to load mdr!", ex);
         }
         return new ArrayList<>();
@@ -263,27 +271,32 @@ public class MDRCache {
     /**
      * This function maps all the error messages to the ones defined in MDR;
      */
-    public void loadCacheForFailureMessages() {
-        if (!MapUtils.isEmpty(errorMessages)) {
-            return;
-        }
+    private void loadCacheForFailureMessages() {
+        log.info("Loading FA_BR_DEF and SALES_BR_DEF..");
         errorMessages = new HashMap<>();
         final List<ObjectRepresentation> objRapprList = new ArrayList<>();
-        List<ObjectRepresentation> brDef = getEntry(MDRAcronymType.FA_BR_DEF);
-        List<ObjectRepresentation> saleBrDef = getEntry(MDRAcronymType.SALE_BR_DEF);
-        objRapprList.addAll(brDef);
-        objRapprList.addAll(saleBrDef);
+        List<ObjectRepresentation> brDef = getEntry(MDRAcronymType.FA_BR);
+        List<ObjectRepresentation> saleBrDef = getEntry(MDRAcronymType.SALE_BR);
+        // For start up non reachable MDR purposes :)
+        if (CollectionUtils.isNotEmpty(brDef)) {
+            objRapprList.addAll(brDef);
+        }
+        if (CollectionUtils.isNotEmpty(saleBrDef)) {
+            objRapprList.addAll(saleBrDef);
+        }
         objRapprList.removeAll(Collections.singleton(null));
-        if(CollectionUtils.isEmpty(objRapprList)){
+        if (CollectionUtils.isEmpty(objRapprList)) {
             return;
         }
         final String MESSAGE_COLUMN = "messageIfFailing";
         final String BR_ID_COLUMN = "code";
         final String BR_NOTE_COLUMN = "note";
+        final String BR_ERROR_TYPE_COLUMN = "fluxGpValidationTypeCode";
         for (ObjectRepresentation objectRepr : objRapprList) {
             String brId = null;
             String errorMessage = null;
             String note = null;
+            String errType = null;
             for (ColumnDataType field : objectRepr.getFields()) {
                 final String columnName = field.getColumnName();
                 if (MESSAGE_COLUMN.equals(columnName)) {
@@ -295,12 +308,14 @@ public class MDRCache {
                 if (BR_NOTE_COLUMN.equals(columnName)) {
                     note = field.getColumnValue();
                 }
+                if (BR_ERROR_TYPE_COLUMN.equals(columnName)) {
+                    errType = field.getColumnValue();
+                }
             }
-            errorMessages.put(brId, new EnrichedBRMessage(note, errorMessage));
+            errorMessages.put(brId, new EnrichedBRMessage(note, errorMessage, errType.contains("ERR") ? ErrorType.ERROR.value() : ErrorType.WARNING.value()));
         }
     }
 
-    @AccessTimeout(value = 10, unit = MINUTES)
     public EnrichedBRMessage getErrorMessage(String brId) {
         return errorMessages.get(brId);
     }

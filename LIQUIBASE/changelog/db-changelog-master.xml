@@ -19,4 +19,8 @@
 
     <include file="v3.0.44\db-changelog-3.0.44.xml" relativeToChangelogFile="true" />
 
+    <include file="changelog\v3.0.44\db-changelog-3.0.44.xml" />
+
+    <include file="changelog\v3.0.45\db-changelog-3.0.45.xml" />
+
 </databaseChangeLog>

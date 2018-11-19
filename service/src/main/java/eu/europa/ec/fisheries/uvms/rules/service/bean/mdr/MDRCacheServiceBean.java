@@ -10,12 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -36,6 +30,13 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Stateless
 @LocalBean
 @Slf4j
@@ -46,11 +47,6 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     public void loadMDRCache(boolean isFromReport) {
         cache.loadAllMdrCodeLists(isFromReport);
-    }
-
-    @Override
-    public EnrichedBRMessage getErrorMessageForBrId(String brId) {
-        return cache.getErrorMessage(brId);
     }
 
     /**
@@ -390,6 +386,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return null;
     }
 
+
     @Override
     public boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage) {
         List<ObjectRepresentation> faoAreas = cache.getEntry(MDRAcronymType.FAO_AREA);
@@ -405,14 +402,29 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                 id.getValue(), "placesCode", countryID.getValue(), locations, creationDateOfMessage);
     }
 
+
     @Override
     public List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym) {
         return cache.getEntry(mdrAcronym);
     }
 
+
     @Override
-    public void loadCacheForFailureMessages() {
-        cache.loadCacheForFailureMessages();
+    public EnrichedBRMessage getErrorMessageForBrId(String brId) {
+        return cache.getErrorMessage(brId);
+    }
+
+
+    @Override
+    public String getErrorMessageStrForBrId(String brid) {
+        EnrichedBRMessage errorMessage = cache.getErrorMessage(brid);
+        return errorMessage != null ? errorMessage.getMessage() : StringUtils.EMPTY;
+    }
+
+    @Override
+    public String getErrorTypeStrForBrId(String brid) {
+        EnrichedBRMessage errorMessage = cache.getErrorMessage(brid);
+        return errorMessage != null ? errorMessage.getType() : StringUtils.EMPTY;
     }
 
 
