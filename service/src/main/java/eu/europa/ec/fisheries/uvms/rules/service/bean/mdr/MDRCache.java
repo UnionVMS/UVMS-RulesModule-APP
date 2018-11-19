@@ -91,9 +91,11 @@ public class MDRCache {
     public void loadAllMdrCodeLists(boolean isFromReport) {
         try {
             if (!alreadyLoadedOnce) {
+                log.info("MDR Cache was never loaded, loading now..");
                 populateMdrCacheDateAndCheckIfRefreshDateChanged();
                 populateMdrCache();
             } else if (isFromReport && oneMinuteHasPassed() && populateMdrCacheDateAndCheckIfRefreshDateChanged()) { // We fetch MdrCacheDate only once per minute.
+                log.info("MDR Cache in MDR was updated.. Going to refresh Rules mdr cahce now...");
                 populateMdrCache();
             }
         } catch (MdrLoadingException e) {
