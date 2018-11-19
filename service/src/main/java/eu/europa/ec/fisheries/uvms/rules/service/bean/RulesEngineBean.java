@@ -30,6 +30,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnical
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.kie.api.runtime.KieContainer;
@@ -181,6 +182,10 @@ public class RulesEngineBean {
 
     public Collection<AbstractFact> validateFacts(Collection<AbstractFact> facts, KieContainer container, Map<String, Object> globals, Map<ExtraValueType, Object> extraValues) {
         KieSession ksession = container.newKieSession();
+        if(CollectionUtils.isEmpty(container.getKieBase().getKiePackages())){
+            log.warn("No Rules defined for this container! Check rules.rule table, might be that everything is disbaled?");
+            return Collections.emptyList();
+        }
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             if(MapUtils.isNotEmpty(globals)){
