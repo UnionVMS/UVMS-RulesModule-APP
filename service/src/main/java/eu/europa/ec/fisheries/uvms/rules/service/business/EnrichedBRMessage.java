@@ -19,9 +19,11 @@ public class EnrichedBRMessage {
     private String note;
     private String expression;
     private String message;
+    private String type;
 
-    public EnrichedBRMessage(String note, String message) {
+    public EnrichedBRMessage(String note, String message, String type) {
         this.note = note;
         this.message = message;
+        this.type = type;
     }
 }

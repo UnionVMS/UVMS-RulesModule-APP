@@ -94,7 +94,6 @@ public class RulesExchangeServiceBean {
         }
         String logGuid = request.getLogGuid();
         String onValue = request.getOnValue();
-        String destination = request.getSenderOrReceiver();  // e.g. "AHR:VMS"
         String df = request.getFluxDataFlow(); //e.g. "urn:un:unece:uncefact:fisheries:FLUX:FA:EU:2" // TODO should come from subscription. Also could be a link between DF and AD value
         try {
             MDC.setContextMap(copyOfContextMap);
@@ -105,7 +104,6 @@ public class RulesExchangeServiceBean {
 
             // Get fluxNationCode (Eg. XEU) from Config Module.
             String fluxNationCode = ruleModuleCache.getSingleConfig(fluxMessageHelper.FLUX_LOCAL_NATION_CODE);
-            String nationCode = StringUtils.isNotEmpty(fluxNationCode) ? fluxNationCode : "flux_local_nation_code_is_missing_in_config_settings_table_please_set_it";
 
             // Get the actual Response ids and match them with the Response Ids from the DB
             Set<FADocumentID> idsFromIncommingMessage = fluxMessageHelper.mapToResponseToFADocumentID(fluxResponseMessageObj);
@@ -121,7 +119,7 @@ public class RulesExchangeServiceBean {
             //Create Response
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, nationCode, onValue, status, destination, getExchangePluginType(pluginType), id);
+            String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, request.getSenderOrReceiver(), onValue, status, request.getSenderOrReceiver(), getExchangePluginType(pluginType), id);
             rulesProducer.sendDataSourceMessage(fluxFAResponseText, DataSourceQueue.EXCHANGE);
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
 
