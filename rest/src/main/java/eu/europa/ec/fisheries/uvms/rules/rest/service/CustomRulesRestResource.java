@@ -216,7 +216,7 @@ public class CustomRulesRestResource {
         try {
             return new ResponseDto(rulesService.deleteCustomRule(guid, request.getRemoteUser(),UnionVMSFeature.manageGlobalAlarmsRules.name(), getApplicationName(servletContext)), ResponseCode.OK);
         } catch (RulesServiceException | RulesFaultException | NullPointerException e) {
-            LOG.error("[ Error when deleting custom rule. ] {} ", e.getStackTrace());
+            LOG.error("[ Error when deleting custom rule. ] {} ", e);
             return ErrorHandler.getFault(e);
         } catch (AccessDeniedException e) {
             LOG.error("Forbidden access", e.getMessage());
