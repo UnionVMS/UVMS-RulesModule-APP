@@ -53,7 +53,7 @@ public class RulesActivityServiceBean {
     private RulesMessageProducer producer;
 
     @EJB
-    private RulesActivityProducerBean rulesActivityServiceBean;
+    private RulesActivityProducerBean rulesActivityProducer;
 
     @EJB
     private RulesResponseQueueProducer rulesResponseProducer;
@@ -64,16 +64,15 @@ public class RulesActivityServiceBean {
             String requestStr = ActivityModuleRequestMapper.mapToSubscriptionRequest(request, type);
             log.debug("Send MapToSubscriptionRequest to Activity");
             HashMap<String, String> map = new HashMap<>();
-            map.put("messageSelector","SubscriptionCheck");
-            String corrId = rulesActivityServiceBean.sendModuleMessageWithProps(requestStr, rulesResponseProducer.getDestination(), map);
-            TextMessage message = consumer.getMessage(corrId, TextMessage.class, 240000L);
+            map.put("messageSelector", "SubscriptionCheck");
+            String corrId = rulesActivityProducer.sendModuleMessageWithProps(requestStr, rulesResponseProducer.getDestination(), map);
+            TextMessage message = consumer.getMessage(corrId, 240000L);
             log.debug("Received response message from Subscription.");
             SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
             SubscriptionPermissionAnswer subscriptionCheck = subscriptionPermissionResponse.getSubscriptionCheck();
             return SubscriptionPermissionAnswer.YES.equals(subscriptionCheck);
         } catch (ActivityModelMapperException | JMSException | JAXBException | MessageException e) {
-            log.error("[ERROR] while trying to check subscription permissions (Is [[[- Subscriptions -]]] module Deployed?).." +
-                    "Going to assume the request doesn't have permissions!!", e);
+            log.error("[ERROR] while trying to check subscription permissions (Is [[[- Subscriptions -]]] module Deployed?).. Going to assume the request doesn't have permissions!!", e);
         }
         return false;
     }
