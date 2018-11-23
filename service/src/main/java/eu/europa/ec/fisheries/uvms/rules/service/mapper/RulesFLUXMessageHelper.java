@@ -159,11 +159,6 @@ public class RulesFLUXMessageHelper {
         if (fluxReportDocument == null || CollectionUtils.isEmpty(faReportDocuments)) {
             return idsReqList;
         }
-        // Purpose code
-        //CodeType purposeCode = fluxReportDocument.getPurposeCode();
-        // Check if we need the purpose codes! For now it seems not!
-        //List<String> purposeCodes = purposeCode != null && StringUtils.isNotEmpty(purposeCode.getValue()) ?
-        //Arrays.asList(purposeCode.getValue()) : Arrays.asList("1", "3", "5", "9");
 
         // FishinActivity type, tripId, tripSchemeId
         for (FAReportDocument faRepDoc : faReportDocuments) {
