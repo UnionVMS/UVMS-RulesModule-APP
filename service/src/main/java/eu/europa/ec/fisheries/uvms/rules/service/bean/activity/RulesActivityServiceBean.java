@@ -17,14 +17,19 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
 import java.util.HashMap;
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMapperException;
+import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesResponseQueueProducer;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionAnswer;
 import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionResponse;
 import eu.europa.fisheries.uvms.subscription.model.mapper.SubscriptionModuleResponseMapper;
@@ -37,6 +42,9 @@ import lombok.extern.slf4j.Slf4j;
 @LocalBean
 @Slf4j
 public class RulesActivityServiceBean {
+
+    @EJB
+    private RulesMessageProducer rulesProducer;
 
     @EJB
     private RulesResponseConsumer consumer;
@@ -70,4 +78,12 @@ public class RulesActivityServiceBean {
         return false;
     }
 
+    public void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, String exchangeLogGuid) {
+        try {
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, exchangeLogGuid);
+            rulesProducer.sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
+        } catch (ActivityModelMarshallException | MessageException e) {
+            throw new RulesServiceException(e.getMessage(), e);
+        }
+    }
 }
