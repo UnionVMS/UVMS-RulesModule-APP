@@ -13,6 +13,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.message.consumer;
 
 import javax.ejb.Local;
+import javax.jms.TextMessage;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 
 
@@ -21,6 +22,6 @@ import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 public interface RulesResponseConsumer {
     <T> T getMessage(String correlationId, Class type) throws MessageException;
     <T> T getMessage(String correlationId, Class type, Long timeoutInMillis) throws MessageException;
-    <T> T getMessage(String correlationId, Long timeoutInMillis) throws MessageException;
+    TextMessage getMessage(String correlationId, Long timeoutInMillis) throws MessageException;
 
 }
