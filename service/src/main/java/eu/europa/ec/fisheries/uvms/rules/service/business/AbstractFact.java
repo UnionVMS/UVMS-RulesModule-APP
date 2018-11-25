@@ -46,7 +46,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 public abstract class AbstractFact {
 
     private static final String COLON = ":";
-    private static volatile AtomicInteger counter = new AtomicInteger();
+    private static AtomicInteger counter = new AtomicInteger();
 
     protected FactType factType;
     protected eu.europa.ec.fisheries.uvms.rules.service.business.MessageType messageType;
