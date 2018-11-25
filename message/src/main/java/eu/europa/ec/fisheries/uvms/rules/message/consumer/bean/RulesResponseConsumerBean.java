@@ -12,6 +12,11 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 
 package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.jms.TextMessage;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
@@ -20,11 +25,6 @@ import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
 @Stateless
 @LocalBean
@@ -35,6 +35,12 @@ public class RulesResponseConsumerBean extends AbstractConsumer implements Rules
     @Override
     public String getDestinationName() {
         return MessageConstants.QUEUE_RULES;
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public TextMessage getMessage(final String correlationId, final Long timeoutInMillis) throws MessageException {
+        return getMessage(correlationId, TextMessage.class, timeoutInMillis);
     }
 
     @Override

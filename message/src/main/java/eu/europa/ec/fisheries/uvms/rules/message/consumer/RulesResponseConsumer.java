@@ -22,6 +22,6 @@ import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 public interface RulesResponseConsumer {
     <T> T getMessage(String correlationId, Class type) throws MessageException;
     <T> T getMessage(String correlationId, Class type, Long timeoutInMillis) throws MessageException;
-    TextMessage getMessage(String correlationId, Long timeoutInMillis) throws MessageException;
+   TextMessage getMessage(String correlationId, Long timeoutInMillis) throws MessageException;
 
 }

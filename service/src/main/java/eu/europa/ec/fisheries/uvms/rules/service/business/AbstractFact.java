@@ -75,7 +75,7 @@ public abstract class AbstractFact {
         this.errors = new ArrayList<>();
     }
 
-    public static int getNumOfInstances() {
+    public static AtomicInteger getNumOfInstances() {
         return counter;
     }
 
