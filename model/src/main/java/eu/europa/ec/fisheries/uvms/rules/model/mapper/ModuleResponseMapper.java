@@ -11,16 +11,19 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
 import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-
 public class ModuleResponseMapper {
+
+    private ModuleResponseMapper(){
+
+    }
 
     private static void validateResponse(TextMessage response, String correlationId) throws RulesModelMapperException, JMSException, RulesFaultException {
 

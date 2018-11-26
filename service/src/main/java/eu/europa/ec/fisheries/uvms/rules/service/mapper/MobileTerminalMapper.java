@@ -22,7 +22,7 @@ public class MobileTerminalMapper {
     private MobileTerminalMapper(){
 
     }
-    
+
     public static MobileTerminalType mapMobileTerminal(eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType mobileTerminalType) {
         if (mobileTerminalType == null) {
             return null;
