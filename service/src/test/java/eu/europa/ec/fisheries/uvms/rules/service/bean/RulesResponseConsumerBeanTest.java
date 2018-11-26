@@ -41,7 +41,7 @@ public class RulesResponseConsumerBeanTest {
     @Test(expected = MessageException.class)
     public void testGetMessage() throws UnmarshalException, RulesValidationException, MessageException, JMSException, ConfigMessageException
     {
-        rulesResponseConsume.getMessage("", String.class);
+        rulesResponseConsume.getMessage("", 200L);
     }
 
 }
