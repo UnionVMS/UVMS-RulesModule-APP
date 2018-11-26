@@ -12,8 +12,8 @@ import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.asset.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.RulesResponseConsumerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMessageProducerBean;
 import eu.europa.ec.fisheries.wsdl.asset.module.ActivityRulesAssetModuleResponse;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteria;
@@ -29,10 +29,10 @@ public class AssetServiceBeanHelper {
     public static final long TIME_TO_WAIT_FOR_A_RESPONSE = 30000L;
 
     @EJB
-    private RulesMessageProducer messageProducer;
+    private RulesMessageProducerBean messageProducer;
 
     @EJB
-    private RulesResponseConsumer messageConsumer;
+    private RulesResponseConsumerBean messageConsumer;
 
     protected List<Asset> receiveMessageFromAsset(String correlationId) throws MessageException, AssetModelMarshallException {
         TextMessage receivedMessage = messageConsumer.getMessage(correlationId, TextMessage.class, TIME_TO_WAIT_FOR_A_RESPONSE);

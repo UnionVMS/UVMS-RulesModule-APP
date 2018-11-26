@@ -12,6 +12,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
@@ -25,7 +26,7 @@ import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.RulesResponseConsumerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -38,17 +39,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetLastRefreshDateResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -65,7 +55,7 @@ public class MDRCache {
     private Map<MDRAcronymType, List<ObjectRepresentation>> cache;
 
     @EJB
-    private RulesResponseConsumer consumer;
+    private RulesResponseConsumerBean consumer;
 
     @EJB
     private RulesMessageProducer producer;
