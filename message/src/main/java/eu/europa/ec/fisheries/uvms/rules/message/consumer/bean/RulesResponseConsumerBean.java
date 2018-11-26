@@ -20,7 +20,7 @@ import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
 @Stateless
 @LocalBean
 public class RulesResponseConsumerBean extends AbstractConsumer {
-    
+
     @Override
     public String getDestinationName() {
         return MessageConstants.QUEUE_RULES;
