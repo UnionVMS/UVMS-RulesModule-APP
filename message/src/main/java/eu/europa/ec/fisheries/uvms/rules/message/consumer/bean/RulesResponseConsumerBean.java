@@ -21,14 +21,12 @@ import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
-import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
 @LocalBean
-public class RulesResponseConsumerBean extends AbstractConsumer implements RulesResponseConsumer, ConfigMessageConsumer {
+public class RulesResponseConsumerBean extends AbstractConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
 
@@ -37,13 +35,11 @@ public class RulesResponseConsumerBean extends AbstractConsumer implements Rules
         return MessageConstants.QUEUE_RULES;
     }
 
-    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public TextMessage getMessage(final String correlationId, final Long timeoutInMillis) throws MessageException {
         return getMessage(correlationId, TextMessage.class, timeoutInMillis);
     }
 
-    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public <T> T getConfigMessage(String correlationId, Class type) throws ConfigMessageException {
         try {
