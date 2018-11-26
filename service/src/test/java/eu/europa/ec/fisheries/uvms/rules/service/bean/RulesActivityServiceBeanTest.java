@@ -10,12 +10,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.UnmarshalException;
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesResponseQueueProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
@@ -23,6 +27,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -32,6 +37,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.times;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -41,9 +48,9 @@ public class RulesActivityServiceBeanTest {
     @Mock private RulesActivityProducerBean rulesActivityProducer;
     @Mock private RulesResponseQueueProducer producer;
     @Mock private RulesResponseConsumer consumer;
+    @Mock private RulesMessageProducer rulesMessageProducer;
     @InjectMocks private RulesActivityServiceBean rulesActivityService;
     TextMessage mock = mock(TextMessage.class);
-
 
     @Before
     public void before(){
@@ -56,7 +63,14 @@ public class RulesActivityServiceBeanTest {
         Mockito.when(rulesActivityProducer.sendModuleMessageWithProps(anyString(), any(javax.jms.Destination.class), anyMap())).thenReturn("value");
         when(mock.getText()).thenReturn("sometext");
         Mockito.when(consumer.getMessage(anyString(), anyLong())).thenReturn(mock);
+
+        InOrder inOrder = inOrder( rulesActivityProducer, consumer);
+
         assertFalse(rulesActivityService.checkSubscriptionPermissions("", MessageType.FLUX_FA_REPORT_MESSAGE));
+
+        inOrder.verify(rulesActivityProducer, times(1)).sendModuleMessageWithProps(anyString(), any(Destination.class), anyMap());
+        inOrder.verify(consumer, times(1)).getMessage(anyString(), anyLong());
+
     }
 
     @Test
@@ -67,6 +81,22 @@ public class RulesActivityServiceBeanTest {
                 "    <subscriptionCheck>NO</subscriptionCheck>\n" +
                 "</ns2:SubscriptionPermissionResponse>");
         Mockito.when(consumer.getMessage(anyString(), anyLong())).thenReturn(mock);
+
+        InOrder inOrder = inOrder(rulesActivityProducer, consumer);
+
         assertFalse(rulesActivityService.checkSubscriptionPermissions("", MessageType.FLUX_FA_REPORT_MESSAGE));
+
+        inOrder.verify(rulesActivityProducer, times(1)).sendModuleMessageWithProps(anyString(), any(Destination.class), anyMap());
+        inOrder.verify(consumer, times(1)).getMessage(anyString(), anyLong());
+
+    }
+
+    @Test
+    public void testSendRequestToActivity() throws MessageException {
+
+        rulesActivityService.sendRequestToActivity("", PluginType.FLUX, MessageType.FLUX_FA_QUERY_MESSAGE, "");
+
+        Mockito.verify(rulesMessageProducer, times(1)).sendDataSourceMessage(anyString(), any(DataSourceQueue.class));
+
     }
 }

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 @LocalBean
 public class RulesResponseConsumerBean extends AbstractConsumer implements RulesResponseConsumer, ConfigMessageConsumer {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
 
     @Override
     public String getDestinationName() {

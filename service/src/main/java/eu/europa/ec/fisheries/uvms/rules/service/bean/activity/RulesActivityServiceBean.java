@@ -85,4 +85,5 @@ public class RulesActivityServiceBean {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
+
 }
