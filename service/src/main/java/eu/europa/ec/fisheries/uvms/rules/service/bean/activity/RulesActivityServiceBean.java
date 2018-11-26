@@ -66,7 +66,7 @@ public class RulesActivityServiceBean {
             HashMap<String, String> map = new HashMap<>();
             map.put("messageSelector", "SubscriptionCheck");
             String corrId = rulesActivityProducer.sendModuleMessageWithProps(requestStr, rulesResponseProducer.getDestination(), map);
-            TextMessage message = consumer.getMessage(corrId, 240000L);
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class,240000L);
             log.debug("Received response message from Subscription.");
             SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
             SubscriptionPermissionAnswer subscriptionCheck = subscriptionPermissionResponse.getSubscriptionCheck();
