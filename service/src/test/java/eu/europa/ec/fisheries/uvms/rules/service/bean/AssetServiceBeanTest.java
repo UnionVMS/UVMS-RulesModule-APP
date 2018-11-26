@@ -10,13 +10,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.AssetServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.AssetServiceBeanHelper;
+import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.wsdl.asset.types.AssetHistoryId;
+import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +29,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -55,7 +62,37 @@ public class AssetServiceBeanTest {
         asset.setCountryCode("BEL");
 
         Mockito.when(helper.findHistoryOfAssetByCfr(anyString())).thenReturn(Arrays.asList(asset));
-        
+
         assertTrue(assetService.isCFRInFleetUnderFlagStateOnLandingDate("", "BEL", new DateTime()));
+    }
+
+
+    @Test
+    public void testFindHistoryOfAssetBy(){
+
+        List<FAReportDocument> faReportDocuments = new ArrayList();
+        List<FishingActivity> specifiedFishingActivities = new ArrayList<>();
+        FishingActivity fishingActivity = new FishingActivity();
+
+        List<FishingActivity> relatedActivities = new ArrayList<>();
+        FishingActivity relatedActivity = new FishingActivity();
+
+        VesselTransportMeans vesselTransportMeans = new VesselTransportMeans();
+        List<VesselTransportMeans> vesselTransportMeansList = new ArrayList<>();
+        vesselTransportMeansList.add(vesselTransportMeans);
+
+        relatedActivity.setRelatedVesselTransportMeans(vesselTransportMeansList);
+
+        relatedActivities.add(relatedActivity);
+
+        fishingActivity.setRelatedFishingActivities(relatedActivities);
+        specifiedFishingActivities.add(fishingActivity);
+        FAReportDocument faReportDocument = new FAReportDocument();
+        faReportDocument.setSpecifiedFishingActivities(specifiedFishingActivities);
+        faReportDocuments.add(faReportDocument);
+
+        List<VesselTransportMeansDto> historyOfAssetBy = assetService.findHistoryOfAssetBy(faReportDocuments);
+
+        assertTrue(CollectionUtils.isNotEmpty(historyOfAssetBy));
     }
 }
