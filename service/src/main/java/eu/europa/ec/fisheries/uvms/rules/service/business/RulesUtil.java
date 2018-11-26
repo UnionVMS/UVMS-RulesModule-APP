@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class RulesUtil {
-    final static String FORMAT = "yyyy-MM-dd HH:mm:ss Z";
+    static final String FORMAT = "yyyy-MM-dd HH:mm:ss Z";
 
     public static String dateToString(Date date) {
         String dateString = null;
