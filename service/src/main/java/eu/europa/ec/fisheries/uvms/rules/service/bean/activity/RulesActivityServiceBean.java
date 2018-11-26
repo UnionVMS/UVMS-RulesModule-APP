@@ -53,7 +53,7 @@ public class RulesActivityServiceBean {
     private RulesMessageProducer producer;
 
     @EJB
-    private RulesActivityProducerBean rulesActivityProducer;
+    private RulesActivityProducerBean rulesActivityServiceBean;
 
     @EJB
     private RulesResponseQueueProducer rulesResponseProducer;
@@ -65,7 +65,7 @@ public class RulesActivityServiceBean {
             log.debug("Send MapToSubscriptionRequest to Activity");
             HashMap<String, String> map = new HashMap<>();
             map.put("messageSelector", "SubscriptionCheck");
-            String corrId = rulesActivityProducer.sendModuleMessageWithProps(requestStr, rulesResponseProducer.getDestination(), map);
+            String corrId = rulesActivityServiceBean.sendModuleMessageWithProps(requestStr, rulesResponseProducer.getDestination(), map);
             TextMessage message = consumer.getMessage(corrId, TextMessage.class,240000L);
             log.debug("Received response message from Subscription.");
             SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
