@@ -120,7 +120,9 @@ public class RulesExchangeServiceBean {
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
             String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, request.getSenderOrReceiver(), onValue, status, request.getSenderOrReceiver(), getExchangePluginType(pluginType), id);
-            rulesProducer.sendDataSourceMessage(fluxFAResponseText, DataSourceQueue.EXCHANGE);
+
+            sendToExchange(fluxFAResponseText);
+
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
 
             idsFromIncommingMessage.removeAll(matchingIdsFromDB); // To avoid duplication in DB.
@@ -167,14 +169,6 @@ public class RulesExchangeServiceBean {
         }
     }
 
-    private eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType getExchangePluginType(PluginType pluginType) {
-        if (pluginType == PluginType.BELGIAN_ACTIVITY) {
-            return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.BELGIAN_ACTIVITY;
-        } else {
-            return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.FLUX;
-        }
-    }
-
     public void updateExchangeMessage(String logGuid, ExchangeLogStatusTypeType statusType) {
         try {
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, statusType);
@@ -182,6 +176,18 @@ public class RulesExchangeServiceBean {
             rulesProducer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
         } catch (ExchangeModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
+        }
+    }
+
+    public void sendToExchange(String message) throws MessageException {
+        rulesProducer.sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
+    }
+
+    private eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType getExchangePluginType(PluginType pluginType) {
+        if (pluginType == PluginType.BELGIAN_ACTIVITY) {
+            return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.BELGIAN_ACTIVITY;
+        } else {
+            return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.FLUX;
         }
     }
 

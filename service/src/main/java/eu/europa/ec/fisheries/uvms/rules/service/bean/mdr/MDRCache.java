@@ -27,7 +27,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.MdrLoadingException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import un.unece.uncefact.data.standard.mdr.communication.*;
 
 import javax.annotation.PostConstruct;
