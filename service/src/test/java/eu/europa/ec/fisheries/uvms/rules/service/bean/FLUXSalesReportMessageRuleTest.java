@@ -1,9 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.Collections;
-
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -12,7 +8,6 @@ import eu.europa.ec.fisheries.schema.sales.FLUXReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCacheServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.MovementsRulesValidator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.SalesFLUXSalesReportMessageFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import org.junit.Test;
@@ -20,14 +15,15 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
+
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by MATBUL on 22/05/2017.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class FLUXSalesReportMessageRuleTest {
-
-    @InjectMocks
-    private MovementsRulesValidator rulesValidator;
 
     @InjectMocks
     private SalesRulesServiceBean salesRulesService;

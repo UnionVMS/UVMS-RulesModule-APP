@@ -10,12 +10,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import eu.europa.ec.fisheries.uvms.asset.client.model.AssetDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -23,6 +23,6 @@ public class VesselTransportMeansDto {
 
     private String reportCreationDateTime;
     private Map<String, String> ids = new HashMap<>();
-    private Asset asset;
+    private AssetDTO asset;
     private String registrationVesselCountry;
 }

@@ -1,25 +1,26 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
-import com.google.common.base.Optional;
-import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetHistoryId;
+import eu.europa.ec.fisheries.uvms.asset.client.model.AssetDTO;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
 public class AssetServiceBeanTest {
 
-    private AssetServiceBean assetServiceBean;
+    private RulesAssetServiceBean assetServiceBean;
 
     @Before
     public void setUp() throws Exception {
-        assetServiceBean = new AssetServiceBean();
+        assetServiceBean = new RulesAssetServiceBean();
     }
 
     @Test
@@ -27,15 +28,12 @@ public class AssetServiceBeanTest {
         Date first = DateTime.parse("2018-04-10").toDate();
         Date second = DateTime.parse("2015-04-10").toDate();
         Date third = DateTime.parse("2010-04-10").toDate();
-
-
-        List<Asset> assets = getAssets(first, third, second);
-
+        List<AssetDTO> assets = getAssets(first, third, second);
         assets.sort(assetServiceBean.assetComparator());
 
-        assertEquals(first, assets.get(0).getEventHistory().getEventDate());
-        assertEquals(second, assets.get(1).getEventHistory().getEventDate());
-        assertEquals(third, assets.get(2).getEventHistory().getEventDate());
+        assertEquals(OffsetDateTime.ofInstant(first.toInstant(), ZoneId.systemDefault()), assets.get(0).getVesselDateOfEntry());
+        assertEquals(OffsetDateTime.ofInstant(second.toInstant(), ZoneId.systemDefault()), assets.get(1).getVesselDateOfEntry());
+        assertEquals(OffsetDateTime.ofInstant(third.toInstant(), ZoneId.systemDefault()), assets.get(2).getVesselDateOfEntry());
     }
 
     @Test
@@ -44,13 +42,16 @@ public class AssetServiceBeanTest {
         Date second = DateTime.parse("2015-04-10").toDate();
         Date third = DateTime.parse("2010-04-10").toDate();
 
-        List<Asset> assets = getAssets(first, second, third);
+        List<AssetDTO> assets = getAssets(first, second, third);
 
-        assertEquals(second, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2016-04-10").toDate(), assets).get().getEventHistory().getEventDate());
-        assertEquals(third, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2012-04-10").toDate(), assets).get().getEventHistory().getEventDate());
-        assertEquals(third, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2013-04-10").toDate(), assets).get().getEventHistory().getEventDate());
-        assertEquals(third, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2014-04-10").toDate(), assets).get().getEventHistory().getEventDate());
-        assertEquals(third, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2015-04-09").toDate(), assets).get().getEventHistory().getEventDate());
+        OffsetDateTime offsetDateTimeSecond = OffsetDateTime.ofInstant(second.toInstant(), ZoneId.systemDefault());
+        OffsetDateTime offsetDateTimeThird = OffsetDateTime.ofInstant(third.toInstant(), ZoneId.systemDefault());
+
+        assertEquals(offsetDateTimeSecond, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2016-04-10").toDate(), assets).get().getVesselDateOfEntry());
+        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2012-04-10").toDate(), assets).get().getVesselDateOfEntry());
+        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2013-04-10").toDate(), assets).get().getVesselDateOfEntry());
+        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2014-04-10").toDate(), assets).get().getVesselDateOfEntry());
+        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2015-04-09").toDate(), assets).get().getVesselDateOfEntry());
 
     }
 
@@ -62,9 +63,9 @@ public class AssetServiceBeanTest {
         Date second = DateTime.parse("2015-04-10").toDate();
         Date third = DateTime.parse("2010-04-10").toDate();
 
-        List<Asset> assets = getAssets(first, second, third);
+        List<AssetDTO> assets = getAssets(first, second, third);
 
-        Optional<Asset> assetHistoryByDate = assetServiceBean.findAssetHistoryByDate(landingDate, assets);
+        Optional<AssetDTO> assetHistoryByDate = assetServiceBean.findAssetHistoryByDate(landingDate, assets);
 
         assertFalse(assetHistoryByDate.isPresent());
     }
@@ -77,34 +78,25 @@ public class AssetServiceBeanTest {
         Date second = DateTime.parse("2015-04-10").toDate();
         Date third = DateTime.parse("2010-04-10").toDate();
 
-        List<Asset> assets = getAssets(first, second, third);
+        List<AssetDTO> assets = getAssets(first, second, third);
 
-        Optional<Asset> assetHistoryByDate = assetServiceBean.findAssetHistoryByDate(landingDate, assets);
+        Optional<AssetDTO> assetHistoryByDate = assetServiceBean.findAssetHistoryByDate(landingDate, assets);
 
         assertTrue(assetHistoryByDate.isPresent());
-        assertEquals(first, assetHistoryByDate.get().getEventHistory().getEventDate());
+        assertEquals(OffsetDateTime.ofInstant(first.toInstant(), ZoneId.systemDefault()), assetHistoryByDate.get().getVesselDateOfEntry());
     }
 
-    protected List<Asset> getAssets(Date first, Date second, Date third) {
-        AssetHistoryId assetHistoryId1 = new AssetHistoryId();
-        assetHistoryId1.setEventDate(first);
+    protected List<AssetDTO> getAssets(Date first, Date second, Date third) {
 
-        AssetHistoryId assetHistoryId2 = new AssetHistoryId();
-        assetHistoryId2.setEventDate(second);
-
-        AssetHistoryId assetHistoryId3 = new AssetHistoryId();
-        assetHistoryId3.setEventDate(third);
+        AssetDTO asset1 = new AssetDTO();
+        asset1.setVesselDateOfEntry(OffsetDateTime.ofInstant(first.toInstant(), ZoneId.systemDefault()));
 
 
-        Asset asset1 = new Asset();
-        asset1.setEventHistory(assetHistoryId1);
+        AssetDTO asset2 = new AssetDTO();
+        asset2.setVesselDateOfEntry(OffsetDateTime.ofInstant(second.toInstant(), ZoneId.systemDefault()));
 
-
-        Asset asset2 = new Asset();
-        asset2.setEventHistory(assetHistoryId2);
-
-        Asset asset3 = new Asset();
-        asset3.setEventHistory(assetHistoryId3);
+        AssetDTO asset3 = new AssetDTO();
+        asset3.setVesselDateOfEntry(OffsetDateTime.ofInstant(third.toInstant(), ZoneId.systemDefault()));
 
         return Arrays.asList(asset1, asset2, asset3);
     }

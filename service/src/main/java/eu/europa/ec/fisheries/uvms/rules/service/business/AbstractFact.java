@@ -13,21 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.asset.client.model.AssetDTO;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
-import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -39,6 +34,12 @@ import org.joda.time.DateTimeZone;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 @Slf4j
 @ToString
@@ -1256,12 +1257,12 @@ public abstract class AbstractFact {
     }
 
 
-    public boolean isSameReportedVesselFlagState(IdType vesselCountryId, List<Asset> assetList) {
+    public boolean isSameReportedVesselFlagState(IdType vesselCountryId, List<AssetDTO> assetList) {
         if (CollectionUtils.isEmpty(assetList)) {
             return false;
         }
         String vesselCountryIdValue = vesselCountryId.getValue();
-        for (Asset asset : assetList){
+        for (AssetDTO asset : assetList){
             if (isSameFlagState(vesselCountryIdValue, asset)) {
                 return true;
             }
@@ -1269,22 +1270,22 @@ public abstract class AbstractFact {
         return false;
     }
 
-    private Boolean isSameFlagState(String vesselCountryIdValue, Asset asset) {
+    private Boolean isSameFlagState(String vesselCountryIdValue, AssetDTO asset) {
         if (asset != null){
-            String flagState = asset.getCountryCode();
+            String flagState = asset.getFlagStateCode();
             return flagState != null && flagState.equals(vesselCountryIdValue);
         }
         return false;
     }
 
-    public boolean vesselIdsMatchICCAT(List<IdType> vesselIds, List<Asset> assets) {
+    public boolean vesselIdsMatchICCAT(List<IdType> vesselIds, List<AssetDTO> assets) {
         if (CollectionUtils.isEmpty(assets)) {
             return false;
         }
 
         Set<String> iccat = new HashSet<>();
 
-        for (Asset asset : assets) {
+        for (AssetDTO asset : assets) {
             iccat.add(asset.getIccat());
         }
 
@@ -1299,18 +1300,14 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean vesselIdsMatchCFR(List<IdType> vesselIds, List<Asset> assets) {
-
+    public boolean vesselIdsMatchCFR(List<IdType> vesselIds, List<AssetDTO> assets) {
         if (CollectionUtils.isEmpty(assets)) {
             return false;
         }
-
         Set<String> cfr = new HashSet<>();
-
-        for (Asset asset : assets) {
+        for (AssetDTO asset : assets) {
             cfr.add(asset.getCfr());
         }
-
         for (IdType vesselId : vesselIds) {
             String value = vesselId.getValue();
             String schemeId = vesselId.getSchemeId();
@@ -1318,11 +1315,10 @@ public abstract class AbstractFact {
                 return false;
             }
         }
-
         return true;
     }
 
-    public boolean vesselIdsMatchEXT(List<IdType> vesselIds, List<Asset> assets) {
+    public boolean vesselIdsMatchEXT(List<IdType> vesselIds, List<AssetDTO> assets) {
 
         if (CollectionUtils.isEmpty(assets)) {
             return false;
@@ -1330,7 +1326,7 @@ public abstract class AbstractFact {
 
         Set<String> ext = new HashSet<>();
 
-        for (Asset asset : assets) {
+        for (AssetDTO asset : assets) {
             ext.add(asset.getIrcs());
             ext.add(asset.getExternalMarking());
         }

@@ -40,6 +40,7 @@
     </dependencyManagement>
 
     <dependencies>
+
         <dependency>
             <groupId>fish.focus.uvms.maven</groupId>
             <artifactId>uvms-pom-monitoring-deps</artifactId>
@@ -68,11 +69,6 @@
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.sales</groupId>
             <artifactId>sales-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
-            <artifactId>asset-model</artifactId>
-            <version>${asset.model.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.mobileterminal</groupId>
@@ -211,6 +207,12 @@
             <artifactId>JUnitParams</artifactId>
             <version>1.0.4</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
+            <artifactId>asset-client</artifactId>
+            <version>${asset-client.version}</version>
         </dependency>
     </dependencies>
 
