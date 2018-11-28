@@ -10,7 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.xml.bind.UnmarshalException;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
@@ -20,7 +19,7 @@ import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.AssetServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.RulesAssetServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -33,6 +32,9 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+
+import javax.xml.bind.UnmarshalException;
+
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
@@ -44,7 +46,7 @@ public class RulesFAReportServiceBeanTest {
     @Mock private RulesActivityServiceBean rulesActivityService;
     @Mock private RulesEngineBean rulesEngine;
     @Mock private RulesDao rulesDaoBean;
-    @Mock private AssetServiceBean assetServiceBean;
+    @Mock private RulesAssetServiceBean assetServiceBean;
     @Mock private RulePostProcessBean rulesService;
     @Mock private RulesFLUXMessageHelper fluxMessageHelper;
     @Mock private GearMatrix fishingGearTypeCharacteristics;
