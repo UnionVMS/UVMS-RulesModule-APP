@@ -31,9 +31,9 @@ public class AssetServiceBeanTest {
         List<AssetDTO> assets = getAssets(first, third, second);
         assets.sort(assetServiceBean.assetComparator());
 
-        assertEquals(OffsetDateTime.ofInstant(first.toInstant(), ZoneId.systemDefault()), assets.get(0).getVesselDateOfEntry());
-        assertEquals(OffsetDateTime.ofInstant(second.toInstant(), ZoneId.systemDefault()), assets.get(1).getVesselDateOfEntry());
-        assertEquals(OffsetDateTime.ofInstant(third.toInstant(), ZoneId.systemDefault()), assets.get(2).getVesselDateOfEntry());
+        assertEquals(OffsetDateTime.ofInstant(first.toInstant(), ZoneId.systemDefault()), assets.get(0).getUpdateTime());
+        assertEquals(OffsetDateTime.ofInstant(second.toInstant(), ZoneId.systemDefault()), assets.get(1).getUpdateTime());
+        assertEquals(OffsetDateTime.ofInstant(third.toInstant(), ZoneId.systemDefault()), assets.get(2).getUpdateTime());
     }
 
     @Test
@@ -47,11 +47,11 @@ public class AssetServiceBeanTest {
         OffsetDateTime offsetDateTimeSecond = OffsetDateTime.ofInstant(second.toInstant(), ZoneId.systemDefault());
         OffsetDateTime offsetDateTimeThird = OffsetDateTime.ofInstant(third.toInstant(), ZoneId.systemDefault());
 
-        assertEquals(offsetDateTimeSecond, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2016-04-10").toDate(), assets).get().getVesselDateOfEntry());
-        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2012-04-10").toDate(), assets).get().getVesselDateOfEntry());
-        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2013-04-10").toDate(), assets).get().getVesselDateOfEntry());
-        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2014-04-10").toDate(), assets).get().getVesselDateOfEntry());
-        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2015-04-09").toDate(), assets).get().getVesselDateOfEntry());
+        assertEquals(offsetDateTimeSecond, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2016-04-10").toDate(), assets).get().getUpdateTime());
+        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2012-04-10").toDate(), assets).get().getUpdateTime());
+        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2013-04-10").toDate(), assets).get().getUpdateTime());
+        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2014-04-10").toDate(), assets).get().getUpdateTime());
+        assertEquals(offsetDateTimeThird, assetServiceBean.findAssetHistoryByDate(DateTime.parse("2015-04-09").toDate(), assets).get().getUpdateTime());
 
     }
 
@@ -83,7 +83,7 @@ public class AssetServiceBeanTest {
         Optional<AssetDTO> assetHistoryByDate = assetServiceBean.findAssetHistoryByDate(landingDate, assets);
 
         assertTrue(assetHistoryByDate.isPresent());
-        assertEquals(OffsetDateTime.ofInstant(first.toInstant(), ZoneId.systemDefault()), assetHistoryByDate.get().getVesselDateOfEntry());
+        assertEquals(OffsetDateTime.ofInstant(first.toInstant(), ZoneId.systemDefault()), assetHistoryByDate.get().getUpdateTime());
     }
 
     protected List<AssetDTO> getAssets(Date first, Date second, Date third) {

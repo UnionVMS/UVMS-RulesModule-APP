@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
@@ -116,9 +118,9 @@ public class RulesAssetServiceBean implements AssetService {
         assetHistories.sort(assetComparator());
         AssetDTO historyOnDate = null;
         // Because our list is ordered from newest event to oldest, we can simply check if the date of the event is before the landing date
-        for (AssetDTO assetHistory : assetHistories) {
-            if (assetHistory.getVesselDateOfEntry() != null && assetHistory.getVesselDateOfEntry().toInstant().isBefore(landingDate.toInstant())) {
-                historyOnDate = assetHistory;
+        for (AssetDTO asset : assetHistories) {
+            if (asset.getUpdateTime() != null && asset.getUpdateTime().toInstant().isBefore(landingDate.toInstant())) {
+                historyOnDate = asset;
                 break;
             }
         }
@@ -129,8 +131,9 @@ public class RulesAssetServiceBean implements AssetService {
     private static AssetQuery createAssetQuery(String reportDate, String cfr, String flagState, String ircs, String extMark, String iccat) {
         AssetQuery assetQuery = new AssetQuery();
         if (StringUtils.isNotEmpty(reportDate)) {
-            Date date = DateUtils.stringToDate(reportDate);
-            assetQuery.setDate(date.toInstant());
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withOffsetParsed();
+            Date dateTime = formatter.withZoneUTC().parseDateTime(reportDate).toGregorianCalendar().getTime();
+            assetQuery.setDate(dateTime.toInstant());
         } else {
             return null;
         }
@@ -157,14 +160,14 @@ public class RulesAssetServiceBean implements AssetService {
 
     Comparator<AssetDTO> assetComparator() {
         return (o1, o2) -> {
-            if (o1.getVesselDateOfEntry() == null && o2.getVesselDateOfEntry() == null) {
+            if (o1.getUpdateTime() == null && o2.getUpdateTime() == null) {
                 return 0;
-            } else if (o2.getVesselDateOfEntry() == null) {
+            } else if (o2.getUpdateTime() == null) {
                 return 1;
-            } else if (o1.getVesselDateOfEntry() == null) {
+            } else if (o1.getUpdateTime() == null) {
                 return -1;
             } else {
-                return (o1.getVesselDateOfEntry().compareTo(o2.getVesselDateOfEntry()) > 0 ? -1 : 1);
+                return (o1.getUpdateTime().compareTo(o2.getUpdateTime()) > 0 ? -1 : 1);
             }
         };
     }
