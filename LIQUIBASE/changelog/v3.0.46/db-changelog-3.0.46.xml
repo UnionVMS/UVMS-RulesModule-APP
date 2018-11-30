@@ -26,5 +26,11 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-3888" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="&quot;PULL&quot;.equals(messageType) &amp;&amp; (referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; !validateFormat(referencedID) &amp;&amp; (purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; !containsAny(nonUniqueIdsList, Arrays.asList(referencedID))"/>
+            <where>BR_ID = 'FA-L03-00-0038'</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>
