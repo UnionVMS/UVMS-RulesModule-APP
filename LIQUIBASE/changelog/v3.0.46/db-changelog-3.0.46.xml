@@ -26,5 +26,27 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4145" author="emrinalgr">
+        <update tableName="rule">
+            <column name="disabled" value="true"/>
+            <where>BR_ID = 'FA-L03-00-0031'</where>
+        </update>
+        <update tableName="rule">
+            <column name="disabled" value="true"/>
+            <where>BR_ID = 'FA-L02-00-0217'</where>
+        </update>
+        <update tableName="rule">
+            <column name="disabled" value="true"/>
+            <where>BR_ID = 'FA-L02-00-0218'</where>
+        </update>
+        <update tableName="rule">
+            <column name="error_type" value="WARNING"/>
+            <where>BR_ID = 'FA-L01-00-0209'</where>
+        </update>
+        <update tableName="rule">
+            <column name="error_type" value="WARNING"/>
+            <where>BR_ID = 'FA-L01-00-0212'</where>
+        </update>
+    </changeSet>
 
 </databaseChangeLog>
