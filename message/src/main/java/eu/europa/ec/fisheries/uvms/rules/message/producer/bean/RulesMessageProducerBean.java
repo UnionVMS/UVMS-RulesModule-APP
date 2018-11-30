@@ -15,8 +15,6 @@ import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
-import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
-import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
@@ -39,7 +37,7 @@ import javax.jms.Queue;
 
 @Stateless
 @LocalBean
-public class RulesMessageProducerBean extends AbstractProducer implements RulesMessageProducer, ConfigMessageProducer {
+public class RulesMessageProducerBean extends AbstractProducer implements RulesMessageProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
 
@@ -101,17 +99,6 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
         } catch (Exception e) {
             LOG.error("[ Error when sending message. ] {}", e.getMessage());
             throw new MessageException("[ Error when sending message. ]", e);
-        }
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public String sendConfigMessage(String text) throws ConfigMessageException {
-        try {
-            return sendDataSourceMessage(text, DataSourceQueue.CONFIG);
-        } catch (MessageException e) {
-            LOG.error("[ Error when sending config message. ] {}", e.getMessage());
-            throw new ConfigMessageException("[ Error when sending config message. ]");
         }
     }
 

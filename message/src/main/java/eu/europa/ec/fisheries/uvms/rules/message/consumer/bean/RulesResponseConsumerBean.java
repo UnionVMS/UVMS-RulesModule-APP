@@ -15,8 +15,6 @@ package eu.europa.ec.fisheries.uvms.rules.message.consumer.bean;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractConsumer;
-import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
-import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +27,7 @@ import javax.jms.TextMessage;
 
 @Stateless
 @LocalBean
-public class RulesResponseConsumerBean extends AbstractConsumer implements RulesResponseConsumer, ConfigMessageConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RulesResponseConsumerBean.class);
+public class RulesResponseConsumerBean extends AbstractConsumer implements RulesResponseConsumer {
 
     @Override
     public String getDestinationName() {
@@ -42,16 +38,6 @@ public class RulesResponseConsumerBean extends AbstractConsumer implements Rules
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public TextMessage getMessage(final String correlationId, final Long timeoutInMillis) throws MessageException {
         return getMessage(correlationId, TextMessage.class, timeoutInMillis);
-    }
-
-    @Override
-    public <T> T getConfigMessage(String correlationId, Class type) throws ConfigMessageException {
-        try {
-            return getMessage(correlationId, type);
-        } catch (MessageException e) {
-            LOG.error("[ Error when getting config message. ] {}", e.getMessage());
-            throw new ConfigMessageException("[ Error when getting config message. ]");
-        }
     }
 
 }
