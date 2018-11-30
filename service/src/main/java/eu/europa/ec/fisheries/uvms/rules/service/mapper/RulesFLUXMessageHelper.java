@@ -47,6 +47,7 @@ import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_QUERY;
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_REPORT;
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_RESPONSE;
 import static eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType.FA_QUERY_ID;
+import static eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType.FA_REPORT_REF_ID;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static java.util.Collections.singletonList;
@@ -92,21 +93,6 @@ public class RulesFLUXMessageHelper {
         return extraValues;
     }
 
-    public Set<FADocumentID> mapToFADocumentID(FLUXFAReportMessage fluxfaReportMessage) {
-        Set<FADocumentID> ids = new HashSet<>();
-        if (fluxfaReportMessage != null){
-            FLUXReportDocument fluxReportDocument = fluxfaReportMessage.getFLUXReportDocument();
-            if (fluxReportDocument != null){
-                mapFluxReportDocumentIDS(ids, fluxReportDocument, FAUUIDType.FA_MESSAGE_ID);
-            }
-            List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
-            if (CollectionUtils.isNotEmpty(faReportDocuments)){
-                mapFaReportDocuments(ids, faReportDocuments);
-            }
-        }
-        return ids;
-    }
-
     public void fillFluxTLOnValue(FLUXResponseMessage fluxResponseMessage, String onValue) {
         IDType idType = new IDType();
         idType.setSchemeID("FLUXTL_ON");
@@ -124,6 +110,21 @@ public class RulesFLUXMessageHelper {
             }
         }
         return idsList;
+    }
+
+    public Set<FADocumentID> mapToFADocumentID(FLUXFAReportMessage fluxfaReportMessage) {
+        Set<FADocumentID> ids = new HashSet<>();
+        if (fluxfaReportMessage != null){
+            FLUXReportDocument fluxReportDocument = fluxfaReportMessage.getFLUXReportDocument();
+            if (fluxReportDocument != null){
+                mapFluxReportDocumentIDS(ids, fluxReportDocument, FAUUIDType.FA_MESSAGE_ID);
+            }
+            List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
+            if (CollectionUtils.isNotEmpty(faReportDocuments)){
+                mapFaReportDocuments(ids, faReportDocuments);
+            }
+        }
+        return ids;
     }
 
     private void mapFaReportDocuments(Set<FADocumentID> ids, List<FAReportDocument> faReportDocuments) {
@@ -146,7 +147,9 @@ public class RulesFLUXMessageHelper {
                     ids.add(new FADocumentID(idType.getValue(), faFluxMessageId));
                 }
                 if(referencedID != null){
-                    ids.add(new FADocumentID(referencedID.getValue(), faFluxMessageId));
+                    FADocumentID faDocumentID = new FADocumentID(referencedID.getValue(), faFluxMessageId);
+                    faDocumentID.setType(FA_REPORT_REF_ID);
+                    ids.add(faDocumentID);
                 }
             }
         }
