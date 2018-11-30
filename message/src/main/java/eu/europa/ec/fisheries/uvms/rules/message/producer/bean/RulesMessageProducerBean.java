@@ -55,6 +55,8 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
     private Queue mdrEventQueue;
     private Queue salesQueue;
 
+    private int retries;
+
     @PostConstruct
     public void init() {
         rulesResponseQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_RULES);
@@ -72,22 +74,30 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException  {
+    public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
         return sendDataSourceMessage(text, queue, Message.DEFAULT_TIME_TO_LIVE, DeliveryMode.PERSISTENT);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public String sendDataSourceMessage(String text, DataSourceQueue queue, long timeToLiveInMillis, int deliveryMode) throws MessageException  {
+    public String sendDataSourceMessage(String text, DataSourceQueue queue, long timeToLiveInMillis, int deliveryMode) throws MessageException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending message to {}", queue.name());
         }
         try {
             Queue destination = getDestinationQueue(queue);
-            if(destination != null){
+            if (destination != null) {
                 return sendMessageToSpecificQueue(text, destination, rulesResponseQueue, timeToLiveInMillis, deliveryMode);
             }
+            LOG.warn("Destination cannot be null! Not going to send message (msg props) :  {} {} {} {}", text, queue, timeToLiveInMillis, deliveryMode);
             return null;
+        } catch (MessageException ex) {
+            LOG.warn("Couldn't send message because of a MessageException! Going to retry for the {} time now..", retries);
+            retries++;
+            if (retries < 3) {
+                return sendDataSourceMessage(text, queue, timeToLiveInMillis, deliveryMode);
+            }
+            throw new MessageException("[ Error when sending message. ]", ex);
         } catch (Exception e) {
             LOG.error("[ Error when sending message. ] {}", e.getMessage());
             throw new MessageException("[ Error when sending message. ]", e);
@@ -99,7 +109,7 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
     public String sendConfigMessage(String text) throws ConfigMessageException {
         try {
             return sendDataSourceMessage(text, DataSourceQueue.CONFIG);
-        } catch (MessageException  e) {
+        } catch (MessageException e) {
             LOG.error("[ Error when sending config message. ] {}", e.getMessage());
             throw new ConfigMessageException("[ Error when sending config message. ]");
         }
@@ -159,7 +169,6 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
     public String getDestinationName() {
         return MessageConstants.QUEUE_RULES;
     }
-
 
 }
 

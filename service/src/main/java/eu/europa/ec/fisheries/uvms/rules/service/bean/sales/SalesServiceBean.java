@@ -1,6 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
-import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
 import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -15,6 +14,7 @@ import javax.ejb.Singleton;
 import javax.jms.JMSException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;

@@ -5,15 +5,12 @@ import eu.europa.ec.fisheries.uvms.asset.client.AssetClient;
 import eu.europa.ec.fisheries.uvms.asset.client.model.AssetDTO;
 import eu.europa.ec.fisheries.uvms.asset.client.model.AssetIdentifier;
 import eu.europa.ec.fisheries.uvms.asset.client.model.AssetQuery;
-import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselCountry;
@@ -24,6 +21,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -52,7 +50,7 @@ public class RulesAssetServiceBean implements AssetService {
         }
         for (VesselTransportMeansDto vesselTransportMeansDto : vesselTransportMeansFactCollectedList) {
             Map<String, String> ids = vesselTransportMeansDto.getIds();
-            AssetQuery assetQuery = createAssetQuery(vesselTransportMeansDto.getReportCreationDateTime(), ids.get("CFR"),
+            AssetQuery assetQuery = createAssetQuery(vesselTransportMeansDto.getReportCreationDateTimeDate(), ids.get("CFR"),
                     vesselTransportMeansDto.getRegistrationVesselCountry(), ids.get("IRCS"), ids.get("EXT_MARK"), ids.get("ICCAT"));
             List<AssetDTO> assetList = assetQuery != null ? assetClient.getAssetList(assetQuery) : null;
             if (CollectionUtils.isNotEmpty(assetList)) {
@@ -109,6 +107,7 @@ public class RulesAssetServiceBean implements AssetService {
             XMLGregorianCalendar dateTime = creationDateTime.getDateTime();
             if (dateTime != null) {
                 vesselTransportMeansFactCollected.setReportCreationDateTime(dateTime.toString());
+                vesselTransportMeansFactCollected.setReportCreationDateTimeDate(dateTime.toGregorianCalendar().toInstant());
             }
         }
     }
@@ -128,12 +127,10 @@ public class RulesAssetServiceBean implements AssetService {
     }
 
 
-    private static AssetQuery createAssetQuery(String reportDate, String cfr, String flagState, String ircs, String extMark, String iccat) {
+    private static AssetQuery createAssetQuery(Instant reportDate, String cfr, String flagState, String ircs, String extMark, String iccat) {
         AssetQuery assetQuery = new AssetQuery();
-        if (StringUtils.isNotEmpty(reportDate)) {
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withOffsetParsed();
-            Date dateTime = formatter.withZoneUTC().parseDateTime(reportDate).toGregorianCalendar().getTime();
-            assetQuery.setDate(dateTime.toInstant());
+        if (reportDate != null) {
+            assetQuery.setDate(reportDate);
         } else {
             return null;
         }

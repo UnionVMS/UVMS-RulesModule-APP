@@ -14,6 +14,7 @@ import eu.europa.ec.fisheries.uvms.asset.client.model.AssetDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import java.util.Map;
 public class VesselTransportMeansDto {
 
     private String reportCreationDateTime;
+    private Instant reportCreationDateTimeDate;
     private Map<String, String> ids = new HashMap<>();
     private AssetDTO asset;
     private String registrationVesselCountry;

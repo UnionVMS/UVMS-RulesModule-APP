@@ -1,6 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
-import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
 import eu.europa.ec.fisheries.schema.sales.FindReportByIdResponse;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
@@ -18,6 +17,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.jms.DeliveryMode;
 import javax.jms.TextMessage;
+import java.util.Optional;
 
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
