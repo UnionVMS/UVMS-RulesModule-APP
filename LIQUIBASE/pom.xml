@@ -221,6 +221,8 @@
 							<url>${db.docker.url}</url>
 							<migrationSqlOutputFile>${project.build.directory}/full-update.sql</migrationSqlOutputFile>
 							<outputFileEncoding>UTF-8</outputFileEncoding>
+														<verbose>true</verbose>
+
 						</configuration>
 						<executions>
 							<execution>

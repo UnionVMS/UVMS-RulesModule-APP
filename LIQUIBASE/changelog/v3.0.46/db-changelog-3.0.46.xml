@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
+
+  This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
+  and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
+  the License, or any later version. The IFDM Suite is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+    <changeSet id="UNIONVMS-3666" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !validDelimitedPeriod(delimitedPeriod, true, false)"/>
+            <where>BR_ID = 'FA-L02-00-0107'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression" value="!subActivity  &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; (!valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true)) || (occurrenceDateTime == null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true))"/>
+            <where>BR_ID = 'FA-L02-00-0108'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4145" author="emrinalgr">
+        <update tableName="rule">
+            <column name="disabled" value="true"/>
+            <where>BR_ID = 'FA-L03-00-0031'</where>
+        </update>
+        <update tableName="rule">
+            <column name="disabled" value="true"/>
+            <where>BR_ID = 'FA-L02-00-0217'</where>
+        </update>
+        <update tableName="rule">
+            <column name="disabled" value="true"/>
+            <where>BR_ID = 'FA-L02-00-0218'</where>
+        </update>
+        <update tableName="rule">
+            <column name="error_type" value="WARNING"/>
+            <where>BR_ID = 'FA-L01-00-0209'</where>
+        </update>
+        <update tableName="rule">
+            <column name="error_type" value="WARNING"/>
+            <where>BR_ID = 'FA-L01-00-0212'</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>
