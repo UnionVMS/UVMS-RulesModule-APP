@@ -15,8 +15,6 @@ import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.AbstractProducer;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JMSUtils;
-import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
-import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.event.ErrorEvent;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
@@ -39,7 +37,7 @@ import javax.jms.Queue;
 
 @Stateless
 @LocalBean
-public class RulesMessageProducerBean extends AbstractProducer implements RulesMessageProducer, ConfigMessageProducer {
+public class RulesMessageProducerBean extends AbstractProducer implements RulesMessageProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(RulesMessageProducerBean.class);
 
@@ -54,6 +52,8 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
     private Queue activityQueue;
     private Queue mdrEventQueue;
     private Queue salesQueue;
+
+    private int retries;
 
     @PostConstruct
     public void init() {
@@ -72,36 +72,32 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException  {
+    public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
         return sendDataSourceMessage(text, queue, Message.DEFAULT_TIME_TO_LIVE, DeliveryMode.PERSISTENT);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public String sendDataSourceMessage(String text, DataSourceQueue queue, long timeToLiveInMillis, int deliveryMode) throws MessageException  {
+    public String sendDataSourceMessage(String text, DataSourceQueue queue, long timeToLiveInMillis, int deliveryMode) throws MessageException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending message to {}", queue.name());
         }
         try {
             Queue destination = getDestinationQueue(queue);
-            if(destination != null){
+            if (destination != null) {
                 return sendMessageToSpecificQueue(text, destination, rulesResponseQueue, timeToLiveInMillis, deliveryMode);
             }
+            LOG.warn("Destination cannot be null! Not going to send message (msg props) :  {} {} {} {}", text, queue, timeToLiveInMillis, deliveryMode);
             return null;
-        } catch (Exception e) {
-            LOG.error("[ Error when sending message. ] {}", e.getMessage());
-            throw new MessageException("[ Error when sending message. ]", e);
-        }
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public String sendConfigMessage(String text) throws ConfigMessageException {
-        try {
-            return sendDataSourceMessage(text, DataSourceQueue.CONFIG);
-        } catch (MessageException  e) {
-            LOG.error("[ Error when sending config message. ] {}", e.getMessage());
-            throw new ConfigMessageException("[ Error when sending config message. ]");
+        } catch (Exception ex) {
+            LOG.warn("Couldn't send message because of a MessageException! Going to retry for the {} time now..", retries);
+            retries++;
+            if (retries < 3) {
+                return sendDataSourceMessage(text, queue, timeToLiveInMillis, deliveryMode);
+            } else {
+                LOG.warn("Tried 3 times to resend message but failed!!");
+                throw new MessageException("[ Error when sending message. ]", ex);
+            }
         }
     }
 
@@ -110,7 +106,7 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
         try {
             LOG.debug("Sending error message back from Rules module to recipient on JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());
             String data = JAXBMarshaller.marshallJaxBObjectToString(message.getFault());
-            this.sendResponseMessageToSender(message.getJmsMessage(), data, "Rules");
+            sendResponseMessageToSender(message.getJmsMessage(), data, "Rules");
         } catch (RulesModelMarshallException | JMSException | MessageException e) {
             LOG.error("Error when returning Error message to recipient");
         }
@@ -159,7 +155,6 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
     public String getDestinationName() {
         return MessageConstants.QUEUE_RULES;
     }
-
 
 }
 

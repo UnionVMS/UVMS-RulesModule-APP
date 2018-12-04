@@ -10,14 +10,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.xml.bind.UnmarshalException;
-import java.util.*;
-import java.util.stream.Collectors;
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
+import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
+import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
@@ -25,8 +24,9 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
-import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
@@ -35,6 +35,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FAReportQueryResponseIdsMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
@@ -44,6 +45,12 @@ import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import javax.xml.bind.UnmarshalException;
+import java.util.*;
+
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 
@@ -58,22 +65,25 @@ public class RulesFaReportServiceBean {
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
     @EJB
+    private RulesMessageProducer rulesProducer;
+
+    @EJB
     private RulesConfigurationCache rulesConfigurationCache;
 
     @EJB
     private RulesEngineBean rulesEngine;
 
     @EJB
-    private RulePostProcessBean rulePostProcess;
+    private RulePostProcessBean rulePostProcessBean;
 
     @EJB
     private GearMatrix fishingGearTypeCharacteristics;
 
     @EJB
-    private RulesActivityServiceBean activityService;
+    private RulesActivityServiceBean activityServiceBean;
 
     @EJB
-    private RulesExchangeServiceBean exchangeService;
+    private RulesExchangeServiceBean exchangeServiceBean;
 
     @EJB
     private AssetService assetService;
@@ -85,7 +95,7 @@ public class RulesFaReportServiceBean {
     private RulesFAResponseServiceBean faResponseValidatorAndSender;
 
     @EJB
-    private RulesDao rulesDao;
+    private RulesDao rulesDaoBean;
 
     private RulesFLUXMessageHelper fluxMessageHelper;
 
@@ -104,35 +114,29 @@ public class RulesFaReportServiceBean {
             List<IDType> messageGUID = collectReportMessageIds(fluxfaReportMessage);
 
             Set<FADocumentID> idsFromIncomingMessage = fluxMessageHelper.mapToFADocumentID(fluxfaReportMessage);
-            List<FADocumentID> reportAndMessageIdsFromDB = rulesDao.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);
+            List<FADocumentID> reportAndMessageIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);
 
             List<String> faIdsPerTripsFromMessage = fluxMessageHelper.collectFaIdsAndTripIds(fluxfaReportMessage);
-            List<String> faIdsPerTripsListFromDb = rulesDao.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
+            List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
 
-            Map<ExtraValueType, Object> extraValues = collectExtraValues(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
+            Map<ExtraValueType, Object> extraValues = fetchExtraValues(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
             extraValues.put(XML, requestStr);
             Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues, String.valueOf(messageGUID));
 
             idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
 
-            ValidationResult faReportValidationResult = rulePostProcess.checkAndUpdateValidationResult(faReportFacts, requestStr, exchangeLogGuid, RawMsgType.FA_REPORT);
-            exchangeService.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult));
+            ValidationResult faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, exchangeLogGuid, RawMsgType.FA_REPORT);
+            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult));
 
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                 log.debug(" The Validation of Report is successful, forwarding message to Activity.");
-                boolean hasPermissions = activityService.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
+                boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
                 if (hasPermissions) {
+                    rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
                     log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
-                    activityService.sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid);
-                    rulesDao.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
-
-                    Set<FADocumentID> result = idsFromIncomingMessage.stream()
-                            .filter(faDocumentID -> !FAUUIDType.FA_REPORT_REF_ID.equals(faDocumentID.getType()))
-                            .collect(Collectors.toSet());
-
-                    rulesDao.createFaDocumentIdEntity(result);// remove ref ids
-
+                    sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid);
                 } else {
                     log.debug(" Request doesn't have permissions!");
                 }
@@ -143,16 +147,16 @@ public class RulesFaReportServiceBean {
             FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
             XPathRepository.INSTANCE.clear(faReportFacts);
 
-            exchangeService.evaluateAndSendToExchange(fluxResponseMessage, request, request.getType(), fluxMessageHelper.isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
+            exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, request.getType(), fluxMessageHelper.isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
 
         } catch (UnmarshalException e) {
             log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
-            exchangeService.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
-            exchangeService.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
+            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
+            exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);
-            exchangeService.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
-            exchangeService.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
+            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
+            exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         }
         log.debug("Finished eval of FLUXFAReportMessage " + exchangeLogGuid);
     }
@@ -171,16 +175,17 @@ public class RulesFaReportServiceBean {
             Set<FADocumentID> idsFromIncommingMessage = fluxMessageHelper.mapToFADocumentID(fluxfaReportMessage);
             List<String> faIdsPerTripsFromMessage = fluxMessageHelper.collectFaIdsAndTripIds(fluxfaReportMessage);
 
-            List<FADocumentID> reportAndMessageIdsFromDB = rulesDao.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
-            List<String> faIdsPerTripsListFromDb = rulesDao.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
+            List<FADocumentID> reportAndMessageIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
+            List<String> faIdsPerTripsListFromDb = rulesDaoBean.loadExistingFaIdsPerTrip(faIdsPerTripsFromMessage);
 
-            Map<ExtraValueType, Object> extraValuesMap = collectExtraValues(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, false);
+            Map<ExtraValueType, Object> extraValuesMap = fetchExtraValues(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, false);
             extraValuesMap.put(XML, requestStr);
             Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValuesMap, String.valueOf(fluxfaReportMessage.getFLUXReportDocument().getIDS()));
-            ValidationResult faReportValidationResult = rulePostProcess.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
+            ValidationResult faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, logGuid, RawMsgType.FA_REPORT);
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                 log.info(" The Validation of FLUXFAReportMessage is successful, forwarding message to Exchange");
-                exchangeService.sendToExchange(ExchangeModuleRequestMapper.createSendFaReportMessageRequest(request.getRequest(), "movement", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), request.getOnValue(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST"));
+                sendToExchange(ExchangeModuleRequestMapper.createSendFaReportMessageRequest(request.getRequest(), "movement", logGuid, request.getFluxDataFlow(),
+                        request.getSenderOrReceiver(), request.getOnValue(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST"));
             } else {
                 log.info(" Validation resulted in errors. Not going to send msg to Exchange module..");
             }
@@ -188,18 +193,23 @@ public class RulesFaReportServiceBean {
 
         } catch (UnmarshalException e) {
             log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
-            exchangeService.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
-            exchangeService.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
+            exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
+            exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);
-            exchangeService.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
-            exchangeService.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
+            exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
+            exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         } catch (MessageException | ExchangeModelMarshallException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);
         }
     }
 
-    private Map<ExtraValueType, Object> collectExtraValues(String senderReceiver, FLUXFAReportMessage fluxfaReportMessage, List<FADocumentID> reportAndMessageIdsFromDB, List<String> faIdsPerTripsListFromDb, boolean isIncomingMessage) {
+    private void sendToExchange(String message) throws MessageException {
+        rulesProducer.sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
+    }
+
+    private Map<ExtraValueType, Object> fetchExtraValues(String senderReceiver, FLUXFAReportMessage fluxfaReportMessage,
+                                                         List<FADocumentID> reportAndMessageIdsFromDB, List<String> faIdsPerTripsListFromDb, boolean isIncomingMessage) {
         Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
         extraValues.put(SENDER_RECEIVER, senderReceiver);
         extraValues.put(ExtraValueType.ASSET, assetService.findHistoryOfAssetBy(fluxfaReportMessage.getFAReportDocuments()));
@@ -209,6 +219,15 @@ public class RulesFaReportServiceBean {
             extraValues.put(TRIP_ID, faIdsPerTripsListFromDb);
         }
         return extraValues;
+    }
+
+    private void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, String exchangeLogGuid) {
+        try {
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, exchangeLogGuid);
+            rulesProducer.sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
+        } catch (ActivityModelMarshallException | MessageException e) {
+            throw new RulesServiceException(e.getMessage(), e);
+        }
     }
 
     private List<IDType> collectReportMessageIds(FLUXFAReportMessage fluxfaReportMessage) {

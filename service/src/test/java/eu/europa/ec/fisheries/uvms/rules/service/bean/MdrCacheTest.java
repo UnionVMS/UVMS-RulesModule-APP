@@ -46,10 +46,10 @@ import static org.mockito.Mockito.when;
 public class MdrCacheTest {
 
     @Mock
-    MDRCacheServiceBean mdrCacheServiceBean;
+    private MDRCacheServiceBean mdrCacheServiceBean;
 
     @Mock
-    MDRCache mdrCache;
+    private MDRCache mdrCache;
 
     @Mock
     private RulesResponseConsumer consumer;
@@ -86,7 +86,6 @@ public class MdrCacheTest {
 
         mdrCache.init();
         List<ObjectRepresentation> faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
-
         assertTrue(CollectionUtils.isNotEmpty(faCatchTypeEntries));
     }
 
@@ -95,11 +94,9 @@ public class MdrCacheTest {
     public void testGetListFromCacheNull() {
         when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.MDR_EVENT))).thenReturn("SomeCorrId");
         when(consumer.getMessage(anyString(), eq(TextMessage.class))).thenReturn(null);
-
         List<ObjectRepresentation> faCatchTypeEntries = null;
-
+        mdrCache.init();
         try {
-            mdrCache.init();
             faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
         } catch (CacheLoader.InvalidCacheLoadException ex) {
             System.out.println("Exception thrown as expected : " + ex.getMessage());

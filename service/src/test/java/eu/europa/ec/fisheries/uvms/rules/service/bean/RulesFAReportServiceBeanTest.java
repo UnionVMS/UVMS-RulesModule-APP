@@ -10,7 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.xml.bind.UnmarshalException;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
@@ -33,6 +32,9 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+
+import javax.xml.bind.UnmarshalException;
+
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;

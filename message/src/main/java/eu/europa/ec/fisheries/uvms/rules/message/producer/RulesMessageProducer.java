@@ -25,6 +25,8 @@ public interface RulesMessageProducer {
 
     String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException;
 
+    void sendModuleResponseMessage(TextMessage message, String text) throws MessageException;
+
     /**
      * @param text the message that needs to be sent
      * @param queue the queue it needs to be sent to (DataSourceQueue)
@@ -37,8 +39,6 @@ public interface RulesMessageProducer {
      * @throws MessageException
      */
     String sendDataSourceMessage(String text, DataSourceQueue queue, long timeToLiveInMillis, int deliveryMode) throws MessageException;
-
-    void sendModuleResponseMessage(TextMessage message, String text) throws MessageException;
 
     void sendModuleErrorResponseMessage(@Observes @ErrorEvent EventMessage message);
 }

@@ -10,22 +10,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import java.io.InputStream;
-import java.util.*;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
@@ -37,6 +30,12 @@ import org.kie.api.builder.Results;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
 import org.kie.api.runtime.KieContainer;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import java.io.InputStream;
+import java.util.*;
+
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Singleton
@@ -58,7 +57,6 @@ public class RulesKieContainerInitializer {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             List<TemplateRuleMapDto> allTemplates = rulesDb.getAllFactTemplatesAndRules();
-            enrichRulesWithMDR(allTemplates);
 
             List<TemplateRuleMapDto> faResponseTemplatesAndRules = getFaResponseRules(allTemplates);
             List<TemplateRuleMapDto> faTemplatesAndRules = getFaMessageRules(allTemplates);
@@ -72,7 +70,7 @@ public class RulesKieContainerInitializer {
             KieContainer faRespContainer = createContainer(faResponseTemplatesAndRules);
 
             log.info("Initializing templates and rules for FA-Query facts. Nr. of Rules : {}", faQueryTemplatesAndRules.size());
-            KieContainer faQueryContainer =  createContainer(faQueryTemplatesAndRules);
+            KieContainer faQueryContainer = createContainer(faQueryTemplatesAndRules);
 
             log.info("Initializing templates and rules for Sales facts. Nr. of Rules : {}", salesTemplatesAndRules.size());
             KieContainer salesContainer = createContainer(salesTemplatesAndRules);
@@ -88,8 +86,9 @@ public class RulesKieContainerInitializer {
                 throw new RuntimeException("Please include all the <code>FactType</code> in the KieContainers");
             }
             log.info("It took " + stopwatch + " to initialize the rules.");
-        } catch (RulesModelException e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
+            throw new RuntimeException("Couldn't initialize rules engine!!");
         }
     }
 
@@ -200,23 +199,6 @@ public class RulesKieContainerInitializer {
         }
         allTemplates.removeAll(faQueryTemplates);
         return faQueryTemplates;
-    }
-
-    private void enrichRulesWithMDR(List<TemplateRuleMapDto> templatesAndRules) {
-        cacheService.loadCacheForFailureMessages();
-        for (TemplateRuleMapDto templatesAndRule : templatesAndRules) {
-            for (RuleType ruleType : templatesAndRule.getRules()) {
-                EnrichedBRMessage enrichedBRMessage = cacheService.getErrorMessageForBrId(ruleType.getBrId());
-                if (enrichedBRMessage != null) {
-                    String errorMessageForBrId = enrichedBRMessage.getMessage();
-                    if (StringUtils.isNotEmpty(errorMessageForBrId)) {
-                        ruleType.setMessage(errorMessageForBrId.replaceAll("\"", "&quot;"));
-                        enrichedBRMessage.setTemplateEntityName(templatesAndRule.getTemplateType().getType().name());
-                        enrichedBRMessage.setExpression(ruleType.getExpression());
-                    }
-                }
-            }
-        }
     }
 
     public KieContainer getContainerByType(ContainerType containerType) {

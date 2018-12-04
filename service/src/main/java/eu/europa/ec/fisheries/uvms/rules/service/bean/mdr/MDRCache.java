@@ -10,16 +10,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import com.google.common.base.Stopwatch;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
+import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
@@ -30,15 +23,22 @@ import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.MdrLoadingException;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
-import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
-import un.unece.uncefact.data.standard.mdr.communication.MdrGetLastRefreshDateResponse;
-import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.mdr.communication.*;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import javax.jms.DeliveryMode;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -70,6 +70,12 @@ public class MDRCache {
 
     private Date lastTimeRefreshDateWasRetrieved;
 
+    private static final int MB = 1024 * 1024;
+
+    private static final long TIME_TO_LIVE_IN_MILLIS = 300000L;
+    private static final long TIME_TO_CONSUME_IN_MILLIS = 60000L;
+
+
     @PostConstruct
     public void init() {
         cache = new ConcurrentHashMap<>();
@@ -82,26 +88,93 @@ public class MDRCache {
     @AccessTimeout(value = 10, unit = MINUTES)
     @Lock(LockType.WRITE)
     public void loadAllMdrCodeLists(boolean isFromReport) {
-        if (!alreadyLoadedOnce) {
-            populateMdrCacheDateAndCheckIfRefreshDateChanged();
-            populateAllMdr();
-        } else if (isFromReport && oneMinuteHasPassed() && populateMdrCacheDateAndCheckIfRefreshDateChanged()) { // We fetch MdrCacheDate only once per minute.
-            populateAllMdr();
+        try {
+            if (!alreadyLoadedOnce) {
+                log.info("MDR Cache was never loaded, loading now..");
+                populateMdrCacheDateAndCheckIfRefreshDateChanged();
+                populateMdrCache();
+            } else if (isFromReport && oneMinuteHasPassed() && populateMdrCacheDateAndCheckIfRefreshDateChanged()) { // We fetch MdrCacheDate only once per minute.
+                log.info("MDR Cache in MDR was updated.. Going to refresh Rules mdr cahce now...");
+                populateMdrCache();
+            }
+        } catch (MdrLoadingException e) {
+            log.error("Exception while trying to loadAllMdrCodeLists...", e);
         }
+    }
+
+    /**
+     * Chooses which way to load mdr cache (at once/one by one) depending on the free memory available!
+     * In this way we avoid an OutOfMemory Exception of the heapSpace. :)
+     */
+    private void populateMdrCache() throws MdrLoadingException {
+        long freeMemory = Runtime.getRuntime().freeMemory() / MB;
+        log.info("Free Memory : [{}] MB", freeMemory);
+        if ((!alreadyLoadedOnce && freeMemory < 800) || freeMemory < 150) {
+            populateAllMdrOneByOne();
+        } else {
+            populateAllMdrAtOnce();
+        }
+        loadCacheForFailureMessages();
     }
 
     private boolean oneMinuteHasPassed() {
         return (Math.abs(new Date().getTime() - lastTimeRefreshDateWasRetrieved.getTime()) / 1000) > 59;
     }
 
-    private void populateAllMdr() {
-        log.info("Loading MDR");
+    /**
+     * It loads all the mdr codelists one by one from the mdr module [GET_MDR_CODE_LIST] Request Type.
+     */
+    private void populateAllMdrOneByOne() {
+        log.info("Loading MDR..");
         for (final MDRAcronymType type : MDRAcronymType.values()) {
-            cache.put(type, mdrCodeListByAcronymType(type));
+            try {
+                cache.put(type, mdrCodeListByAcronymType(type));
+            } catch (MdrLoadingException e) {
+                log.error(e.getMessage());
+            }
         }
         log.info("{} lists cached", cache.size());
         alreadyLoadedOnce = true;
         log.info("MDR refresh Date {}", mdrRefreshDate);
+    }
+
+    /**
+     * It loads all the mdr codelists at once from the mdr module [GET_ALL_MDR_CODE_LIST] Request Type.
+     */
+    private void populateAllMdrAtOnce() throws MdrLoadingException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        log.info("Loading All MDR...");
+        MdrGetAllCodeListsResponse allMdrCodeLists = getAllMdrCodeLists();
+        if (allMdrCodeLists != null && CollectionUtils.isNotEmpty(allMdrCodeLists.getCodeLists())) {
+            for (SingleCodeListRappresentation codeList : allMdrCodeLists.getCodeLists()) {
+                cache.put(MDRAcronymType.valueOf(codeList.getAcronym()), codeList.getDataSets());
+            }
+        } else {
+            log.warn("Mdr Response resulted null/empty! Check if MDR is deployed!");
+        }
+        log.info("Nr. {} lists were cached.", cache.size());
+        alreadyLoadedOnce = true;
+        log.info("MDR refresh Date {}", mdrRefreshDate);
+        long elapsed = stopwatch.elapsed(TimeUnit.SECONDS);
+        log.info("Loading and caching took [{}] seconds!", elapsed);
+    }
+
+    private MdrGetAllCodeListsResponse getAllMdrCodeLists() throws MdrLoadingException {
+        MdrGetAllCodeListsResponse response;
+        String request;
+        try {
+            request = MdrModuleMapper.createFluxMdrGetAllCodeListRequest();
+            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, TIME_TO_LIVE_IN_MILLIS, DeliveryMode.NON_PERSISTENT);
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class, TIME_TO_CONSUME_IN_MILLIS);
+            if (message != null) {
+                response = unmarshallTextMessage(message.getText(), MdrGetAllCodeListsResponse.class);
+                return response;
+            }
+        } catch (MdrModelMarshallException | JMSException | ActivityModelMarshallException | MessageException e) {
+            log.error("Some very bad error happened while trying to get the MDR Codelists {}", e);
+            throw new MdrLoadingException(e.getMessage());
+        }
+        return null;
     }
 
     @AccessTimeout(value = 10, unit = MINUTES)
@@ -112,7 +185,12 @@ public class MDRCache {
             result = cache.get(acronymType);
             if (CollectionUtils.isEmpty(result)) {
                 log.warn(" Reloading {}", acronymType);
-                cache.put(acronymType, mdrCodeListByAcronymType(acronymType));
+                try {
+                    cache.put(acronymType, mdrCodeListByAcronymType(acronymType));
+                } catch (MdrLoadingException e) {
+                    log.error("Error when trying to refresh codelist {}", acronymType);
+                    return null;
+                }
                 result = cache.get(acronymType);
                 if (CollectionUtils.isEmpty(result)) {
                     log.error(" Failed to reload {}", acronymType);
@@ -129,19 +207,22 @@ public class MDRCache {
      * @param acronymType
      * @return
      */
-    @SneakyThrows
-    private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronymType) {
+    private List<ObjectRepresentation> mdrCodeListByAcronymType(MDRAcronymType acronymType) throws MdrLoadingException {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronymType.name());
-        String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, 300000L, DeliveryMode.NON_PERSISTENT);
-        TextMessage message = consumer.getMessage(corrId, TextMessage.class, 300000L);
-        long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        if (elapsed > 100) {
-            log.info("Loading {} took {} ", acronymType, stopwatch);
-        }
-        if (message != null) {
-            MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
-            return response.getDataSets();
+        try {
+            String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronymType.name());
+            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, TIME_TO_LIVE_IN_MILLIS, DeliveryMode.NON_PERSISTENT);
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class, TIME_TO_CONSUME_IN_MILLIS);
+            long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+            if (elapsed > 100) {
+                log.info("Loading {} took {} ", acronymType, stopwatch);
+            }
+            if (message != null) {
+                MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
+                return response.getDataSets();
+            }
+        } catch (MessageException | MdrModelMarshallException | JMSException | ActivityModelMarshallException ex) {
+            throw new MdrLoadingException("Error while trying to load mdr!", ex);
         }
         return new ArrayList<>();
     }
@@ -150,7 +231,7 @@ public class MDRCache {
      * Checks if the refresh date from mdr module has changed.
      * If it has changed sets cacheDateChanged=true; and refreshed the mdrRefreshDate with the new date.
      */
-    private boolean populateMdrCacheDateAndCheckIfRefreshDateChanged() {
+    private boolean populateMdrCacheDateAndCheckIfRefreshDateChanged() throws MdrLoadingException {
         boolean cacheDateChanged = false;
         try {
             Date mdrDate = getLastTimeMdrWasRefreshedFromMdrModule();
@@ -160,7 +241,8 @@ public class MDRCache {
                 cacheDateChanged = true;
             }
         } catch (MessageException e) {
-            log.error(" Couldn't populate MDR Refresh date.. MDR Module is deployed?");
+            log.error(" Couldn't populate MDR Refresh date.. MDR Module is deployed?", e);
+            throw new MdrLoadingException(e.getMessage());
         }
         return cacheDateChanged;
     }
@@ -173,38 +255,46 @@ public class MDRCache {
      */
     private Date getLastTimeMdrWasRefreshedFromMdrModule() throws MessageException {
         try {
-            String corrId = producer.sendDataSourceMessage(MdrModuleMapper.createMdrGetLastRefreshDateRequest(), DataSourceQueue.MDR_EVENT, 30000L, DeliveryMode.NON_PERSISTENT);
-            TextMessage message = consumer.getMessage(corrId, TextMessage.class, 30000L);
+            String corrId = producer.sendDataSourceMessage(MdrModuleMapper.createMdrGetLastRefreshDateRequest(), DataSourceQueue.MDR_EVENT, 60000L, DeliveryMode.NON_PERSISTENT);
+            TextMessage message = consumer.getMessage(corrId, TextMessage.class, 60000L);
             if (message != null) {
                 MdrGetLastRefreshDateResponse response = JAXBUtils.unMarshallMessage(message.getText(), MdrGetLastRefreshDateResponse.class);
                 return response.getLastRefreshDate() != null ? DateUtils.xmlGregorianCalendarToDate(response.getLastRefreshDate()) : null;
             }
             throw new MessageException("[FATAL-ERROR] Couldn't get LastRefreshDate from MDR Module! Mdr is deployed?");
         } catch (MdrModelMarshallException | JAXBException | JMSException e) {
-            throw new MessageException("[FATAL-ERROR] Couldn't get LastRefreshDate from MDR Module! Mdr is deployed?");
+            throw new MessageException("[FATAL-ERROR] Couldn't get LastRefreshDate from MDR Module! Mdr is deployed?", e);
         }
     }
 
     /**
      * This function maps all the error messages to the ones defined in MDR;
      */
-    public void loadCacheForFailureMessages() {
-        if (!MapUtils.isEmpty(errorMessages)) {
-            return;
-        }
+    private void loadCacheForFailureMessages() {
         errorMessages = new HashMap<>();
         final List<ObjectRepresentation> objRapprList = new ArrayList<>();
-        List<ObjectRepresentation> brDef = getEntry(MDRAcronymType.FA_BR_DEF);
-        List<ObjectRepresentation> saleBrDef = getEntry(MDRAcronymType.SALE_BR_DEF);
-        objRapprList.addAll(brDef);
-        objRapprList.addAll(saleBrDef);
+        List<ObjectRepresentation> brDef = getEntry(MDRAcronymType.FA_BR);
+        List<ObjectRepresentation> saleBrDef = getEntry(MDRAcronymType.SALE_BR);
+        // For start up non reachable MDR purposes :)
+        if (CollectionUtils.isNotEmpty(brDef)) {
+            objRapprList.addAll(brDef);
+        }
+        if (CollectionUtils.isNotEmpty(saleBrDef)) {
+            objRapprList.addAll(saleBrDef);
+        }
+        objRapprList.removeAll(Collections.singleton(null));
+        if (CollectionUtils.isEmpty(objRapprList)) {
+            return;
+        }
         final String MESSAGE_COLUMN = "messageIfFailing";
         final String BR_ID_COLUMN = "code";
         final String BR_NOTE_COLUMN = "note";
+        final String BR_ERROR_TYPE_COLUMN = "fluxGpValidationTypeCode";
         for (ObjectRepresentation objectRepr : objRapprList) {
             String brId = null;
             String errorMessage = null;
             String note = null;
+            String errType = null;
             for (ColumnDataType field : objectRepr.getFields()) {
                 final String columnName = field.getColumnName();
                 if (MESSAGE_COLUMN.equals(columnName)) {
@@ -216,12 +306,14 @@ public class MDRCache {
                 if (BR_NOTE_COLUMN.equals(columnName)) {
                     note = field.getColumnValue();
                 }
+                if (BR_ERROR_TYPE_COLUMN.equals(columnName)) {
+                    errType = field.getColumnValue();
+                }
             }
-            errorMessages.put(brId, new EnrichedBRMessage(note, errorMessage));
+            errorMessages.put(brId, new EnrichedBRMessage(note, errorMessage, errType.contains("ERR") ? ErrorType.ERROR.value() : ErrorType.WARNING.value()));
         }
     }
 
-    @AccessTimeout(value = 10, unit = MINUTES)
     public EnrichedBRMessage getErrorMessage(String brId) {
         return errorMessages.get(brId);
     }

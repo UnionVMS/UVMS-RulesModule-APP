@@ -21,9 +21,6 @@
 
     <include file="changelog\v3.0.45\db-changelog-3.0.45.xml" />
 
-    <include file="changelog\v3.0.46\db-changelog-3.0.46.xml" />
-
-
     <!-- testdata, run with parameter -Dliquibase.contexts=test
     <include file="changelog\v0.1\db-changelog-insertTestData_0.1.xml"/>
     -->

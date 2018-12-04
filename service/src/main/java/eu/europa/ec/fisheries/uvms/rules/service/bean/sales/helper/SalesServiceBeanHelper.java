@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 
-import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.sales.CheckForUniqueIdResponse;
 import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
 import eu.europa.ec.fisheries.schema.sales.FindReportByIdResponse;
@@ -24,12 +23,13 @@ import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Singleton
 public class SalesServiceBeanHelper {
 
-    public static final long TIME_TO_WAIT_FOR_A_RESPONSE = 30000L;
+    private static final long TIME_TO_WAIT_FOR_A_RESPONSE = 30000L;
 
     @EJB
     private RulesMessageProducer messageProducer;
@@ -54,9 +54,9 @@ public class SalesServiceBeanHelper {
     protected Optional<FLUXSalesReportMessage> unmarshal(String message) throws SalesMarshallException {
         FindReportByIdResponse findReportByIdResponse = JAXBMarshaller.unmarshallString(message, FindReportByIdResponse.class);
         if (StringUtils.isNotBlank(findReportByIdResponse.getReport())) {
-            return Optional.of((FLUXSalesReportMessage) JAXBMarshaller.unmarshallString(findReportByIdResponse.getReport(), FLUXSalesReportMessage.class));
+            return Optional.of(JAXBMarshaller.unmarshallString(findReportByIdResponse.getReport(), FLUXSalesReportMessage.class));
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 

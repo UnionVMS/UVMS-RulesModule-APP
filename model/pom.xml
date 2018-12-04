@@ -24,7 +24,6 @@
 
         <wsdl.contract.name>RulesModuleService</wsdl.contract.name>
         <wsdl.source.name>RulesDataSourceService</wsdl.source.name>
-        <javaee.version>7.0</javaee.version>
         <sl4j.version>1.7.25</sl4j.version>
         <logback.version>1.2.3</logback.version>
         <logback.core.version>1.2.3</logback.core.version>
@@ -40,14 +39,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>${javaee.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${sl4j.version}</version>
@@ -62,8 +53,6 @@
             <artifactId>logback-core</artifactId>
             <version>${logback.core.version}</version>
         </dependency>
-
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

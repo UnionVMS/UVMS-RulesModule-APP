@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Resource;
 import javax.ejb.*;
-import javax.transaction.Transactional;
 import java.util.Collection;
 
 /**
@@ -26,7 +25,6 @@ import java.util.Collection;
  */
 @Slf4j
 @Stateless
-@Transactional
 public class RulesSchedulerServiceBean implements RulesSchedulerService {
 
     private static final String RULES_SYNCHRONIZATION_TIMER = "RulesSynchronizationTimer";

@@ -35,7 +35,7 @@
 				</exclusion>
 				<exclusion>
 				    <groupId>net.sf.ehcache</groupId>
-  					<artifactId>ehcache</artifactId>				
+  					<artifactId>ehcache</artifactId>
 				</exclusion>
                 <exclusion>
                     <groupId>com.google.guava</groupId>

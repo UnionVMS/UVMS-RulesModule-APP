@@ -2769,12 +2769,12 @@ public class ActivityFactMapper {
         this.xPathUtil = xPathUtil1;
     }
 
-    public void setFishingActivitiesWithTripIds(List<String> fishingActivitiesWithTripIds) {
-        this.fishingActivitiesWithTripIds = fishingActivitiesWithTripIds;
-    }
-
     public void setSenderReceiver(String value) {
         senderReceiver = value;
+    }
+
+    public void setFishingActivitiesWithTripIds(List<String> fishingActivitiesWithTripIds) {
+        this.fishingActivitiesWithTripIds = fishingActivitiesWithTripIds;
     }
 
     public List<IdType> getFaReportMessageIds() {
