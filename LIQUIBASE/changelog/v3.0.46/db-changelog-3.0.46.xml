@@ -21,7 +21,7 @@
         </update>
 
         <update tableName="rule">
-            <column name="expression" value="!subActivity  &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; (!valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true)) || (occurrenceDateTime == null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true))"/>
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !subActivity &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true)"/>
             <where>BR_ID = 'FA-L02-00-0108'</where>
         </update>
     </changeSet>
