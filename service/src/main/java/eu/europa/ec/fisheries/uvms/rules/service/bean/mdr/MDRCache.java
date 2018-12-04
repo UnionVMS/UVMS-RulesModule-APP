@@ -271,7 +271,6 @@ public class MDRCache {
      * This function maps all the error messages to the ones defined in MDR;
      */
     private void loadCacheForFailureMessages() {
-        log.info("Loading FA_BR_DEF and SALES_BR_DEF..");
         errorMessages = new HashMap<>();
         final List<ObjectRepresentation> objRapprList = new ArrayList<>();
         List<ObjectRepresentation> brDef = getEntry(MDRAcronymType.FA_BR);

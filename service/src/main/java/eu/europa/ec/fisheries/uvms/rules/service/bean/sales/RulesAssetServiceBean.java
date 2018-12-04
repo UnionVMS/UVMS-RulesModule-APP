@@ -19,7 +19,8 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -27,7 +28,8 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-@Singleton
+@Stateless
+@LocalBean
 @Slf4j
 public class RulesAssetServiceBean implements AssetService {
 

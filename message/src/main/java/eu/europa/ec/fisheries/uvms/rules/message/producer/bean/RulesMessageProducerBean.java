@@ -89,16 +89,15 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
             }
             LOG.warn("Destination cannot be null! Not going to send message (msg props) :  {} {} {} {}", text, queue, timeToLiveInMillis, deliveryMode);
             return null;
-        } catch (MessageException ex) {
+        } catch (Exception ex) {
             LOG.warn("Couldn't send message because of a MessageException! Going to retry for the {} time now..", retries);
             retries++;
             if (retries < 3) {
                 return sendDataSourceMessage(text, queue, timeToLiveInMillis, deliveryMode);
+            } else {
+                LOG.warn("Tried 3 times to resend message but failed!!");
+                throw new MessageException("[ Error when sending message. ]", ex);
             }
-            throw new MessageException("[ Error when sending message. ]", ex);
-        } catch (Exception e) {
-            LOG.error("[ Error when sending message. ] {}", e.getMessage());
-            throw new MessageException("[ Error when sending message. ]", e);
         }
     }
 
@@ -107,7 +106,7 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
         try {
             LOG.debug("Sending error message back from Rules module to recipient on JMS Queue with correlationID: {} ", message.getJmsMessage().getJMSMessageID());
             String data = JAXBMarshaller.marshallJaxBObjectToString(message.getFault());
-            this.sendResponseMessageToSender(message.getJmsMessage(), data, "Rules");
+            sendResponseMessageToSender(message.getJmsMessage(), data, "Rules");
         } catch (RulesModelMarshallException | JMSException | MessageException e) {
             LOG.error("Error when returning Error message to recipient");
         }
