@@ -20,6 +20,7 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.ValidationQualityAnalysisFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -43,10 +44,15 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
     private FaResponseFactMapper responseFactMapper;
     private XPathStringWrapper stringWrapper;
 
-    public ActivityResponseFactGenerator(FLUXResponseMessage fluxResponseMessage, FaResponseFactMapper responseFactMapper) {
+    public ActivityResponseFactGenerator(FLUXResponseMessage fluxResponseMessage, FaResponseFactMapper responseFactMapper, MessageType messageType) {
+        super(messageType);
         this.fluxResponseMessage = fluxResponseMessage;
         this.responseFactMapper = responseFactMapper;
         this.stringWrapper = responseFactMapper.getStringWrapper();
+    }
+
+    public ActivityResponseFactGenerator(){
+        super(MessageType.PUSH);
     }
 
     @Override

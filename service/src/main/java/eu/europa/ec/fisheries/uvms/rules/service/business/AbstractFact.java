@@ -103,22 +103,6 @@ public abstract class AbstractFact {
         return xpathsList;
     }
 
-    public boolean valueContainsAll(List<IdType> idTypes, String... valuesToMatch) {
-        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
-            return true;
-        }
-        int valLength = valuesToMatch.length;
-        int hits = 0;
-        for (String val : valuesToMatch) {
-            for (IdType IdType : idTypes) {
-                if (IdType != null && val.equals(IdType.getValue())) {
-                    hits++;
-                }
-            }
-        }
-        return valLength > hits;
-    }
-
     public boolean valueStartsWith(List<IdType> idTypes, String... valuesToMatch) {
         if (isEmpty(idTypes) || ArrayUtils.isEmpty(valuesToMatch)) {
             return false;
@@ -340,7 +324,7 @@ public abstract class AbstractFact {
      * Validate the format of the value depending on the codeType for single CodeType
      *
      * @param codeType CodeType
-     * @return
+     * @return true if format is invalid, return false if format is valid
      */
     public boolean validateFormat(CodeType codeType) {
         boolean isInvalid = false;
@@ -363,6 +347,12 @@ public abstract class AbstractFact {
      *
      */
     public boolean containsAny(Collection col1, Collection col2) {
+        if (CollectionUtils.isEmpty(col1)){
+            col1 = new ArrayList();
+        }
+        if (CollectionUtils.isEmpty(col2)){
+            col2 = new ArrayList();
+        }
         return CollectionUtils.containsAny(col1, col2);
     }
 
@@ -708,18 +698,18 @@ public abstract class AbstractFact {
         return found;
     }
 
-    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) { // FIXME change logic true false
+    public boolean valueContainsAny(CodeType codeType, String... valuesToMatch) {
         return codeType == null || valueContainsAny(Collections.singletonList(codeType), valuesToMatch);
     }
 
     /**
-     * Returns true when value is not found.
+     * Returns true if at least one element is in both collections.
      *
      * @param codeTypes
      * @param valuesToMatch
      * @return
      */
-    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) { // FIXME change logic true false
+    public boolean valueContainsAny(List<CodeType> codeTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
@@ -728,6 +718,23 @@ public abstract class AbstractFact {
         for (String val : valuesToMatch) {
             for (CodeType CodeTypes : removeNull) {
                 if (val.equals(CodeTypes.getValue())) {
+                    isMatchFound = true;
+                    break;
+                }
+            }
+        }
+        return !isMatchFound;
+    }
+
+    public boolean idTypeValueContainsAny(List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypes, String... valuesToMatch) { // FIXME change logic true false
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+        ImmutableList<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> removeNull = ImmutableList.copyOf(Iterables.filter(idTypes, Predicates.notNull()));
+        boolean isMatchFound = false;
+        for (String val : valuesToMatch) {
+            for (eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType idType : removeNull) {
+                if (val.equals(idType.getValue())) {
                     isMatchFound = true;
                     break;
                 }
@@ -1150,8 +1157,8 @@ public abstract class AbstractFact {
         return value != null && ((value.compareTo(new BigDecimal(lowBound)) >= 0) && (value.compareTo(new BigDecimal(upperBound)) <= 0));
     }
 
-    public MessageType getMessageType() {
-        return messageType;
+    public String getMessageType() {
+        return messageType.name();
     }
 
     public void setCreationDateOfMessage(DateTime creationDateOfMessage) {

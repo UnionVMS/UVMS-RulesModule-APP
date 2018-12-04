@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIde
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
@@ -751,35 +752,20 @@ public class AbstractFactTest {
     }
 
     @Test
-    public void testValueContainsAll() {
-
-        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "CFR");
-        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "IRCS");
-        IdType idType3 = ActivityObjectsHelper.generateIdType("value13", "UUID");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2, idType3);
-        boolean result = fact.valueContainsAll(idTypes, "value1");
-        assertFalse(result);
-    }
-
-    @Test
-    public void testValueContainsAll_1() {
-
-        IdType idType1 = ActivityObjectsHelper.generateIdType("value1", "XEU");
-        IdType idType2 = ActivityObjectsHelper.generateIdType("value12", "XFA");
-
-        List<IdType> idTypes = Arrays.asList(idType1, idType2);
-        boolean result = fact.valueContainsAll(idTypes, "XEU","XFA");
-        assertTrue(result);
-    }
-
-    @Test
     public void testIsNumeric() {
         NumericType numericType1 = ActivityObjectsHelper.generateNumericType(new BigDecimal(12), "XXX");
         NumericType numericType2 = ActivityObjectsHelper.generateNumericType(new BigDecimal(12), "XXX");
         NumericType numericType3 = ActivityObjectsHelper.generateNumericType(new BigDecimal(12), "XXX");
         List<NumericType> numericTypes = Arrays.asList(numericType1, numericType2, numericType3);
         boolean result = fact.isNumeric(numericTypes);
+        assertTrue(result);
+    }
+
+    @Test
+    public void testValidateFormatEmptyValue() {
+        IdType id = new IdType();
+        id.setSchemeId("UUID");
+        boolean result = fact.validateFormat(id);
         assertTrue(result);
     }
 
@@ -823,12 +809,6 @@ public class AbstractFactTest {
     public void testSchemeIdContainsAllWithNull() {
 
         assertTrue(fact.schemeIdContainsAll(new ArrayList<IdType>(), null));
-    }
-
-    @Test
-    public void testValueContainsAllWithNull() {
-
-        assertTrue(fact.valueContainsAll(new ArrayList<IdType>(), null));
     }
 
     @Test
@@ -1448,6 +1428,7 @@ public class AbstractFactTest {
         assertTrue(result);
     }
 
+
     @Test
     public void testMatchWithFluxTL() {
         IdType idType = new IdType();
@@ -1683,7 +1664,7 @@ public class AbstractFactTest {
     public void testIsEmptyCollectionsReflective(){
         FLUXFAReportMessage message = JAXBMarshaller.unMarshallMessage(
                 IOUtils.toString(new FileInputStream("src/test/resources/testData/faRepDocForEmptynessCheck.xml")), FLUXFAReportMessage.class);
-        ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator();
+        ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator(MessageType.PUSH);
         generator.setBusinessObjectMessage(message);
         for (AbstractFact abstractFact : generator.generateAllFacts()) {
             if(abstractFact instanceof FaReportDocumentFact){

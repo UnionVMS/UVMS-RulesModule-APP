@@ -13,17 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import java.util.ArrayList;
+import java.util.List;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_QUERY_MESSAGE;
@@ -38,9 +37,14 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
     private ActivityFactMapper activityFactMapper;
     private XPathStringWrapper xPathUtil;
 
-    public ActivityQueryFactGenerator() {
+    public ActivityQueryFactGenerator(MessageType messageType) {
+        super(messageType);
         xPathUtil = new XPathStringWrapper();
         activityFactMapper = new ActivityFactMapper(xPathUtil);
+    }
+
+    public ActivityQueryFactGenerator() {
+        super(MessageType.PUSH);
     }
 
     @Override

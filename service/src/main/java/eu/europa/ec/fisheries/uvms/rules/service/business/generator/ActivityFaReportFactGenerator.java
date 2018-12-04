@@ -13,9 +13,11 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import java.util.*;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
@@ -32,9 +34,6 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-
-import java.util.*;
-
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType.RELOCATION;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
@@ -48,9 +47,14 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
     private ActivityFactMapper activityFactMapper;
 
-    public ActivityFaReportFactGenerator() {
+    public ActivityFaReportFactGenerator(MessageType messageType) {
+        super(messageType);
         xPathUtil = new XPathStringWrapper();
         activityFactMapper = new ActivityFactMapper(xPathUtil);
+    }
+
+    public ActivityFaReportFactGenerator() {
+        super(MessageType.PUSH);
     }
 
     @Override
@@ -78,6 +82,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                     activityFactMapper.getFaQueryIds().add(idType);
                 }
             }
+            activityFactMapper.setFaRelatedReportIds(idTypeList);
         }
 
         List<String> stringListMap = (List<String>) extraValueMap.get(TRIP_ID);
@@ -92,7 +97,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         List<AbstractFact> facts = new ArrayList<>();
         List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
         if (CollectionUtils.isNotEmpty(faReportDocuments)) {
-            facts.addAll(activityFactMapper.generateFactForFaReportDocuments(faReportDocuments));
+            facts.addAll(activityFactMapper.generateFactForFaReportDocuments(faReportDocuments, messageType));
             int index = 1;
             for (FAReportDocument faReportDocument : faReportDocuments) {
 

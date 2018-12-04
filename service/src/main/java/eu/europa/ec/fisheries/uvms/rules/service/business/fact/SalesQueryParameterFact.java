@@ -4,9 +4,11 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.DateTimeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import lombok.ToString;
 
 import java.util.Objects;
 
+@ToString
 public class SalesQueryParameterFact extends SalesAbstractFact {
 
     protected CodeType typeCode;

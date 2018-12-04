@@ -116,11 +116,10 @@ public class RulesFaQueryServiceBean {
             Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues, String.valueOf(faQueryMessage.getFAQuery().getID()));
 
             idsFromIncomingMessage.removeAll(faQueryIdsFromDb);
-            rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
 
             ValidationResult faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, exchangeLogGuid, RawMsgType.FA_QUERY);
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faQueryValidationReport));
-
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
             SetFLUXFAReportMessageRequest setFLUXFAReportMessageRequest = null;
             if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
                 log.debug("The Validation of FaQueryMessage is successful, going to check permissions (Subscriptions)..");
@@ -207,7 +206,6 @@ public class RulesFaQueryServiceBean {
             XPathRepository.INSTANCE.clear(faQueryFacts);
             idsFromIncommingMessage.removeAll(faQueryIdsFromDb);
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
-
         } catch (UnmarshalException e) {
             log.error("Error while trying to parse FLUXFaQueryMessage received message! It is malformed!");
             exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
