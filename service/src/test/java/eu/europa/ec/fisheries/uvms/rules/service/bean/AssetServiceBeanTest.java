@@ -10,11 +10,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.uvms.asset.client.AssetClient;
-import eu.europa.ec.fisheries.uvms.asset.client.model.AssetDTO;
-import eu.europa.ec.fisheries.uvms.asset.client.model.AssetIdentifier;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.RulesAssetServiceBean;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.AssetServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.AssetServiceBeanHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetHistoryId;
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -27,28 +32,18 @@ import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
-
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AssetServiceBeanTest {
 
-    @InjectMocks
-    private RulesAssetServiceBean assetService;
-
-    @Mock
-    AssetClient client;
+    @Mock private AssetServiceBeanHelper helper;
+    @InjectMocks private AssetServiceBean assetService;
 
     @Before
-    public void before() {
+    public void before(){
 
     }
 
@@ -58,18 +53,22 @@ public class AssetServiceBeanTest {
     }
 
     @Test
-    public void testIsCFRInFleetUnderFlagStateOnLandingDateWithHappyEnding() {
-        OffsetDateTime now = OffsetDateTime.now();
-        AssetDTO asset = new AssetDTO();
-        asset.setVesselDateOfEntry(now);
-        asset.setFlagStateCode("BEL");
-        Mockito.when(client.getAssetFromAssetIdAndDate(any(AssetIdentifier.class), anyString(), any(OffsetDateTime.class))).thenReturn(asset);
+    public void testIsCFRInFleetUnderFlagStateOnLandingDateWithHappy() throws AssetModelMarshallException, MessageException {
+
+        eu.europa.ec.fisheries.wsdl.asset.types.Asset asset = new eu.europa.ec.fisheries.wsdl.asset.types.Asset();
+        AssetHistoryId assetHistoryId = new AssetHistoryId();
+        assetHistoryId.setEventDate(new Date());
+        asset.setEventHistory(assetHistoryId);
+        asset.setCountryCode("BEL");
+
+        Mockito.when(helper.findHistoryOfAssetByCfr(anyString())).thenReturn(Arrays.asList(asset));
+
         assertTrue(assetService.isCFRInFleetUnderFlagStateOnLandingDate("", "BEL", new DateTime(2019, 1, 15, 0, 0, 0, 0)));
     }
 
 
     @Test
-    public void testFindHistoryOfAssetBy() {
+    public void testFindHistoryOfAssetBy(){
 
         List<FAReportDocument> faReportDocuments = new ArrayList();
         List<FishingActivity> specifiedFishingActivities = new ArrayList<>();

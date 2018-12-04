@@ -19,7 +19,7 @@ import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.RulesAssetServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.AssetServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -46,7 +46,7 @@ public class RulesFAReportServiceBeanTest {
     @Mock private RulesActivityServiceBean rulesActivityService;
     @Mock private RulesEngineBean rulesEngine;
     @Mock private RulesDao rulesDaoBean;
-    @Mock private RulesAssetServiceBean assetServiceBean;
+    @Mock private AssetServiceBean assetServiceBean;
     @Mock private RulePostProcessBean rulesService;
     @Mock private RulesFLUXMessageHelper fluxMessageHelper;
     @Mock private GearMatrix fishingGearTypeCharacteristics;
