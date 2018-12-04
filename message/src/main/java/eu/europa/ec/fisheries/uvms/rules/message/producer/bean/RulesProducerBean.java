@@ -19,8 +19,10 @@ import javax.ejb.Stateless;
 @Stateless
 @LocalBean
 public class RulesProducerBean extends AbstractProducer {
+
     @Override
     public String getDestinationName() {
         return MessageConstants.QUEUE_MODULE_RULES;
     }
+
 }

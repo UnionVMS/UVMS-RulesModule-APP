@@ -26,7 +26,7 @@ public class RulesConfigRegistrationProducerBean extends AbstractProducer implem
     private Queue rulesRespQueue;
 
     @PostConstruct
-    public void initMdrQueue(){
+    public void initRulesQueue(){
         rulesRespQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_RULES);
     }
 
