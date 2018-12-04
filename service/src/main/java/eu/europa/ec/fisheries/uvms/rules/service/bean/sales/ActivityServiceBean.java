@@ -23,11 +23,13 @@ public class ActivityServiceBean implements ActivityService {
     @Override
     public Optional<FishingTripResponse> getFishingTrip(String fishingTripID) {
         Optional<FishingTripResponse> trip = Optional.absent();
+
         try {
             trip = helper.findTrip(fishingTripID);
         } catch (MessageException | ActivityModelMarshallException | JMSException | SalesMarshallException e) {
             log.warn("Couldn't query FA for fishing trip with id " + fishingTripID, e);
         }
+
         return trip;
     }
 }

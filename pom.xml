@@ -38,7 +38,7 @@
         <activity.model.version>1.0.8</activity.model.version>
         <mdr.model.version>1.0.4</mdr.model.version>
         <subscription.model.version>1.3</subscription.model.version>
-        <asset-client.version>6.0.19-SNAPSHOT</asset-client.version>
+        <asset.model.version>4.0.18</asset.model.version>
         <audit.model.version>4.0.4</audit.model.version>
         <rules.model.version>${project.version}</rules.model.version>
         <sales.model.version>1.0.11</sales.model.version>

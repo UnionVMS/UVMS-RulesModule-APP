@@ -24,6 +24,20 @@ public interface EventService {
 
     void pingReceived(@Observes @PingReceivedEvent EventMessage eventMessage);
 
+    void setMovementReportReceived(@Observes @SetMovementBatchReportReceivedEvent EventMessage message);
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    void getCustomRule(@Observes @GetCustomRuleReceivedEvent EventMessage message);
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    void getTicketsByMovements(@Observes @GetTicketsByMovementsEvent EventMessage message);
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    void countTicketsByMovementsEvent(@Observes @CountTicketsByMovementsEvent EventMessage message);
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    void getTicketsAndRulesByMovementsEvent(@Observes @GetTicketsAndRulesByMovementsEvent EventMessage message);
+
     void setFLUXFAReportMessageReceived(@Observes @SetFLUXFAReportMessageReceivedEvent EventMessage message);
 
     void setFaQueryMessageReceived(@Observes @SetFluxFaQueryMessageReceivedEvent EventMessage message);

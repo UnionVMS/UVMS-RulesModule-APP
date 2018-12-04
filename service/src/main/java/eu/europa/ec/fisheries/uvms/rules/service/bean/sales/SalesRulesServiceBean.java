@@ -311,16 +311,24 @@ public class SalesRulesServiceBean implements SalesRulesService {
     @Override
     public boolean isCFRInFleetUnderFlagStateOnLandingDate(SalesFishingActivityFact fact) {
         try {
+
             List<IDType> ids = fact.getRelatedVesselTransportMeans().get(0).getIDS();
+
             Optional<String> cfr = findCfrFromIdTypes(ids);
+
             // vessel country
-            String flagState = fact.getRelatedVesselTransportMeans().get(0).getRegistrationVesselCountry().getID().getValue();
+            String flagState = fact.getRelatedVesselTransportMeans().get(0)
+                    .getRegistrationVesselCountry().getID().getValue();
+
             // get landing date from sales document or get it from activity module?
             DateTime landingDate = fact.getSpecifiedDelimitedPeriods().get(0).getStartDateTime().getDateTime();
-            if (!cfr.isPresent() || isBlank(cfr.get()) || isBlank(flagState) || landingDate == null) {
+
+            if (!cfr.isPresent() || isBlank(cfr.get())
+                    || isBlank(flagState) || landingDate == null) {
                 // not enough data available to evaluate this rule
                 return false;
             }
+
             return !assetService.isCFRInFleetUnderFlagStateOnLandingDate(cfr.get(), flagState, landingDate);
         } catch (NullPointerException e) {
             return false;

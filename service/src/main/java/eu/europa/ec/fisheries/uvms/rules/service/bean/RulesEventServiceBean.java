@@ -12,29 +12,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import eu.europa.ec.fisheries.schema.rules.module.v1.*;
-import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
-import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
-import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.event.*;
-import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
-import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
-import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
-import eu.europa.ec.fisheries.uvms.rules.service.EventService;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaQueryServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MdrRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
-import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
-import lombok.extern.slf4j.Slf4j;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -44,6 +21,36 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.*;
+import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
+import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
+import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.event.*;
+import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
+import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesFaultException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
+import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.ModuleResponseMapper;
+import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesModuleResponseMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.EventService;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaQueryServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MdrRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
+import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
+import lombok.extern.slf4j.Slf4j;
 
 @Stateless
 @Slf4j
@@ -60,6 +67,9 @@ public class RulesEventServiceBean implements EventService {
 
     @EJB
     private RulesMessageProducer rulesProducer;
+
+    @EJB
+    private RulesMovementProcessorBean rulesService;
 
     @EJB
     private RulesFaReportServiceBean faReportRulesMessageServiceBean;
@@ -89,6 +99,102 @@ public class RulesEventServiceBean implements EventService {
             errorEvent.fire(eventMessage);
         }
     }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void setMovementReportReceived(@Observes @SetMovementBatchReportReceivedEvent EventMessage message) {
+        log.info(" Validating movement from Received from Exchange Module..");
+        try {
+            TextMessage jmsMessage = message.getJmsMessage();
+            SetFLUXMovementReportRequest request = JAXBMarshaller.unmarshallTextMessage(jmsMessage, SetFLUXMovementReportRequest.class);
+            rulesService.setMovementReportReceived(request, jmsMessage.getJMSMessageID());
+        } catch (RulesModelMapperException | RulesServiceException | JMSException e) {
+            log.error(" Error when creating movement {}", e.getMessage());
+        }
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void getCustomRule(@Observes @GetCustomRuleReceivedEvent EventMessage message) {
+        log.info(" Get custom rule by guid..");
+        try {
+            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+            if (baseRequest.getMethod() != RulesModuleMethod.GET_CUSTOM_RULE) {
+                errorEvent.fire(new EventMessage(message.getJmsMessage(), ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE,
+                        " Error, Get Custom Rule invoked but it is not the intended method, caller is trying: "
+                                + baseRequest.getMethod().name())));
+            }
+            GetCustomRuleRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), GetCustomRuleRequest.class);
+            CustomRuleType response = rulesService.getCustomRuleByGuid(request.getGuid());
+            rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), RulesModuleResponseMapper.mapToGetCustomRuleResponse(response));
+        } catch (RulesModelMapperException | RulesServiceException | MessageException e) {
+            log.error(" Error when fetching rule by guid {}", e.getMessage());
+            errorEvent.fire(message);
+        }
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void getTicketsByMovements(@Observes @GetTicketsByMovementsEvent EventMessage message) {
+        log.info(" Fetch tickets by movements..");
+        try {
+            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+            if (baseRequest.getMethod() != RulesModuleMethod.GET_TICKETS_BY_MOVEMENTS) {
+                errorEvent.fire(new EventMessage(message.getJmsMessage(), ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE,
+                        " Error, Get Tickets By Movements invoked but it is not the intended method, caller is trying: "
+                                + baseRequest.getMethod().name())));
+            }
+            GetTicketsByMovementsRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), GetTicketsByMovementsRequest.class);
+            GetTicketListByMovementsResponse response = rulesService.getTicketsByMovements(request.getMovementGuids());
+            String responseString = RulesModuleResponseMapper.mapToGetTicketListByMovementsResponse(response.getTickets());
+            rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), responseString);
+        } catch (RulesModelMapperException | RulesServiceException | RulesFaultException | MessageException e) {
+            log.error(" Error when fetching tickets by movements {}", e.getMessage());
+            errorEvent.fire(message);
+        }
+
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void countTicketsByMovementsEvent(@Observes @CountTicketsByMovementsEvent EventMessage message) {
+        log.info(" Count tickets by movements..");
+        try {
+            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+            if (baseRequest.getMethod() != RulesModuleMethod.COUNT_TICKETS_BY_MOVEMENTS) {
+                errorEvent.fire(new EventMessage(message.getJmsMessage(), ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE,
+                        " Error, count tickets by movements invoked but it is not the intended method, caller is trying: "
+                                + baseRequest.getMethod().name())));
+            }
+            CountTicketsByMovementsRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), CountTicketsByMovementsRequest.class);
+            long response = rulesService.countTicketsByMovements(request.getMovementGuids());
+            rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), RulesModuleResponseMapper.mapToCountTicketListByMovementsResponse(response));
+        } catch (RulesModelMapperException | RulesServiceException | RulesFaultException | MessageException e) {
+            log.error(" Error when fetching ticket count by movements {}", e.getMessage());
+            errorEvent.fire(message);
+        }
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void getTicketsAndRulesByMovementsEvent(@Observes @GetTicketsAndRulesByMovementsEvent EventMessage message) {
+        log.info(" Fetch tickets and rules by movements..");
+        try {
+            RulesBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), RulesBaseRequest.class);
+            if (baseRequest.getMethod() != RulesModuleMethod.GET_TICKETS_AND_RULES_BY_MOVEMENTS) {
+                errorEvent.fire(new EventMessage(message.getJmsMessage(), ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE,
+                        " Error, Get Tickets And Rules By Movements invoked but it is not the intended method, caller is trying: "
+                                + baseRequest.getMethod().name())));
+            }
+            GetTicketsAndRulesByMovementsRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), GetTicketsAndRulesByMovementsRequest.class);
+            GetTicketsAndRulesByMovementsResponse response = rulesService.getTicketsAndRulesByMovements(request.getMovementGuids());
+            rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), RulesModuleResponseMapper.getTicketsAndRulesByMovementsResponse(response.getTicketsAndRules()));
+        } catch (RulesModelMapperException | RulesServiceException | MessageException e) {
+            log.error(" Error when fetching tickets and rules by movements {}", e.getMessage());
+            errorEvent.fire(message);
+        }
+    }
+
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
