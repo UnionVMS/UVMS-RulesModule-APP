@@ -3,9 +3,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.MeasureType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import lombok.ToString;
 
 import java.util.Objects;
 
+@ToString
 public class SalesFLUXGeographicalCoordinateFact extends SalesAbstractFact {
 
     private eu.europa.ec.fisheries.schema.sales.MeasureType longitudeMeasure;
