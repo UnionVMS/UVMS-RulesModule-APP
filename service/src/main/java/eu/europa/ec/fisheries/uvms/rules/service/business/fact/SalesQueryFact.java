@@ -7,11 +7,13 @@ import eu.europa.ec.fisheries.schema.sales.DelimitedPeriodType;
 import eu.europa.ec.fisheries.schema.sales.FLUXPartyType;
 import eu.europa.ec.fisheries.schema.sales.SalesQueryParameterType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import lombok.ToString;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@ToString
 public class SalesQueryFact extends SalesAbstractFact {
 
     private IdType id;

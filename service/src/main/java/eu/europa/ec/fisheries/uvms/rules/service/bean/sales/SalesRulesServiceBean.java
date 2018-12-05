@@ -335,6 +335,11 @@ public class SalesRulesServiceBean implements SalesRulesService {
         }
     }
 
+    @Override
+    public boolean sale_L02_00_0183(SalesFLUXLocationFact fact) {
+        return fact.getID() == null && (fact.getTypeCode() == null || !(fact.getTypeCode().getValue().equals("POSITION") || fact.getTypeCode().getValue().equals("ADDRESS")));
+    }
+
     private Optional<String> findCfrFromIdTypes(List<IDType> ids) {
         for (IDType id : ids) {
             if (id.getSchemeID().equals("CFR")) {
