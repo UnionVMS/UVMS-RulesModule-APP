@@ -67,7 +67,7 @@ public class AssetServiceBean implements AssetService {
 
         while (iterator.hasNext()){
             VesselTransportMeansDto vesselTransportMeansDto = iterator.next();
-            String reportDate = vesselTransportMeansDto.getAcceptanceDateTime();
+            String reportDate = vesselTransportMeansDto.getReportCreationDateTime();
             String regCountry = vesselTransportMeansDto.getRegistrationVesselCountry();
             Map<String, String> ids = vesselTransportMeansDto.getIds();
 
@@ -111,7 +111,7 @@ public class AssetServiceBean implements AssetService {
     private void mapVesselTransportMeansToDto(List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList, FAReportDocument faReportDocument, VesselTransportMeans transportMeans) {
         if (transportMeans != null){
             VesselTransportMeansDto relatedMeansDto = new VesselTransportMeansDto();
-            setAcceptanceDateTime(faReportDocument, relatedMeansDto);
+            setReportCreationDateTime(faReportDocument, relatedMeansDto);
 
             List<IDType> relatedIds = transportMeans.getIDS();
             for (IDType id : relatedIds) {
@@ -125,12 +125,12 @@ public class AssetServiceBean implements AssetService {
         }
     }
 
-    private void setAcceptanceDateTime(FAReportDocument faReportDocument, VesselTransportMeansDto vesselTransportMeansFactCollected) {
-        if (faReportDocument != null && faReportDocument.getAcceptanceDateTime() != null){
-            DateTimeType acceptanceDateTime1 = faReportDocument.getAcceptanceDateTime();
-            XMLGregorianCalendar dateTime = acceptanceDateTime1.getDateTime();
+    private void setReportCreationDateTime(FAReportDocument faReportDocument, VesselTransportMeansDto vesselTransportMeansFactCollected) {
+        if (faReportDocument != null && faReportDocument.getRelatedFLUXReportDocument() != null){
+            DateTimeType creationDateTime = faReportDocument.getRelatedFLUXReportDocument().getCreationDateTime();
+            XMLGregorianCalendar dateTime = creationDateTime.getDateTime();
             if (dateTime != null){
-                vesselTransportMeansFactCollected.setAcceptanceDateTime(dateTime.toString());
+                vesselTransportMeansFactCollected.setReportCreationDateTime(dateTime.toString());
             }
         }
     }

@@ -18,6 +18,7 @@ import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -45,7 +46,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 public abstract class AbstractFact {
 
     private static final String COLON = ":";
-    private static volatile int counter = 0;
+    private static AtomicInteger counter = new AtomicInteger();
 
     protected FactType factType;
     protected eu.europa.ec.fisheries.uvms.rules.service.business.MessageType messageType;
@@ -63,18 +64,18 @@ public abstract class AbstractFact {
 
     @Override
     protected void finalize() throws Throwable {
-        counter--;
+        counter.getAndDecrement();
         super.finalize();
     }
 
     public AbstractFact() {
-        counter++;
+        counter.getAndIncrement();
         this.uniqueIds = new ArrayList<>();
         this.warnings = new ArrayList<>();
         this.errors = new ArrayList<>();
     }
 
-    public static int getNumOfInstances() {
+    public static AtomicInteger getNumOfInstances() {
         return counter;
     }
 

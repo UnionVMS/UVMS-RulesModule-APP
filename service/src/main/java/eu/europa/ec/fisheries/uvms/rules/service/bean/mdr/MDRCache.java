@@ -12,6 +12,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
@@ -38,17 +39,6 @@ import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetCodeListResponse;
 import un.unece.uncefact.data.standard.mdr.communication.MdrGetLastRefreshDateResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MINUTES;
