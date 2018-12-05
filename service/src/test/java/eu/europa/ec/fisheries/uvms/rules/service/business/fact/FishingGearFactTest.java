@@ -192,4 +192,22 @@ public class FishingGearFactTest {
         gn.setApplicableGearCharacteristics(Arrays.asList(me, gm, gd));
         Assert.assertTrue(factUnderTest.valid(gn));
     }
+
+    @Test
+    public void testWithGNNNQGShouldFailTBS2(){
+        FishingGear gn = ActivityObjectsHelper.generateFishingGear("TBS");
+        GearCharacteristic me = ActivityObjectsHelper.generateGearCharacteristic("ME");
+        GearCharacteristic gd = ActivityObjectsHelper.generateGearCharacteristic("GD");
+        gn.setApplicableGearCharacteristics(Arrays.asList(me, gd));
+        Assert.assertFalse(factUnderTest.valid(gn));
+    }
+
+    @Test
+    public void testWithGNNNQGShouldFailTBS3(){
+        FishingGear gn = ActivityObjectsHelper.generateFishingGear("TBS");
+        GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
+        GearCharacteristic gd = ActivityObjectsHelper.generateGearCharacteristic("GD");
+        gn.setApplicableGearCharacteristics(Arrays.asList(gm, gd));
+        Assert.assertFalse(factUnderTest.valid(gn));
+    }
 }

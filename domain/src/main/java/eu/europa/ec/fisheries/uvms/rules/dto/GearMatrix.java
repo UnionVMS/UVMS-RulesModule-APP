@@ -41,19 +41,19 @@ public class GearMatrix {
                 new Condition("MT", true))
         );
         matrix.put("TBN", Arrays.asList(
-                new Condition("ME", true),
-                new Condition("GM", false),
-                new Condition("MT", false))
+                new Condition("ME", false),
+                new Condition("GM", true),
+                new Condition("MT", true))
         );
         matrix.put("TBS", Arrays.asList(
-                new Condition("ME", true),
-                new Condition("GM", false),
-                new Condition("MT", false))
+                new Condition("ME", false),
+                new Condition("GM", true),
+                new Condition("MT", true))
         );
         matrix.put("TB", Arrays.asList(
-                new Condition("ME", true),
-                new Condition("GM", false),
-                new Condition("MT", false))
+                new Condition("ME", false),
+                new Condition("GM", true),
+                new Condition("MT", true))
         );
         matrix.put("TBB", Arrays.asList(
                 new Condition("ME", false),
