@@ -1,28 +1,17 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-
 import com.google.common.collect.Lists;
-import eu.europa.ec.fisheries.schema.sales.AAPProcessType;
-import eu.europa.ec.fisheries.schema.sales.AAPProductType;
-import eu.europa.ec.fisheries.schema.sales.AmountType;
-import eu.europa.ec.fisheries.schema.sales.FACatchType;
-import eu.europa.ec.fisheries.schema.sales.FLUXOrganizationType;
-import eu.europa.ec.fisheries.schema.sales.IDType;
-import eu.europa.ec.fisheries.schema.sales.SalesBatchType;
-import eu.europa.ec.fisheries.schema.sales.SalesPartyType;
-import eu.europa.ec.fisheries.schema.sales.SalesPriceType;
-import eu.europa.ec.fisheries.schema.sales.SalesReportType;
-import eu.europa.ec.fisheries.schema.sales.TextType;
-import eu.europa.ec.fisheries.schema.sales.VehicleTransportMeansType;
+import eu.europa.ec.fisheries.schema.sales.*;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SalesReportFactTest {
 
@@ -358,81 +347,7 @@ public class SalesReportFactTest {
     }
 
     @Test
-    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenSalesNoteAndAllFLUXOrganizationsHaveAName() {
-        FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
-
-        VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
-                .withOwnerSalesParty(new SalesPartyType()
-                    .withSpecifiedFLUXOrganization(fluxOrganizationWithName));
-
-        SalesPartyFact salesPartyFact1 = new SalesPartyFact();
-        salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
-
-        SalesPartyFact salesPartyFact2 = new SalesPartyFact();
-        salesPartyFact2.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
-
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setSpecifiedVehicleTransportMeans(vehicleTransportMeans);
-        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact1, salesPartyFact2));
-
-        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
-        fact.setItemTypeCode(new CodeType("SN"));
-
-        assertFalse(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
-    }
-
-    @Test
-    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenSalesNoteAndNotAllFLUXOrganizationsHaveANameBecauseOfASalesPartyInTheDocument() {
-        FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
-        FLUXOrganizationType fluxOrganizationWithoutName = new FLUXOrganizationType();
-
-        VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
-                .withOwnerSalesParty(new SalesPartyType()
-                        .withSpecifiedFLUXOrganization(fluxOrganizationWithName));
-
-        SalesPartyFact salesPartyFact1 = new SalesPartyFact();
-        salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
-
-        SalesPartyFact salesPartyFact2 = new SalesPartyFact();
-        salesPartyFact2.setSpecifiedFLUXOrganization(fluxOrganizationWithoutName);
-
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setSpecifiedVehicleTransportMeans(vehicleTransportMeans);
-        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact1, salesPartyFact2));
-
-        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
-        fact.setItemTypeCode(new CodeType("SN"));
-
-        assertFalse(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
-    }
-
-    @Test
-    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenSalesNoteAndNotAllFLUXOrganizationsHaveANameBecauseOfASalesPartyInTheVesselTransportMeans() {
-        FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
-        FLUXOrganizationType fluxOrganizationWithoutName = new FLUXOrganizationType();
-
-        VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
-                .withOwnerSalesParty(new SalesPartyType()
-                        .withSpecifiedFLUXOrganization(fluxOrganizationWithoutName));
-
-        SalesPartyFact salesPartyFact1 = new SalesPartyFact();
-        salesPartyFact1.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
-
-        SalesPartyFact salesPartyFact2 = new SalesPartyFact();
-        salesPartyFact2.setSpecifiedFLUXOrganization(fluxOrganizationWithName);
-
-        SalesDocumentFact salesDocumentFact = new SalesDocumentFact();
-        salesDocumentFact.setSpecifiedVehicleTransportMeans(vehicleTransportMeans);
-        salesDocumentFact.setSpecifiedSalesParties(Arrays.asList(salesPartyFact1, salesPartyFact2));
-
-        fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
-        fact.setItemTypeCode(new CodeType("SN"));
-
-        assertFalse(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
-    }
-
-    @Test
-    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenTakeOverDocumentAndAllFLUXOrganizationsHaveAName() {
+    public void doesAFLUXOrganizationNotHaveANameWhenAllFLUXOrganizationsHaveAName() {
         FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
 
         VehicleTransportMeansType vehicleTransportMeans = new VehicleTransportMeansType()
@@ -452,11 +367,11 @@ public class SalesReportFactTest {
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("TOD"));
 
-        assertFalse(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
+        assertFalse(fact.doesAFLUXOrganizationNotHaveAName());
     }
 
     @Test
-    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenTakeOverDocumentAndNotAllFLUXOrganizationsHaveANameBecauseOfASalesPartyInTheDocument() {
+    public void doesAFLUXOrganizationNotHaveANameWhenNotAllFLUXOrganizationsHaveANameBecauseOfASalesPartyInTheDocument() {
         FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
         FLUXOrganizationType fluxOrganizationWithoutName = new FLUXOrganizationType();
 
@@ -477,11 +392,11 @@ public class SalesReportFactTest {
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("TOD"));
 
-        assertTrue(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
+        assertTrue(fact.doesAFLUXOrganizationNotHaveAName());
     }
 
     @Test
-    public void isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveANameWhenTakeOverDocumentAndNotAllFLUXOrganizationsHaveANameBecauseOfASalesPartyInTheVesselTransportMeans() {
+    public void doesAFLUXOrganizationNotHaveANameWhenNotAllFLUXOrganizationsHaveANameBecauseOfASalesPartyInTheVesselTransportMeans() {
         FLUXOrganizationType fluxOrganizationWithName = new FLUXOrganizationType().withName(new TextType().withValue("name"));
         FLUXOrganizationType fluxOrganizationWithoutName = new FLUXOrganizationType();
 
@@ -502,7 +417,7 @@ public class SalesReportFactTest {
         fact.setIncludedSalesDocuments(Arrays.asList(salesDocumentFact));
         fact.setItemTypeCode(new CodeType("TOD"));
 
-        assertTrue(fact.isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName());
+        assertTrue(fact.doesAFLUXOrganizationNotHaveAName());
     }
 
     @Test
