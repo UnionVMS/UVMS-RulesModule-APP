@@ -1,16 +1,19 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @Slf4j
+@ToString
 public class SalesReportFact extends SalesAbstractFact {
 
     public static final String MDR_FISH_FRESHNESS = "FISH_FRESHNESS";
@@ -72,49 +75,6 @@ public class SalesReportFact extends SalesAbstractFact {
     @Override
     public int hashCode() {
         return Objects.hash(id, itemTypeCode, includedSalesDocuments, includedValidationResultDocuments, creationDateOfMessage);
-    }
-
-    private boolean doAllProductHaveAZeroPrice(SalesDocumentFact salesDocument) {
-        List<BigDecimal> prices = getPriceOfEveryProduct(salesDocument.getSpecifiedSalesBatches());
-
-        if (prices.isEmpty()) {
-            return false;
-        }
-
-        for (BigDecimal price : getPriceOfEveryProduct(salesDocument.getSpecifiedSalesBatches())) {
-            if (price.compareTo(BigDecimal.ZERO) != 0) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private List<BigDecimal> getPriceOfEveryProduct(List<SalesBatchType> specifiedSalesBatches) {
-        List<BigDecimal> prices = new ArrayList<>();
-        for (AAPProductType product : getAllProducts(specifiedSalesBatches)) {
-            if (product.getTotalSalesPrice() != null
-                    && !isEmpty(product.getTotalSalesPrice().getChargeAmounts())
-                    && product.getTotalSalesPrice().getChargeAmounts().get(0) != null
-                    && product.getTotalSalesPrice().getChargeAmounts().get(0).getValue() != null) {
-                prices.add(product.getTotalSalesPrice().getChargeAmounts().get(0).getValue());
-            }
-        }
-        return prices;
-    }
-
-    private List<AAPProductType> getAllProducts(List<SalesBatchType> specifiedSalesBatches) {
-        List<AAPProductType> products = new ArrayList<>();
-        for (SalesBatchType salesBatch :specifiedSalesBatches) {
-            if(!isEmpty(salesBatch.getSpecifiedAAPProducts())){
-                for (AAPProductType product: salesBatch.getSpecifiedAAPProducts()) {
-                    if (product != null) {
-                        products.add(product);
-                    }
-                }
-            }
-        }
-        return products;
     }
 
     public boolean isProviderRoleNotSpecifiedForSalesNote(){
@@ -179,13 +139,11 @@ public class SalesReportFact extends SalesAbstractFact {
     }
 
     public boolean isSalesNoteIdentifierNotSpecifiedForTakeOverDocumentWithStoredProducts(){
-        if(isItemTypeEqualTo("TOD") && !isEmpty(includedSalesDocuments))
-        {
+        if(isItemTypeEqualTo("TOD") && !isEmpty(includedSalesDocuments)) {
             for (SalesDocumentFact salesDocument:includedSalesDocuments) {
-                if (isAnyProductSetWithStorageAsUsage(salesDocument)){
-                    if (isEmpty(salesDocument.getSalesNoteIDs()) || isEmpty(salesDocument.getSalesNoteIDs().get(0).getValue())){
-                        return true;
-                    }
+                if (isAnyProductSetWithStorageAsUsage(salesDocument) &&
+                        isEmpty(salesDocument.getSalesNoteIDs()) || isEmpty(salesDocument.getSalesNoteIDs().get(0).getValue())){
+                    return true;
                 }
             }
         }
@@ -195,10 +153,6 @@ public class SalesReportFact extends SalesAbstractFact {
 
     public boolean isSalesNoteAndIsFreshnessNotPresent() {
         return isItemTypeEqualTo("SN") && isFreshnessNotPresent();
-    }
-
-    public boolean isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName() {
-        return isItemTypeEqualTo("TOD") && doesAFLUXOrganizationNotHaveAName();
     }
 
     public boolean isSalesNoteAndNotAllChargeAmountsAreGreaterThanOrEqualToZero() {
@@ -212,6 +166,16 @@ public class SalesReportFact extends SalesAbstractFact {
     public boolean isSalesNoteAndAnyChargeAmountIsEqualToZero() {
         return isItemTypeEqualTo("SN") && isAChargeAmountZero();
     }
+
+    public boolean doesAFLUXOrganizationNotHaveAName() {
+        if (!isEmpty(includedSalesDocuments) && includedSalesDocuments.get(0) != null) {
+            return doesAFLUXOrganizationNotHaveANameInSalesParties(includedSalesDocuments.get(0).getSpecifiedSalesParties()) ||
+                    doesAFLUXOrganizationNotHaveANameInVehicleTransportMeans(includedSalesDocuments.get(0).getSpecifiedVehicleTransportMeans());
+        } else {
+            return false;
+        }
+    }
+
 
     private Optional<SalesPartyFact> findRecipient(){
         for (SalesDocumentFact salesDocument:includedSalesDocuments) {
@@ -297,15 +261,6 @@ public class SalesReportFact extends SalesAbstractFact {
         }
     }
 
-    private boolean doesAFLUXOrganizationNotHaveAName() {
-        if (!isEmpty(includedSalesDocuments) && includedSalesDocuments.get(0) != null) {
-            return doesAFLUXOrganizationNotHaveANameInSalesParties(includedSalesDocuments.get(0).getSpecifiedSalesParties()) ||
-                    doesAFLUXOrganizationNotHaveANameInVehicleTransportMeans(includedSalesDocuments.get(0).getSpecifiedVehicleTransportMeans());
-        } else {
-            return false;
-        }
-    }
-
     private boolean doesAFLUXOrganizationNotHaveANameInVehicleTransportMeans(VehicleTransportMeansType specifiedVehicleTransportMeans) {
         return specifiedVehicleTransportMeans != null &&
                 doesAFLUXOrganizationNotHaveAName(specifiedVehicleTransportMeans.getOwnerSalesParty());
@@ -327,10 +282,9 @@ public class SalesReportFact extends SalesAbstractFact {
     private boolean doesAFLUXOrganizationNotHaveANameInSalesParties(List<SalesPartyFact> specifiedSalesParties) {
         if (!isEmpty(specifiedSalesParties)) {
             for (SalesPartyFact salesPartyFact : specifiedSalesParties) {
-                if (salesPartyFact != null) {
-                    if (doesTheFLUXOrganizationNotHaveAName(salesPartyFact.getSpecifiedFLUXOrganization())) {
-                        return true;
-                    }
+                if (salesPartyFact != null
+                        && doesTheFLUXOrganizationNotHaveAName(salesPartyFact.getSpecifiedFLUXOrganization())) {
+                    return true;
                 }
             }
         }

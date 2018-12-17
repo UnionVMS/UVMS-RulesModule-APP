@@ -5,6 +5,7 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.SalesAbstractFact;
+import lombok.ToString;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import java.util.Objects;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+@ToString
 public class SalesDocumentFact extends SalesAbstractFact {
 
     private List<IdType> ids;

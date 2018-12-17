@@ -1090,6 +1090,38 @@ public class SalesRulesServiceBeanTest {
         verifyNoMoreInteractions(salesService);
     }
 
+    @Test
+    public void testSaleL02000183WhenIdIsNullAndTypeCodeIsPosition() {
+        SalesFLUXLocationFact fact = new SalesFLUXLocationFact();
+        fact.setID(null);
+        fact.setTypeCode(new CodeType("POSITION"));
+        boolean result = service.sale_L02_00_0183(fact);
+
+        assertFalse("When TypeCode is 'POSITION', rule shouldn't fire when ID is null", result);
+    }
+
+    @Test
+    public void testSaleL02000183WhenIdIsNullAndTypeCodeIsAddress() {
+        SalesFLUXLocationFact fact = new SalesFLUXLocationFact();
+        fact.setID(null);
+        fact.setTypeCode(new CodeType("ADDRESS"));
+        boolean result = service.sale_L02_00_0183(fact);
+
+        assertFalse("When TypeCode is 'ADDRESS', rule shouldn't fire when ID is null", result);
+    }
+
+    @Test
+    public void testSaleL02000183WhenIdIsNullAndTypeCodeIsNotAddressOrPosition() {
+        SalesFLUXLocationFact fact = new SalesFLUXLocationFact();
+        fact.setID(null);
+        fact.setTypeCode(new CodeType("NOT_ADDRESS_NOR_POSITION"));
+        boolean result = service.sale_L02_00_0183(fact);
+
+        assertTrue("When TypeCode is not 'ADDRESS' or 'POSITION', rule should fire when ID is null", result);
+    }
+
+
+
     private List<ObjectRepresentation> getTestEntriesForMDRListTERRITORY_CURRENCY() {
         ColumnDataType code = new ColumnDataType();
         code.setColumnName("code");
