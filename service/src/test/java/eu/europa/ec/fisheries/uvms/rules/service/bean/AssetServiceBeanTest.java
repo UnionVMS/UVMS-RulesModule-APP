@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.AssetServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.AssetServiceBeanHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.wsdl.asset.types.AssetHistoryId;
@@ -40,7 +40,7 @@ import static org.mockito.Matchers.anyString;
 public class AssetServiceBeanTest {
 
     @Mock private AssetServiceBeanHelper helper;
-    @InjectMocks private AssetServiceBean assetService;
+    @InjectMocks private AssetClientBean assetService;
 
     @Before
     public void before(){

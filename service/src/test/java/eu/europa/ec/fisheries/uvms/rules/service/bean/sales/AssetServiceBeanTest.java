@@ -1,25 +1,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales;
 
-import com.google.common.base.Optional;
-import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetHistoryId;
-import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static org.junit.Assert.*;
-
+/*
 public class AssetServiceBeanTest {
 
-    private AssetServiceBean assetServiceBean;
+    private AssetClientBean assetServiceBean;
 
     @Before
     public void setUp() throws Exception {
-        assetServiceBean = new AssetServiceBean();
+//        assetServiceBean = new AssetServiceBean();
     }
 
     @Test
@@ -108,4 +96,6 @@ public class AssetServiceBeanTest {
 
         return Arrays.asList(asset1, asset2, asset3);
     }
+
 }
+*/

@@ -10,12 +10,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
-import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
+import eu.europa.ec.fisheries.uvms.activity.model.schemas.PluginType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
@@ -27,11 +27,11 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -86,7 +86,7 @@ public class RulesFaReportServiceBean {
     private RulesExchangeServiceBean exchangeServiceBean;
 
     @EJB
-    private AssetService assetService;
+    private IAssetClient assetClientBean;
 
     @EJB
     private ActivityOutQueueConsumer activityConsumer;
@@ -212,7 +212,7 @@ public class RulesFaReportServiceBean {
                                                          List<FADocumentID> reportAndMessageIdsFromDB, List<String> faIdsPerTripsListFromDb, boolean isIncomingMessage) {
         Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
         extraValues.put(SENDER_RECEIVER, senderReceiver);
-        extraValues.put(ExtraValueType.ASSET, assetService.findHistoryOfAssetBy(fluxfaReportMessage.getFAReportDocuments()));
+        extraValues.put(ExtraValueType.ASSET, assetClientBean.findHistoryOfAssetBy(fluxfaReportMessage.getFAReportDocuments()));
         extraValues.put(FA_QUERY_AND_REPORT_IDS, faIdsMapper.mapToFishingActivityIdDto(reportAndMessageIdsFromDB));
         extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getMatrix());
         if (isIncomingMessage) {

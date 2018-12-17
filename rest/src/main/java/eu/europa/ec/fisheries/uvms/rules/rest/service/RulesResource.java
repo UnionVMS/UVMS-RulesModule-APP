@@ -24,11 +24,11 @@ import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseCode;
 import eu.europa.ec.fisheries.uvms.rules.rest.dto.ResponseDto;
-import eu.europa.ec.fisheries.uvms.rules.service.AssetService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesKieContainerInitializer;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
@@ -82,7 +82,7 @@ public class RulesResource {
     private RulesFLUXMessageHelper helper;
 
     @EJB
-    private AssetService assetService;
+    private IAssetClient assetClientBean;
 
     @EJB
     private RulesConfigurationCache cache;
@@ -108,7 +108,7 @@ public class RulesResource {
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, fr);
             extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, gearMatrix.getMatrix());
-            extraValues.put(ASSET, assetService.findHistoryOfAssetBy(request.getFAReportDocuments()));
+            extraValues.put(ASSET, assetClientBean.findHistoryOfAssetBy(request.getFAReportDocuments()));
             Set<FADocumentID> idsFromIncomingMessage = helper.mapToFADocumentID(request);
             List<FADocumentID> faDocumentIDS = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);
             extraValues.put(FA_QUERY_AND_REPORT_IDS, faIdsMapper.mapToFishingActivityIdDto(faDocumentIDS));
