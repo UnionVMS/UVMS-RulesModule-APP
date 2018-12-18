@@ -43,10 +43,10 @@ import org.slf4j.MDC;
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector IS NULL"),
-        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "5"),
+        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "3"),
         @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "120000"),
         @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "1"),
-        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "4"),
+        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "3"),
 })
 public class RulesEventMessageConsumerBean implements MessageListener {
 
