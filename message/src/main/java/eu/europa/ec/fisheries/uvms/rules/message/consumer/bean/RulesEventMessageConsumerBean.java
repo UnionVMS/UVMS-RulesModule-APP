@@ -43,10 +43,10 @@ import org.slf4j.MDC;
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_TYPE_STR, propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
         @ActivationConfigProperty(propertyName = MessageConstants.DESTINATION_STR, propertyValue = MessageConstants.RULES_MESSAGE_IN_QUEUE_NAME),
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "messageSelector IS NULL"),
-        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
-        @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "60000"),
-        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "0"),
-        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "10"),
+        @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "5"),
+        @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "120000"),
+        @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "1"),
+        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "4"),
 })
 public class RulesEventMessageConsumerBean implements MessageListener {
 
@@ -109,26 +109,6 @@ public class RulesEventMessageConsumerBean implements MessageListener {
     private Event<EventMessage> getFluxMdrSynchMessageResponse;
 
     @Inject
-    @ReceiveSalesQueryEvent
-    private Event<EventMessage> receiveSalesQueryEvent;
-
-    @Inject
-    @ReceiveSalesReportEvent
-    private Event<EventMessage> receiveSalesReportEvent;
-
-    @Inject
-    @ReceiveSalesResponseEvent
-    private Event<EventMessage> receiveSalesResponseEvent;
-
-    @Inject
-    @SendSalesReportEvent
-    private Event<EventMessage> sendSalesReportEvent;
-
-    @Inject
-    @SendSalesResponseEvent
-    private Event<EventMessage> sendSalesResponseEvent;
-
-    @Inject
     @ErrorEvent
     private Event<EventMessage> errorEvent;
 
@@ -183,9 +163,6 @@ public class RulesEventMessageConsumerBean implements MessageListener {
                     break;
                 case GET_FLUX_MDR_SYNC_RESPONSE :
                     getFluxMdrSynchMessageResponse.fire(new EventMessage(textMessage));
-                    break;
-                case RECEIVE_SALES_QUERY:
-                    receiveSalesQueryEvent.fire(new EventMessage(textMessage));
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", method.name());
