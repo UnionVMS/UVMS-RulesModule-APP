@@ -60,7 +60,7 @@
         <insert tableName="rule">
             <column name="rule_id" value="10029"/>
             <column name="br_id" value="SALE-L00-00-0095"/>
-            <column name="expression" value="isTakeOverDocumentAndDoesAFLUXOrganizationNotHaveAName()"/>
+            <column name="expression" value="doesAFLUXOrganizationNotHaveAName()"/>
             <column name="note" value="Name in FLUX Organization must be present."/>
             <column name="message" value="Name in FLUX Organization must be present."/>
             <column name="level" value="L00"/>
