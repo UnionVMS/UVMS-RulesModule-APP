@@ -9,7 +9,6 @@
 
     <include file="changelog\v0.1\db-changelog-createTables_0.1.xml" />
 
-
     <include file="changelog\v3.1\db-changelog-insertIdTypeTemplate.xml" />
 
     <include file="changelog\v0.1\db-changelog-insertInitData_0.1.xml" />
