@@ -9,6 +9,7 @@
 
     <include file="changelog\v0.1\db-changelog-createTables_0.1.xml" />
 
+
     <include file="changelog\v3.1\db-changelog-insertIdTypeTemplate.xml" />
 
     <include file="changelog\v0.1\db-changelog-insertInitData_0.1.xml" />
@@ -23,6 +24,7 @@
 
     <include file="changelog\v3.0.46\db-changelog-3.0.46.xml" />
 
+    <include file="changelog\v3.0.48\db-changelog-3.0.48.xml" />
 
     <!-- testdata, run with parameter -Dliquibase.contexts=test
     <include file="changelog\v0.1\db-changelog-insertTestData_0.1.xml"/>
