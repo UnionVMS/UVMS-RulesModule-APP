@@ -35,4 +35,13 @@
             <where>BR_ID = 'FA-L03-00-0306'</where>
         </update>
     </changeSet>
+
+    <changeSet id="UNIONVMS-4160" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="isFromFaReport &amp;&amp; !isEmpty(specifiedContactPartyRoleCodes) &amp;&amp;
+                           !codeTypeValueContainsMatch(specifiedContactPartyRoleCodes, &quot;MASTER&quot;, &quot;AGENT&quot;)"/>
+            <where>BR_ID = 'FA-L02-00-0071'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
