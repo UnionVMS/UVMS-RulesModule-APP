@@ -27,9 +27,9 @@ import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.RulesResponseCons
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesProducerBean;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.ejb.*;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by kovian on 31/05/2017.
@@ -58,6 +58,20 @@ public class RulesConfigurationCache extends AbstractConfigSettingsBean {
     @Override
     protected String getModuleName() {
         return "rules";
+    }
+
+    @Override
+    @Lock(LockType.WRITE)
+    @AccessTimeout(value = 5, unit = TimeUnit.MINUTES)
+    public String getSingleConfig(String configKey) {
+      return super.getSingleConfig(configKey);
+    }
+
+    @Override
+    @Lock(LockType.WRITE)
+    @AccessTimeout(value = 5, unit = TimeUnit.MINUTES)
+    public Map<String, String> getAllSettingsForModule() {
+        return super.getAllSettingsForModule();
     }
 
 }

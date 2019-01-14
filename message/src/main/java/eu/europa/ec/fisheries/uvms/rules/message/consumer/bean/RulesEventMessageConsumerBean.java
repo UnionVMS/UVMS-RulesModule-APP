@@ -46,7 +46,7 @@ import org.slf4j.MDC;
         @ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "3"),
         @ActivationConfigProperty(propertyName = "initialRedeliveryDelay", propertyValue = "120000"),
         @ActivationConfigProperty(propertyName = "maximumRedeliveries", propertyValue = "1"),
-        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "3"),
+        @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "5"),
 })
 public class RulesEventMessageConsumerBean implements MessageListener {
 

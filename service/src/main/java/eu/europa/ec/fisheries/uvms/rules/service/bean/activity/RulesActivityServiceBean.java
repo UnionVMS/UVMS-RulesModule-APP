@@ -28,6 +28,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivitySubsCheckProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesResponseQueueProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionAnswer;
@@ -53,7 +54,7 @@ public class RulesActivityServiceBean {
     private RulesMessageProducer producer;
 
     @EJB
-    private RulesActivityProducerBean rulesActivityServiceBean;
+    private RulesActivitySubsCheckProducer rulesActivityServiceBean;
 
     @EJB
     private RulesResponseQueueProducer rulesResponseProducer;
@@ -63,16 +64,14 @@ public class RulesActivityServiceBean {
         try {
             String requestStr = ActivityModuleRequestMapper.mapToSubscriptionRequest(request, type);
             log.debug("Send MapToSubscriptionRequest to Activity");
-            HashMap<String, String> map = new HashMap<>();
-            map.put("messageSelector", "SubscriptionCheck");
-            String corrId = rulesActivityServiceBean.sendModuleMessageWithProps(requestStr, rulesResponseProducer.getDestination(), map);
-            TextMessage message = consumer.getMessage(corrId,240000L);
+            String corrId = rulesActivityServiceBean.sendModuleMessage(requestStr, rulesResponseProducer.getDestination());
+            TextMessage message = consumer.getMessage(corrId,300000L);
             log.debug("Received response message from Subscription.");
             SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
             SubscriptionPermissionAnswer subscriptionCheck = subscriptionPermissionResponse.getSubscriptionCheck();
             return SubscriptionPermissionAnswer.YES.equals(subscriptionCheck);
         } catch (ActivityModelMapperException | JMSException | JAXBException | MessageException e) {
-            log.error("[ERROR] while trying to check subscription permissions (Is [[[- Subscriptions -]]] module Deployed?).. Going to assume the request doesn't have permissions!!", e);
+            log.error("[ERROR] while trying to check subscription permissions (Is [[[- Subscriptions -]]] module Deployed?).. Going to assume the request doesn't have permissions!!");
         }
         return false;
     }

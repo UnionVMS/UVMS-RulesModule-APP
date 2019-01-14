@@ -1,10 +1,5 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl;
 
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.*;
-import com.google.common.base.Optional;
 import eu.europa.ec.fisheries.uvms.asset.ejb.client.IAssetFacade;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
@@ -21,16 +16,19 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.*;
+
 @Slf4j
 @Singleton
 public class AssetClientBean implements IAssetClient {
 
     // Remote asset EJB
     @EJB(lookup = "java:global/asset-module/asset-service/AssetFacade!eu.europa.ec.fisheries.uvms.asset.ejb.client.IAssetFacade")
-
     private IAssetFacade iAssetFacade;
 
-    @Override
     public boolean isCFRInFleetUnderFlagStateOnLandingDate(String cfr, String flagState, DateTime landingDate) {
         try {
             log.info("Find history of asset by CFR: {} ", cfr);
@@ -51,42 +49,29 @@ public class AssetClientBean implements IAssetClient {
         return true;
     }
 
-    @Override
     public List<VesselTransportMeansDto> findHistoryOfAssetBy(List<FAReportDocument> faReportDocuments) {
         List<VesselTransportMeansDto> vesselTransportMeansFactCollectedList = new ArrayList<>();
-
         for (FAReportDocument faReportDocument : faReportDocuments) {
             collectAndMap(vesselTransportMeansFactCollectedList, faReportDocument);
         }
-
-        Iterator<VesselTransportMeansDto> iterator = vesselTransportMeansFactCollectedList.iterator();
-
-        while (iterator.hasNext()) {
-            VesselTransportMeansDto vesselTransportMeansDto = iterator.next();
-
+        for (VesselTransportMeansDto vesselTransportMeansDto : vesselTransportMeansFactCollectedList) {
             String reportCreationDateTime = vesselTransportMeansDto.getReportCreationDateTime();
-
             String reportDate = DateUtils.END_OF_TIME.toString();
-            if (StringUtils.isNotEmpty(reportCreationDateTime)){
+            if (StringUtils.isNotEmpty(reportCreationDateTime)) {
                 reportDate = reportCreationDateTime;
             }
-
             String regCountry = vesselTransportMeansDto.getRegistrationVesselCountry();
             Map<String, String> ids = vesselTransportMeansDto.getIds();
-
             String cfr = ids.get("CFR");
             String ircs = ids.get("IRCS");
             String extMark = ids.get("EXT_MARK");
             String iccat = ids.get("ICCAT");
-
             log.info("Find history of asset by reportDate: {}, cfr: {}, regCountry: {}, ircs: {}, extMark: {}, iccat: {} ", reportDate, cfr, regCountry, ircs, extMark, iccat);
             List<Asset> assets = iAssetFacade.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat);
-
             if (CollectionUtils.isNotEmpty(assets)) {
                 vesselTransportMeansDto.setAsset(assets.get(0));
             }
         }
-
         return vesselTransportMeansFactCollectedList;
     }
 
@@ -155,22 +140,19 @@ public class AssetClientBean implements IAssetClient {
             }
         }
 
-        return Optional.fromNullable(historyOnDate);
+        return Optional.ofNullable(historyOnDate);
     }
     
     protected Comparator<Asset> assetComparator() {
-        return new Comparator<Asset>() {
-            @Override
-            public int compare(Asset o1, Asset o2) {
-                if (o1.getEventHistory().getEventDate() == null && o2.getEventHistory().getEventDate() == null) {
-                    return 0;
-                } else if (o2.getEventHistory().getEventDate() == null) {
-                    return 1;
-                } else if (o1.getEventHistory().getEventDate() == null) {
-                    return -1;
-                } else {
-                    return (o1.getEventHistory().getEventDate().compareTo(o2.getEventHistory().getEventDate()) > 0 ? -1 : 1);
-                }
+        return (o1, o2) -> {
+            if (o1.getEventHistory().getEventDate() == null && o2.getEventHistory().getEventDate() == null) {
+                return 0;
+            } else if (o2.getEventHistory().getEventDate() == null) {
+                return 1;
+            } else if (o1.getEventHistory().getEventDate() == null) {
+                return -1;
+            } else {
+                return (o1.getEventHistory().getEventDate().compareTo(o2.getEventHistory().getEventDate()) > 0 ? -1 : 1);
             }
         };
     }

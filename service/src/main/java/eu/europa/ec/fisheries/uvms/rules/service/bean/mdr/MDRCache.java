@@ -73,7 +73,7 @@ public class MDRCache {
     private static final int MB = 1024 * 1024;
 
     private static final long TIME_TO_LIVE_IN_MILLIS = 300000L;
-    private static final long TIME_TO_CONSUME_IN_MILLIS = 60000L;
+    private static final long TIME_TO_CONSUME_IN_MILLIS = 120000L;
 
 
     @PostConstruct
@@ -112,7 +112,7 @@ public class MDRCache {
         if ((!alreadyLoadedOnce && freeMemory < 800) || freeMemory < 150) {
             populateAllMdrOneByOne();
         } else {
-            populateAllMdrAtOnce();
+            populateAllMdrOneByOne(); //populateAllMdrAtOnce(); This one sometimes is to heavy for activemq!
         }
         loadCacheForFailureMessages();
     }

@@ -11,9 +11,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
+import javax.ejb.*;
 import javax.xml.bind.JAXBException;
 import java.util.*;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
@@ -169,6 +167,7 @@ public class RulesExchangeServiceBean {
         }
     }
 
+    @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
     public void updateExchangeMessage(String logGuid, ExchangeLogStatusTypeType statusType) {
         try {
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, statusType);

@@ -7,7 +7,7 @@
         <jta-data-source>jdbc/uvms_rules</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL94Dialect"/>
         </properties>
     </persistence-unit>
     <persistence-unit name="rulesOraclePU" transaction-type="JTA">

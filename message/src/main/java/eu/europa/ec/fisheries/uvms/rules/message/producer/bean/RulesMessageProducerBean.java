@@ -30,10 +30,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Observes;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Queue;
+import javax.jms.*;
 
 @Stateless
 @LocalBean
@@ -71,9 +68,13 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
     }
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String sendDataSourceMessage(String text, DataSourceQueue queue) throws MessageException {
         return sendDataSourceMessage(text, queue, Message.DEFAULT_TIME_TO_LIVE, DeliveryMode.PERSISTENT);
+    }
+
+    @Override
+    public void sendModuleResponseMessage(TextMessage message, String text) throws MessageException {
+        sendResponseMessageToSender(message, text);
     }
 
     @Override
@@ -90,14 +91,8 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
             LOG.warn("Destination cannot be null! Not going to send message (msg props) :  {} {} {} {}", text, queue, timeToLiveInMillis, deliveryMode);
             return null;
         } catch (Exception ex) {
-            LOG.warn("Couldn't send message because of a MessageException! Going to retry for the {} time now..", retries);
-            retries++;
-            if (retries < 3) {
-                return sendDataSourceMessage(text, queue, timeToLiveInMillis, deliveryMode);
-            } else {
-                LOG.warn("Tried 3 times to resend message but failed!!");
-                throw new MessageException("[ Error when sending message. ]", ex);
-            }
+            LOG.warn("Couldn't send message because of a MessageException!");
+            throw new MessageException("[ Error when sending message. ]", ex);
         }
     }
 

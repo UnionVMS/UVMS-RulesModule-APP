@@ -6,7 +6,7 @@
         <jta-data-source>jdbc/uvms_rules</jta-data-source>
         <class>eu.europa.ec.fisheries.uvms.config.service.entity.Parameter</class>
         <properties>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL94Dialect"/>
         </properties>
     </persistence-unit>
 </persistence>

@@ -120,7 +120,7 @@ public class RulesFaReportServiceBean {
 
             Map<ExtraValueType, Object> extraValues = fetchExtraValues(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
             extraValues.put(XML, requestStr);
-            Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues, String.valueOf(messageGUID));
+            Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues, messageGUID != null ? messageGUID.get(0).getValue() : String.valueOf(messageGUID));
 
             idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
