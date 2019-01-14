@@ -9,7 +9,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.0.48-SNAPSHOT</version>
+    <version>3.0.49-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -196,14 +196,6 @@
             <artifactId>orika-core</artifactId>
             <version>${orika.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
