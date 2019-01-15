@@ -23,9 +23,10 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -64,7 +65,13 @@ public class RulesFaReportServiceBean {
     private FAReportQueryResponseIdsMapper faIdsMapper;
 
     @EJB
-    private RulesMessageProducer rulesProducer;
+    private RulesResponseConsumer rulesConsumer;
+
+    @EJB
+    private RulesActivityProducerBean activityProducer;
+
+    @EJB
+    private RulesExchangeProducerBean exchangeProducer;
 
     @EJB
     private RulesConfigurationCache rulesConfigurationCache;
@@ -204,7 +211,7 @@ public class RulesFaReportServiceBean {
     }
 
     private void sendToExchange(String message) throws MessageException {
-        rulesProducer.sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
+        exchangeProducer.sendModuleMessage(message, rulesConsumer.getDestination());
     }
 
     private Map<ExtraValueType, Object> fetchExtraValues(String senderReceiver, FLUXFAReportMessage fluxfaReportMessage,
@@ -223,7 +230,7 @@ public class RulesFaReportServiceBean {
     private void sendRequestToActivity(String activityMsgStr, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType, MessageType messageType, String exchangeLogGuid) {
         try {
             String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, exchangeLogGuid);
-            rulesProducer.sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
+            activityProducer.sendModuleMessage(activityRequest, rulesConsumer.getDestination());
         } catch (ActivityModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }

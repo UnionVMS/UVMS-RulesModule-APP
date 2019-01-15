@@ -50,8 +50,6 @@ public class RulesMessageProducerBean extends AbstractProducer implements RulesM
     private Queue mdrEventQueue;
     private Queue salesQueue;
 
-    private int retries;
-
     @PostConstruct
     public void init() {
         rulesResponseQueue = JMSUtils.lookupQueue(MessageConstants.QUEUE_RULES);

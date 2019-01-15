@@ -15,8 +15,9 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMdrProducerBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,7 +31,13 @@ import javax.ejb.Stateless;
 public class MdrRulesMessageServiceBean {
 
     @EJB
-    private RulesMessageProducer producer;
+    private RulesResponseConsumer rulesConsumer;
+
+    @EJB
+    private RulesExchangeProducerBean exchangeProducer;
+
+    @EJB
+    private RulesMdrProducerBean mdrProducer;
 
     /*
      * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest
@@ -41,7 +48,7 @@ public class MdrRulesMessageServiceBean {
         try {
             exchangerStrReq = ExchangeModuleRequestMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY, fr);
             if (StringUtils.isNotEmpty(exchangerStrReq)) {
-                producer.sendDataSourceMessage(exchangerStrReq, DataSourceQueue.EXCHANGE);
+                exchangeProducer.sendModuleMessage(exchangerStrReq, rulesConsumer.getDestination());
             } else {
                 log.error("REQUEST TO BE SENT TO EXCHANGE MODULE RESULTS NULL. NOT SENDING IT!");
             }
@@ -57,7 +64,7 @@ public class MdrRulesMessageServiceBean {
         try {
             mdrSyncResponseReq = MdrModuleMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
             if (StringUtils.isNotEmpty(mdrSyncResponseReq)) {
-                producer.sendDataSourceMessage(mdrSyncResponseReq, DataSourceQueue.MDR_EVENT);
+                mdrProducer.sendModuleMessage(mdrSyncResponseReq, rulesConsumer.getDestination());
             } else {
                 log.error("REQUEST TO BE SENT TO MDR MODULE RESULTS NULL. NOT SENDING IT!");
             }

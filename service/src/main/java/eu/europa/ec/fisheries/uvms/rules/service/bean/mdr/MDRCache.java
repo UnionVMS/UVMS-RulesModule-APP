@@ -18,9 +18,8 @@ import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMdrProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.MdrLoadingException;
@@ -31,7 +30,6 @@ import un.unece.uncefact.data.standard.mdr.communication.*;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
-import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
@@ -55,10 +53,10 @@ public class MDRCache {
     private Map<MDRAcronymType, List<ObjectRepresentation>> cache;
 
     @EJB
-    private RulesResponseConsumer consumer;
+    private RulesResponseConsumer rulesConsumer;
 
     @EJB
-    private RulesMessageProducer producer;
+    private RulesMdrProducerBean mdrProducer;
 
     // This variable will store the date that the last entity in mdr (module) was refreshed.
     // @Info : refresh to 'last_success' column of 'mdr_codelist_status' table in mdr schema.
@@ -72,8 +70,10 @@ public class MDRCache {
 
     private static final int MB = 1024 * 1024;
 
-    private static final long TIME_TO_LIVE_IN_MILLIS = 300000L;
-    private static final long TIME_TO_CONSUME_IN_MILLIS = 120000L;
+    private static final long ONE_MINUTES_IN_MILLIS = 60000L;
+    private static final long TWO_MINUTES_IN_MILLIS = 120000L;
+    private static final long FIVE_MINUTES_IN_MILLIS = 300000L;
+
 
 
     @PostConstruct
@@ -164,8 +164,8 @@ public class MDRCache {
         String request;
         try {
             request = MdrModuleMapper.createFluxMdrGetAllCodeListRequest();
-            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, TIME_TO_LIVE_IN_MILLIS, DeliveryMode.NON_PERSISTENT);
-            TextMessage message = consumer.getMessage(corrId, TextMessage.class, TIME_TO_CONSUME_IN_MILLIS);
+            String corrId = mdrProducer.sendModuleMessageNonPersistent(request, rulesConsumer.getDestination(), FIVE_MINUTES_IN_MILLIS);
+            TextMessage message = rulesConsumer.getMessage(corrId, TextMessage.class, ONE_MINUTES_IN_MILLIS);
             if (message != null) {
                 response = unmarshallTextMessage(message.getText(), MdrGetAllCodeListsResponse.class);
                 return response;
@@ -211,8 +211,8 @@ public class MDRCache {
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             String request = MdrModuleMapper.createFluxMdrGetCodeListRequest(acronymType.name());
-            String corrId = producer.sendDataSourceMessage(request, DataSourceQueue.MDR_EVENT, TIME_TO_LIVE_IN_MILLIS, DeliveryMode.NON_PERSISTENT);
-            TextMessage message = consumer.getMessage(corrId, TextMessage.class, TIME_TO_CONSUME_IN_MILLIS);
+            String corrId = mdrProducer.sendModuleMessageNonPersistent(request, rulesConsumer.getDestination(), FIVE_MINUTES_IN_MILLIS);
+            TextMessage message = rulesConsumer.getMessage(corrId, TextMessage.class, ONE_MINUTES_IN_MILLIS);
             long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
             if (elapsed > 100) {
                 log.info("Loading {} took {} ", acronymType, stopwatch);
@@ -255,8 +255,8 @@ public class MDRCache {
      */
     private Date getLastTimeMdrWasRefreshedFromMdrModule() throws MessageException {
         try {
-            String corrId = producer.sendDataSourceMessage(MdrModuleMapper.createMdrGetLastRefreshDateRequest(), DataSourceQueue.MDR_EVENT, 60000L, DeliveryMode.NON_PERSISTENT);
-            TextMessage message = consumer.getMessage(corrId, TextMessage.class, 60000L);
+            String corrId = mdrProducer.sendModuleMessageNonPersistent(MdrModuleMapper.createMdrGetLastRefreshDateRequest(), rulesConsumer.getDestination(), ONE_MINUTES_IN_MILLIS);
+            TextMessage message = rulesConsumer.getMessage(corrId, TextMessage.class, ONE_MINUTES_IN_MILLIS);
             if (message != null) {
                 MdrGetLastRefreshDateResponse response = JAXBUtils.unMarshallMessage(message.getText(), MdrGetLastRefreshDateResponse.class);
                 return response.getLastRefreshDate() != null ? DateUtils.xmlGregorianCalendarToDate(response.getLastRefreshDate()) : null;

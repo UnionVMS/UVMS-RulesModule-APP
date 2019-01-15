@@ -22,8 +22,9 @@ import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import eu.europa.ec.fisheries.uvms.config.service.ParameterService;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesSalesProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -56,7 +57,13 @@ public class SalesRulesMessageServiceBean {
     private static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
 
     @EJB
-    private RulesMessageProducer producer;
+    private RulesResponseConsumer rulesConsumer;
+
+    @EJB
+    private RulesExchangeProducerBean exchangeProducer;
+
+    @EJB
+    private RulesSalesProducerBean salesProducer;
 
     @EJB
     private RulesEngineBean rulesEngine;
@@ -368,7 +375,7 @@ public class SalesRulesMessageServiceBean {
         try {
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, statusType);
             log.debug("Message to exchange to update status : {}", statusMsg);
-            producer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
+            exchangeProducer.sendModuleMessage(statusMsg, rulesConsumer.getDestination());
         } catch (ExchangeModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
@@ -389,11 +396,11 @@ public class SalesRulesMessageServiceBean {
     }
 
     private void sendToSales(String message) throws MessageException {
-        producer.sendDataSourceMessage(message, DataSourceQueue.SALES);
+        salesProducer.sendModuleMessage(message, rulesConsumer.getDestination());
     }
 
     private void sendToExchange(String message) throws MessageException {
-        producer.sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
+        exchangeProducer.sendModuleMessage(message, rulesConsumer.getDestination());
     }
 
     private String createInvalidSalesResponseMessage(ReceiveSalesReportRequest receiveSalesReportRequest, ValidationResult validationResult) throws SalesMarshallException {

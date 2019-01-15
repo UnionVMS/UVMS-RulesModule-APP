@@ -11,15 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.TextMessage;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.RecipientInfoType;
@@ -42,9 +33,10 @@ import eu.europa.ec.fisheries.uvms.commons.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeDataSourceResponseMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesAuditProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesUserProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.CustomRuleListResponseDto;
@@ -72,6 +64,16 @@ import eu.europa.ec.fisheries.wsdl.user.types.Organisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.TextMessage;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 @Stateless
 public class MovementValidationServiceBean implements ValidationService {
 
@@ -81,7 +83,13 @@ public class MovementValidationServiceBean implements ValidationService {
     private RulesResponseConsumer consumer;
 
     @EJB
-    private RulesMessageProducer producer;
+    private RulesExchangeProducerBean exchangeProducer;
+
+    @EJB
+    private RulesAuditProducerBean auditProducer;
+
+    @EJB
+    private RulesUserProducerBean userProducer;
 
     @Inject
     @TicketEvent
@@ -252,7 +260,7 @@ public class MovementValidationServiceBean implements ValidationService {
                         // Find current email address
                         String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(subscription.getOwner());
                         LOG.debug("Send GetContactDetailsRequest message to User");
-                        String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
+                        String userMessageId = userProducer.sendModuleMessage(userRequest, consumer.getDestination());
                         TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
                         LOG.debug("Received response message");
                         GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
@@ -282,7 +290,7 @@ public class MovementValidationServiceBean implements ValidationService {
             MovementType exchangeMovement = fact.getExchangeMovement();
             String userRequest = UserModuleRequestMapper.mapToFindOrganisationsRequest(endpoint);
             LOG.debug("Send FindOrganisationsRequest message to User");
-            String userMessageId = producer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
+            String userMessageId = userProducer.sendModuleMessage(userRequest, consumer.getDestination());
             TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
             LOG.debug("Received response message");
             FindOrganisationsResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, FindOrganisationsResponse.class);
@@ -309,9 +317,7 @@ public class MovementValidationServiceBean implements ValidationService {
                     }
                     String exchangeRequest = ExchangeModuleRequestMapper.createSendReportToPlugin(service.getServiceClassName(), pluginType, new Date(), ruleName, endpoint, exchangeMovement, recipientInfoList, fact.getAssetName(), fact.getIrcs(), fact.getMmsiNo(), fact.getExternalMarking(), fact.getFlagState());
                     LOG.debug("Send SendMovementToPluginRequest message to Exchange");
-                    String messageId = producer.sendDataSourceMessage(exchangeRequest, DataSourceQueue.EXCHANGE);
-                    LOG.debug("Received response message {}", messageId);
-
+                    exchangeProducer.sendModuleMessage(exchangeRequest, consumer.getDestination());
                     sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_TO_ENDPOINT, null, endpoint, "UVMS");
                     // TODO: Do something with the response??? Or don't send response from Exchange
                     return;
@@ -330,7 +336,7 @@ public class MovementValidationServiceBean implements ValidationService {
         types.add(pluginType);
         String serviceListRequest = ExchangeModuleRequestMapper.createGetServiceListRequest(types);
         LOG.debug("Send GetServiceListRequest message to Exchange");
-        String serviceListRequestId = producer.sendDataSourceMessage(serviceListRequest, DataSourceQueue.EXCHANGE);
+        String serviceListRequestId = exchangeProducer.sendModuleMessage(serviceListRequest, consumer.getDestination());
         TextMessage serviceListResponse = consumer.getMessage(serviceListRequestId, TextMessage.class);
         LOG.debug("Received response message");
         return ExchangeDataSourceResponseMapper.mapToServiceTypeListFromModuleResponse(serviceListResponse, serviceListRequestId);
@@ -362,7 +368,7 @@ public class MovementValidationServiceBean implements ValidationService {
                         continue;
                     }
                     String request = ExchangeModuleRequestMapper.createSetCommandSendEmailRequest(service.getServiceClassName(), email, ruleName);
-                    producer.sendDataSourceMessage(request, DataSourceQueue.EXCHANGE);
+                    exchangeProducer.sendModuleMessage(request, consumer.getDestination());
 
                     sendAuditMessage(AuditObjectTypeEnum.CUSTOM_RULE_ACTION, AuditOperationEnum.SEND_EMAIL, null, emailAddress, "UVMS");
                     return;
@@ -579,7 +585,7 @@ public class MovementValidationServiceBean implements ValidationService {
     private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
         try {
             String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
-            producer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
+            auditProducer.sendModuleMessage(message, consumer.getDestination());
         }
         catch (AuditModelMarshallException | MessageException e) {
             LOG.error("[ Error when sending message to Audit. ] {}", e.getMessage());

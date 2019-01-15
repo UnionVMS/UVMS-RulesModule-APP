@@ -1,15 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
-import java.util.*;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
@@ -26,9 +17,10 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -46,6 +38,17 @@ import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+import java.util.*;
+
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
@@ -60,7 +63,13 @@ public class RulesFaQueryServiceBean {
     private static ValidationResult failure = new ValidationResult(true, false, false, null);
 
     @EJB
-    private RulesMessageProducer producer;
+    private RulesExchangeProducerBean exchangeProducer;
+
+    @EJB
+    private RulesResponseConsumer rulesConsumer;
+
+    @EJB
+    private RulesActivityProducerBean activityProducer;
 
     @EJB
     private RulesEngineBean rulesEngine;
@@ -170,7 +179,7 @@ public class RulesFaQueryServiceBean {
         try {
 
             String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, exchangeLogGuid);
-            final String corrId = producer.sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
+            final String corrId = activityProducer.sendModuleMessage(activityRequest, rulesConsumer.getDestination());
             final TextMessage message = activityConsumer.getMessage(corrId, TextMessage.class);
             return JAXBUtils.unMarshallMessage(message.getText(), SetFLUXFAReportMessageRequest.class);
         } catch (ActivityModelMarshallException | MessageException | JAXBException | JMSException e) {
@@ -220,14 +229,14 @@ public class RulesFaQueryServiceBean {
     }
 
     private void sendToExchange(String message) throws MessageException {
-        producer.sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
+        exchangeProducer.sendModuleMessage(message, rulesConsumer.getDestination());
     }
 
     private void updateRequestMessageStatusInExchange(String logGuid, ExchangeLogStatusTypeType statusType) {
         try {
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, statusType);
             log.debug("Message to exchange to update status : {}", statusMsg);
-            producer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
+            exchangeProducer.sendModuleMessage(statusMsg, rulesConsumer.getDestination());
         } catch (ExchangeModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }

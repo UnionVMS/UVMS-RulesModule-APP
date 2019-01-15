@@ -6,9 +6,8 @@ import eu.europa.ec.fisheries.schema.sales.FLUXSalesReportMessage;
 import eu.europa.ec.fisheries.schema.sales.FindReportByIdResponse;
 import eu.europa.ec.fisheries.schema.sales.SalesMessageIdType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesSalesProducerBean;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
@@ -19,7 +18,6 @@ import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.util.List;
@@ -32,14 +30,14 @@ public class SalesServiceBeanHelper {
     private static final long TIME_TO_WAIT_FOR_A_RESPONSE = 30000L;
 
     @EJB
-    private RulesMessageProducer messageProducer;
+    private RulesResponseConsumer rulesConsumer;
 
     @EJB
-    private RulesResponseConsumer messageConsumer;
+    private RulesSalesProducerBean salesProducer;
 
     @Lock(LockType.READ)
     protected Optional<FLUXSalesReportMessage> receiveMessageFromSales(String correlationId) throws MessageException, JMSException, SalesMarshallException {
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationId, TextMessage.class, TIME_TO_WAIT_FOR_A_RESPONSE);
+        TextMessage receivedMessageAsTextMessage = rulesConsumer.getMessage(correlationId, TextMessage.class, TIME_TO_WAIT_FOR_A_RESPONSE);
         log.info("Received response message");
         String receivedMessageAsString = receivedMessageAsTextMessage.getText();
         return unmarshal(receivedMessageAsString);
@@ -47,7 +45,7 @@ public class SalesServiceBeanHelper {
 
     @Lock(LockType.READ)
     protected String sendMessageToSales(String request) throws MessageException {
-        return messageProducer.sendDataSourceMessage(request, DataSourceQueue.SALES, TIME_TO_WAIT_FOR_A_RESPONSE + 1000L, DeliveryMode.NON_PERSISTENT);
+        return salesProducer.sendModuleMessageNonPersistent(request, rulesConsumer.getDestination(), TIME_TO_WAIT_FOR_A_RESPONSE + 1000L);
     }
 
     @Lock(LockType.READ)
@@ -74,7 +72,7 @@ public class SalesServiceBeanHelper {
         log.info("Send CheckForUniqueIdRequest message to Sales");
         String correlationID = sendMessageToSales(checkForUniqueIdRequest);
 
-        TextMessage receivedMessageAsTextMessage = messageConsumer.getMessage(correlationID, TextMessage.class, TIME_TO_WAIT_FOR_A_RESPONSE);
+        TextMessage receivedMessageAsTextMessage = rulesConsumer.getMessage(correlationID, TextMessage.class, TIME_TO_WAIT_FOR_A_RESPONSE);
         log.info("Received response message");
         CheckForUniqueIdResponse response = JAXBMarshaller.unmarshallString(receivedMessageAsTextMessage.getText(), CheckForUniqueIdResponse.class);
         return !response.isUnique();

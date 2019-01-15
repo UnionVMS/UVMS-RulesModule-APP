@@ -10,13 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.HashMap;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMapperException;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
@@ -24,9 +17,7 @@ import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMa
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivitySubsCheckProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesResponseQueueProducer;
@@ -35,6 +26,13 @@ import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionAns
 import eu.europa.ec.fisheries.wsdl.subscription.module.SubscriptionPermissionResponse;
 import eu.europa.fisheries.uvms.subscription.model.mapper.SubscriptionModuleResponseMapper;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
 
 /**
  * Created by kovian on 17/07/2016.
@@ -45,13 +43,10 @@ import lombok.extern.slf4j.Slf4j;
 public class RulesActivityServiceBean {
 
     @EJB
-    private RulesMessageProducer rulesProducer;
+    private RulesResponseConsumer rulesConsumer;
 
     @EJB
-    private RulesResponseConsumer consumer;
-
-    @EJB
-    private RulesMessageProducer producer;
+    private RulesActivityProducerBean activityProducer;
 
     @EJB
     private RulesActivitySubsCheckProducer rulesActivityServiceBean;
@@ -65,7 +60,7 @@ public class RulesActivityServiceBean {
             String requestStr = ActivityModuleRequestMapper.mapToSubscriptionRequest(request, type);
             log.debug("Send MapToSubscriptionRequest to Activity");
             String corrId = rulesActivityServiceBean.sendModuleMessage(requestStr, rulesResponseProducer.getDestination());
-            TextMessage message = consumer.getMessage(corrId,300000L);
+            TextMessage message = rulesConsumer.getMessage(corrId,300000L);
             log.debug("Received response message from Subscription.");
             SubscriptionPermissionResponse subscriptionPermissionResponse = SubscriptionModuleResponseMapper.mapToSubscriptionPermissionResponse(message.getText());
             SubscriptionPermissionAnswer subscriptionCheck = subscriptionPermissionResponse.getSubscriptionCheck();
@@ -79,7 +74,7 @@ public class RulesActivityServiceBean {
     public void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, String exchangeLogGuid) {
         try {
             String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, exchangeLogGuid);
-            rulesProducer.sendDataSourceMessage(activityRequest, DataSourceQueue.ACTIVITY);
+            activityProducer.sendModuleMessage(activityRequest, rulesConsumer.getDestination());
         } catch (ActivityModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }

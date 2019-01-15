@@ -10,20 +10,10 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.xml.bind.UnmarshalException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageRequest;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -44,6 +34,17 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.xml.bind.UnmarshalException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_QUERY;
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_RESPONSE;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
@@ -69,9 +70,6 @@ public class RulesFAResponseServiceBean {
 
     @EJB
     private RulesConfigurationCache ruleModuleCache;
-
-    @EJB
-    private RulesMessageProducer producer;
 
     private RulesFLUXMessageHelper fluxMessageHelper;
 

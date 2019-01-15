@@ -12,25 +12,16 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.*;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByMovementsResponse;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.event.*;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesAuditProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
@@ -52,6 +43,16 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnical
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+
 @Stateless
 @Slf4j
 public class RulesEventServiceBean implements EventService {
@@ -66,7 +67,10 @@ public class RulesEventServiceBean implements EventService {
     private GetValidationResultService getValidationResultService;
 
     @EJB
-    private RulesMessageProducer rulesProducer;
+    private RulesResponseConsumer rulesConsumer;
+
+    @EJB
+    private RulesAuditProducerBean auditProducer;
 
     @EJB
     private RulesMovementProcessorBean rulesService;
@@ -93,7 +97,7 @@ public class RulesEventServiceBean implements EventService {
             PingResponse pingResponse = new PingResponse();
             pingResponse.setResponse("pong");
             String pingResponseText = JAXBMarshaller.marshallJaxBObjectToString(pingResponse);
-            rulesProducer.sendModuleResponseMessage(eventMessage.getJmsMessage(), pingResponseText);
+            auditProducer.sendResponseMessageToSender(eventMessage.getJmsMessage(), pingResponseText);
         } catch (RulesModelMarshallException | MessageException e) {
             log.error(" Error when responding to ping {}", e.getMessage());
             errorEvent.fire(eventMessage);
@@ -126,7 +130,7 @@ public class RulesEventServiceBean implements EventService {
             }
             GetCustomRuleRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), GetCustomRuleRequest.class);
             CustomRuleType response = rulesService.getCustomRuleByGuid(request.getGuid());
-            rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), RulesModuleResponseMapper.mapToGetCustomRuleResponse(response));
+            auditProducer.sendResponseMessageToSender(message.getJmsMessage(), RulesModuleResponseMapper.mapToGetCustomRuleResponse(response));
         } catch (RulesModelMapperException | RulesServiceException | MessageException e) {
             log.error(" Error when fetching rule by guid {}", e.getMessage());
             errorEvent.fire(message);
@@ -147,7 +151,7 @@ public class RulesEventServiceBean implements EventService {
             GetTicketsByMovementsRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), GetTicketsByMovementsRequest.class);
             GetTicketListByMovementsResponse response = rulesService.getTicketsByMovements(request.getMovementGuids());
             String responseString = RulesModuleResponseMapper.mapToGetTicketListByMovementsResponse(response.getTickets());
-            rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), responseString);
+            auditProducer.sendResponseMessageToSender(message.getJmsMessage(), responseString);
         } catch (RulesModelMapperException | RulesServiceException | RulesFaultException | MessageException e) {
             log.error(" Error when fetching tickets by movements {}", e.getMessage());
             errorEvent.fire(message);
@@ -168,7 +172,7 @@ public class RulesEventServiceBean implements EventService {
             }
             CountTicketsByMovementsRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), CountTicketsByMovementsRequest.class);
             long response = rulesService.countTicketsByMovements(request.getMovementGuids());
-            rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), RulesModuleResponseMapper.mapToCountTicketListByMovementsResponse(response));
+            auditProducer.sendResponseMessageToSender(message.getJmsMessage(), RulesModuleResponseMapper.mapToCountTicketListByMovementsResponse(response));
         } catch (RulesModelMapperException | RulesServiceException | RulesFaultException | MessageException e) {
             log.error(" Error when fetching ticket count by movements {}", e.getMessage());
             errorEvent.fire(message);
@@ -188,7 +192,7 @@ public class RulesEventServiceBean implements EventService {
             }
             GetTicketsAndRulesByMovementsRequest request = JAXBMarshaller.unmarshallTextMessage(message.getJmsMessage(), GetTicketsAndRulesByMovementsRequest.class);
             GetTicketsAndRulesByMovementsResponse response = rulesService.getTicketsAndRulesByMovements(request.getMovementGuids());
-            rulesProducer.sendModuleResponseMessage(message.getJmsMessage(), RulesModuleResponseMapper.getTicketsAndRulesByMovementsResponse(response.getTicketsAndRules()));
+            auditProducer.sendResponseMessageToSender(message.getJmsMessage(), RulesModuleResponseMapper.getTicketsAndRulesByMovementsResponse(response.getTicketsAndRules()));
         } catch (RulesModelMapperException | RulesServiceException | MessageException e) {
             log.error(" Error when fetching tickets and rules by movements {}", e.getMessage());
             errorEvent.fire(message);
@@ -344,7 +348,7 @@ public class RulesEventServiceBean implements EventService {
             TextMessage jmsRequestMessage = message.getJmsMessage();
             GetValidationsByRawMsgGuidRequest rulesRequest = JAXBMarshaller.unmarshallTextMessage(jmsRequestMessage, SendSalesResponseRequest.class);
             String validationsForRawMessageGuid = getValidationResultService.getValidationsForRawMessageUUID(rulesRequest.getGuid(), rulesRequest.getType());
-            rulesProducer.sendModuleResponseMessage(jmsRequestMessage, validationsForRawMessageGuid);
+            auditProducer.sendResponseMessageToSender(jmsRequestMessage, validationsForRawMessageGuid);
         } catch (RulesModelMarshallException | MessageException e) {
             log.error(" Error while trying to send Response to a GetValidationResultsByRawGuid to the Requestor Module..", e);
         }
@@ -354,7 +358,7 @@ public class RulesEventServiceBean implements EventService {
 	private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
         try {
             String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
-            rulesProducer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
+            auditProducer.sendModuleMessage(message, rulesConsumer.getDestination());
         }
         catch (AuditModelMarshallException | MessageException e) {
             log.error(" Error when sending message to Audit {}", e.getMessage());

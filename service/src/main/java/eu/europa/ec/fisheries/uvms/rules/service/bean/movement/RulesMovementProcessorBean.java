@@ -12,26 +12,6 @@
 
  package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
@@ -41,14 +21,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.mobileterminal.module.v1.MobileTerminalBatchListElement;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelAttribute;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelType;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalListQuery;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalSearchCriteria;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
 import eu.europa.ec.fisheries.schema.movement.common.v1.SimpleResponse;
 import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementBatchResponse;
 import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementResponse;
@@ -105,10 +78,8 @@ import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementDuplicateExc
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementFaultException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.MovementOutQueueProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.*;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
@@ -128,22 +99,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketUpdateEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.AssetAssetIdMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.ExchangeMovementMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.MobileTerminalMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementBaseTypeMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementFactMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.RawMovementFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
-import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetIdType;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteria;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteriaPair;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetListPagination;
-import eu.europa.ec.fisheries.wsdl.asset.types.AssetListQuery;
-import eu.europa.ec.fisheries.wsdl.asset.types.BatchAssetListResponseElement;
-import eu.europa.ec.fisheries.wsdl.asset.types.ConfigSearchField;
+import eu.europa.ec.fisheries.wsdl.asset.types.*;
 import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
 import eu.europa.ec.fisheries.wsdl.user.module.GetUserContextResponse;
 import eu.europa.ec.fisheries.wsdl.user.types.Feature;
@@ -153,6 +112,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.nio.file.AccessDeniedException;
+import java.util.*;
+import java.util.concurrent.*;
 
 
 @Stateless
@@ -167,9 +138,6 @@ public class RulesMovementProcessorBean {
     private RulesResponseConsumer consumer;
 
     @EJB
-    private RulesMessageProducer rulesProducer;
-
-    @EJB
     private MovementOutQueueProducer movOutQueueProducer;
 
     @EJB
@@ -177,6 +145,27 @@ public class RulesMovementProcessorBean {
 
     @EJB
     private MovementsRulesValidator movementValidator;
+
+    @EJB
+    private RulesMovementProducerBean movementProducer;
+
+    @EJB
+    private RulesMobilTerminalProducerBean mobileTerminalProducer;
+
+    @EJB
+    private RulesExchangeProducerBean exchangeProducer;
+
+    @EJB
+    private RulesAssetProducerBean assetProducer;
+
+    @EJB
+    private RulesConfigProducerBean configProducer;
+
+    @EJB
+    private RulesUserProducerBean userProducer;
+
+    @EJB
+    private RulesAuditProducerBean auditProducer;
 
     @Inject
     @TicketUpdateEvent
@@ -361,7 +350,7 @@ public class RulesMovementProcessorBean {
         }
         String mobileTerminalBatchListRequestStr = MobileTerminalModuleRequestMapper.createMobileTerminalBatchListRequest(query);
         log.debug("Send MobileTerminalListRequest message to Mobile terminal");
-        String getMobileTerminalMessageId = rulesProducer.sendDataSourceMessage(mobileTerminalBatchListRequestStr, DataSourceQueue.MOBILE_TERMINAL);
+        String getMobileTerminalMessageId = mobileTerminalProducer.sendModuleMessage(mobileTerminalBatchListRequestStr, consumer.getDestination());
         TextMessage getMobileTerminalResponse = consumer.getMessage(getMobileTerminalMessageId, TextMessage.class);
         log.debug("Received response message");
         List<MobileTerminalBatchListElement> resultList = MobileTerminalModuleResponseMapper.mapToMobileTerminalBatchListResponse(getMobileTerminalResponse);
@@ -460,7 +449,7 @@ public class RulesMovementProcessorBean {
         List<SetReportMovementType> setReportMovementType = ExchangeMovementMapper.mapExchangeMovementBatch(rawMovement);
         try {
             String exchangeResponseText = ExchangeMovementMapper.mapToProcessedMovementResponseBatch(setReportMovementType, movTypeList, username);
-            rulesProducer.sendDataSourceMessage(exchangeResponseText, DataSourceQueue.EXCHANGE);
+            exchangeProducer.sendModuleMessage(exchangeResponseText, consumer.getDestination());
         } catch (ExchangeModelMapperException e) {
             log.error(e.getMessage(), e);
         }
@@ -492,7 +481,7 @@ public class RulesMovementProcessorBean {
         }
         String getAssetRequest = AssetModuleRequestMapper.createBatchAssetListModuleRequest(assetListBatch);
         log.debug("Send AssetListModuleRequest message to Asset");
-        String getAssetMessageId = rulesProducer.sendDataSourceMessage(getAssetRequest, DataSourceQueue.ASSET);
+        String getAssetMessageId = assetProducer.sendModuleMessage(getAssetRequest, consumer.getDestination());
         TextMessage getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
         log.debug("Received response message");
         List<BatchAssetListResponseElement> resultList = AssetModuleResponseMapper.mapToBatchAssetListFromResponse(getAssetResponse, getAssetMessageId);
@@ -565,7 +554,7 @@ public class RulesMovementProcessorBean {
     private Asset getAsset(AssetIdType type, String value) throws AssetModelMapperException, MessageException {
         String getAssetListRequest = AssetModuleRequestMapper.createGetAssetModuleRequest(value, type);
         log.debug("Send GetAssetModuleRequest message to Asset");
-        String getAssetMessageId = rulesProducer.sendDataSourceMessage(getAssetListRequest, DataSourceQueue.ASSET);
+        String getAssetMessageId = assetProducer.sendModuleMessage(getAssetListRequest, consumer.getDestination());
         TextMessage getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
         log.debug("Received response message");
 
@@ -606,7 +595,7 @@ public class RulesMovementProcessorBean {
 
         String request = MobileTerminalModuleRequestMapper.createMobileTerminalListRequest(query);
         log.debug("Send MobileTerminalListRequest message to Mobile terminal");
-        String messageId = rulesProducer.sendDataSourceMessage(request, DataSourceQueue.MOBILE_TERMINAL);
+        String messageId = mobileTerminalProducer.sendModuleMessage(request, consumer.getDestination());
         TextMessage getMobileTerminalResponse = consumer.getMessage(messageId, TextMessage.class);
         log.debug("Received response message");
         List<MobileTerminalType> resultList = MobileTerminalModuleResponseMapper.mapToMobileTerminalListResponse(getMobileTerminalResponse);
@@ -650,7 +639,7 @@ public class RulesMovementProcessorBean {
             try {
                 String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementBatchRequest(movementBatch, username);
                 log.debug("Send CreateMovementRequest message to Movement");
-                String messageId = rulesProducer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
+                String messageId = movementProducer.sendModuleMessage(createMovementRequest, consumer.getDestination());
                 TextMessage movJmsResponse = consumer.getMessage(messageId, TextMessage.class, 2400000L);
                 log.debug("Received response message");
                 movementSimpleResponse = MovementModuleResponseMapper.mapToCreateMovementBatchResponse(movJmsResponse);
@@ -839,7 +828,7 @@ public class RulesMovementProcessorBean {
         try {
             String settingsRequest = ModuleRequestMapper.toListSettingsRequest("asset");
             log.debug("Send ListSettingsRequest message to Config");
-            String messageId = rulesProducer.sendDataSourceMessage(settingsRequest, DataSourceQueue.CONFIG);
+            String messageId = configProducer.sendModuleMessage(settingsRequest, consumer.getDestination());
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
             log.debug("Received response message");
             SettingsListResponse settings = eu.europa.ec.fisheries.uvms.config.model.mapper.JAXBMarshaller.unmarshallTextMessage(response, SettingsListResponse.class);
@@ -878,7 +867,7 @@ public class RulesMovementProcessorBean {
         try {
             String request = MovementModuleRequestMapper.mapToGetMovementMapByQueryRequest(query);
             log.debug("Send GetMovementMapByQueryRequest message to Movement");
-            String messageId = rulesProducer.sendDataSourceMessage(request, DataSourceQueue.MOVEMENT);
+            String messageId = movementProducer.sendModuleMessage(request, consumer.getDestination());
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
             log.debug("Received response message");
 
@@ -916,7 +905,7 @@ public class RulesMovementProcessorBean {
             movementBaseType.setConnectId(connectId);
             String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementRequest(movementBaseType, username);
             log.debug("Send CreateMovementRequest message to Movement");
-            String messageId = rulesProducer.sendDataSourceMessage(createMovementRequest, DataSourceQueue.MOVEMENT);
+            String messageId = movementProducer.sendModuleMessage(createMovementRequest, consumer.getDestination());
             TextMessage movementResponse = consumer.getMessage(messageId, TextMessage.class, 10000L);
             log.debug("Received response message");
             CreateMovementResponse createMovementResponse = MovementModuleResponseMapper.mapToCreateMovementResponseFromMovementResponse(movementResponse);
@@ -990,7 +979,7 @@ public class RulesMovementProcessorBean {
         try {
             String getAssetRequest = AssetModuleRequestMapper.createAssetGroupListByAssetGuidRequest(assetGuid);
             log.debug("Send GetAssetGroupListByAssetGuidRequest message to Asset");
-            getAssetMessageId = rulesProducer.sendDataSourceMessage(getAssetRequest, DataSourceQueue.ASSET);
+            getAssetMessageId = assetProducer.sendModuleMessage(getAssetRequest, consumer.getDestination());
             getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
             log.debug("Received response message");
             assetGroups = AssetModuleResponseMapper.mapToAssetGroupListFromResponse(getAssetResponse, getAssetMessageId);
@@ -1121,7 +1110,7 @@ public class RulesMovementProcessorBean {
     private String getOrganisationName(String userName) throws eu.europa.ec.fisheries.uvms.user.model.exception.ModelMarshallException, MessageException, RulesModelMarshallException {
         String userRequest = UserModuleRequestMapper.mapToGetContactDetailsRequest(userName);
         log.debug("Send GetContactDetailsRequest message to User");
-        String userMessageId = rulesProducer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
+        String userMessageId = userProducer.sendModuleMessage(userRequest, consumer.getDestination());
         TextMessage userMessage = consumer.getMessage(userMessageId, TextMessage.class);
         log.debug("Received response message");
         GetContactDetailResponse userResponse = JAXBMarshaller.unmarshallTextMessage(userMessage, GetContactDetailResponse.class);
@@ -1481,7 +1470,7 @@ public class RulesMovementProcessorBean {
     private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
         try {
             String message = AuditLogMapper.mapToAuditLog(type.getValue(), operation.getValue(), affectedObject, comment, username);
-            rulesProducer.sendDataSourceMessage(message, DataSourceQueue.AUDIT);
+            auditProducer.sendModuleMessage(message, consumer.getDestination());
         } catch (AuditModelMarshallException | MessageException e) {
             log.error(" Error when sending message to Audit. ] {}", e.getMessage());
         }
@@ -1496,7 +1485,7 @@ public class RulesMovementProcessorBean {
         String userRequest;
         try {
             userRequest = UserModuleRequestMapper.mapToGetUserContextRequest(contextId);
-            String messageId = rulesProducer.sendDataSourceMessage(userRequest, DataSourceQueue.USER);
+            String messageId = userProducer.sendModuleMessage(userRequest, consumer.getDestination());
             log.debug("JMS message with ID: {} is sent to USM.", messageId);
             TextMessage response = consumer.getMessage(messageId, TextMessage.class);
             log.debug("Received response message");
@@ -1532,7 +1521,7 @@ public class RulesMovementProcessorBean {
         try {
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, statusType);
             log.debug("Message to exchange to update status : {}", statusMsg);
-            rulesProducer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
+            exchangeProducer.sendModuleMessage(statusMsg, consumer.getDestination());
         } catch (ExchangeModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }

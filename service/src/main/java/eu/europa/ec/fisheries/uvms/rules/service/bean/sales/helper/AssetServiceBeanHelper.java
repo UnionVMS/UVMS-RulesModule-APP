@@ -5,9 +5,8 @@ import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallExcep
 import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.asset.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesAssetProducerBean;
 import eu.europa.ec.fisheries.wsdl.asset.module.ActivityRulesAssetModuleResponse;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteria;
@@ -18,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.jms.DeliveryMode;
 import javax.jms.TextMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,24 +25,24 @@ import java.util.List;
 @Slf4j
 public class AssetServiceBeanHelper {
 
-    public static final long TIME_TO_WAIT_FOR_A_RESPONSE = 30000L;
-
-    @EJB
-    private RulesMessageProducer messageProducer;
+    private static final long TIME_TO_WAIT_FOR_A_RESPONSE = 30000L;
 
     @EJB
     private RulesResponseConsumer messageConsumer;
 
-    protected List<Asset> receiveMessageFromAsset(String correlationId) throws MessageException, AssetModelMarshallException {
+    @EJB
+    private RulesAssetProducerBean assetProducer;
+
+    private List<Asset> receiveMessageFromAsset(String correlationId) throws MessageException, AssetModelMarshallException {
         TextMessage receivedMessage = messageConsumer.getMessage(correlationId, TextMessage.class, TIME_TO_WAIT_FOR_A_RESPONSE);
         return unmarshal(receivedMessage);
     }
 
-    protected String sendMessageToAsset(String request) throws MessageException {
-        return messageProducer.sendDataSourceMessage(request, DataSourceQueue.ASSET,TIME_TO_WAIT_FOR_A_RESPONSE + 1000L, DeliveryMode.NON_PERSISTENT);
+    private String sendMessageToAsset(String request) throws MessageException {
+        return assetProducer.sendModuleMessageNonPersistent(request, messageConsumer.getDestination(),TIME_TO_WAIT_FOR_A_RESPONSE + 1000L);
     }
 
-    protected List<Asset> unmarshal(TextMessage message) throws AssetModelMarshallException {
+    private List<Asset> unmarshal(TextMessage message) throws AssetModelMarshallException {
         ActivityRulesAssetModuleResponse activityRulesAssetModuleResponse = JAXBMarshaller.unmarshallTextMessage(message, ActivityRulesAssetModuleResponse.class);
         return activityRulesAssetModuleResponse.getAssetHistories();
     }

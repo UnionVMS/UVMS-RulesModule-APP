@@ -10,10 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.xml.bind.JAXBException;
-import java.util.*;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
@@ -26,9 +22,9 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
@@ -45,9 +41,13 @@ import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_QUERY;
-import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_REPORT;
-import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_RESPONSE;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import javax.xml.bind.JAXBException;
+import java.util.*;
+
+import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.*;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 
@@ -74,7 +74,10 @@ public class RulesExchangeServiceBean {
     private RulesFAResponseServiceBean faResponseServiceBean;
 
     @EJB
-    private RulesMessageProducer rulesProducer;
+    private RulesResponseConsumer rulesConsumer;
+
+    @EJB
+    private RulesExchangeProducerBean exchangeProducer;
 
     @EJB
     private RulesDao rulesDaoBean;
@@ -172,14 +175,14 @@ public class RulesExchangeServiceBean {
         try {
             String statusMsg = ExchangeModuleRequestMapper.createUpdateLogStatusRequest(logGuid, statusType);
             log.debug("Message to exchange to update status : {}", statusMsg);
-            rulesProducer.sendDataSourceMessage(statusMsg, DataSourceQueue.EXCHANGE);
+            exchangeProducer.sendModuleMessage(statusMsg, rulesConsumer.getDestination());
         } catch (ExchangeModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
 
     public void sendToExchange(String message) throws MessageException {
-        rulesProducer.sendDataSourceMessage(message, DataSourceQueue.EXCHANGE);
+        exchangeProducer.sendModuleMessage(message, rulesConsumer.getDestination());
     }
 
     private eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType getExchangePluginType(PluginType pluginType) {
