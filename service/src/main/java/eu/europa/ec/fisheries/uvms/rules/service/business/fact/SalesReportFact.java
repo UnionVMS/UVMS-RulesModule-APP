@@ -141,9 +141,10 @@ public class SalesReportFact extends SalesAbstractFact {
     public boolean isSalesNoteIdentifierNotSpecifiedForTakeOverDocumentWithStoredProducts(){
         if(isItemTypeEqualTo("TOD") && !isEmpty(includedSalesDocuments)) {
             for (SalesDocumentFact salesDocument:includedSalesDocuments) {
-                if (isAnyProductSetWithStorageAsUsage(salesDocument) &&
-                        isEmpty(salesDocument.getSalesNoteIDs()) || isEmpty(salesDocument.getSalesNoteIDs().get(0).getValue())){
-                    return true;
+                if (isAnyProductSetWithStorageAsUsage(salesDocument)){
+                    if (isEmpty(salesDocument.getSalesNoteIDs()) || isEmpty(salesDocument.getSalesNoteIDs().get(0).getValue())){
+                        return true;
+                    }
                 }
             }
         }
