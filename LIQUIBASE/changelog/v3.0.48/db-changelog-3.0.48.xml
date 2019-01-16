@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
+
+  This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
+  and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
+  the License, or any later version. The IFDM Suite is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+    <changeSet id="UNIONVMS-4161" author="emrinalgr">
+        <update tableName="rule">
+            <column name="error_type" value="WARNING"/>
+            <where>BR_ID = 'FA-L01-00-0174'</where>
+        </update>
+        <update tableName="rule">
+            <column name="error_type" value="WARNING"/>
+            <where>BR_ID = 'FA-L03-00-0175'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4122" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="!containsAny(relatedFLUXReportDocumentIDs, nonUniqueIdsList) &amp;&amp; (codeTypeValueEquals(typeCode, &quot;DECLARATION&quot;) &amp;&amp; codeTypeValueEquals(purposeCode, &quot;9&quot;) &amp;&amp; (containsMoreThenOneDeclarationPerTrip(faTypesPerTrip, FishingActivityType.DEPARTURE) || containsMoreThenOneArrivalOrDeparture(FishingActivityType.DEPARTURE) || containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.DEPARTURE)))"/>
+            <where>BR_ID = 'FA-L03-00-0241'</where>
+        </update>
+        <update tableName="rule">
+            <column name="expression" value="!containsAny(relatedFLUXReportDocumentIDs, nonUniqueIdsList) &amp;&amp; (codeTypeValueEquals(typeCode, &quot;DECLARATION&quot;) &amp;&amp; codeTypeValueEquals(purposeCode, &quot;9&quot;) &amp;&amp; (containsMoreThenOneDeclarationPerTrip(faTypesPerTrip, FishingActivityType.ARRIVAL) || containsMoreThenOneArrivalOrDeparture(FishingActivityType.ARRIVAL) || containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.ARRIVAL)))"/>
+            <where>BR_ID = 'FA-L03-00-0306'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4160" author="emrinalgr">
+        <update tableName="rule">
+            <column name="expression" value="isFromFaReport &amp;&amp; !isEmpty(specifiedContactPartyRoleCodes) &amp;&amp;
+                           !codeTypeValueContainsMatch(specifiedContactPartyRoleCodes, &quot;MASTER&quot;, &quot;AGENT&quot;)"/>
+            <where>BR_ID = 'FA-L02-00-0071'</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

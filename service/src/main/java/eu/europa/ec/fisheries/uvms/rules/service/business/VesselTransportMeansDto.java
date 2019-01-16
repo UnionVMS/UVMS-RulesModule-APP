@@ -21,7 +21,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class VesselTransportMeansDto {
 
-    private String acceptanceDateTime;
+    private String reportCreationDateTime;
     private Map<String, String> ids = new HashMap<>();
     private Asset asset;
     private String registrationVesselCountry;

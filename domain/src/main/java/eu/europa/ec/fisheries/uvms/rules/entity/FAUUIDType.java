@@ -12,6 +12,7 @@ package eu.europa.ec.fisheries.uvms.rules.entity;
 
 public enum FAUUIDType {
     FA_REPORT_ID,
+    FA_REPORT_REF_ID,
     FA_MESSAGE_ID,
     FA_QUERY_ID,
     FA_RESPONSE

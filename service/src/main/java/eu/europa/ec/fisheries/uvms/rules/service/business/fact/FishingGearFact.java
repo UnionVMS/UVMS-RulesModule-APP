@@ -69,8 +69,10 @@ public class FishingGearFact extends AbstractFact {
         if (CollectionUtils.isNotEmpty(conditions)){
             for (GearMatrix.Condition next : conditions) {
                 String value = next.getValue();
-                if (!next.isOptional()) {
-                    if (!valid(gearCharacteristics, mandatoryHits, value)) return false;
+                if (!next.isOptional() && optional.getValue() < 1) {
+                    if (!valid(gearCharacteristics, mandatoryHits, value)) {
+                        return false;
+                    }
                 } else {
                     optional.increment();
                     valid(gearCharacteristics, optionalHits, value);

@@ -22,8 +22,11 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.CodeTypeMapperImpl;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,6 +88,20 @@ public class RulesExchangeServiceBeanTest {
         inOrder.verify(rulesEngine, times(1)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap());
         inOrder.verify(rulesService, times(1)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
         inOrder.verify(rulesDaoBean, times(1)).createFaDocumentIdEntity(anySet());
+
+    }
+
+    @Test
+    public void testEvaluateAndSendToExchangeWithS11etFaQueryMessageRequest() throws RulesValidationException, ServiceException {
+
+        Mockito.when(fluxMessageHelper.getIDs(fluxResponseMessage)).thenReturn("value");
+
+        ValidationResult validationResult = new ValidationResult();
+        validationResult.setError(false);
+        Mockito.when(rulesService.checkAndUpdateValidationResultForGeneralBusinessRules(any(RuleError.class), anyString(), anyString(), any(RawMsgType.class))).thenReturn(validationResult);
+
+        rulesExchangeServiceBean.sendFLUXResponseMessageOnException("", "", new SetFaQueryMessageRequest(), new CodeTypeMapperImpl());
+
 
     }
 

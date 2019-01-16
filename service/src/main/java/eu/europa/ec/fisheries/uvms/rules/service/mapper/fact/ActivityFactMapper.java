@@ -257,9 +257,14 @@ public class ActivityFactMapper {
         for (FAReportDocument faReportDocument : faReportDocuments) {
             if(CollectionUtils.isNotEmpty(faReportDocument.getSpecifiedFishingActivities())){
                 for (FishingActivity fishingActivity : faReportDocument.getSpecifiedFishingActivities()) {
+                    String faRepoDocTypeCode = "";
+                    un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faReportDocumentTypeCode = faReportDocument.getTypeCode();
+                    if (faReportDocumentTypeCode != null){
+                        faRepoDocTypeCode = faReportDocumentTypeCode.getValue();
+                    }
                     FishingActivityType activityType = fetchActivityType(fishingActivity.getTypeCode());
                     FishingTrip specifiedFishingTrip = fishingActivity.getSpecifiedFishingTrip();
-                    if(specifiedFishingTrip != null && CollectionUtils.isNotEmpty(specifiedFishingTrip.getIDS()) &&
+                    if(specifiedFishingTrip != null && CollectionUtils.isNotEmpty(specifiedFishingTrip.getIDS()) && "DECLARATION".equals(faRepoDocTypeCode) &&
                             (FishingActivityType.DEPARTURE.equals(activityType) || FishingActivityType.ARRIVAL.equals(activityType))){
                         tripsPerFaTypeFromFasInReports.get(activityType).add(specifiedFishingTrip.getIDS().get(0).getValue());
                     }

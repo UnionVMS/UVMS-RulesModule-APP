@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.0.46-SNAPSHOT</version>
+        <version>3.0.49-SNAPSHOT</version>
     </parent>
 
     <artifactId>liquibase</artifactId>
@@ -55,7 +55,7 @@
                 <db.outputFile>changelog/generatedChangelog.xml</db.outputFile>
                 <driver.groupId>org.postgresql</driver.groupId>
                 <driver.artifactId>postgresql</driver.artifactId>
-                <driver.version>9.4-1201-jdbc41</driver.version>
+                <driver.version>9.4.1211</driver.version>
                 <db.diffTypes />
             </properties>
             <dependencies>
@@ -221,6 +221,8 @@
 							<url>${db.docker.url}</url>
 							<migrationSqlOutputFile>${project.build.directory}/full-update.sql</migrationSqlOutputFile>
 							<outputFileEncoding>UTF-8</outputFileEncoding>
+														<verbose>true</verbose>
+
 						</configuration>
 						<executions>
 							<execution>

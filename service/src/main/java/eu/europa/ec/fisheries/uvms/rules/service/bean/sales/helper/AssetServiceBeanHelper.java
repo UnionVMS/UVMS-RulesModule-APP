@@ -1,6 +1,12 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper;
 
 
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.jms.DeliveryMode;
+import javax.jms.TextMessage;
+import java.util.ArrayList;
+import java.util.List;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
 import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.asset.model.mapper.JAXBMarshaller;
@@ -15,13 +21,6 @@ import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteriaPair;
 import eu.europa.ec.fisheries.wsdl.asset.types.ConfigSearchField;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.jms.DeliveryMode;
-import javax.jms.TextMessage;
-import java.util.ArrayList;
-import java.util.List;
 
 @Singleton
 @Slf4j
