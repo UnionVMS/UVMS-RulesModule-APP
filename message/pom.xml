@@ -9,7 +9,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.0.49-SNAPSHOT</version>
+        <version>3.0.49</version>
     </parent>
 
     <dependencies>
