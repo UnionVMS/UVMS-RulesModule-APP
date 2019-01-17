@@ -9,7 +9,7 @@
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.0.49-W14J8-MARE</version>
+    <version>3.0.50-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -291,7 +291,7 @@
 
     <scm>
         <connection>${scm.connection}</connection>
-        <tag>rules-3.0.49-W14J8-MARE</tag>
+        <tag>rules-3.0.49-SNAPSHOT</tag>
     </scm>
 
     <profiles>
