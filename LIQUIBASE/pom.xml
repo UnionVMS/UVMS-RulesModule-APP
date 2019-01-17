@@ -130,99 +130,18 @@
                 <db.diffTypes>data</db.diffTypes>
             </properties>
         </profile>
-        <profile>
+		<profile>
 			<id>publish-sql</id>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>io.fabric8</groupId>
-						<artifactId>docker-maven-plugin</artifactId>
-						<inherited>false</inherited>
-						<executions>
-							<execution>
-								<id>verifyallstopped</id>
-								<phase>validate</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-								<configuration>
-									<allContainers>true</allContainers>
-								</configuration>
-							</execution>
-							<execution>
-								<id>start</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>start</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>stop</id>
-								<phase>package</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-								<configuration>
-									<allContainers>true</allContainers>
-								</configuration>
-							</execution>
-						</executions>
-						<configuration combine.self="override">
-							<images>
-								<image>
-									<alias>postgres</alias>
-									<name>uvms/postgres-base:${docker.dev.version}</name>
-									<run>
-										<net>bridge</net>
-										<namingStrategy>none</namingStrategy>
-										<ports>
-											<port>25432:5432</port>
-										</ports>
-										<wait>
-											<log>database system is shut down</log>
-											<time>240000</time>
-											<kill>15000</kill>
-											<shutdown>15000</shutdown>
-										</wait>
-										<log>
-											<enabled>true</enabled>
-											<color>green</color>
-										</log>
-										<hostname>postgres</hostname>
-									</run>
-								</image>
-							</images>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.8</version>
-						<executions>
-							<execution>
-								<id>delayDockerStartup</id>
-								<phase>process-resources</phase>
-								<configuration>
-									<tasks>
-										<sleep seconds="5" />
-									</tasks>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>					
-					<plugin>
 						<groupId>org.liquibase</groupId>
 						<artifactId>liquibase-maven-plugin</artifactId>
-						<version>3.5.2</version>
+						<version>3.5.3</version>
 						<configuration>
 							<url>${db.docker.url}</url>
 							<migrationSqlOutputFile>${project.build.directory}/full-update.sql</migrationSqlOutputFile>
 							<outputFileEncoding>UTF-8</outputFileEncoding>
-														<verbose>true</verbose>
-
 						</configuration>
 						<executions>
 							<execution>
@@ -230,13 +149,6 @@
 								<phase>process-resources</phase>
 								<goals>
 									<goal>updateSQL</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>test-apply-schema</id>
-								<phase>test</phase>
-								<goals>
-									<goal>update</goal>
 								</goals>
 							</execution>
 						</executions>
@@ -266,9 +178,9 @@
 				</plugins>
 			</build>
 			<properties>
-				<db.docker.url>jdbc:postgresql://localhost:25432/db71u</db.docker.url>
+				<db.docker.url>offline:postgresql?changeLogFile=target/databasechangelog.csv&amp;outputLiquibaseSql=true</db.docker.url>
 			</properties>
-		</profile>                       
+		</profile>
     </profiles>
 
     <build>
