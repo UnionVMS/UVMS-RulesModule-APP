@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMa
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
+import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
@@ -50,6 +51,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.*;
 import javax.xml.bind.UnmarshalException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
@@ -131,7 +133,6 @@ public class RulesFaReportServiceBean {
 
             idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
-            rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
 
             ValidationResult faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, exchangeLogGuid, RawMsgType.FA_REPORT);
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult));
@@ -143,6 +144,11 @@ public class RulesFaReportServiceBean {
                     rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
                     log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
                     sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid);
+
+                    Set<FADocumentID> result = idsFromIncomingMessage.stream().filter(faDocumentID -> !FAUUIDType.FA_REPORT_REF_ID.equals(faDocumentID.getType()))
+                            .collect(Collectors.toSet());
+
+                    rulesDaoBean.createFaDocumentIdEntity(result);// remove ref ids
                 } else {
                     log.debug(" Request doesn't have permissions!");
                 }
