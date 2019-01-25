@@ -36,7 +36,7 @@ public class RulesConfigRegistrationProducerBean extends AbstractProducer implem
         try {
             return sendModuleMessage(textMsg, rulesRespQueue);
         } catch (MessageException e) {
-            LOG.error("[ERROR] Error while trying to send message to Config! Check MdrConfigProducerBeanImpl..");
+            LOG.error("[ERROR] Error while trying to send message to Config! Check RulesConfigRegistrationProducerBean..");
         }
         return StringUtils.EMPTY;
     }
