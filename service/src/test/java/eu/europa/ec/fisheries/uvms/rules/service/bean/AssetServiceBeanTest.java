@@ -63,7 +63,7 @@ public class AssetServiceBeanTest {
 
         Mockito.when(helper.findHistoryOfAssetByCfr(anyString())).thenReturn(Arrays.asList(asset));
 
-        assertTrue(assetService.isCFRInFleetUnderFlagStateOnLandingDate("", "BEL", new DateTime(2019, 1, 15, 0, 0, 0, 0)));
+        assertTrue(assetService.isCFRInFleetUnderFlagStateOnLandingDate("", "BEL", new DateTime(2069, 1, 15, 0, 0, 0, 0)));
     }
 
 

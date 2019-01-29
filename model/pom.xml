@@ -89,7 +89,7 @@
 
     <scm>
         <connection>${scm.connection}</connection>
-        <tag>rules-3.0.49-SNAPSHOT</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <profiles>
