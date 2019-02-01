@@ -17,6 +17,13 @@
     <changeSet id="SALE-L00-00-0170-becomes-a-warning" author="stihft">
         <update tableName="rule">
             <column name="error_type" value="WARNING"/>
+            <where>BR_ID = 'SALE-L00-00-0170'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="SALE-L00-00-0103-becomes-a-warning" author="stihft">
+        <update tableName="rule">
+            <column name="error_type" value="WARNING"/>
             <where>BR_ID = 'SALE-L00-00-0103'</where>
         </update>
     </changeSet>
