@@ -41,6 +41,7 @@ public class RulePostProcessBean {
     @EJB
     private RulesDomainModel rulesDomainModel;
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public ValidationResult checkAndUpdateValidationResult(Collection<AbstractFact> facts, String rawMessage, String rawMsgGuid, RawMsgType type) {
         try {
             boolean isError = false;

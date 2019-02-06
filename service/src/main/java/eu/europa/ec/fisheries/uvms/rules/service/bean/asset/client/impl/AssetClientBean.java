@@ -17,12 +17,12 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 
 @Slf4j
-@Singleton
+@Stateless
 public class AssetClientBean implements IAssetClient {
 
     // Remote asset EJB
