@@ -205,7 +205,7 @@ public class SalesRulesMessageServiceBean {
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
-            extraValues.put(SENDER_RECEIVER, parameterService.getStringValue(FLUX_LOCAL_NATION_CODE));
+            extraValues.put(SENDER_RECEIVER, parameterService.getParamValueById(FLUX_LOCAL_NATION_CODE));
             extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesResponseMessage).or(DateTime.now()));
             extraValues.put(XML, salesResponseMessageAsString);
 
@@ -253,7 +253,7 @@ public class SalesRulesMessageServiceBean {
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
-            extraValues.put(SENDER_RECEIVER, parameterService.getStringValue(FLUX_LOCAL_NATION_CODE));
+            extraValues.put(SENDER_RECEIVER, parameterService.getParamValueById(FLUX_LOCAL_NATION_CODE));
             extraValues.put(ORIGINATING_PLUGIN, rulesRequest.getPluginToSendResponseThrough());
             extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(salesResponseMessage).or(DateTime.now()));
             extraValues.put(XML, salesResponseMessageAsString);
@@ -305,7 +305,7 @@ public class SalesRulesMessageServiceBean {
 
             //create map with extra values
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
-            extraValues.put(SENDER_RECEIVER, parameterService.getStringValue(FLUX_LOCAL_NATION_CODE));
+            extraValues.put(SENDER_RECEIVER, parameterService.getParamValueById(FLUX_LOCAL_NATION_CODE));
             extraValues.put(ORIGINATING_PLUGIN, rulesRequest.getPluginToSendResponseThrough());
             extraValues.put(CREATION_DATE_OF_MESSAGE, getCreationDate(report).or(DateTime.now()));
             extraValues.put(XML, salesReportMessageAsString);
