@@ -92,6 +92,41 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testIsGreaterOrEquals(){
+
+        NumericType numericType = new NumericType();
+        numericType.setValue(new BigDecimal("1"));
+
+        assertTrue(fact.isGreaterOrEquals(Collections.singletonList(numericType), 1));
+
+        numericType = new NumericType();
+        numericType.setValue(new BigDecimal("0.5"));
+
+        assertFalse(fact.isGreaterOrEquals(Collections.singletonList(numericType), 1));
+
+        numericType = new NumericType();
+        numericType.setValue(new BigDecimal("2.5"));
+
+        assertTrue(fact.isGreaterOrEquals(Collections.singletonList(numericType), 1));
+
+        numericType = new NumericType();
+        numericType.setValue(new BigDecimal("2.5"));
+
+        NumericType numericType2 = new NumericType();
+        numericType2.setValue(new BigDecimal("0.5"));
+
+        assertFalse(fact.isGreaterOrEquals(Arrays.asList(numericType, numericType2), 1));
+
+        numericType = new NumericType();
+        numericType.setValue(new BigDecimal("2.5"));
+
+        numericType2 = new NumericType();
+        numericType2.setValue(new BigDecimal("1.5"));
+
+        assertTrue(fact.isGreaterOrEquals(Arrays.asList(numericType, numericType2), 1));
+
+    }
+    @Test
     public void testValidDelimitedPeriod(){
         FishingActivityFact fishingActivityFact = new FishingActivityFact();
         FishingActivity related1 = new FishingActivity();
