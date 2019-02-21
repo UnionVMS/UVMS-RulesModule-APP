@@ -31,4 +31,6 @@
     <include file="changelog\v0.1\db-changelog-insertTestData_0.1.xml"/>
     -->
 
+    <include file="changelog\v2.4\db-changelog-2.4.xml" />
+
 </databaseChangeLog>
