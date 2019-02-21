@@ -831,6 +831,32 @@ public abstract class AbstractFact {
         return true;
     }
 
+    public boolean greaterOrEquals(List<NumericType> numericList, double value) {
+        boolean isGreater = false;
+        if (CollectionUtils.isEmpty(numericList)) {
+            return false;
+        }
+        ImmutableList<NumericType> removeNull = ImmutableList.copyOf(Iterables.filter(numericList, Predicates.notNull()));
+        for (NumericType type : removeNull) {
+            BigDecimal val = type.getValue();
+            isGreater = val.intValue() >= value;
+        }
+        return isGreater;
+    }
+
+    public boolean equals(List<NumericType> numericList, int value) {
+        boolean equals = false;
+        if (CollectionUtils.isEmpty(numericList)) {
+            return false;
+        }
+        ImmutableList<NumericType> removeNull = ImmutableList.copyOf(Iterables.filter(numericList, Predicates.notNull()));
+        for (NumericType type : removeNull) {
+            BigDecimal val = type.getValue();
+            equals = val.intValue() == value;
+        }
+        return equals;
+    }
+
     public boolean isStrictPositiveNumeric(NumericType numericType){
         return isStrictPositiveNumeric(Collections.singletonList(numericType));
     }

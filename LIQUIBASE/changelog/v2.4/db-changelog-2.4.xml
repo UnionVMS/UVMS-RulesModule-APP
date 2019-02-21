@@ -1,0 +1,10 @@
+
+    <changeSet id="UNIONVMS-4164" author="emrinalgr">
+
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !greaterOrEquals(appliedAAPProcessConversionFactorNumber, 1) || equals(appliedAAPProcessConversionFactorNumber, 0)"/>
+            <where>BR_ID = 'FA-L01-00-0174'</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>
