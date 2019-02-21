@@ -20,4 +20,22 @@
         </update>
     </changeSet>
 
+    <changeSet id="UNIONVMS-4166" author="emrinalgr">
+        <insert tableName="rule">
+            <column name="rule_id" value="452"/>
+            <column name="br_id" value="FA-L02-00-0045"/>
+            <column name="expression"
+                    value="!isEmpty(ownerFluxPartyIds) &amp;&amp; !isEmpty(faReportMessageOwnerFluxPartyIds) &amp;&amp; idTypeValueContainsAny(faReportMessageOwnerFluxPartyIds, &quot;XEU&quot;, &quot;XFA&quot;) &amp;&amp; !idTypesListsAreEqual(ownerFluxPartyIds, faReportMessageOwnerFluxPartyIds)"/>
+            <column name="note" value="The party sending must be allowed to send the message"/>
+            <column name="message"
+                    value="Report Owner ID not consistent with FLUX TL envelope parameters."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1"/>
+            <column name="property_names" value="ownerFluxPartyIds,faReportMessageOwnerFluxPartyIds"/>
+            <column name="disabled" value="false"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

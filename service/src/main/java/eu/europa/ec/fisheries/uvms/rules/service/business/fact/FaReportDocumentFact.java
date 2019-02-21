@@ -46,6 +46,7 @@ public class FaReportDocumentFact extends AbstractFact {
     private Date creationDateTime;
     private String creationDateTimeString;
     private List<IdType> ownerFluxPartyIds;
+    private List<IdType> faReportMessageOwnerFluxPartyIds;
     private VesselTransportMeans specifiedVesselTransportMeans;
     private List<FishingActivity> specifiedFishingActivities;
     private List<String> specifiedFishingActivitiesTypes;

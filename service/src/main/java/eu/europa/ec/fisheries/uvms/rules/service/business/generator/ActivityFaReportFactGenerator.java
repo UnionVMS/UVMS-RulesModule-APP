@@ -19,6 +19,7 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
@@ -97,7 +98,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         List<AbstractFact> facts = new ArrayList<>();
         List<FAReportDocument> faReportDocuments = fluxfaReportMessage.getFAReportDocuments();
         if (CollectionUtils.isNotEmpty(faReportDocuments)) {
-            facts.addAll(activityFactMapper.generateFactForFaReportDocuments(faReportDocuments, messageType));
+            facts.addAll(activityFactMapper.generateFactForFaReportDocuments(faReportDocuments, messageType, getFaMessageOwnerParty(fluxfaReportMessage)));
             int index = 1;
             for (FAReportDocument faReportDocument : faReportDocuments) {
 
@@ -138,6 +139,13 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         }
 
         return facts;
+    }
+
+    private List<IdType> getFaMessageOwnerParty(FLUXFAReportMessage faReportMessage) {
+        if(faReportMessage != null && faReportMessage.getFLUXReportDocument() != null && faReportMessage.getFLUXReportDocument().getOwnerFLUXParty() != null){
+            return activityFactMapper.mapToIdTypes(faReportMessage.getFLUXReportDocument().getOwnerFLUXParty().getIDS());
+        }
+        return null;
     }
 
     private Collection<AbstractFact> addFacts(List<FishingActivity> fishingActivities, FAReportDocument faReportDocument, boolean isSubActivity, CodeType mainActivityType) {

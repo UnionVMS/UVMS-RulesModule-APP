@@ -13,11 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -39,6 +34,12 @@ import org.joda.time.DateTimeZone;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 @Slf4j
 @ToString
@@ -1227,6 +1228,16 @@ public abstract class AbstractFact {
         void setFormatStr(String formatStr) {
             this.formatStr = formatStr;
         }
+    }
+
+    public boolean idTypesListsAreEqual(List<IdType> idList1, List<IdType> idList2){
+        if(CollectionUtils.isEmpty(idList1) || CollectionUtils.isEmpty(idList2)){
+            return CollectionUtils.isEmpty(idList1) && CollectionUtils.isEmpty(idList2);
+        }
+        if(idList1.size() != idList2.size()){
+            return false;
+        }
+        return CollectionUtils.isEmpty(CollectionUtils.removeAll(idList1, idList2));
     }
 
     public boolean matchWithFluxTL(List<IdType> idTypes) {
