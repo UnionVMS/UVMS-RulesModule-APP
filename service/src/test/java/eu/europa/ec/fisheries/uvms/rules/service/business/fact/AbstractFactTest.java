@@ -92,6 +92,15 @@ public class AbstractFactTest {
     }
 
     @Test
+    public void testEquals(){
+
+        NumericType numericType = new NumericType();
+        numericType.setValue(new BigDecimal("0"));
+
+        assertTrue(fact.isEquals(Collections.singletonList(numericType), 0));
+    }
+
+    @Test
     public void testIsGreaterOrEquals(){
 
         NumericType numericType = new NumericType();
