@@ -97,7 +97,7 @@ public class AbstractFactTest {
         NumericType numericType = new NumericType();
         numericType.setValue(new BigDecimal("0"));
 
-        assertTrue(fact.equals(Collections.singletonList(numericType), 0));
+        assertTrue(fact.isEquals(Collections.singletonList(numericType), 0));
     }
 
     @Test
@@ -106,17 +106,17 @@ public class AbstractFactTest {
         NumericType numericType = new NumericType();
         numericType.setValue(new BigDecimal("1"));
 
-        assertTrue(fact.greaterOrEquals(Collections.singletonList(numericType), 1));
+        assertTrue(fact.isGreaterOrEquals(Collections.singletonList(numericType), 1));
 
         numericType = new NumericType();
         numericType.setValue(new BigDecimal("0.5"));
 
-        assertFalse(fact.greaterOrEquals(Collections.singletonList(numericType), 1));
+        assertFalse(fact.isGreaterOrEquals(Collections.singletonList(numericType), 1));
 
         numericType = new NumericType();
         numericType.setValue(new BigDecimal("2.5"));
 
-        assertTrue(fact.greaterOrEquals(Collections.singletonList(numericType), 1));
+        assertTrue(fact.isGreaterOrEquals(Collections.singletonList(numericType), 1));
 
         numericType = new NumericType();
         numericType.setValue(new BigDecimal("2.5"));
@@ -124,7 +124,7 @@ public class AbstractFactTest {
         NumericType numericType2 = new NumericType();
         numericType2.setValue(new BigDecimal("0.5"));
 
-        assertFalse(fact.greaterOrEquals(Arrays.asList(numericType, numericType2), 1));
+        assertFalse(fact.isGreaterOrEquals(Arrays.asList(numericType, numericType2), 1));
 
         numericType = new NumericType();
         numericType.setValue(new BigDecimal("2.5"));
@@ -132,7 +132,7 @@ public class AbstractFactTest {
         numericType2 = new NumericType();
         numericType2.setValue(new BigDecimal("1.5"));
 
-        assertTrue(fact.greaterOrEquals(Arrays.asList(numericType, numericType2), 1));
+        assertTrue(fact.isGreaterOrEquals(Arrays.asList(numericType, numericType2), 1));
 
     }
     @Test

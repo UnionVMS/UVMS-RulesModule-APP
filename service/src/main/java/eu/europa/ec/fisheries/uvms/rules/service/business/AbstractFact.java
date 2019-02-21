@@ -830,7 +830,7 @@ public abstract class AbstractFact {
         return true;
     }
 
-    public boolean greaterOrEquals(List<NumericType> numericList, double value) {
+    public boolean isGreaterOrEquals(List<NumericType> numericList, double value) {
         boolean isGreater = false;
         if (CollectionUtils.isEmpty(numericList)) {
             return false;
@@ -843,7 +843,7 @@ public abstract class AbstractFact {
         return isGreater;
     }
 
-    public boolean equals(List<NumericType> numericList, int value) {
+    public boolean isEquals(List<NumericType> numericList, int value) {
         boolean equals = false;
         if (CollectionUtils.isEmpty(numericList)) {
             return false;

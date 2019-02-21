@@ -73,7 +73,7 @@ public interface SalesRulesService {
     /**
      * Checks if a report exists that is equal to the referencedID of the incoming report
      * @param fact fact, containing a document with a referencedID
-     * @return true if no report/query exist with an id equals to the given the referencedID
+     * @return true if no report/query exist with an id isEquals to the given the referencedID
      */
     boolean doesReferencedIdNotExist(FactWithReferencedId fact);
 
