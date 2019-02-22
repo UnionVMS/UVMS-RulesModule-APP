@@ -16,11 +16,12 @@
 
         <update tableName="rule">
             <column name="expression" value="!isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !isEquals(appliedAAPProcessConversionFactorNumber, 0) || !isGreaterOrEquals(appliedAAPProcessConversionFactorNumber, 1)"/>
+            <column name="rule_created_on"/>
             <where>BR_ID = 'FA-L01-00-0174'</where>
         </update>
     </changeSet>
 
-    <changeSet id="UNIONVMS-4166" author="emrinalgr">
+    <changeSet id="UNIONVMS-4166" author="kovian">
         <insert tableName="rule">
             <column name="rule_id" value="452"/>
             <column name="br_id" value="FA-L02-00-0045"/>
@@ -34,6 +35,22 @@
             <column name="rule_created_on"/>
             <column name="template_id" value="1"/>
             <column name="property_names" value="ownerFluxPartyIds,faReportMessageOwnerFluxPartyIds"/>
+            <column name="disabled" value="false"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4167" author="kovian">
+        <insert tableName="rule">
+            <column name="rule_id" value="600"/>
+            <column name="br_id" value="FA-L02-00-0600"/>
+            <column name="expression" value="codeTypeValueEquals(typeCode, &quot;AREA_ENTRY&quot;) &amp;&amp; (speciesTargetCode == null || (speciesTargetCode.listId != &quot;TARGET_SPECIES_GROUP&quot;))"/>
+            <column name="note" value="TBU from MDR"/>
+            <column name="message"  value="TBU from MDR"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="speciesTargetCode"/>
             <column name="disabled" value="false"/>
         </insert>
     </changeSet>
