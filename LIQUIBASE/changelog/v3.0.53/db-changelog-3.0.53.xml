@@ -66,6 +66,21 @@
             <column name="property_names" value="speciesTargetCode"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="605"/>
+            <column name="br_id" value="FA-L02-00-0605"/>
+            <column name="expression" value="subActivity  &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; (mainActivityType == &quot;JOINT_FISHING_OPERATION&quot;)
+                                            &amp;&amp; atMostOneVTMRoleCodeWithValue(&quot;CATCHING_VESSEL&quot;)"/>
+            <column name="note" value="TBU from MDR"/>
+            <column name="message"  value="Check value. If the activity is a joint fishing operation declaration, there cannot be more than one occurrence of VesselTransportMeans/RoleCode = 'CATCHING_VESSEL' for the Related- and SpecifiedVesselTransportMeans entities in this FAReportDocument."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="relatedVesselTransportMeansRoleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>

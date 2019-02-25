@@ -13,7 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
-import java.util.*;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -35,6 +34,9 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import java.util.*;
+
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType.RELOCATION;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
@@ -159,16 +161,10 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
             for (FishingActivity fishingActivity : fishingActivities) {
 
-                String partialSpecFishActXpath;
-
-                if(isSubActivity){
-                    partialSpecFishActXpath = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FISHING_ACTIVITY, index).getValue();
-                } else {
-                    partialSpecFishActXpath = xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FISHING_ACTIVITY, index).getValue();
-                }
+                String partialSpecFishActXpath = isSubActivity ? xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FISHING_ACTIVITY, index).getValue() : xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FISHING_ACTIVITY, index).getValue();
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.add(activityFactMapper.generateFishingActivityFact(fishingActivity, isSubActivity, faReportDocument.getTypeCode(), mainActivityType));
+                facts.add(activityFactMapper.generateFishingActivityFact(fishingActivity, isSubActivity, faReportDocument, mainActivityType));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(fishingActivity.getRelatedVesselTransportMeans(), facts));

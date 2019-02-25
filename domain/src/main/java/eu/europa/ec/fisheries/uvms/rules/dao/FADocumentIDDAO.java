@@ -12,13 +12,12 @@ package eu.europa.ec.fisheries.uvms.rules.dao;
 
 import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class FADocumentIDDAO extends AbstractDAO<FADocumentID> {
 
@@ -34,6 +33,9 @@ public class FADocumentIDDAO extends AbstractDAO<FADocumentID> {
 
     public List<FADocumentID> loadFADocumentIDByIdsByIds(Set<FADocumentID> ids) {
         Set<String> stringSet = new HashSet<>();
+        if(CollectionUtils.isEmpty(ids)){
+            return new ArrayList<>();
+        }
         for (FADocumentID id : ids) {
             String uuid = id.getUuid();
             if(StringUtils.isNotEmpty(uuid)){

@@ -48,7 +48,7 @@ public class RulePostProcessBean {
             boolean isWarning = false;
             List<ValidationMessageType> validationMessages = new ArrayList<>();
             for (AbstractFact fact : facts) {
-                if (fact.hasWarOrErr()) {
+                if (fact!=null && fact.hasWarOrErr()) {
                     List<String> uniqueIds = fact.getUniqueIds();
                     for (RuleError error : fact.getErrors()) {
                         isError = true;

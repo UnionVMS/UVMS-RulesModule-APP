@@ -18,10 +18,12 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -49,6 +51,9 @@ public class FishingActivityFact extends AbstractFact {
     private CodeType faReportDocumentTypeCode;
     private List<CodeType> relatedFluxLocationRFMOCodeList;
     private List<FACatch> specifiedFaCatch;
+
+    private List<CodeType> relatedVesselTransportMeansRoleCodes;
+    private List<CodeType> faRepDockSpecifiedVesselTransportMeansRoleCodes;
 
     public FishingActivityFact() {
         setFactType();
@@ -125,6 +130,15 @@ public class FishingActivityFact extends AbstractFact {
             }
         }
         return true;
+    }
+
+    public boolean atMostOneVTMRoleCodeWithValue(String value){
+        if(StringUtils.isEmpty(value)){
+            return true;
+        }
+        List<CodeType> allRoleCodes = new ArrayList<>(relatedVesselTransportMeansRoleCodes);
+        allRoleCodes.addAll(faRepDockSpecifiedVesselTransportMeansRoleCodes);
+        return allRoleCodes.stream().filter((role) -> value.equals(role.getValue())).count() > 1;
     }
 
 }

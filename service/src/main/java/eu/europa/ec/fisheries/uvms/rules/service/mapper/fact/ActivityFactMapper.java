@@ -13,6 +13,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
@@ -289,12 +291,11 @@ public class ActivityFactMapper {
         return faType;
     }
 
-    public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, boolean isSubActivity,
-                                                           un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faReportType,
+    public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, boolean isSubActivity, FAReportDocument faReportDocument,
                                                            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType mainActivityType) {
         FishingActivityFact fishingActivityFact = new FishingActivityFact();
         fishingActivityFact.setSubActivity(isSubActivity);
-        fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportType));
+        fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
 
         String partialXpath = xPathUtil.getValue();
 
@@ -307,8 +308,11 @@ public class ActivityFactMapper {
         if(mainActivityType != null){
             fishingActivityFact.setMainActivityType(mainActivityType.getValue());
             fishingActivityFact.setSpecifiedFaCatch(fishingActivity.getSpecifiedFACatches());
+            fishingActivityFact.setRelatedVesselTransportMeansRoleCodes(extractRoleCodes(fishingActivity.getRelatedVesselTransportMeans()));
+            fishingActivityFact.setFaRepDockSpecifiedVesselTransportMeansRoleCodes(extractRoleCodes(Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans())));
         }
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(fishingActivityFact, "specifiedFaCatch");
+        xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VESSEL_TRANSPORT_MEANS, ROLE_CODE).storeInRepo(fishingActivityFact, "relatedVesselTransportMeansRoleCodes");
 
         fishingActivityFact.setRelatedFishingTrip(mapRelatedFishingTrips(fishingActivity.getRelatedFishingActivities()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY, SPECIFIED_FISHING_TRIP).storeInRepo(fishingActivityFact, "relatedFishingTrip");
@@ -357,6 +361,18 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(fishingActivityFact, RELATED_FLUX_LOCATION_RFMO_CODE_LIST_PROP);
 
         return fishingActivityFact;
+    }
+
+    private List<CodeType> extractRoleCodes(List<VesselTransportMeans> vesselTransportMeans) {
+        List<CodeType> roleCodes = new ArrayList<>();
+        if(CollectionUtils.isEmpty(vesselTransportMeans)){
+            return roleCodes;
+        }
+        vesselTransportMeans = vesselTransportMeans.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        vesselTransportMeans.forEach((trspMean)->  roleCodes.add(mapToCodeType(trspMean.getRoleCode())));
+        return roleCodes;
     }
 
     public DateTime mapToJodaDateTime(DateTimeType creationDateTime) {
