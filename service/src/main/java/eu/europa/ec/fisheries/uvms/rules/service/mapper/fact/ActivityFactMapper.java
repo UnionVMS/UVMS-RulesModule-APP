@@ -749,7 +749,7 @@ public class ActivityFactMapper {
         return list;
     }
 
-    public List<FaCatchFact> generateFactsForFaCatch(FishingActivity activity, boolean isSubActivity, un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode) {
+    public List<FaCatchFact> generateFactsForFaCatch(FishingActivity activity, boolean isSubActivity, FAReportDocument faReportDocument) {
 
         if (activity == null) {
             return emptyList();
@@ -776,7 +776,7 @@ public class ActivityFactMapper {
                 faCatchFact.setFishingActivityTypeCode(mapToCodeType(activity.getTypeCode()));
                 xPathUtil.appendWithoutWrapping(partialXPath).append(TYPE_CODE).storeInRepo(faCatchFact, FISHING_ACTIVITY_TYPE_CODE);
 
-                faCatchFact.setFaReportDocumentTypeCode(mapToCodeType(typeCode));
+                faCatchFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument!=null?faReportDocument.getTypeCode():null));
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT).storeInRepo(faCatchFact, FA_REPORT_DOCUMENT_TYPE_CODE);
 
                 partialXPath = xPathUtil.appendWithoutWrapping(partialXPath1).appendWithIndex(SPECIFIED_FA_CATCH, index).getValue();
@@ -852,6 +852,10 @@ public class ActivityFactMapper {
                 if (fishActRelatedFluxLocations != null) {
                     faCatchFact.setFluxLocationId(mapFLUXLocationIDs(fishActRelatedFluxLocations));
                     xPathUtil.appendWithoutWrapping(partialXPath).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "fluxLocationId");
+                }
+
+                if(faReportDocument != null && faReportDocument.getSpecifiedVesselTransportMeans() != null && faReportDocument.getSpecifiedVesselTransportMeans().getRegistrationVesselCountry() != null){
+                    faCatchFact.setFarepDocSpecVesselTrpmRegVesselCountryId(mapToIdType(faReportDocument.getSpecifiedVesselTransportMeans().getRegistrationVesselCountry().getID()));
                 }
 
                 faCatchFact.setSubActivity(isSubActivity);
@@ -1997,9 +2001,7 @@ public class ActivityFactMapper {
         if (codeType == null) {
             return null;
         }
-
         boolean notBlankValue = StringUtils.isNotBlank(codeType.getValue());
-
         if (notBlankValue){
             eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType1 = new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType();
             codeType1.setListId(codeType.getListID());

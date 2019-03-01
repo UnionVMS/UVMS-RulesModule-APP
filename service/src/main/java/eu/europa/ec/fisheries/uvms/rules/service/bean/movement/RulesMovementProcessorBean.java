@@ -285,8 +285,7 @@ public class RulesMovementProcessorBean {
      * @throws JMSException
      * @throws MobileTerminalModelMapperException
      */
-    private EnrichedMovementWrapper enrichBatchWithMobileTerminalAndAssets(List<RawMovementType> rawMovementList)
-            throws AssetModelMapperException, MessageException, MobileTerminalUnmarshallException, JMSException, MobileTerminalModelMapperException {
+    private EnrichedMovementWrapper enrichBatchWithMobileTerminalAndAssets(List<RawMovementType> rawMovementList) throws AssetModelMapperException, MessageException, MobileTerminalUnmarshallException, JMSException, MobileTerminalModelMapperException {
         List<Asset> assetList = new ArrayList<>();
         // Get Mobile Terminal if it exists
         List<MobileTerminalType> mobileTerminalList;

@@ -47,11 +47,11 @@ public interface MDRCacheRuleService {
 
     boolean isIdTypePresentInMDRList(IdType id, DateTime creationDateOfMessage);
 
+    boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime validityDate, IdType farepDocSpecVesselTrpmRegVesselCountryId);
+
     String getDataTypeForMDRList(String listName, String codeValue);
 
     boolean isAllSchemeIdsPresentInMDRList(String listName, List<IdType> idTypes, DateTime creationDateOfMessage);
-
-    boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations,  List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime creationDateOfMessage);
 
     boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage);
 

@@ -16,7 +16,7 @@
 
         <update tableName="rule">
             <column name="expression" value="!isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !isEquals(appliedAAPProcessConversionFactorNumber, 0) || !isGreaterOrEquals(appliedAAPProcessConversionFactorNumber, 1)"/>
-            <column name="rule_created_on"/>
+            <column name="error_type" value="WARNING"/>
             <where>BR_ID = 'FA-L01-00-0174'</where>
         </update>
     </changeSet>
@@ -81,6 +81,13 @@
             <column name="property_names" value="relatedVesselTransportMeansRoleCodes"/>
             <column name="disabled" value="false"/>
         </insert>
+
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !mdrService.combinationExistsInConversionFactorList(specifiedFLUXLocations, appliedAAPProcessTypeCodes, speciesCode, creationDateOfMessage, farepDocSpecVesselTrpmRegVesselCountryId)"/>
+            <column name="error_type" value="WARNING"/>
+            <where>BR_ID = 'FA-L03-00-0175'</where>
+        </update>
+
     </changeSet>
 
 </databaseChangeLog>

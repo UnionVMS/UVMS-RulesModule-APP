@@ -31,6 +31,7 @@ public class FaCatchFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
     private CodeType faReportDocumentTypeCode;
+    private IdType farepDocSpecVesselTrpmRegVesselCountryId;
     private CodeType typeCode;
     private CodeType speciesCode;
     private MeasureType unitQuantity;
