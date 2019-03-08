@@ -319,8 +319,8 @@ public class MDRCache {
                 }
             }
             EnrichedBRMessage err = new EnrichedBRMessage(note, errorMessage, errType.contains("ERR") ? ErrorType.ERROR.value() : ErrorType.WARNING.value());
-            err.setEndDate(DateUtils.parseToUTCDate(endDate, "yyyy-MM-dd HH:mm:ss.S"));
-            err.setStartDate(DateUtils.parseToUTCDate(startDate, "yyyy-MM-dd HH:mm:ss.S"));
+            err.setEndDate(endDate != null ? DateUtils.parseToUTCDate(endDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.END_OF_TIME.toDate());
+            err.setStartDate(startDate != null ? DateUtils.parseToUTCDate(startDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.START_OF_TIME.toDate());
             enrichedBRMessageMap.put(brId, err);
         }
     }
