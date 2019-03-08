@@ -10,6 +10,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
@@ -29,18 +36,10 @@ import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
 @Stateless
 @LocalBean
 @Slf4j
-public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService {
+public class  MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService {
 
     private static final String TERRITORY = "TERRITORY";
     private static final String MANAGEMENT_AREA = "MANAGEMENT_AREA";

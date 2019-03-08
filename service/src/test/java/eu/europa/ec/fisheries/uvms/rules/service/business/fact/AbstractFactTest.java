@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -71,6 +72,7 @@ public class AbstractFactTest {
 
     @Test
     public void testListIdContainsAll() {
+
         List<CodeType> codeTypes = Arrays.asList(objectsHelper.generateCodeType("val1", "AREA"), objectsHelper.generateCodeType("val2", "AREA1"));
         assertTrue(fact.listIdContainsAll(codeTypes, "AREA", "AREA1", "BLA"));
     }

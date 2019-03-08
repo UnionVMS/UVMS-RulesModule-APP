@@ -10,6 +10,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
@@ -27,16 +35,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.mdr.communication.*;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -62,7 +60,7 @@ public class MDRCache {
     // @Info : refresh to 'last_success' column of 'mdr_codelist_status' table in mdr schema.
     private Date mdrRefreshDate;
 
-    private Map<String, EnrichedBRMessage> errorMessages;
+    private Map<String, EnrichedBRMessage> enrichedBRMessageMap;
 
     private boolean alreadyLoadedOnce = false;
 
@@ -79,7 +77,7 @@ public class MDRCache {
     @PostConstruct
     public void init() {
         cache = new ConcurrentHashMap<>();
-        errorMessages = new ConcurrentHashMap<>();
+        enrichedBRMessageMap = new ConcurrentHashMap<>();
     }
 
     /**
@@ -114,7 +112,7 @@ public class MDRCache {
         } else {
             populateAllMdrOneByOne(); //populateAllMdrAtOnce(); This one sometimes is to heavy for activemq!
         }
-        loadCacheForFailureMessages();
+        overrideBRMessages();
     }
 
     private boolean oneMinuteHasPassed() {
@@ -268,10 +266,10 @@ public class MDRCache {
     }
 
     /**
-     * This function maps all the error messages to the ones defined in MDR;
+     * This function overrides business rules messages to the ones defined in MDR;
      */
-    private void loadCacheForFailureMessages() {
-        errorMessages = new HashMap<>();
+    private void overrideBRMessages() {
+        enrichedBRMessageMap = new HashMap<>();
         final List<ObjectRepresentation> objRapprList = new ArrayList<>();
         List<ObjectRepresentation> brDef = getEntry(MDRAcronymType.FA_BR);
         List<ObjectRepresentation> saleBrDef = getEntry(MDRAcronymType.SALE_BR);
@@ -290,11 +288,15 @@ public class MDRCache {
         final String BR_ID_COLUMN = "code";
         final String BR_NOTE_COLUMN = "note";
         final String BR_ERROR_TYPE_COLUMN = "fluxGpValidationTypeCode";
+        final String START_DATE = "startDate";
+        final String END_DATE = "endDate";
         for (ObjectRepresentation objectRepr : objRapprList) {
             String brId = null;
             String errorMessage = null;
             String note = null;
             String errType = null;
+            String startDate = null;
+            String endDate = null;
             for (ColumnDataType field : objectRepr.getFields()) {
                 final String columnName = field.getColumnName();
                 if (MESSAGE_COLUMN.equals(columnName)) {
@@ -309,13 +311,22 @@ public class MDRCache {
                 if (BR_ERROR_TYPE_COLUMN.equals(columnName)) {
                     errType = field.getColumnValue();
                 }
+                if (START_DATE.equals(columnName)) {
+                    startDate = field.getColumnValue();
+                }
+                if (END_DATE.equals(columnName)) {
+                    endDate = field.getColumnValue();
+                }
             }
-            errorMessages.put(brId, new EnrichedBRMessage(note, errorMessage, errType.contains("ERR") ? ErrorType.ERROR.value() : ErrorType.WARNING.value()));
+            EnrichedBRMessage err = new EnrichedBRMessage(note, errorMessage, errType.contains("ERR") ? ErrorType.ERROR.value() : ErrorType.WARNING.value());
+            err.setEndDate(DateUtils.parseToUTCDate(endDate, "yyyy-MM-dd HH:mm:ss.S"));
+            err.setStartDate(DateUtils.parseToUTCDate(startDate, "yyyy-MM-dd HH:mm:ss.S"));
+            enrichedBRMessageMap.put(brId, err);
         }
     }
 
     public EnrichedBRMessage getErrorMessage(String brId) {
-        return errorMessages.get(brId);
+        return enrichedBRMessageMap.get(brId);
     }
 
     @AccessTimeout(value = 10, unit = MINUTES)

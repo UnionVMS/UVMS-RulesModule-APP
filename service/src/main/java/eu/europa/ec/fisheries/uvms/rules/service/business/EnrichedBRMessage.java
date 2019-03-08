@@ -10,6 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import java.util.Date;
 import lombok.Data;
 
 @Data
@@ -20,6 +21,8 @@ public class EnrichedBRMessage {
     private String expression;
     private String message;
     private String type;
+    private Date startDate;
+    private Date endDate;
 
     public EnrichedBRMessage(String note, String message, String type) {
         this.note = note;

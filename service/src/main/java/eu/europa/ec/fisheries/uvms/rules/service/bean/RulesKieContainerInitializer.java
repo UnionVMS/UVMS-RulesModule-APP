@@ -10,12 +10,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import java.io.InputStream;
+import java.util.*;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -30,12 +33,6 @@ import org.kie.api.builder.Results;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
 import org.kie.api.runtime.KieContainer;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import java.io.InputStream;
-import java.util.*;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Singleton
@@ -45,9 +42,6 @@ public class RulesKieContainerInitializer {
 
     @EJB
     private RulesDomainModel rulesDb;
-
-    @EJB
-    private MDRCacheRuleService cacheService;
 
     private Map<ContainerType, KieContainer> containers;
 
