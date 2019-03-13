@@ -13,6 +13,9 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
@@ -21,10 +24,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -136,7 +135,11 @@ public class FishingActivityFact extends AbstractFact {
         if(StringUtils.isEmpty(value)){
             return true;
         }
-        List<CodeType> allRoleCodes = new ArrayList<>(relatedVesselTransportMeansRoleCodes);
+        List<CodeType> allRoleCodes = new ArrayList<>();
+
+        if (CollectionUtils.isNotEmpty(relatedVesselTransportMeansRoleCodes)){
+            allRoleCodes = new ArrayList<>(relatedVesselTransportMeansRoleCodes);
+        }
         allRoleCodes.addAll(faRepDockSpecifiedVesselTransportMeansRoleCodes);
         return allRoleCodes.stream().filter((role) -> value.equals(role.getValue())).count() > 1;
     }
