@@ -369,7 +369,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         }
     }
 
-
+    @Override
     public boolean combinationExistsInConversionFactorListAndIsGreaterOrEqualToOne(List<FLUXLocation> specifiedFLUXLocations, List<AAPProcess> appliedAAPProceses,
                                                                                    CodeType speciesCode, DateTime validityDate, IdType farepDocSpecVesselTrpmRegVesselCountryId) {
         Iterables.removeIf(specifiedFLUXLocations, Objects::isNull);

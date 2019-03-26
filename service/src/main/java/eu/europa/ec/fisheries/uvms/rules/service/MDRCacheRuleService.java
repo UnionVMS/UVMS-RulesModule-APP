@@ -17,6 +17,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
 import javax.ejb.Local;
@@ -48,6 +49,9 @@ public interface MDRCacheRuleService {
     boolean isIdTypePresentInMDRList(IdType id, DateTime creationDateOfMessage);
 
     boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime validityDate, IdType farepDocSpecVesselTrpmRegVesselCountryId);
+
+    boolean combinationExistsInConversionFactorListAndIsGreaterOrEqualToOne(List<FLUXLocation> specifiedFLUXLocations, List<AAPProcess> appliedAAPProceses,
+                                                                            CodeType speciesCode, DateTime validityDate, IdType farepDocSpecVesselTrpmRegVesselCountryId);
 
     String getDataTypeForMDRList(String listName, String codeValue);
 
