@@ -50,6 +50,9 @@ public class MDRCache {
     @Getter
     private Map<MDRAcronymType, List<ObjectRepresentation>> cache;
 
+    @Getter
+    private List<String> allCodeLists;
+
     @EJB
     private RulesResponseConsumer rulesConsumer;
 
@@ -78,6 +81,7 @@ public class MDRCache {
     public void init() {
         cache = new ConcurrentHashMap<>();
         enrichedBRMessageMap = new ConcurrentHashMap<>();
+        allCodeLists = new ArrayList<>();
     }
 
     /**
@@ -112,7 +116,10 @@ public class MDRCache {
         } else {
             populateAllMdrOneByOne(); //populateAllMdrAtOnce(); This one sometimes is to heavy for activemq!
         }
+        // The CODELIST_STATUS codelist is loaded separately since it cannot take the same flow cause it doesn't extend @MasterDataRegistry @see @MDR.MasterDataRegistryEntityCacheFactory
+        populateAllCodeListStatuses();
         overrideBRMessages();
+        log.info("Codelists : {}", allCodeLists);
     }
 
     private boolean oneMinuteHasPassed() {
@@ -155,6 +162,23 @@ public class MDRCache {
         log.info("MDR refresh Date {}", mdrRefreshDate);
         long elapsed = stopwatch.elapsed(TimeUnit.SECONDS);
         log.info("Loading and caching took [{}] seconds!", elapsed);
+    }
+
+    private void populateAllCodeListStatuses() throws MdrLoadingException {
+        final String OBJECT_ACRONYM = "objectAcronym";
+        List<ObjectRepresentation> objectRepresentations = mdrCodeListStatus();
+        objectRepresentations.forEach((objectRappr) -> {
+            if(objectRappr != null && CollectionUtils.isNotEmpty(objectRappr.getFields())){
+                String objAcronym = null;
+                for (ColumnDataType field : objectRappr.getFields()) {
+                    final String columnName = field.getColumnName();
+                    if (OBJECT_ACRONYM.equals(columnName)) {
+                        objAcronym = field.getColumnValue();
+                    }
+                }
+                allCodeLists.add(objAcronym);
+            }
+        });
     }
 
     private MdrGetAllCodeListsResponse getAllMdrCodeLists() throws MdrLoadingException {
@@ -225,6 +249,28 @@ public class MDRCache {
         return new ArrayList<>();
     }
 
+    private List<ObjectRepresentation> mdrCodeListStatus() throws MdrLoadingException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        try {
+            String request = MdrModuleMapper.createFluxMdrGetStatusesRequest();
+            String corrId = mdrProducer.sendModuleMessageNonPersistent(request, rulesConsumer.getDestination(), FIVE_MINUTES_IN_MILLIS);
+            TextMessage message = rulesConsumer.getMessage(corrId, TextMessage.class, ONE_MINUTES_IN_MILLIS);
+            long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+            if (elapsed > 100) {
+                log.info("Loading {} took {} CODELIST_STATUS ", stopwatch);
+            }
+            if (message != null) {
+                MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
+                return response.getDataSets();
+            }
+        } catch (MessageException | MdrModelMarshallException | JMSException | ActivityModelMarshallException ex) {
+            throw new MdrLoadingException("Error while trying to load mdr!", ex);
+        }
+        return new ArrayList<>();
+    }
+
+
+
     /**
      * Checks if the refresh date from mdr module has changed.
      * If it has changed sets cacheDateChanged=true; and refreshed the mdrRefreshDate with the new date.
@@ -290,14 +336,14 @@ public class MDRCache {
         final String BR_ERROR_TYPE_COLUMN = "fluxGpValidationTypeCode";
         final String START_DATE = "startDate";
         final String END_DATE = "endDate";
-        for (ObjectRepresentation objectRepr : objRapprList) {
+        objRapprList.forEach((objectRappr) ->  {
             String brId = null;
             String errorMessage = null;
             String note = null;
             String errType = null;
             String startDate = null;
             String endDate = null;
-            for (ColumnDataType field : objectRepr.getFields()) {
+            for (ColumnDataType field : objectRappr.getFields()) {
                 final String columnName = field.getColumnName();
                 if (MESSAGE_COLUMN.equals(columnName)) {
                     errorMessage = field.getColumnValue();
@@ -322,7 +368,7 @@ public class MDRCache {
             err.setEndDate(endDate != null ? DateUtils.parseToUTCDate(endDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.END_OF_TIME.toDate());
             err.setStartDate(startDate != null ? DateUtils.parseToUTCDate(startDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.START_OF_TIME.toDate());
             enrichedBRMessageMap.put(brId, err);
-        }
+        });
     }
 
     public EnrichedBRMessage getErrorMessage(String brId) {

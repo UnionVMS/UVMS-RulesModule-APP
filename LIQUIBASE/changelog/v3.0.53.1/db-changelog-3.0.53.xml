@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
+
+  This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
+  and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
+  the License, or any later version. The IFDM Suite is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
+  -->
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="UNIONVMS-" author="kovian">
+
+        <!-- UNIONVMS-4174 -->
+        <delete tableName="rule">
+            <where>BR_ID = 'FA-L01-00-0208'</where>
+        </delete>
+        <delete tableName="rule">
+            <where>BR_ID = 'FA-L01-00-0211'</where>
+        </delete>
+
+        <!-- UNIONVMS-4175 -->
+        <delete tableName="rule">
+            <where>BR_ID = 'FA-L02-00-0282'</where>
+        </delete>
+
+        <!-- UNIONVMS-4173 -->
+        <update tableName="rule">
+            <column name="error_type" value="ERROR"/>
+            <where>BR_ID = 'FA-L03-00-0016'</where>
+        </update>
+
+        <!-- UNIONVMS-4180 -->
+        <insert tableName="rule">
+            <column name="rule_id" value="610"/>
+            <column name="br_id" value="FA-L02-00-0610"/>
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !noCatchesDeclaredForCodeTypes(&quot;GEAR_SHOT&quot;, &quot;GEAR_RETRIEVAL&quot;)"/>
+            <column name="note" value=""/>
+            <column name="message" value="If the activity is a fishing operation declaration and the  RelatedFishingActivity/TypeCode is either GEAR_SHOT or GEAR_RETRIEVAL, then the  RelatedFishingActivity shall not contain SpecifiedFACatch entities."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2019-03-25 00:00:00.0"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="relatedFishingActivities"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!-- UNIONVMS-4176 -->
+        <update tableName="rule">
+            <column name="error_type" value="ERROR"/>
+            <column name="expression" value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value != null
+                           &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, -90, 90) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, false) &lt; 1)"/>
+            <where>BR_ID = 'FA-L01-00-0209'</where>
+        </update>
+        <update tableName="rule">
+            <column name="error_type" value="ERROR"/>
+            <column name="expression" value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value != null
+                                            &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value, -180, 180) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure.value, false) &lt; 1)"/>
+            <where>BR_ID = 'FA-L01-00-0212'</where>
+        </update>
+
+        <!-- UNIONVMS-UNIONVMS-4177 -->
+        <insert tableName="rule">
+            <column name="rule_id" value="145"/>
+            <column name="br_id" value="FA-L03-00-0145"/>
+            <column name="expression" value="valueCode != null &amp;&amp; (isEmpty(valueCode.listId) || !mdrService.codeListExistsInMdr(valueCode.listId))"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check presence of attribute listID. Must be present and have a value of an existing code list in MDR."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2019-03-25 00:00:00.0"/>
+            <column name="template_id" value="6"/>
+            <column name="property_names" value="valueCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="146"/>
+            <column name="br_id" value="FA-L01-00-0146"/>
+            <column name="expression" value="valueCode != null &amp;&amp; !isEmpty(valueCode.listId) &amp;&amp; !mdrService.isPresentInMDRList(valueCode.listId, valueCode.value, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check value. Must be existing on the MDR code list specified in listID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2019-03-25 00:00:00.0"/>
+            <column name="template_id" value="6"/>
+            <column name="property_names" value="valueCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!-- UNIONVMS-4178 -->
+        <insert tableName="rule">
+            <column name="rule_id" value="147"/>
+            <column name="br_id" value="FA-L03-00-0147"/>
+            <column name="expression" value="valueCode != null &amp;&amp; (isEmpty(valueCode.listId) || !mdrService.codeListExistsInMdr(valueCode.listId))"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check presence of attribute listID. Must be present and have a value of an existing code list in MDR."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2019-03-25 00:00:00.0"/>
+            <column name="template_id" value="11"/>
+            <column name="property_names" value="valueCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="148"/>
+            <column name="br_id" value="FA-L01-00-0148"/>
+            <column name="expression" value="valueCode != null &amp;&amp; !isEmpty(valueCode.listId) &amp;&amp; !mdrService.isPresentInMDRList(valueCode.listId, valueCode.value, creationDateOfMessage)"/>
+            <column name="note" value=""/>
+            <column name="message" value="Check value. Must be existing on the MDR code list specified in listID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2019-03-25 00:00:00.0"/>
+            <column name="template_id" value="11"/>
+            <column name="property_names" value="valueCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <!-- UNIONVMS-4180 -->
+        <insert tableName="rule">
+            <column name="rule_id" value="188"/>
+            <column name="br_id" value="FA-L02-00-0188"/>
+            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; (appliedAAPProcess.size() > 1) &amp;&amp;
+            !(containsAtLeastOneCFGreaterThenOne() || !mdrService.combinationExistsInConversionFactorListAndIsGreaterOrEqualToOne(specifiedFLUXLocations, appliedAAPProcess, speciesCode, creationDateOfMessage))"/>
+            <column name="note" value=""/>
+            <column name="message" value="If more than one AppliedAAPProcess is present for one FACatch, there must be at least one occurrence where CF >=1 which means : a)  there must be at least one occurrence where ConversionFactorNumeric >=1 or b)  a conversion factor exists in the CONVERSION_FACTOR code list (MDR) for the combination of parameters and has a value >=1."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on" valueDate="2019-03-25 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="appliedAAPProcessConversionFactorNumber, appliedAAPProcess"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

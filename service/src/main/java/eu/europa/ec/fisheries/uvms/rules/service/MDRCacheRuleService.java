@@ -63,4 +63,6 @@ public interface MDRCacheRuleService {
 
     String getErrorTypeStrForBrId(String brid);
 
+    boolean codeListExistsInMdr(String listName);
+
 }

@@ -13,6 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -79,6 +80,15 @@ public class FaCatchFact extends AbstractFact {
             }
         }
         return false;
+    }
+
+    public boolean containsAtLeastOneCFGreaterThenOne(){
+        boolean containsAtLeastOneGreaterThenOne = false;
+        final BigDecimal one = new BigDecimal(1);
+        if(CollectionUtils.isNotEmpty(appliedAAPProcessConversionFactorNumber)){
+            containsAtLeastOneGreaterThenOne = appliedAAPProcessConversionFactorNumber.stream().anyMatch(cf -> cf.getValue() != null && one.compareTo(cf.getValue()) <= 0);
+        }
+        return containsAtLeastOneGreaterThenOne;
     }
 
     public FaCatchFact() {

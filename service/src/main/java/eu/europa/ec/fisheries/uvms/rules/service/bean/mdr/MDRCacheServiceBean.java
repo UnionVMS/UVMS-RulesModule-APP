@@ -10,13 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
@@ -33,16 +26,29 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Stateless
 @LocalBean
 @Slf4j
-public class  MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService {
+public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService {
 
     private static final String TERRITORY = "TERRITORY";
     private static final String MANAGEMENT_AREA = "MANAGEMENT_AREA";
+    private static final String FISH_PRESENTATION = "FISH_PRESENTATION";
+    private static final String FISH_PRESERVATION = "FISH_PRESERVATION";
     private static final String XEU = "XEU";
 
     @EJB
@@ -266,7 +272,8 @@ public class  MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleServic
      * @return
      */
     @Override
-    public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime validityDate, IdType farepDocSpecVesselTrpmRegVesselCountryId) {
+    public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes,
+                                                           CodeType speciesCode, DateTime validityDate, IdType farepDocSpecVesselTrpmRegVesselCountryId) {
         Iterables.removeIf(specifiedFLUXLocations, Objects::isNull);
         Iterables.removeIf(appliedAAPProcessTypeCodes, Objects::isNull);
 
@@ -333,10 +340,10 @@ public class  MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleServic
         // Determine FISH_PRESENTATION and FISH_PRESERVATION
         if (CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)) {
             for (CodeType presPreserv : appliedAAPProcessTypeCodes) {
-                if ("FISH_PRESENTATION".equals(presPreserv.getListId())) {
+                if (FISH_PRESENTATION.equals(presPreserv.getListId())) {
                     presentation = presPreserv.getValue();
                 }
-                if ("FISH_PRESERVATION".equals(presPreserv.getListId())) {
+                if (FISH_PRESERVATION.equals(presPreserv.getListId())) {
                     preservationState = presPreserv.getValue();
                 }
             }
@@ -359,6 +366,130 @@ public class  MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleServic
             return true; // Case : "CF FLAG STATE" exists
         } else {
             return !StringUtils.isEmpty(flagState) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, "placesCode", flagState)); // Case : "CF EU" exists
+        }
+    }
+
+
+    public boolean combinationExistsInConversionFactorListAndIsGreaterOrEqualToOne(List<FLUXLocation> specifiedFLUXLocations, List<AAPProcess> appliedAAPProceses,
+                                                                                   CodeType speciesCode, DateTime validityDate, IdType farepDocSpecVesselTrpmRegVesselCountryId) {
+        Iterables.removeIf(specifiedFLUXLocations, Objects::isNull);
+        Iterables.removeIf(appliedAAPProceses, Objects::isNull);
+
+        String speciesCodeVal = speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY;
+        AtomicReference<String> presentation = new AtomicReference<>(StringUtils.EMPTY);
+        AtomicReference<String> preservationState = new AtomicReference<>(StringUtils.EMPTY);
+        String country = StringUtils.EMPTY;
+        String flagState = farepDocSpecVesselTrpmRegVesselCountryId.getValue();
+        String flagStateBis = XEU;
+
+        // 1. If no MANAGEMENT_AREA and no TERRITORY is provided => fail
+        // 2. If more then one MANAGEMENT_AREA or TERRITORY are provided => fail
+        // 3. If MANAGEMENT_AREA and TERRITORY are provided than MANAGEMENT_AREA takes precedence
+        //   3.1 If MANAGEMENT_AREA doesn't exist (in MDR) than take TERRITORY
+        //   3.2 If also TERRITORY doesn't exist (in MDR) => fail
+        //   3.3 If TERRITORY has been chosen :
+        //       3.3.1 If value XEU is provided => fail
+        //       3.3.2 If value is in MEMBER_STATE list => fail
+        //       3.3.3 If value is not in MEMBER_STATE list => OK
+        if (CollectionUtils.isNotEmpty(specifiedFLUXLocations)) {  // Country is the location ID (first one that has value in the schemdID="TERRITORY" or  schemdID="MANAGEMENT_AREA")
+            List<IDType> allLocationIds = new ArrayList<>();
+            for (FLUXLocation location : specifiedFLUXLocations) {
+                if (location != null && location.getID() != null) {
+                    allLocationIds.add(location.getID());
+                }
+            }
+            if (CollectionUtils.isEmpty(allLocationIds)) {
+                return false; // Case 1
+            }
+            IDType managArea = null;
+            IDType territory = null;
+            if (moreThenOneTerritoryOrManagementAreas(allLocationIds)) { // Case 2
+                return false;
+            } else {
+                for (IDType locId : allLocationIds) {
+                    String locIdSchemeId = locId.getSchemeID();
+                    if (TERRITORY.equals(locIdSchemeId)) {
+                        territory = locId;
+                    } else if (MANAGEMENT_AREA.equals(locIdSchemeId)) {
+                        managArea = locId;
+                    }
+                }
+            }
+            boolean valueExistsInMDR = false;
+            if (managArea != null && isPresentInMDRList(MANAGEMENT_AREA, managArea.getValue(), validityDate)) {
+                String value = managArea.getValue();
+                country = value.substring(0, value.indexOf("_"));
+                valueExistsInMDR = true;
+            } else if (territory != null && isPresentInMDRList(TERRITORY, territory.getValue(), validityDate)) {
+                String value = territory.getValue();
+                if (XEU.equals(value) || isPresentInMDRList("MEMBER_STATE", value, validityDate)) {
+                    return false; // Case 3.3.1 + 3.3.2
+                }
+                country = value;
+                valueExistsInMDR = true;
+            }
+            if (!valueExistsInMDR) {
+                return false; // Case 3.1 + 3.2
+            }
+        } else { // Case 1
+            return false;
+        }
+
+        // Determine FISH_PRESENTATION and FISH_PRESERVATION
+        AtomicReference<Boolean> greaterEqualsToOneCFExists = new AtomicReference<>(false);
+        List<ObjectRepresentation> conversionFactorList = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
+        if (CollectionUtils.isNotEmpty(appliedAAPProceses)) {
+            final String FACTOR_COLUMN = "factor";
+            final BigInteger one = new BigInteger("1");
+            String finalCountry = country;
+            appliedAAPProceses.forEach(aapProcess -> {
+                List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> aapProcTypeCodes = aapProcess.getTypeCodes();
+                if (CollectionUtils.isNotEmpty(aapProcTypeCodes)) {
+                    aapProcTypeCodes.forEach(presPreserv -> {
+                        String listID = presPreserv.getListID();
+                        if (FISH_PRESENTATION.equals(listID)) {
+                            presentation.set(presPreserv.getValue());
+                        } else if (FISH_PRESERVATION.equals(listID)) {
+                            preservationState.set(presPreserv.getValue());
+                        }
+                    });
+                }
+                // Pre-filtering (species,presentation,preservation) - this is common to all scenarios.
+                List<ObjectRepresentation> preFilteredList;
+                if (!(StringUtils.isBlank(speciesCodeVal) || StringUtils.isBlank(presentation.get()) || StringUtils.isBlank(preservationState.get()))) {
+                    // Pre-filtering by : speciesCode, presentation, preservation
+                    List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(conversionFactorList, "code", speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY);
+                    List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "presentation", presentation.get());
+                    preFilteredList = filterEntriesByColumn(filtered_2_list, "state", preservationState.get());
+                    if (!StringUtils.isEmpty(finalCountry)) { // Case : "CF RFMO/SFPA/3rd party" exists
+                        List<ObjectRepresentation> filteredOr = filterEntriesByColumn(preFilteredList, "placesCode", finalCountry);
+                        findMatchAndSetFlagIfExistsWantedValue(greaterEqualsToOneCFExists, FACTOR_COLUMN, one, filteredOr);
+                    }
+                    if (!greaterEqualsToOneCFExists.get()) { // Case : "CF FLAG STATE" exists
+                        List<ObjectRepresentation> filteredOr = filterEntriesByColumn(preFilteredList, "placesCode", flagStateBis);
+                        findMatchAndSetFlagIfExistsWantedValue(greaterEqualsToOneCFExists, FACTOR_COLUMN, one, filteredOr);
+                    }
+                    if(!greaterEqualsToOneCFExists.get() && !StringUtils.isEmpty(flagState)) {  // Case : "CF EU" exists
+                        List<ObjectRepresentation> filteredOr = filterEntriesByColumn(preFilteredList, "placesCode", flagState);
+                        findMatchAndSetFlagIfExistsWantedValue(greaterEqualsToOneCFExists, FACTOR_COLUMN, one, filteredOr);
+                    }
+                }
+            });
+        }
+        return greaterEqualsToOneCFExists.get();
+    }
+
+    private void findMatchAndSetFlagIfExistsWantedValue(AtomicReference<Boolean> greaterEqualsToOneCFExists, String FACTOR_COLUMN, BigInteger one, List<ObjectRepresentation> filteredOr) {
+        if (CollectionUtils.isNotEmpty(filteredOr)) {
+            filteredOr.forEach(objectRepresentation -> {
+                objectRepresentation.getFields().forEach(columnDataType -> {
+                    String columnName = columnDataType.getColumnName();
+                    String columnValue = columnDataType.getColumnValue();
+                    if (FACTOR_COLUMN.equals(columnName) && StringUtils.isNotBlank(columnValue) && (one.compareTo(new BigInteger(columnValue)) <= 0)) {
+                        greaterEqualsToOneCFExists.set(true);
+                    }
+                });
+            });
         }
     }
 
@@ -521,6 +652,11 @@ public class  MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleServic
     public String getErrorTypeStrForBrId(String brid) {
         EnrichedBRMessage errorMessage = cache.getErrorMessage(brid);
         return errorMessage != null ? errorMessage.getType() : StringUtils.EMPTY;
+    }
+
+    @Override
+    public boolean codeListExistsInMdr(String listName) {
+        return cache.getAllCodeLists().stream().anyMatch(listName::equals);
     }
 
 

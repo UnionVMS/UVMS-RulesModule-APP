@@ -22,7 +22,9 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author padhyad
@@ -119,14 +121,11 @@ public class FaFishingOperationFact extends AbstractFact {
         if (CollectionUtils.isEmpty(relatedFishingActivities)) {
             return false;
         }
-
-
         for (FishingActivity fishingActivity : relatedFishingActivities) {
             if (CollectionUtils.isEmpty(fishingActivity.getRelatedFLUXLocations())) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -146,9 +145,28 @@ public class FaFishingOperationFact extends AbstractFact {
         this.vesselTransportMeansContactParties = vesselTransportMeansContactParties;
     }
 
+    public boolean noCatchesDeclaredForCodeTypes(String... codeValues) {
+        AtomicBoolean noCatchesDeclared = new AtomicBoolean(true);
+        if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
+            List<String> codeValuesToMatch = Arrays.asList(codeValues);
+            relatedFishingActivities.forEach((relatedFishAct) -> {
+                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = relatedFishAct.getTypeCode();
+                String codeVal = typeCode != null ? typeCode.getValue() : StringUtils.EMPTY;
+                codeValuesToMatch.forEach((valToMatch) -> {
+                    if (valToMatch.equals(codeVal) && CollectionUtils.isNotEmpty(relatedFishAct.getSpecifiedFACatches())) {
+                        noCatchesDeclared.set(false);
+                        return;
+                    }
+                });
+            });
+        }
+        return noCatchesDeclared.get();
+
+    }
+
     // FA-L00-00-0079
     public boolean verifyContactPartyRule(List<VesselTransportMeans> vesselTransportMeans) {
-        outerloop :
+        outerloop:
         for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
             final un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType roleCode = vesselTransportMean.getRoleCode();
             if (roleCode != null && StringUtils.equals(roleCode.getValue(), "PAIR_FISHING_PARTNER")) {

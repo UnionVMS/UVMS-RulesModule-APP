@@ -36,6 +36,7 @@ public class FluxCharacteristicsFact extends AbstractFact {
     private CodeType valueCode;
     private List<TextType> values;
     private QuantityType valueQuantity;
+
     public CodeType getTypeCode() {
         return typeCode;
     }
