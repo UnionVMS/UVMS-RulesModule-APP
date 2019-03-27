@@ -123,7 +123,7 @@
             <column name="rule_id" value="188"/>
             <column name="br_id" value="FA-L02-00-0188"/>
             <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; (appliedAAPProcess.size() > 1) &amp;&amp;
-            !(containsAtLeastOneCFGreaterThenOne() || !mdrService.combinationExistsInConversionFactorListAndIsGreaterOrEqualToOne(specifiedFLUXLocations, appliedAAPProcess, speciesCode, creationDateOfMessage, farepDocSpecVesselTrpmRegVesselCountryId))"/>
+            !containsAtLeastOneCFGreaterThenOne() &amp;&amp; !mdrService.combinationExistsInConversionFactorListAndIsGreaterOrEqualToOne(specifiedFLUXLocations, appliedAAPProcess, speciesCode, creationDateOfMessage, farepDocSpecVesselTrpmRegVesselCountryId)"/>
             <column name="note" value=""/>
             <column name="message" value="If more than one AppliedAAPProcess is present for one FACatch, there must be at least one occurrence where CF >=1 which means : a)  there must be at least one occurrence where ConversionFactorNumeric >=1 or b)  a conversion factor exists in the CONVERSION_FACTOR code list (MDR) for the combination of parameters and has a value >=1."/>
             <column name="level" value="L02"/>
