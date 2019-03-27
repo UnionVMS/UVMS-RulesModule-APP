@@ -16,6 +16,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
@@ -141,7 +143,7 @@ public class FishingActivityFact extends AbstractFact {
             allRoleCodes = new ArrayList<>(relatedVesselTransportMeansRoleCodes);
         }
         allRoleCodes.addAll(faRepDockSpecifiedVesselTransportMeansRoleCodes);
-        return allRoleCodes.stream().filter((role) -> value.equals(role.getValue())).count() > 1;
+        return allRoleCodes.stream().filter(Objects::nonNull).filter(role -> value.equals(role.getValue())).count() > 1;
     }
 
 }
