@@ -143,7 +143,7 @@ public class FishingActivityFact extends AbstractFact {
             allRoleCodes = new ArrayList<>(relatedVesselTransportMeansRoleCodes);
         }
         allRoleCodes.addAll(faRepDockSpecifiedVesselTransportMeansRoleCodes);
-        return allRoleCodes.stream().filter(Objects::nonNull).filter(role -> value.equals(role.getValue())).count() > 1;
+        return allRoleCodes.stream().filter(role -> role != null && value.equals(role.getValue())).count() > 1;
     }
 
 }
