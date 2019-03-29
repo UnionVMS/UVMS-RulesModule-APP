@@ -10,10 +10,12 @@ details. You should have received a copy of the GNU General Public License along
 */
 package eu.europa.ec.fisheries.uvms.rules.mapper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.uvms.rules.entity.DataFlowAndExpression;
 import eu.europa.ec.fisheries.uvms.rules.entity.Rule;
 import lombok.SneakyThrows;
 import org.junit.Before;
@@ -38,10 +40,11 @@ public class RuleMapperTest {
     @SneakyThrows
     public void testRuleMapper(){
         Rule ruleEntity = new Rule();
-
-        ruleEntity.setExpression("code.id == id");
+        DataFlowAndExpression dtEpr = new DataFlowAndExpression();
+        dtEpr.setExpression("code.id == id");
+        dtEpr.setFailureMessage("Result message");
+        ruleEntity.getDataFlowAndExpressionList().add(dtEpr);
         ruleEntity.setLevel("001");
-        ruleEntity.setMessage("Result message");
         ruleEntity.setBrId("ID_2291");
         ruleEntity.setErrorType(ErrorType.ERROR);
         ruleEntity.setNote("Some Notes");
@@ -53,9 +56,9 @@ public class RuleMapperTest {
         RuleType ruleType = externalRuleTypes.get(0);
 
         assertNotNull(ruleType);
-        assertEquals("code.id == id", ruleType.getExpression());
+        assertEquals("code.id == id", ruleType.getDataFlowAndExpressionList().get(1).getExpression());
         assertEquals("001", ruleType.getLevel());
-        assertEquals("Result message", ruleType.getMessage());
+        assertEquals("Result message", ruleType.getDataFlowAndExpressionList().get(1).getFailureMessage());
         assertEquals("ID_2291", ruleType.getBrId());
         assertEquals("Some Notes", ruleType.getNote());
         assertEquals(ErrorType.ERROR.toString(), ruleType.getErrorType().toString());

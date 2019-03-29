@@ -99,6 +99,7 @@ public class RulesEngineBean {
                 faResponseFactMapper.setFrom(from);
                 faResponseFactMapper.setMessageType(MessageType.PUSH);
                 AbstractGenerator generator = new ActivityResponseFactGenerator((FLUXResponseMessage) businessObject, faResponseFactMapper, PUSH);
+                generator.setExtraValueMap(extraValues);
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
@@ -112,6 +113,7 @@ public class RulesEngineBean {
                 faResponseFactMapper.setFrom(from);
                 faResponseFactMapper.setMessageType(PULL);
                 AbstractGenerator generator = new ActivityResponseFactGenerator((FLUXResponseMessage) businessObject, faResponseFactMapper, PULL);
+                generator.setExtraValueMap(extraValues);
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);

@@ -36,6 +36,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType.RELOCATION;
@@ -104,10 +105,8 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
             int index = 1;
             for (FAReportDocument faReportDocument : faReportDocuments) {
 
-                List<AbstractFact> factsByReport = new ArrayList<>();
-
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
-                factsByReport.addAll(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument,false, null));
+                List<AbstractFact> factsByReport = new ArrayList<>(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument, false, null));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS);
                 factsByReport.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true, facts));
@@ -139,8 +138,11 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 }
             }
         }
+        String df = (String) extraValueMap.get(DATA_FLOW);
+        List<AbstractFact> nonNullFacts = facts.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        nonNullFacts.forEach(fact -> fact.setMessageDataFlow(df));
 
-        return facts;
+        return nonNullFacts;
     }
 
     private List<IdType> getFaMessageOwnerParty(FLUXFAReportMessage faReportMessage) {

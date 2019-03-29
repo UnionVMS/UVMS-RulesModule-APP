@@ -36,6 +36,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 
 public class ActivityResponseFactGenerator extends AbstractGenerator {
@@ -84,7 +85,8 @@ public class ActivityResponseFactGenerator extends AbstractGenerator {
                 }
             }
         }
-
+        String df = (String) extraValueMap.get(DATA_FLOW);
+        facts.forEach(fact -> fact.setMessageDataFlow(df));
         return facts;
     }
 

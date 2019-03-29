@@ -14,7 +14,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Stateless
 @LocalBean
@@ -637,21 +638,31 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
 
     @Override
-    public EnrichedBRMessage getErrorMessageForBrId(String brId) {
-        return cache.getErrorMessage(brId);
-    }
-
-
-    @Override
-    public String getErrorMessageStrForBrId(String brid) {
-        EnrichedBRMessage errorMessage = cache.getErrorMessage(brid);
-        return errorMessage != null ? errorMessage.getMessage() : StringUtils.EMPTY;
+    public List<RuleFromMDR> getFaBrsForBrId(String brId) {
+        return cache.geFaBRsByBrId(brId);
     }
 
     @Override
-    public String getErrorTypeStrForBrId(String brid) {
-        EnrichedBRMessage errorMessage = cache.getErrorMessage(brid);
-        return errorMessage != null ? errorMessage.getType() : StringUtils.EMPTY;
+    public RuleFromMDR getFaBrForBrIdAndDf(String brId, String df) {
+        return cache.getFaBrForBrIdAndDf(brId, df);
+    }
+
+    @Override
+    public String getErrorMessageForBrIdAndDF(String brid, String df) {
+        RuleFromMDR ruleDromMDR = cache.getFaBrForBrIdAndDf(brid, df);
+        return ruleDromMDR != null ? ruleDromMDR.getMessage() : StringUtils.EMPTY;
+    }
+
+    @Override
+    public String getErrorTypeStrForBrIdAndDF(String brid, String df) {
+        RuleFromMDR ruleDromMDR = cache.getFaBrForBrIdAndDf(brid, df);
+        return ruleDromMDR != null ? ruleDromMDR.getType() : StringUtils.EMPTY;
+    }
+
+    @Override
+    public List<String> getDataFlowListForBRId(String brId) {
+        List<RuleFromMDR> ruleFromMDRS = cache.geFaBRsByBrId(brId);
+        return CollectionUtils.isNotEmpty(ruleFromMDRS) ? ruleFromMDRS.stream().map(RuleFromMDR::getDataFlow).collect(Collectors.toList()) : null;
     }
 
     @Override

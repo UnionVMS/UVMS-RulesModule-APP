@@ -13,8 +13,12 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import lombok.Data;
+
+import java.util.Date;
 import java.util.List;
 
+@Data
 public class RuleError {
 
     private String ruleId;
@@ -22,6 +26,12 @@ public class RuleError {
     private String message;
 
     protected String level;
+
+/*    protected String df;
+
+    protected Date startDate;
+
+    protected Date endDate;*/
 
     protected List<String> xpaths;
 
@@ -32,29 +42,4 @@ public class RuleError {
         this.xpaths = xpathsForProps;
     }
 
-
-    public String getRuleId() {
-        return ruleId;
-    }
-    public void setRuleId(String ruleId) {
-        this.ruleId = ruleId;
-    }
-    public String getMessage() {
-        return message;
-    }
-    public void setMessage(String message) {
-        this.message = message;
-    }
-    public String getLevel() {
-        return level;
-    }
-    public void setLevel(String level) {
-        this.level = level;
-    }
-    public List<String> getXpaths() {
-        return xpaths;
-    }
-    public void setXpaths(List<String> xpaths) {
-        this.xpaths = xpaths;
-    }
 }

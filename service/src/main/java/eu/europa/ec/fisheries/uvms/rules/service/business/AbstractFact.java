@@ -13,11 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -40,6 +35,12 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+
 @Slf4j
 @ToString
 public abstract class AbstractFact {
@@ -56,6 +57,8 @@ public abstract class AbstractFact {
     protected boolean ok = true;
     protected DateTime creationDateOfMessage;
     private Integer sequence = 0;
+
+    private String messageDataFlow;
 
     public boolean hasWarOrErr(){
         return CollectionUtils.isNotEmpty(warnings) || CollectionUtils.isNotEmpty(errors);
@@ -1201,6 +1204,14 @@ public abstract class AbstractFact {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
+    }
+
+    public void setMessageDataFlow(String messageDataFlow) {
+        this.messageDataFlow = messageDataFlow;
+    }
+
+    public String getMessageDataFlow() {
+        return messageDataFlow;
     }
 
     public enum FORMATS {

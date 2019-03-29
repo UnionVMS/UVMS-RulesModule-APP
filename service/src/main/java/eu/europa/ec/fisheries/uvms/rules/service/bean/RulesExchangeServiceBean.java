@@ -49,6 +49,7 @@ import java.util.*;
 
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.*;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 
 @Stateless
@@ -113,6 +114,7 @@ public class RulesExchangeServiceBean {
             String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj, "UTF-8", false, new FANamespaceMapper());
             Map<ExtraValueType, Object> extraValues = fluxMessageHelper.populateExtraValuesMap(fluxNationCode, matchingIdsFromDB);
             extraValues.put(XML, fluxResponse);
+            extraValues.put(DATA_FLOW, df);
 
             Collection<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_FA_RESPONSE_MSG, fluxResponseMessageObj, extraValues);
             ValidationResult fluxResponseValidationResult = ruleService.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, logGuid, FA_RESPONSE);

@@ -10,8 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -26,7 +25,7 @@ import java.util.List;
 @Local
 public interface MDRCacheRuleService {
 
-    EnrichedBRMessage getErrorMessageForBrId(String brId);
+    List<RuleFromMDR> getFaBrsForBrId(String brId);
 
     boolean isPresentInMDRList(String listName, String codeValue, DateTime creationDateOfMessage);
 
@@ -63,9 +62,13 @@ public interface MDRCacheRuleService {
 
     List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym);
 
-    String getErrorMessageStrForBrId(String brid);
+    RuleFromMDR getFaBrForBrIdAndDf(String brId, String df);
 
-    String getErrorTypeStrForBrId(String brid);
+    String getErrorMessageForBrIdAndDF(String brid, String df);
+
+    String getErrorTypeStrForBrIdAndDF(String brid, String df);
+
+    List<String> getDataFlowListForBRId(String brId);
 
     boolean codeListExistsInMdr(String listName);
 

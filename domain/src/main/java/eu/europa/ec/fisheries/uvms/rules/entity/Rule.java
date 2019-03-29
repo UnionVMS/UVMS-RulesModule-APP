@@ -16,14 +16,17 @@ package eu.europa.ec.fisheries.uvms.rules.entity;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.domain.Audit;
+import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "rule")
 @ToString
+@Data
 public class Rule implements Serializable {
 
     @Id
@@ -41,9 +44,6 @@ public class Rule implements Serializable {
     @Column(name = "br_id", nullable = false, unique = true)
     private String brId;
 
-    @Column(name = "expression", nullable = false, columnDefinition = "text")
-    private String expression;
-
     @Column(name = "note", nullable = false, columnDefinition = "text")
     private String note;
 
@@ -51,12 +51,12 @@ public class Rule implements Serializable {
     @Enumerated(EnumType.STRING)
     private ErrorType errorType;
 
-    @Column(name = "message", nullable = false, columnDefinition = "text")
-    private String message;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_id")
     private Template template;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "rule", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<DataFlowAndExpression> dataFlowAndExpressionList;
 
     @Column(name = "level", nullable = false)
     private String level;
@@ -68,90 +68,6 @@ public class Rule implements Serializable {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Audit getAudit() {
-        return audit;
-    }
-
-    public void setAudit(Audit audit) {
-        this.audit = audit;
-    }
-
-    public String getBrId() {
-        return brId;
-    }
-
-    public void setBrId(String brId) {
-        this.brId = brId;
-    }
-
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public ErrorType getErrorType() {
-        return errorType;
-    }
-
-    public void setErrorType(ErrorType errorType) {
-        this.errorType = errorType;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Template getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(Template template) {
-        this.template = template;
-    }
-
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
-
-    public String getPropertyNames() {
-        return propertyNames;
-    }
-
-    public void setPropertyNames(String propertyNames) {
-        this.propertyNames = propertyNames;
-    }
-
-    public Boolean getDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(Boolean disabled) {
-        this.disabled = disabled;
     }
 
     @PrePersist

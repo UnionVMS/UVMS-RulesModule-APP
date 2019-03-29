@@ -16,7 +16,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -59,7 +59,8 @@ public class GetValidationResultService {
     }
 
     private void loadValidationMessagesFromMDR(ValidationMessageType validationMessageType, String brId) {
-        EnrichedBRMessage errorMessageForBrId = mdrCacheService.getErrorMessageForBrId(brId);
+        List<RuleFromMDR> errorMessageForBrId = mdrCacheService.getFaBrsForBrId(brId);
+        // Loop here
         if (errorMessageForBrId != null){
             validationMessageType.setExpression(errorMessageForBrId.getExpression());
             validationMessageType.setMessage(errorMessageForBrId.getMessage());

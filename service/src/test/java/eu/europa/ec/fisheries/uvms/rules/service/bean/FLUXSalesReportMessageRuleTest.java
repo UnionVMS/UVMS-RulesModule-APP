@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.DataFlowAndExpressionType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -76,13 +77,17 @@ public class FLUXSalesReportMessageRuleTest {
     }
 
     public static RuleType createRuleType(String expression, String brId, String note, ErrorType type, String errorMessage) {
+        DataFlowAndExpressionType dfType = new DataFlowAndExpressionType();
+        dfType.setExpression(expression);
+        dfType.setFailureMessage(errorMessage);
+
         RuleType ruleType = new RuleType();
-        ruleType.setExpression(expression);
         ruleType.setBrId(brId);
         ruleType.setNote(note);
         ruleType.setErrorType(type);
-        ruleType.setMessage(errorMessage);
         ruleType.setLevel("LevelName");
+
+        ruleType.getDataFlowAndExpressionList().add(dfType);
         return ruleType;
     }
 }

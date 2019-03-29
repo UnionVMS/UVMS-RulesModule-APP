@@ -7,12 +7,15 @@ rulemsg
 type
 level
 propertyNames
+dataflow
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaDeclarationOfRelocationOrTranshipmentFact;
 import java.util.Arrays;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker;
 global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
+
 
 
 template "@{tname}"
@@ -21,11 +24,11 @@ rule "Vessel Transport means @{tname} - @{brid}"
 
 when
 
-    $fact : FaDeclarationOfRelocationOrTranshipmentFact(@{expression})
+    $fact : FaDeclarationOfRelocationOrTranshipmentFact(RuleApplicabilityChecker.isApplicable("@{brid}", "@{dataflow}", getMessageDataFlow(), getCreationDateOfMessage(), mdrService) && @{expression})
 
 then
     $fact.setOk(false);
-    $fact.addWarningOrError(mdrService.getErrorTypeStrForBrId("@{brid}"), mdrService.getErrorMessageStrForBrId("@{brid}"), "@{brid}", "@{level}", "@{propertyNames}");
+    $fact.addWarningOrError(mdrService.getErrorTypeStrForBrIdAndDF("@{brid}", "@{dataflow}"), mdrService.getErrorMessageForBrIdAndDF("@{brid}", "@{dataflow}"), "@{brid}", "@{level}", "@{propertyNames}");
 
 end
 

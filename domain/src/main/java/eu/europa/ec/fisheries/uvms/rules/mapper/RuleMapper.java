@@ -15,7 +15,10 @@ package eu.europa.ec.fisheries.uvms.rules.mapper;
 
 import java.util.Collection;
 import java.util.List;
+
+import eu.europa.ec.fisheries.schema.rules.rule.v1.DataFlowAndExpressionType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
+import eu.europa.ec.fisheries.uvms.rules.entity.DataFlowAndExpression;
 import eu.europa.ec.fisheries.uvms.rules.entity.Rule;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -36,5 +39,12 @@ public interface RuleMapper {
     RuleType mapToFactRuleType(Rule factRule);
 
     List<RuleType> mapToAllFactRuleType(Collection<Rule> factRules);
+
+    @Mappings({
+            @Mapping(target = "ruleId", source = "rule.id")
+    })
+    DataFlowAndExpressionType mapToFactDataFlowAndExpressionType(DataFlowAndExpression factRules);
+
+    List<DataFlowAndExpressionType> mapToAllFactDataFlowAndExpressionType(Collection<DataFlowAndExpression> factRules);
 
 }

@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.util.*;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.DataFlowAndExpressionType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
@@ -124,15 +125,18 @@ public class RulesKieContainerInitializer {
         TemplateDataListener listener = new TemplateDataListener(tc);
         int rowNum = 0;
         for (RuleType ruleDto : rules) {
-            listener.newRow(rowNum, 0);
-            listener.newCell(rowNum, 0, templateName, 0);
-            listener.newCell(rowNum, 1, ruleDto.getExpression(), 0);
-            listener.newCell(rowNum, 2, ruleDto.getBrId(), 0);
-            listener.newCell(rowNum, 3, ruleDto.getMessage(), 0);
-            listener.newCell(rowNum, 4, ruleDto.getErrorType().value(), 0);
-            listener.newCell(rowNum, 5, ruleDto.getLevel(), 0);
-            listener.newCell(rowNum, 6, ruleDto.getPropertyNames(), 0);
-            rowNum++;
+            for (DataFlowAndExpressionType dataFlowAndExpressionType : ruleDto.getDataFlowAndExpressionList()) {
+                listener.newRow(rowNum, 0);
+                listener.newCell(rowNum, 0, templateName, 0);
+                listener.newCell(rowNum, 1, dataFlowAndExpressionType.getExpression(), 0);
+                listener.newCell(rowNum, 2, ruleDto.getBrId(), 0);
+                listener.newCell(rowNum, 3, dataFlowAndExpressionType.getFailureMessage(), 0);
+                listener.newCell(rowNum, 4, ruleDto.getErrorType().value(), 0);
+                listener.newCell(rowNum, 5, ruleDto.getLevel(), 0);
+                listener.newCell(rowNum, 6, ruleDto.getPropertyNames(), 0);
+                listener.newCell(rowNum, 7, dataFlowAndExpressionType.getDataFlow(), 0);
+                rowNum++;
+            }
         }
         listener.finishSheet();
         String drl = listener.renderDRL();
