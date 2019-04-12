@@ -59,6 +59,14 @@ public interface MDRCacheRuleService {
 
     boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage);
 
+    boolean validateFormat(List<IdType> ids, DateTime creationDateOfMessage);
+
+    boolean validateSchemeIdFormat(List<IdType> ids, String schemeID, DateTime creationDateOfMessage);
+
+    boolean validateFormat(IdType id, DateTime creationDateOfMessage);
+
+    boolean validateFormat(CodeType codeType, DateTime creationDateOfMessage);
+
     boolean isLocationNotInCountry(IdType id, IdType countryID, DateTime creationDateOfMessage);
 
     List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym);

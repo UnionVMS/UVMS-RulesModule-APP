@@ -10,14 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
@@ -29,12 +21,24 @@ import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMdrProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.business.FormatExpression;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.MdrLoadingException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.mdr.communication.*;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.TimeUnit.MINUTES;
@@ -65,6 +69,8 @@ public class MDRCache {
 
     private Map<String, EnrichedBRMessage> enrichedBRMessageMap;
 
+    private Map<String, FormatExpression> formatsByIdentifier;
+
     private boolean alreadyLoadedOnce = false;
 
     private Date lastTimeRefreshDateWasRetrieved;
@@ -76,11 +82,11 @@ public class MDRCache {
     private static final long FIVE_MINUTES_IN_MILLIS = 300000L;
 
 
-
     @PostConstruct
     public void init() {
         cache = new ConcurrentHashMap<>();
         enrichedBRMessageMap = new ConcurrentHashMap<>();
+        formatsByIdentifier = new ConcurrentHashMap<>();
         allCodeLists = new ArrayList<>();
     }
 
@@ -119,6 +125,7 @@ public class MDRCache {
         // The CODELIST_STATUS codelist is loaded separately since it cannot take the same flow cause it doesn't extend @MasterDataRegistry @see @MDR.MasterDataRegistryEntityCacheFactory
         populateAllCodeListStatuses();
         overrideBRMessages();
+        populateFormatExpressions();
         log.info("Codelists : {}", allCodeLists);
     }
 
@@ -168,7 +175,7 @@ public class MDRCache {
         final String OBJECT_ACRONYM = "objectAcronym";
         List<ObjectRepresentation> objectRepresentations = mdrCodeListStatus();
         objectRepresentations.forEach((objectRappr) -> {
-            if(objectRappr != null && CollectionUtils.isNotEmpty(objectRappr.getFields())){
+            if (objectRappr != null && CollectionUtils.isNotEmpty(objectRappr.getFields())) {
                 String objAcronym = null;
                 for (ColumnDataType field : objectRappr.getFields()) {
                     final String columnName = field.getColumnName();
@@ -270,7 +277,6 @@ public class MDRCache {
     }
 
 
-
     /**
      * Checks if the refresh date from mdr module has changed.
      * If it has changed sets cacheDateChanged=true; and refreshed the mdrRefreshDate with the new date.
@@ -334,9 +340,9 @@ public class MDRCache {
         final String BR_ID_COLUMN = "code";
         final String BR_NOTE_COLUMN = "note";
         final String BR_ERROR_TYPE_COLUMN = "fluxGpValidationTypeCode";
-        final String START_DATE = "startDate";
-        final String END_DATE = "endDate";
-        objRapprList.forEach((objectRappr) ->  {
+        final String START_DATE_COLUM = "startDate";
+        final String END_DATE_COLUM = "endDate";
+        objRapprList.forEach((objectRappr) -> {
             String brId = null;
             String errorMessage = null;
             String note = null;
@@ -357,10 +363,10 @@ public class MDRCache {
                 if (BR_ERROR_TYPE_COLUMN.equals(columnName)) {
                     errType = field.getColumnValue();
                 }
-                if (START_DATE.equals(columnName)) {
+                if (START_DATE_COLUM.equals(columnName)) {
                     startDate = field.getColumnValue();
                 }
-                if (END_DATE.equals(columnName)) {
+                if (END_DATE_COLUM.equals(columnName)) {
                     endDate = field.getColumnValue();
                 }
             }
@@ -368,6 +374,46 @@ public class MDRCache {
             err.setEndDate(endDate != null ? DateUtils.parseToUTCDate(endDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.END_OF_TIME.toDate());
             err.setStartDate(startDate != null ? DateUtils.parseToUTCDate(startDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.START_OF_TIME.toDate());
             enrichedBRMessageMap.put(brId, err);
+        });
+    }
+
+    private void populateFormatExpressions() {
+        populateFormatExpressionsForList(getEntry(MDRAcronymType.FA_TRIP_ID_TYPE));
+        populateFormatExpressionsForList(getEntry(MDRAcronymType.FLAP_ID_TYPE));
+        populateFormatExpressionsForList(getEntry(MDRAcronymType.FLUX_GP_MSG_ID));
+        populateFormatExpressionsForList(getEntry(MDRAcronymType.FLUX_VESSEL_ID_TYPE));
+    }
+
+    private void populateFormatExpressionsForList(List<ObjectRepresentation> faTripIdList) {
+        final String CODE_COLUMN = "code";
+        final String FORMAT_EXPR_COLUMN = "formatExpression";
+        final String START_DATE_COLUM = "startDate";
+        final String END_DATE_COLUM = "endDate";
+        faTripIdList.forEach((objectRappr) -> {
+            String code = null;
+            String expression = null;
+            String startDate = null;
+            String endDate = null;
+            for (ColumnDataType field : objectRappr.getFields()) {
+                final String columnName = field.getColumnName();
+                if (CODE_COLUMN.equals(columnName)) {
+                    code = field.getColumnValue();
+                }
+                if (FORMAT_EXPR_COLUMN.equals(columnName)) {
+                    expression = field.getColumnValue();
+                }
+                if (START_DATE_COLUM.equals(columnName)) {
+                    startDate = field.getColumnValue();
+                }
+                if (END_DATE_COLUM.equals(columnName)) {
+                    endDate = field.getColumnValue();
+                }
+            }
+            if (StringUtils.isNotEmpty(code)) {
+                Date endDateDate = endDate != null ? DateUtils.parseToUTCDate(endDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.END_OF_TIME.toDate();
+                Date startDateDate = startDate != null ? DateUtils.parseToUTCDate(startDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.START_OF_TIME.toDate();
+                formatsByIdentifier.put(code, new FormatExpression(expression, startDateDate, endDateDate));
+            }
         });
     }
 
@@ -381,4 +427,7 @@ public class MDRCache {
         return cache.size() > 10;
     }
 
+    public Map<String, FormatExpression> getFormatsByIdentifier() {
+        return formatsByIdentifier;
+    }
 }
