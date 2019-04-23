@@ -347,7 +347,7 @@ public class RulesEventServiceBean implements EventService {
         try {
             TextMessage jmsRequestMessage = message.getJmsMessage();
             GetValidationsByRawMsgGuidRequest rulesRequest = JAXBMarshaller.unmarshallTextMessage(jmsRequestMessage, SendSalesResponseRequest.class);
-            String validationsForRawMessageGuid = getValidationResultService.getValidationsForRawMessageUUID(rulesRequest.getGuid(), rulesRequest.getType());
+            String validationsForRawMessageGuid = getValidationResultService.getValidationsForRawMessageUUID(rulesRequest.getGuid(), rulesRequest.getType(), rulesRequest.getDf());
             auditProducer.sendResponseMessageToSender(jmsRequestMessage, validationsForRawMessageGuid);
         } catch (RulesModelMarshallException | MessageException e) {
             log.error(" Error while trying to send Response to a GetValidationResultsByRawGuid to the Requestor Module..", e);

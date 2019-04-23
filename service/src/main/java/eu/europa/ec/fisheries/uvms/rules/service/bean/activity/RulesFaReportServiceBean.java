@@ -114,8 +114,9 @@ public class RulesFaReportServiceBean {
     }
 
     public void evaluateIncomingFLUXFAReport(SetFLUXFAReportMessageRequest request) {
-        final String requestStr = request.getRequest();
-        final String exchangeLogGuid = request.getLogGuid();
+        String requestStr = request.getRequest();
+        String exchangeLogGuid = request.getLogGuid();
+        String dataFlow = request.getFluxDataFlow();
         FLUXFAReportMessage fluxfaReportMessage = null;
         try {
             fluxfaReportMessage = fluxMessageHelper.unMarshallAndValidateSchema(requestStr);
@@ -129,6 +130,7 @@ public class RulesFaReportServiceBean {
 
             Map<ExtraValueType, Object> extraValues = fetchExtraValues(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
             extraValues.put(XML, requestStr);
+            extraValues.put(DATA_FLOW, dataFlow);
             Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues, messageGUID != null ? messageGUID.get(0).getValue() : String.valueOf(messageGUID));
 
             idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);

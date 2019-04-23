@@ -16,7 +16,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,7 +40,7 @@ public class GetValidationResultService {
     @EJB
     private MDRCacheRuleService mdrCacheService;
 
-    public String getValidationsForRawMessageUUID(String guid, String type) {
+    public String getValidationsForRawMessageUUID(String guid, String type, String dataFlow) {
         ValidationMessageTypeResponse validationsResponse = new ValidationMessageTypeResponse();
         try {
             validationsResponse.getValidationsListResponse().addAll(domainModel.getValidationMessagesByRawMsgGuid(guid, type));
@@ -48,7 +48,7 @@ public class GetValidationResultService {
             for (ValidationMessageType validationMessageType : validationsListResponse) {
                 if (validationMessageType != null){
                     String brId = validationMessageType.getBrId();
-                    loadValidationMessagesFromMDR(validationMessageType, brId);
+                    loadValidationMessagesFromMDR(validationMessageType, brId, dataFlow);
                 }
             }
             return JAXBUtils.marshallJaxBObjectToString(validationsResponse);
@@ -58,8 +58,8 @@ public class GetValidationResultService {
         return StringUtils.EMPTY;
     }
 
-    private void loadValidationMessagesFromMDR(ValidationMessageType validationMessageType, String brId) {
-        EnrichedBRMessage errorMessageForBrId = mdrCacheService.getErrorMessageForBrId(brId);
+    private void loadValidationMessagesFromMDR(ValidationMessageType validationMessageType, String brId, String dataFlow) {
+        RuleFromMDR errorMessageForBrId = mdrCacheService.getFaBrForBrIdAndDataFlow(brId, dataFlow);
         if (errorMessageForBrId != null){
             validationMessageType.setExpression(errorMessageForBrId.getExpression());
             validationMessageType.setMessage(errorMessageForBrId.getMessage());

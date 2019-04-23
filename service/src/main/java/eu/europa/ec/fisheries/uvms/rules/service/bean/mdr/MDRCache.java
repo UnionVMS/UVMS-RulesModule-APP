@@ -20,8 +20,8 @@ import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMdrProducerBean;
-import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
 import eu.europa.ec.fisheries.uvms.rules.service.business.FormatExpression;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.MdrLoadingException;
 import lombok.Getter;
@@ -67,9 +67,11 @@ public class MDRCache {
     // @Info : refresh to 'last_success' column of 'mdr_codelist_status' table in mdr schema.
     private Date mdrRefreshDate;
 
-    private Map<String, EnrichedBRMessage> enrichedBRMessageMap;
+    private Map<String, List<RuleFromMDR>> enrichedBRMessageMap;
 
     private Map<String, FormatExpression> formatsByIdentifier;
+
+    private Map<String, List<String>> dataFlowContexts;
 
     private boolean alreadyLoadedOnce = false;
 
@@ -87,6 +89,7 @@ public class MDRCache {
         cache = new ConcurrentHashMap<>();
         enrichedBRMessageMap = new ConcurrentHashMap<>();
         formatsByIdentifier = new ConcurrentHashMap<>();
+        dataFlowContexts = new ConcurrentHashMap<>();
         allCodeLists = new ArrayList<>();
     }
 
@@ -126,7 +129,7 @@ public class MDRCache {
         populateAllCodeListStatuses();
         overrideBRMessages();
         populateFormatExpressions();
-        log.info("Codelists : {}", allCodeLists);
+        populateDataFlowContextMappings();
     }
 
     private boolean oneMinuteHasPassed() {
@@ -340,41 +343,69 @@ public class MDRCache {
         final String BR_ID_COLUMN = "code";
         final String BR_NOTE_COLUMN = "note";
         final String BR_ERROR_TYPE_COLUMN = "fluxGpValidationTypeCode";
-        final String START_DATE_COLUM = "startDate";
-        final String END_DATE_COLUM = "endDate";
-        objRapprList.forEach((objectRappr) -> {
+        final String CONTEXT_COLUMN = "context";
+        final String ACTIVE_COLUMN = "activationIndicator";
+        final String START_DATE_COLUMN = "startDate";
+        final String END_DATE_COLUMN = "endDate";
+        for (ObjectRepresentation objectRepr : objRapprList) {
             String brId = null;
             String errorMessage = null;
             String note = null;
             String errType = null;
             String startDate = null;
             String endDate = null;
-            for (ColumnDataType field : objectRappr.getFields()) {
+            String context = null;
+            Boolean isActive = null;
+            for (ColumnDataType field : objectRepr.getFields()) {
                 final String columnName = field.getColumnName();
+                final String columnValue = field.getColumnValue();
                 if (MESSAGE_COLUMN.equals(columnName)) {
-                    errorMessage = field.getColumnValue();
+                    errorMessage = columnValue;
                 }
                 if (BR_ID_COLUMN.equals(columnName)) {
-                    brId = field.getColumnValue();
+                    brId = columnValue;
                 }
                 if (BR_NOTE_COLUMN.equals(columnName)) {
-                    note = field.getColumnValue();
+                    note = columnValue;
                 }
                 if (BR_ERROR_TYPE_COLUMN.equals(columnName)) {
-                    errType = field.getColumnValue();
+                    errType = columnValue;
                 }
-                if (START_DATE_COLUM.equals(columnName)) {
-                    startDate = field.getColumnValue();
+                if (START_DATE_COLUMN.equals(columnName)) {
+                    startDate = columnValue;
                 }
-                if (END_DATE_COLUM.equals(columnName)) {
-                    endDate = field.getColumnValue();
+                if (END_DATE_COLUMN.equals(columnName)) {
+                    endDate = columnValue;
+                }
+                if (CONTEXT_COLUMN.equals(columnName)) {
+                    context = columnValue;
+                }
+                if (ACTIVE_COLUMN.equals(columnName)) {
+                    isActive = "Y".equals(columnValue);
                 }
             }
-            EnrichedBRMessage err = new EnrichedBRMessage(note, errorMessage, errType.contains("ERR") ? ErrorType.ERROR.value() : ErrorType.WARNING.value());
+            RuleFromMDR err = new RuleFromMDR(note, errorMessage, errType.contains("ERR") ? ErrorType.ERROR.value() : ErrorType.WARNING.value(), isActive, context);
             err.setEndDate(endDate != null ? DateUtils.parseToUTCDate(endDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.END_OF_TIME.toDate());
             err.setStartDate(startDate != null ? DateUtils.parseToUTCDate(startDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.START_OF_TIME.toDate());
-            enrichedBRMessageMap.put(brId, err);
-        });
+            if (enrichedBRMessageMap.get(brId) != null) {
+                enrichedBRMessageMap.get(brId).add(err);
+            } else {
+                List<RuleFromMDR> rfmdrList = new ArrayList<>();
+                rfmdrList.add(err);
+                enrichedBRMessageMap.put(brId, rfmdrList);
+            }
+        }
+    }
+
+    public RuleFromMDR getFaBrForBrIdAndContext(String brId, String context) {
+        loadAllMdrCodeLists(false);
+        List<RuleFromMDR> rulesFromMdr = this.geFaBRsByBrId(brId);
+        return CollectionUtils.isNotEmpty(rulesFromMdr) ? rulesFromMdr.stream().filter((ruleMdr) -> StringUtils.equals(ruleMdr.getContext(), context)).findFirst().orElse(null) : null;
+    }
+
+    public List<RuleFromMDR> geFaBRsByBrId(String brId) {
+        loadAllMdrCodeLists(false);
+        return enrichedBRMessageMap.get(brId);
     }
 
     private void populateFormatExpressions() {
@@ -382,6 +413,7 @@ public class MDRCache {
         populateFormatExpressionsForList(getEntry(MDRAcronymType.FLAP_ID_TYPE));
         populateFormatExpressionsForList(getEntry(MDRAcronymType.FLUX_GP_MSG_ID));
         populateFormatExpressionsForList(getEntry(MDRAcronymType.FLUX_VESSEL_ID_TYPE));
+        log.info("Finished loading format expressions..");
     }
 
     private void populateFormatExpressionsForList(List<ObjectRepresentation> faTripIdList) {
@@ -417,9 +449,35 @@ public class MDRCache {
         });
     }
 
-    public EnrichedBRMessage getErrorMessage(String brId) {
-        return enrichedBRMessageMap.get(brId);
+    private void populateDataFlowContextMappings(){
+        List<ObjectRepresentation> fluxDfList = getEntry(MDRAcronymType.FLUX_DF);
+        final String DATA_FLOW_COLUMN = "dataFlow";
+        final String CONTEXT_COLUMN = "context";
+        fluxDfList.forEach(objectRepresentation -> {
+            String df = null;
+            String context = null;
+            for (ColumnDataType field : objectRepresentation.getFields()) {
+                final String columnName = field.getColumnName();
+                if (DATA_FLOW_COLUMN.equals(columnName)) {
+                    df = field.getColumnValue();
+                }
+                if (CONTEXT_COLUMN.equals(columnName)) {
+                    context = field.getColumnValue();
+                }
+            }
+            if(StringUtils.isNoneEmpty(df)){
+                if(dataFlowContexts.get(df) != null){
+                    dataFlowContexts.get(df).add(context);
+                } else {
+                    List<String> contextList = new ArrayList<>();
+                    contextList.add(context);
+                    dataFlowContexts.put(df, contextList);
+                }
+            }
+        });
+        log.info("Finished loading the data flow context mappings..");
     }
+
 
     @AccessTimeout(value = 10, unit = MINUTES)
     @Lock(LockType.READ)
@@ -428,6 +486,12 @@ public class MDRCache {
     }
 
     public Map<String, FormatExpression> getFormatsByIdentifier() {
+        loadAllMdrCodeLists(false);
         return formatsByIdentifier;
+    }
+
+    public Map<String, List<String>> getDataFlowContexts() {
+        loadAllMdrCodeLists(false);
+        return dataFlowContexts;
     }
 }

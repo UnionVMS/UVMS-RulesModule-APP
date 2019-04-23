@@ -20,6 +20,6 @@ public enum ExtraValueType {
     FISHING_GEAR_TYPE_CHARACTERISTICS,
     CREATION_DATE_OF_MESSAGE,
     RESPONSE_IDS,
-    XML
-
+    XML,
+    DATA_FLOW
 }

@@ -10,8 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.EnrichedBRMessage;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -22,11 +21,12 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 
 import javax.ejb.Local;
 import java.util.List;
+import java.util.Map;
 
 @Local
 public interface MDRCacheRuleService {
 
-    EnrichedBRMessage getErrorMessageForBrId(String brId);
+    List<RuleFromMDR> getFaBrsForBrId(String brId);
 
     boolean isPresentInMDRList(String listName, String codeValue, DateTime creationDateOfMessage);
 
@@ -71,10 +71,21 @@ public interface MDRCacheRuleService {
 
     List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym);
 
-    String getErrorMessageStrForBrId(String brid);
+    RuleFromMDR getFaBrForBrIdAndContext(String brId, String df);
 
-    String getErrorTypeStrForBrId(String brid);
+    RuleFromMDR getFaBrForBrIdAndDataFlow(String brId, String dataFlow);
+
+    String getErrorMessageForBrIdAndDF(String brid, String df);
+
+    String getErrorTypeStrForBrIdAndDF(String brid, String df);
+
+    List<String> getDataFlowListForBRId(String brId);
 
     boolean codeListExistsInMdr(String listName);
 
+    Map<String, List<String>> getRulesContexts();
+
+    boolean doesRuleExistInRulesTable(String brId, String context);
+
+    String findContextForDf(String dataFlow);
 }

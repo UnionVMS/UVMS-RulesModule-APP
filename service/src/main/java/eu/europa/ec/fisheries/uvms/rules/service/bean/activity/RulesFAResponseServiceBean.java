@@ -44,10 +44,12 @@ import javax.xml.bind.UnmarshalException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.Map;
 
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_QUERY;
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_RESPONSE;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
 
 @Stateless
 @LocalBean
@@ -86,13 +88,17 @@ public class RulesFAResponseServiceBean {
             throw new IllegalArgumentException("SetFluxFaResponseMessageRequest is null");
         }
         String requestStr = request.getRequest();
-        final String logGuid = request.getLogGuid();
+        String logGuid = request.getLogGuid();
+        String dataFlow = request.getFluxDataFlow();
         log.info("Evaluate FLUXResponseMessage with GUID " + logGuid);
         FLUXResponseMessage fluxResponseMessage;
         try {
             // Validate xsd schema
             fluxResponseMessage = fluxMessageHelper.unMarshallFluxResponseMessage(requestStr);
-            Collection<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage, new EnumMap<>(ExtraValueType.class), String.valueOf(fluxResponseMessage.getFLUXResponseDocument().getIDS()));
+            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+            extraValues.put(DATA_FLOW, dataFlow);
+
+            Collection<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage, extraValues, String.valueOf(fluxResponseMessage.getFLUXResponseDocument().getIDS()));
             ValidationResult fluxResponseValidResults = ruleService.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, FA_RESPONSE);
             exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(fluxResponseValidResults));
             if (fluxResponseValidResults != null && !fluxResponseValidResults.isError()) {

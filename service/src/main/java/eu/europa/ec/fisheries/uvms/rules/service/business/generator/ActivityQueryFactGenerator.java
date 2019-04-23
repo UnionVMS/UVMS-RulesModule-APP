@@ -23,6 +23,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWr
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_QUERY_MESSAGE;
@@ -68,6 +70,8 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
             }
         }
         populateCreationDateTime(factList);
+        String df = (String) extraValueMap.get(DATA_FLOW);
+        factList.forEach(fact -> fact.setMessageDataFlow(df));
         return factList;
     }
 

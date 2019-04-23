@@ -29,7 +29,7 @@
             <where>BR_ID = 'FA-L01-00-0003'</where>
         </update>
 
-        <update tableName=" rule">
+        <update tableName="rule">
             <column name="expression"
                     value="!isEmpty(relatedReportIDs) &amp;&amp; mdrService.validateFormat(relatedReportIDs, creationDateOfMessage)"/>
             <where>BR_ID = 'FA-L01-00-0024'</where>
@@ -40,7 +40,7 @@
             <where>BR_ID = 'FA-L01-00-0030'</where>
         </update>
 
-        <update tableName=" rule">
+        <update tableName="rule">
             <column name="expression" value="mdrService.validateFormat(referencedID, creationDateOfMessage)"/>
             <where>BR_ID = 'FA-L01-00-0012'</where>
         </update>
@@ -61,7 +61,7 @@
             <where>BR_ID = 'FA-L01-00-0037'</where>
         </update>
 
-        <update tableName=" rule">
+        <update tableName="rule">
             <column name="expression" value="!isEmpty(fishingActivityIds) &amp;&amp; mdrService.validateFormat(fishingActivityIds, creationDateOfMessage)"/>
             <where>BR_ID = 'FA-L01-00-0110'</where>
         </update>
@@ -72,7 +72,7 @@
             <where>BR_ID = 'FA-L01-00-0354'</where>
         </update>
 
-        <update tableName=" rule">
+        <update tableName="rule">
             <column name="expression" value="valueID != null &amp;&amp; mdrService.validateFormat(valueID, creationDateOfMessage)"/>
             <where>BR_ID = 'FA-L01-00-0377'</where>
         </update>
@@ -82,7 +82,7 @@
             <where>BR_ID = 'FA-L01-00-0381'</where>
         </update>
 
-        <update tableName=" rule">
+        <update tableName="rule">
             <column name="expression" value="referencedID != null &amp;&amp; mdrService.validateFormat(referencedID, creationDateOfMessage)"/>
             <where>BR_ID = 'FA-L01-00-0384'</where>
         </update>
@@ -93,7 +93,7 @@
             <where>BR_ID = 'FA-L02-00-0271'</where>
         </update>
 
-        <update tableName=" rule">
+        <update tableName="rule">
             <column name="expression" value="&quot;PULL&quot;.equals(messageType) &amp;&amp; (referencedID != null || (purposeCode != null
             &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; referencedID
             != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; !mdrService.validateFormat(referencedID, creationDateOfMessage) &amp;&amp;

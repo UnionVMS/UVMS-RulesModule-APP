@@ -50,8 +50,7 @@ import javax.xml.bind.UnmarshalException;
 import java.util.*;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_QUERY_MSG;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 
 @Stateless
 @LocalBean
@@ -107,8 +106,9 @@ public class RulesFaQueryServiceBean {
 
     public void evaluateIncomingFAQuery(SetFaQueryMessageRequest request) {
         String requestStr = request.getRequest();
-        final String exchangeLogGuid = request.getLogGuid();
-        final String onValue = request.getOnValue();
+        String exchangeLogGuid = request.getLogGuid();
+        String onValue = request.getOnValue();
+        String dataFlow = request.getFluxDataFlow();
         FLUXFAQueryMessage faQueryMessage = null;
         try {
             faQueryMessage = fluxMessageHelper.unMarshallFaQueryMessage(requestStr);
@@ -120,8 +120,9 @@ public class RulesFaQueryServiceBean {
 
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
-
             extraValues.put(XML, requestStr);
+            extraValues.put(DATA_FLOW, dataFlow);
+
             Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues, String.valueOf(faQueryMessage.getFAQuery().getID()));
 
             idsFromIncomingMessage.removeAll(faQueryIdsFromDb);

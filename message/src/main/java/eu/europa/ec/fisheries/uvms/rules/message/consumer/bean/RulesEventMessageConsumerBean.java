@@ -123,7 +123,7 @@ public class RulesEventMessageConsumerBean implements MessageListener {
         try {
             RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
             RulesModuleMethod method = request.getMethod();
-            LOG.info("\n\nRequest message method: {}", method.value());
+            LOG.info("Request message method: {}", method.value());
             switch (method) {
                 case RECEIVE_MOVEMENT_BATCH:
                     setMovementReportBatchRecievedEvent.fire(new EventMessage(textMessage));

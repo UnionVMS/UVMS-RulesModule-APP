@@ -7,25 +7,28 @@ rulemsg
 type
 level
 propertyNames
+context
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaJointFishingOperationFact;
 import java.util.Arrays;
+global eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker appliChecker;
 global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
+
 
 
 template "@{tname}"
 
-rule "Vessel Transport means @{tname} - @{brid}"
+rule "Fa Joint Fishing Operation @{tname} - @{brid}"
 
 when
 
-    $fact : FaJointFishingOperationFact(@{expression})
+    $fact : FaJointFishingOperationFact((appliChecker.isApplicable("@{brid}", "@{context}", getMessageDataFlow(), getCreationDateOfMessage(), mdrService)) && (@{expression}))
 
 then
     $fact.setOk(false);
-    $fact.addWarningOrError(mdrService.getErrorTypeStrForBrId("@{brid}"), mdrService.getErrorMessageStrForBrId("@{brid}"), "@{brid}", "@{level}", "@{propertyNames}");
+    $fact.addWarningOrError(mdrService.getErrorTypeStrForBrIdAndDF("@{brid}", "@{context}"), mdrService.getErrorMessageForBrIdAndDF("@{brid}", "@{context}"), "@{brid}", "@{level}", "@{propertyNames}");
 
 end
 
