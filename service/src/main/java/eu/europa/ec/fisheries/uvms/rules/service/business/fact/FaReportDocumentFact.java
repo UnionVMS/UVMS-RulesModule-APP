@@ -142,7 +142,6 @@ public class FaReportDocumentFact extends AbstractFact {
         List<String> declaredDepartureInMessageList = new ArrayList<>();
         List<String> declaredArrivalInFaReportList = new ArrayList<>();
         List<String> declaredDepartureInFaReportList = new ArrayList<>();
-
         if (FishingActivityType.ARRIVAL.equals(type)) {
             declaredArrivalInMessageList = tripsPerFaTypeFromMessage.get(FishingActivityType.ARRIVAL);
             declaredArrivalInFaReportList = tripsPerFaTypeFromThisReport.get(FishingActivityType.ARRIVAL);
@@ -150,7 +149,6 @@ public class FaReportDocumentFact extends AbstractFact {
             declaredDepartureInMessageList = tripsPerFaTypeFromMessage.get(FishingActivityType.DEPARTURE);
             declaredDepartureInFaReportList = tripsPerFaTypeFromThisReport.get(FishingActivityType.DEPARTURE);
         }
-
         if (CollectionUtils.isNotEmpty(declaredArrivalInFaReportList)){
             for (String s : declaredArrivalInFaReportList) {
                 if (Collections.frequency(declaredArrivalInMessageList, s) >= 2){
@@ -158,7 +156,6 @@ public class FaReportDocumentFact extends AbstractFact {
                 }
             }
         }
-
         if (CollectionUtils.isNotEmpty(declaredDepartureInFaReportList)){
             for (String s : declaredDepartureInFaReportList) {
                 if (Collections.frequency(declaredDepartureInMessageList, s) >= 2){
@@ -166,13 +163,10 @@ public class FaReportDocumentFact extends AbstractFact {
                 }
             }
         }
-
         return false;
     }
 
-    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds,
-                                                         Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip,
-                                                         FishingActivityType faType) {
+    public boolean containsMoreThenOneDeclarationPerTrip(List<IdType> specifiedFishingTripIds, Map<String, List<FishingActivityWithIdentifiers>> faTypesPerTrip, FishingActivityType faType) {
         if (MapUtils.isEmpty(faTypesPerTrip) || CollectionUtils.isEmpty(specifiedFishingTripIds) || faType == null) {
             return false;
         }

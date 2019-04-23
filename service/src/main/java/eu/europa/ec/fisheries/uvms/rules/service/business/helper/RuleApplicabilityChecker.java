@@ -2,104 +2,91 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
-import org.apache.commons.collections.CollectionUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import java.util.Date;
-import java.util.List;
 
+
+@Stateless
+@LocalBean
+@Slf4j
 public class RuleApplicabilityChecker {
 
-    public static boolean isApplicable(String brId, String ruleDataFlow, String messageDataFlow, DateTime messageCreationDate, MDRCacheRuleService mdrService){
-       // List<String> dfListForBrId = mdrService.getDataFlowListForBRId(brId);
-        List<RuleFromMDR> mdrRulesList = mdrService.getFaBrsForBrId(brId); // mdrService.getFaBrsForBrIdAndDataFlow(brId, messageDataFlow);
-        if(CollectionUtils.isEmpty(mdrRulesList)){ // 1.  Rule doesn't exist in MDR
-           return false;
+    /**
+     * Most important parameters :
+     * <p>
+     * 1. thisRulesBrId of this Rule
+     * 2. MSG's DF
+     * 3. Rules's DF
+     * <p>
+     * A Rule is deemed relevant if :
+     * <p>
+     * 1. Exists in MDR
+     * 2. Is Active in MDR
+     * 3. DF of that rule is relevant (either null or == to msg's df ** If its null then its relevant only if it doesn't exist another rule in MDR (with the same thisRulesBrId ovv..) that has the same DF as the message)
+     * 4. The Rule in MDR is not expired
+     * 5. The country is relevant
+     * <p>
+     * 1. Get the FA_BR definition for the specific thisRulesBrId (this rule's thisRulesBrId)
+     * 1.1 If that doesn't exist => Rule doesn't exist in MDR
+     *
+     * @param thisRulesBrId
+     * @param ruleContext
+     * @param messageDataFlow
+     * @param messageCreationDate
+     * @param mdrService
+     * @return
+     */
+    public boolean isApplicable(String thisRulesBrId, String ruleContext, String messageDataFlow, DateTime messageCreationDate, MDRCacheRuleService mdrService) {
+        String msgContext = mdrService.findContextForDf(messageDataFlow);
+        if (StringUtils.isEmpty(msgContext)) {
+            return false;
         }
-        RuleFromMDR chosenRelevantRule = choseRelevantDataFlow(ruleDataFlow, messageDataFlow, mdrRulesList);
-        boolean isApplicable = false;
-        if(chosenRelevantRule != null) { // 1.
-            // This date in case of FA_Messages come from FA_REPORT or FA_MESSAGE
-            Date startDate = chosenRelevantRule.getStartDate();
-            Date endDate = chosenRelevantRule.getEndDate();
-            if (chosenRelevantRule.isActive() && isDateInRange(messageCreationDate, startDate, endDate) ) { //&& isDataFlowRelevan(...,...,...)
-                isApplicable = true;
+        RuleFromMDR faBrForBrIdAndContext = null;
+        if (StringUtils.isNotEmpty(msgContext)) {
+            faBrForBrIdAndContext = mdrService.getFaBrForBrIdAndContext(thisRulesBrId, msgContext);
+            if (faBrForBrIdAndContext == null) {
+                faBrForBrIdAndContext = mdrService.getFaBrForBrIdAndContext(thisRulesBrId, null);
             }
         }
-        return isApplicable;
+        if (StringUtils.isEmpty(ruleContext) || "NULL".equals(ruleContext)) { // Case : rule.context == null. Rule is applicable only if for this msg.context and this thisRulesBrId cannot be found a rule in rules table.
+            if (!mdrService.doesRuleExistInRulesTable(thisRulesBrId, msgContext)) {
+                return checkMdrRuleValidity(messageCreationDate, faBrForBrIdAndContext);
+            }
+        } else {// Case : rule.context != null and == msg.context. We apply this rule only if a perfect match can be found in MDR
+            if (StringUtils.equals(ruleContext, msgContext)) {
+                return checkMdrRuleValidity(messageCreationDate, faBrForBrIdAndContext);
+            }
+        }
+        return false;
     }
 
-    private static RuleFromMDR choseRelevantDataFlow(String ruleDataFlow, String messageDataFlow, List<RuleFromMDR> mdrRulesList) {
-
-        // A perfect match can be found
-        if(StringUtils.equals(ruleDataFlow, messageDataFlow)){
-            RuleFromMDR chosenOne = null;
-            for (RuleFromMDR ruleFromMDR : mdrRulesList) {
-                if(StringUtils.equals(ruleFromMDR.getDataFlow(), messageDataFlow)){
-                    chosenOne = ruleFromMDR;
-                }
-            }
-            return chosenOne; // if chosenOne is null => doesn't exist in MDR
-        }
-
-        // A perfect match cannot be found so we apply this only if a rule with dataFlow="null" has been defined in rules and in MDR
-        if(StringUtils.isEmpty(ruleDataFlow)){
-            for (RuleFromMDR ruleFromMDR : mdrRulesList) {
-                if(StringUtils.isEmpty(ruleFromMDR.getDataFlow())){
-                    return ruleFromMDR;
-                }
-            }
-        }
-        return null;
+    private boolean checkMdrRuleValidity(DateTime messageCreationDate, RuleFromMDR faBrForBrIdAndContext) {
+        return faBrForBrIdAndContext != null
+                && faBrForBrIdAndContext.isActive()
+                && isDateInRange(messageCreationDate, faBrForBrIdAndContext.getStartDate(), faBrForBrIdAndContext.getEndDate())
+                && isRuleApplicableForCountry();
     }
 
     /**
-     * Example :
+     *  TODO : When MDR's <FA_BR.country> field is ready => implement me!
      *
-     *  Rule001     DF1    EXPR1
-     *  Rule001     NULL   EXPR1
-     *  Rule001     DF2    EXPR1
-     *
-     *  We'll have 3 rules in the KieContainer for this, since it is flattenmed there!
-     *
-     *  And the message coming in has a DF1
-     *
-     *     1)
-     *        ruleDataFlow="DF1";
-     *        messageDataFlow="DF1";
-     *        dfListForBrId={"DF1","NULL","DF2"};
-     *
-     *        isDataFlowRelevant("DF1", "DF1", {"DF1","NULL","DF2"})    => TRUE
-     *
-     *     2)
-     *        ruleDataFlow="NULL";
-     *        messageDataFlow="DF1";
-     *        dfListForBrId={"DF1","NULL","DF2"};
-     *
-     *        isDataFlowRelevant("NULL", "DF1", {"DF1","NULL","DF2"})    => FALSE
-     *
-     *     3)
-     *        ruleDataFlow="DF2";
-     *        messageDataFlow="DF1";
-     *        dfListForBrId={"DF1","NULL","DF2"};
-     *
-     *        isDataFlowRelevant("DF2", "DF1", {"DF1","NULL","DF2"})    => FALSE
-     *
-     *  And the message coming in has a DF3
-     *
-     * @param ruleDataFlow (can be null)
-     * @param messageDataFlow
-     * @param dfListForBrId
      * @return
      */
-    private static boolean isDataFlowRelevan(String ruleDataFlow, String messageDataFlow, List<String> dfListForBrId){
-        return StringUtils.equals(ruleDataFlow, messageDataFlow) || ((ruleDataFlow == null) && !dfListForBrId.contains(messageDataFlow));
+    private boolean isRuleApplicableForCountry() {
+        return true;
     }
 
-    private static boolean isDateInRange(DateTime jodaTestDate, Date startDate, Date endDate) {
+    private boolean isDateInRange(DateTime jodaTestDate, Date startDate, Date endDate) {
+        if (jodaTestDate == null || startDate == null || endDate == null) {
+            return true;
+        }
         Date testDate = jodaTestDate.toDate();
-        return !(testDate.before(startDate) || testDate.after(endDate));
+        return testDate.after(startDate) && testDate.before(endDate);
     }
 
 }

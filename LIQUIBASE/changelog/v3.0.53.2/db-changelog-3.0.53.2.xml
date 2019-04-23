@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Developed by the European Commission - Directorate General for Maritime Affairs and Fisheries @ European Union, 2015-2016.
+
+  This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can redistribute it
+  and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of
+  the License, or any later version. The IFDM Suite is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+  details. You should have received a copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
+  -->
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="UNIONVMS-4201" author="kovian">
+
+        <!-- UNIONVMS-4201 -->
+        <update tableName="rule">
+            <column name="error_type" value="ERROR"/>
+            <column name="expression"
+                    value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; (typeCode.value == &quot;JOINT_FISHING_OPERATION&quot;)
+                                            &amp;&amp; atMostOneVTMRoleCodeWithValue(&quot;CATCHING_VESSEL&quot;)"/>
+            <where>BR_ID = 'FA-L02-00-0605'</where>
+        </update>
+
+        <!-- UNIONVMS-4192 -->
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; mdrService.validateFormat(ids, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0003'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression"
+                    value="!isEmpty(relatedReportIDs) &amp;&amp; mdrService.validateFormat(relatedReportIDs, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0024'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; mdrService.validateFormat(ids, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0030'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression" value="mdrService.validateFormat(referencedID, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0012'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression"
+                    value="referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; !mdrService.validateFormat(referencedID, creationDateOfMessage) &amp;&amp; isEmpty(relatedFaQueryIDs)"/>
+            <where>BR_ID = 'FA-L03-00-0013'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression" value="id != null &amp;&amp; mdrService.validateFormat(id, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0052'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression" value="mdrService.validateFormat(referencedID, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0037'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(fishingActivityIds) &amp;&amp; mdrService.validateFormat(fishingActivityIds, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0110'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression"
+                    value="id != null &amp;&amp; id.schemeId != null &amp;&amp; mdrService.validateFormat(id, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0354'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression" value="valueID != null &amp;&amp; mdrService.validateFormat(valueID, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0377'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; mdrService.validateFormat(ids, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0381'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression" value="referencedID != null &amp;&amp; mdrService.validateFormat(referencedID, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L01-00-0384'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression"
+                    value="!subActivity &amp;&amp; !isEmpty(relatedVesselTransportMeansIDs) &amp;&amp; mdrService.validateFormat(relatedVesselTransportMeansIDs, creationDateOfMessage)"/>
+            <where>BR_ID = 'FA-L02-00-0271'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression" value="&quot;PULL&quot;.equals(messageType) &amp;&amp; (referencedID != null || (purposeCode != null
+            &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; referencedID
+            != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; !mdrService.validateFormat(referencedID, creationDateOfMessage) &amp;&amp;
+            !containsAny(nonUniqueIdsList, Arrays.asList(referencedID))"/>
+            <where>BR_ID = 'FA-L03-00-0038'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; mdrService.validateSchemeIdFormat(ids, &quot;EU_TRIP_ID&quot;, creationDateOfMessage)"/>
+            <where>BR_ID ='FA-L01-00-0192'</where>
+        </update>
+
+    </changeSet>
+
+</databaseChangeLog>

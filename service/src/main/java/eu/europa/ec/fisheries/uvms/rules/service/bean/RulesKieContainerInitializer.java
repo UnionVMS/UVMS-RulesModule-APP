@@ -10,16 +10,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.*;
-import java.io.InputStream;
-import java.util.*;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.DataFlowAndExpressionType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ContextExpressionType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -34,6 +31,12 @@ import org.kie.api.builder.Results;
 import org.kie.api.definition.KiePackage;
 import org.kie.api.definition.rule.Rule;
 import org.kie.api.runtime.KieContainer;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.*;
+import java.io.InputStream;
+import java.util.*;
+
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Singleton
@@ -43,6 +46,9 @@ public class RulesKieContainerInitializer {
 
     @EJB
     private RulesDomainModel rulesDb;
+
+    @EJB
+    private MDRCache mdrCache;
 
     private Map<ContainerType, KieContainer> containers;
 
@@ -92,7 +98,8 @@ public class RulesKieContainerInitializer {
         for (TemplateRuleMapDto template : templates) {
             String templateFile = TemplateFactory.getTemplateFileName(template.getTemplateType().getType());
             String templateName = template.getTemplateType().getTemplateName();
-            drlsAndRules.putAll(generateRulesFromTemplate(templateName, templateFile, template.getRules()));
+            List<RuleType> rulesListForThisTemplate = template.getRules();
+            drlsAndRules.putAll(generateRulesFromTemplate(templateName, templateFile, rulesListForThisTemplate));
         }
 
         KieServices kieServices = KieServices.Factory.get();
@@ -115,8 +122,8 @@ public class RulesKieContainerInitializer {
         return kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
     }
 
-    private Map<String, String> generateRulesFromTemplate(String templateName, String templateFile, List<RuleType> rules) {
-        if (CollectionUtils.isEmpty(rules)) {
+    private Map<String, String> generateRulesFromTemplate(String templateName, String templateFile, List<RuleType> ruleTypeList) {
+        if (CollectionUtils.isEmpty(ruleTypeList)) {
             return Collections.emptyMap();
         }
         InputStream templateStream = this.getClass().getResourceAsStream(templateFile);
@@ -124,17 +131,18 @@ public class RulesKieContainerInitializer {
         Map<String, String> drlsAndBrId = new HashMap<>();
         TemplateDataListener listener = new TemplateDataListener(tc);
         int rowNum = 0;
-        for (RuleType ruleDto : rules) {
-            for (DataFlowAndExpressionType dataFlowAndExpressionType : ruleDto.getDataFlowAndExpressionList()) {
+        for (RuleType ruleDto : ruleTypeList) {
+            for (ContextExpressionType contextExpressionType : ruleDto.getContextExpressionList()) {
+                String ruleContext = contextExpressionType.getContext() != null ? contextExpressionType.getContext() : "NULL";
                 listener.newRow(rowNum, 0);
                 listener.newCell(rowNum, 0, templateName, 0);
-                listener.newCell(rowNum, 1, dataFlowAndExpressionType.getExpression(), 0);
+                listener.newCell(rowNum, 1, contextExpressionType.getExpression(), 0);
                 listener.newCell(rowNum, 2, ruleDto.getBrId(), 0);
-                listener.newCell(rowNum, 3, dataFlowAndExpressionType.getFailureMessage(), 0);
+                listener.newCell(rowNum, 3, contextExpressionType.getFailureMessage(), 0);
                 listener.newCell(rowNum, 4, ruleDto.getErrorType().value(), 0);
                 listener.newCell(rowNum, 5, ruleDto.getLevel(), 0);
                 listener.newCell(rowNum, 6, ruleDto.getPropertyNames(), 0);
-                listener.newCell(rowNum, 7, dataFlowAndExpressionType.getDataFlow(), 0);
+                listener.newCell(rowNum, 7, ruleContext, 0);
                 rowNum++;
             }
         }

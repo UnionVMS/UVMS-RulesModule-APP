@@ -11,10 +11,6 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
@@ -36,6 +32,11 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
@@ -263,13 +264,17 @@ public class ActivityFactMapper {
             if(CollectionUtils.isNotEmpty(faReportDocument.getSpecifiedFishingActivities())){
                 for (FishingActivity fishingActivity : faReportDocument.getSpecifiedFishingActivities()) {
                     String faRepoDocTypeCode = "";
+                    String faReportPurposeCode = "";
                     un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faReportDocumentTypeCode = faReportDocument.getTypeCode();
                     if (faReportDocumentTypeCode != null){
                         faRepoDocTypeCode = faReportDocumentTypeCode.getValue();
                     }
+                    if(faReportDocument.getRelatedFLUXReportDocument() != null && faReportDocument.getRelatedFLUXReportDocument().getPurposeCode() != null){
+                        faReportPurposeCode = faReportDocument.getRelatedFLUXReportDocument().getPurposeCode().getValue();
+                    }
                     FishingActivityType activityType = fetchActivityType(fishingActivity.getTypeCode());
                     FishingTrip specifiedFishingTrip = fishingActivity.getSpecifiedFishingTrip();
-                    if(specifiedFishingTrip != null && CollectionUtils.isNotEmpty(specifiedFishingTrip.getIDS()) && "DECLARATION".equals(faRepoDocTypeCode) &&
+                    if(specifiedFishingTrip != null && CollectionUtils.isNotEmpty(specifiedFishingTrip.getIDS()) && "DECLARATION".equals(faRepoDocTypeCode) && !"5".equals(faReportPurposeCode) &&
                             (FishingActivityType.DEPARTURE.equals(activityType) || FishingActivityType.ARRIVAL.equals(activityType))){
                         tripsPerFaTypeFromFasInReports.get(activityType).add(specifiedFishingTrip.getIDS().get(0).getValue());
                     }
@@ -308,9 +313,10 @@ public class ActivityFactMapper {
         if(mainActivityType != null){
             fishingActivityFact.setMainActivityType(mainActivityType.getValue());
             fishingActivityFact.setSpecifiedFaCatch(fishingActivity.getSpecifiedFACatches());
-            fishingActivityFact.setRelatedVesselTransportMeansRoleCodes(extractRoleCodes(fishingActivity.getRelatedVesselTransportMeans()));
-            fishingActivityFact.setFaRepDockSpecifiedVesselTransportMeansRoleCodes(extractRoleCodes(Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans())));
         }
+        fishingActivityFact.setRelatedVesselTransportMeansRoleCodes(extractRoleCodes(fishingActivity.getRelatedVesselTransportMeans()));
+        fishingActivityFact.setFaRepDockSpecifiedVesselTransportMeansRoleCodes(extractRoleCodes(Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans())));
+
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(fishingActivityFact, "specifiedFaCatch");
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VESSEL_TRANSPORT_MEANS, ROLE_CODE).storeInRepo(fishingActivityFact, "relatedVesselTransportMeansRoleCodes");
 

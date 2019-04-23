@@ -13,15 +13,15 @@
             <xsd:element name="errorType" type="rule:ErrorType"/>
             <xsd:element name="level" type="xsd:string"/>
             <xsd:element name="propertyNames" type="xsd:string"/>
-            <xsd:element name="dataFlowAndExpressionList" type="rule:DataFlowAndExpressionType" maxOccurs="unbounded"/>
+            <xsd:element name="contextExpressionList" type="rule:ContextExpressionType" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="DataFlowAndExpressionType">
+    <xsd:complexType name="ContextExpressionType">
         <xsd:sequence>
             <xsd:element name="id" type="xsd:long"/>
             <xsd:element name="ruleId" type="xsd:long"/>
-            <xsd:element name="dataFlow" type="xsd:string"/>
+            <xsd:element name="context" type="xsd:string"/>
             <xsd:element name="expression" type="xsd:string"/>
             <xsd:element name="failureMessage" type="xsd:string"/>
         </xsd:sequence>

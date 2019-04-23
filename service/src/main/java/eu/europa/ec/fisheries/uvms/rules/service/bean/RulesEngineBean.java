@@ -10,12 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheService;
@@ -24,6 +18,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
@@ -36,11 +31,17 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
 import static eu.europa.ec.fisheries.uvms.rules.service.business.MessageType.PULL;
 import static eu.europa.ec.fisheries.uvms.rules.service.business.MessageType.PUSH;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
 
 @Stateless
 @Slf4j
@@ -55,6 +56,9 @@ public class RulesEngineBean {
 
     @EJB
     private MDRCacheService mdrCacheService;
+
+    @EJB
+    private RuleApplicabilityChecker appliChecker;
 
     @EJB
     private SalesReportFactGenerator salesReportFactGenerator;
@@ -89,6 +93,7 @@ public class RulesEngineBean {
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
+                globals.put("appliChecker", appliChecker);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_REPORT), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.SENDING_FA_RESPONSE_MSG) {
@@ -103,6 +108,7 @@ public class RulesEngineBean {
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
+                globals.put("appliChecker", appliChecker);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_REPORT), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.RECEIVING_FA_RESPONSE_MSG) {
@@ -117,6 +123,7 @@ public class RulesEngineBean {
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
+                globals.put("appliChecker", appliChecker);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_RESPONSE), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.RECEIVING_FA_QUERY_MSG || businessObjectType == BusinessObjectType.SENDING_FA_QUERY_MSG) {
@@ -128,6 +135,7 @@ public class RulesEngineBean {
                 List<AbstractFact> facts = generator.generateAllFacts();
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
+                globals.put("appliChecker", appliChecker);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_QUERY), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_QUERY_MSG) {
@@ -140,6 +148,7 @@ public class RulesEngineBean {
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
                 globals.put("salesService", salesRulesService);
+                globals.put("appliChecker", appliChecker);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
 
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_REPORT_MSG) {
@@ -154,6 +163,7 @@ public class RulesEngineBean {
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
                 globals.put("salesService", salesRulesService);
+                globals.put("appliChecker", appliChecker);
 
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
             } else if (businessObjectType == BusinessObjectType.FLUX_SALES_RESPONSE_MSG) {
@@ -167,6 +177,7 @@ public class RulesEngineBean {
                 Map<String, Object> globals = new HashMap<>();
                 globals.put("mdrService", mdrCacheRuleService);
                 globals.put("salesService", salesRulesService);
+                globals.put("appliChecker", appliChecker);
 
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
             }

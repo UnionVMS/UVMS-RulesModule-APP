@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 global org.slf4j.Logger logger;
 global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker;
+global eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker appliChecker;
 global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 

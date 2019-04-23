@@ -13,9 +13,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import org.apache.commons.collections.CollectionUtils;
@@ -23,6 +20,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,23 +30,14 @@ import java.util.List;
 public class FaJointFishingOperationFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
-
     private List<IdType> fishingActivityIds;
-
     private CodeType faReportDocumentTypeCode;
-
     private List<FLUXLocation> relatedFLUXLocations;
-
     private List<CodeType> fluxLocationTypeCode;
-
     private CodeType faReportDocVesselRoleCode;
-
     private List<FishingActivity> relatedFishingActivities;
-
     private List<CodeType> relatedFishingActivityTypeCode;
-
     private List<CodeType> relatedFishingActivityFaCatchTypeCodes;
-
     private List<FACatch> relatedFishingActivityFaCatch;
 
     public List<String> getSpecifiedFACatchSpeciesCodes(){
@@ -160,17 +149,14 @@ public class FaJointFishingOperationFact extends AbstractFact {
      * FALSE : If atleast one FishingActivity is without VesselTransport OR fishingActivityList is empty
      */
     public boolean ifVesselTransportPresent(List<FishingActivity> fishingActivityList) {
-
         if (CollectionUtils.isEmpty(fishingActivityList)) {
             return false;
         }
-
         for (FishingActivity fishingActivity : fishingActivityList) {
             if (CollectionUtils.isEmpty(fishingActivity.getRelatedVesselTransportMeans())) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -181,17 +167,14 @@ public class FaJointFishingOperationFact extends AbstractFact {
      * FALSE : If atleast one FishingActivity is without FACatch OR fishingActivityList is empty
      */
     public boolean ifFACatchPresent(List<FishingActivity> fishingActivityList) {
-
         if (CollectionUtils.isEmpty(fishingActivityList)) {
             return false;
         }
-
         for (FishingActivity fishingActivity : fishingActivityList) {
             if (CollectionUtils.isEmpty(fishingActivity.getSpecifiedFACatches())) {
                 return false;
             }
         }
-
         return true;
     }
 

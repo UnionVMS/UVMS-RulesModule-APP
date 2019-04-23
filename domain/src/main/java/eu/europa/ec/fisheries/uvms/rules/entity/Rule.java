@@ -43,7 +43,6 @@ public class Rule implements Serializable {
 
     @Column(name = "br_id", nullable = false, unique = true)
     private String brId;
-
     @Column(name = "note", nullable = false, columnDefinition = "text")
     private String note;
 
@@ -56,7 +55,7 @@ public class Rule implements Serializable {
     private Template template;
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "rule", fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<DataFlowAndExpression> dataFlowAndExpressionList;
+    private List<RuleContextExpression> ruleContextExpressionList;
 
     @Column(name = "level", nullable = false)
     private String level;

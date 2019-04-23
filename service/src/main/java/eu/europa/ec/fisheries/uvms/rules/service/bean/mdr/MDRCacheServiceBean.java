@@ -14,6 +14,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheService;
+import eu.europa.ec.fisheries.uvms.rules.service.business.FormatExpression;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
@@ -34,10 +35,8 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -51,9 +50,14 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     private static final String FISH_PRESENTATION = "FISH_PRESENTATION";
     private static final String FISH_PRESERVATION = "FISH_PRESERVATION";
     private static final String XEU = "XEU";
+    private static final String CODE_COLUMN_NAME = "code";
+    private static final String PLACES_CODE_COLUMN = "placesCode";
 
     @EJB
     private MDRCache cache;
+
+    @EJB
+    private RulesCache rulesCache;
 
     public void loadMDRCache(boolean isFromReport) {
         cache.loadAllMdrCodeLists(isFromReport);
@@ -319,9 +323,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                 }
             }
             boolean valueExistsInMDR = false;
-            if (managArea != null && isPresentInMDRList(MANAGEMENT_AREA, managArea.getValue(), validityDate)) {
-                String value = managArea.getValue();
-                country = value.substring(0, value.indexOf("_"));
+            String managementAreaRFMOCode = (managArea == null) ? null : retrieveValueForSpecificColumnOfCodeListFilterByCodeValue(MANAGEMENT_AREA, managArea.getValue(), validityDate, PLACES_CODE_COLUMN);
+            if (StringUtils.isNoneEmpty(managementAreaRFMOCode)) {
+                country = managementAreaRFMOCode;
                 valueExistsInMDR = true;
             } else if (territory != null && isPresentInMDRList(TERRITORY, territory.getValue(), validityDate)) {
                 String value = territory.getValue();
@@ -354,19 +358,19 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         List<ObjectRepresentation> preFilteredList;
         if (!(StringUtils.isBlank(speciesCodeVal) || StringUtils.isBlank(presentation) || StringUtils.isBlank(preservationState))) {
             List<ObjectRepresentation> conversionFactorList = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
-            List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(conversionFactorList, "code", speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY);
+            List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(conversionFactorList, CODE_COLUMN_NAME, speciesCodeVal);
             List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "presentation", presentation);
             preFilteredList = filterEntriesByColumn(filtered_2_list, "state", preservationState);
         } else {
             return false; // Case : some of the filters are empty
         }
 
-        if (!StringUtils.isEmpty(country) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, "placesCode", country))) {
+        if (!StringUtils.isEmpty(country) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, country))) {
             return true; // Case : "CF RFMO/SFPA/3rd party" exists
-        } else if (CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, "placesCode", flagStateBis))) {
+        } else if (CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagStateBis))) {
             return true; // Case : "CF FLAG STATE" exists
         } else {
-            return !StringUtils.isEmpty(flagState) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, "placesCode", flagState)); // Case : "CF EU" exists
+            return !StringUtils.isEmpty(flagState) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagState)); // Case : "CF EU" exists
         }
     }
 
@@ -417,9 +421,9 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                 }
             }
             boolean valueExistsInMDR = false;
-            if (managArea != null && isPresentInMDRList(MANAGEMENT_AREA, managArea.getValue(), validityDate)) {
-                String value = managArea.getValue();
-                country = value.substring(0, value.indexOf("_"));
+            String managementAreaRFMOCode = (managArea == null) ? null : retrieveValueForSpecificColumnOfCodeListFilterByCodeValue(MANAGEMENT_AREA, managArea.getValue(), validityDate, PLACES_CODE_COLUMN);
+            if (StringUtils.isNoneEmpty(managementAreaRFMOCode)) {
+                country = managementAreaRFMOCode;
                 valueExistsInMDR = true;
             } else if (territory != null && isPresentInMDRList(TERRITORY, territory.getValue(), validityDate)) {
                 String value = territory.getValue();
@@ -459,19 +463,19 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                 List<ObjectRepresentation> preFilteredList;
                 if (!(StringUtils.isBlank(speciesCodeVal) || StringUtils.isBlank(presentation.get()) || StringUtils.isBlank(preservationState.get()))) {
                     // Pre-filtering by : speciesCode, presentation, preservation
-                    List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(conversionFactorList, "code", speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY);
+                    List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(conversionFactorList, CODE_COLUMN_NAME, speciesCodeVal);
                     List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "presentation", presentation.get());
                     preFilteredList = filterEntriesByColumn(filtered_2_list, "state", preservationState.get());
                     if (!StringUtils.isEmpty(finalCountry)) { // Case : "CF RFMO/SFPA/3rd party" exists
-                        List<ObjectRepresentation> filteredOr = filterEntriesByColumn(preFilteredList, "placesCode", finalCountry);
+                        List<ObjectRepresentation> filteredOr = filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, finalCountry);
                         findMatchAndSetFlagIfExistsWantedValue(greaterEqualsToOneCFExists, FACTOR_COLUMN, one, filteredOr);
                     }
                     if (!greaterEqualsToOneCFExists.get()) { // Case : "CF FLAG STATE" exists
-                        List<ObjectRepresentation> filteredOr = filterEntriesByColumn(preFilteredList, "placesCode", flagStateBis);
+                        List<ObjectRepresentation> filteredOr = filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagStateBis);
                         findMatchAndSetFlagIfExistsWantedValue(greaterEqualsToOneCFExists, FACTOR_COLUMN, one, filteredOr);
                     }
-                    if(!greaterEqualsToOneCFExists.get() && !StringUtils.isEmpty(flagState)) {  // Case : "CF EU" exists
-                        List<ObjectRepresentation> filteredOr = filterEntriesByColumn(preFilteredList, "placesCode", flagState);
+                    if (!greaterEqualsToOneCFExists.get() && !StringUtils.isEmpty(flagState)) {  // Case : "CF EU" exists
+                        List<ObjectRepresentation> filteredOr = filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagState);
                         findMatchAndSetFlagIfExistsWantedValue(greaterEqualsToOneCFExists, FACTOR_COLUMN, one, filteredOr);
                     }
                 }
@@ -523,6 +527,35 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return matchingList;
     }
 
+    private String retrieveValueForSpecificColumnOfCodeListFilterByCodeValue(String listName, String codeValue, DateTime validityDate, String columnNameValueOfWhichToBeReturned) {
+        if (validityDate == null) {
+            return null;
+        }
+        MDRAcronymType mdrAcronymType = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        if (mdrAcronymType == null) {
+            return null;
+        }
+        List<ObjectRepresentation> rows = cache.getEntry(mdrAcronymType);
+        List<ObjectRepresentation> filteredByCodeFieldValue = rows.stream()
+                .filter(row -> {
+                    AtomicBoolean found = new AtomicBoolean(false);
+                    row.getFields().forEach(field -> {
+                        if (CODE_COLUMN_NAME.equals(field.getColumnName()) && codeValue.equals(field.getColumnValue())) { // Record with that 'codeValue' was found
+                            found.set(true);
+                        }
+                    });
+                    return found.get();
+                }).collect(Collectors.toList());
+
+        if (CollectionUtils.isNotEmpty(filteredByCodeFieldValue)) {
+            List<ColumnDataType> foundColumn = filteredByCodeFieldValue.get(0).getFields().stream().filter(field -> columnNameValueOfWhichToBeReturned.equals(field.getColumnName())).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(foundColumn)) {
+                return foundColumn.get(0).getColumnName();
+            }
+        }
+        return null;
+    }
+
     /**
      * This method gets value from DataType Column of MDR list for the matching record. Record will be matched with CODE column
      *
@@ -544,7 +577,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
                     continue;
                 }
                 for (ColumnDataType columnDataType : columnDataTypes) {
-                    if ("code".equals(columnDataType.getColumnName()) && columnDataType.getColumnValue().equals(codeValue)) {
+                    if (CODE_COLUMN_NAME.equals(columnDataType.getColumnName()) && columnDataType.getColumnValue().equals(codeValue)) {
                         valueFound = true;
                         break;
                     }
@@ -589,7 +622,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             if (CollectionUtils.isEmpty(columnDataTypes)) {
                 continue;
             }
-            Optional<String> code = ObjectRepresentationHelper.getValueOfColumn("code", representation);
+            Optional<String> code = ObjectRepresentationHelper.getValueOfColumn(CODE_COLUMN_NAME, representation);
             Optional<String> startDate = ObjectRepresentationHelper.getValueOfColumn("startDate", representation);
             Optional<String> endDate = ObjectRepresentationHelper.getValueOfColumn("endDate", representation);
             if (code.isPresent() && startDate.isPresent() && endDate.isPresent()
@@ -623,11 +656,111 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
 
+    // ################################ START : FORMAT VALIDATION #################################################
+
+    /**
+     * Validate the format of the value depending on the schemeId for List<IdType>
+     */
+    @Override
+    public boolean validateFormat(List<IdType> ids, DateTime creationDateOfMessage) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return true;
+        }
+        for (IdType id : ids) {
+            if (validateFormat(id, creationDateOfMessage)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean validateSchemeIdFormat(List<IdType> ids, String schemeID, DateTime creationDateOfMessage) {
+        if (CollectionUtils.isEmpty(ids) || StringUtils.isEmpty(schemeID)) {
+            return true;
+        }
+        for (IdType id : ids) {
+            if (schemeID.equals(id.getSchemeId()) && validateFormat(id, creationDateOfMessage)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Validate the format of the value depending on the schemeId for single IdType
+     *
+     * @param id IdType
+     * @return
+     */
+    @Override
+    public boolean validateFormat(IdType id, DateTime creationDateOfMessage) {
+        boolean isInvalid = false;
+        if (id == null || id.getSchemeId() == null) {
+            return false;
+        }
+        try {
+            String schemeId = id.getSchemeId();
+            FormatExpression formatExpression = cache.getFormatsByIdentifier().get(id.getSchemeId());
+            if(formatExpression == null){
+                return false;
+            }
+            if ("UUID".equalsIgnoreCase(schemeId) && "00000000-0000-0000-0000-000000000000".equals(id.getValue()) || !validateFormatFromExprObject(id.getValue(), formatExpression, creationDateOfMessage)) {
+                isInvalid = true;
+            }
+        } catch (IllegalArgumentException ex) {
+            log.debug("The SchemeId : '" + id.getSchemeId() + "' is not mapped in the AbstractFact.validateFormat(List<IdType> ids) method.", ex.getMessage());
+            isInvalid = false;
+        }
+        return isInvalid;
+    }
+
+    /**
+     * Validate the format of the value depending on the codeType for single CodeType
+     *
+     * @param codeType CodeType
+     * @return true if format is invalid, return false if format is valid
+     */
+    @Override
+    public boolean validateFormat(CodeType codeType, DateTime creationDateOfMessage) {
+        boolean isInvalid = false;
+        if (codeType == null) {
+            return isInvalid;
+        }
+        try {
+            if (!validateFormatFromExprObject(codeType.getValue(), cache.getFormatsByIdentifier().get(codeType.getListId()), creationDateOfMessage)) {
+                isInvalid = true;
+            }
+        } catch (IllegalArgumentException ex) {
+            log.debug("The codeType : '" + codeType.getListId() + "' is not mapped in the AbstractFact.validateFormat(List<CodeType> codeTypes) method.", ex.getMessage());
+            isInvalid = false;
+        }
+        return isInvalid;
+    }
+
+    private boolean validateFormatFromExprObject(String value, FormatExpression formatExpression, DateTime creationDateOfMessage) {
+        return formatExpression != null &&
+                !StringUtils.isEmpty(value) &&
+                !StringUtils.isEmpty(formatExpression.getExpression()) &&
+                value.matches(formatExpression.getExpression()) &&
+                isValidDate(creationDateOfMessage, formatExpression.getStartDate(), formatExpression.getEndDate());
+    }
+
+    private boolean isValidDate(DateTime creationDateOfMessage, Date startDate, Date endDate) {
+        if (creationDateOfMessage == null || startDate == null || endDate == null) {
+            return true;
+        }
+        Date date = creationDateOfMessage.toDate();
+        return date.after(startDate) && date.before(endDate);
+    }
+
+    // ################################ END : FORMAT VALIDATION #################################################
+
     @Override
     public boolean isLocationNotInCountry(IdType id, IdType countryID, DateTime creationDateOfMessage) {
         List<ObjectRepresentation> locations = cache.getEntry(MDRAcronymType.LOCATION);
         return !ObjectRepresentationHelper.doesObjectRepresentationExistWithTheGivenCodeAndWithTheGivenValueForTheGivenColumn(
-                id.getValue(), "placesCode", countryID.getValue(), locations, creationDateOfMessage);
+                id.getValue(), PLACES_CODE_COLUMN, countryID.getValue(), locations, creationDateOfMessage);
     }
 
 
@@ -643,26 +776,32 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     }
 
     @Override
-    public RuleFromMDR getFaBrForBrIdAndDf(String brId, String df) {
-        return cache.getFaBrForBrIdAndDf(brId, df);
+    public RuleFromMDR getFaBrForBrIdAndContext(String brId, String context) {
+        return cache.getFaBrForBrIdAndContext(brId, context);
+    }
+
+    @Override
+    public RuleFromMDR getFaBrForBrIdAndDataFlow(String brId, String dataFlow) {
+        String contextForDf = findContextForDf(dataFlow);
+        return cache.getFaBrForBrIdAndContext(brId, contextForDf);
     }
 
     @Override
     public String getErrorMessageForBrIdAndDF(String brid, String df) {
-        RuleFromMDR ruleDromMDR = cache.getFaBrForBrIdAndDf(brid, df);
+        RuleFromMDR ruleDromMDR = cache.getFaBrForBrIdAndContext(brid, df);
         return ruleDromMDR != null ? ruleDromMDR.getMessage() : StringUtils.EMPTY;
     }
 
     @Override
     public String getErrorTypeStrForBrIdAndDF(String brid, String df) {
-        RuleFromMDR ruleDromMDR = cache.getFaBrForBrIdAndDf(brid, df);
+        RuleFromMDR ruleDromMDR = cache.getFaBrForBrIdAndContext(brid, df);
         return ruleDromMDR != null ? ruleDromMDR.getType() : StringUtils.EMPTY;
     }
 
     @Override
     public List<String> getDataFlowListForBRId(String brId) {
         List<RuleFromMDR> ruleFromMDRS = cache.geFaBRsByBrId(brId);
-        return CollectionUtils.isNotEmpty(ruleFromMDRS) ? ruleFromMDRS.stream().map(RuleFromMDR::getDataFlow).collect(Collectors.toList()) : null;
+        return CollectionUtils.isNotEmpty(ruleFromMDRS) ? ruleFromMDRS.stream().map(RuleFromMDR::getContext).collect(Collectors.toList()) : null;
     }
 
     @Override
@@ -670,5 +809,24 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return cache.getAllCodeLists().stream().anyMatch(listName::equals);
     }
 
+    @Override
+    public Map<String, List<String>> getRulesContexts() {
+        return rulesCache.getRulesContexts();
+    }
+
+    @Override
+    public boolean doesRuleExistInRulesTable(String brId, String context) {
+        List<String> rulesContexts = rulesCache.getRulesContexts().get(brId);
+        return rulesContexts.contains(context);
+    }
+
+    @Override
+    public String findContextForDf(String dataFlow) {
+        if(StringUtils.isEmpty(dataFlow)){
+            return null;
+        }
+        List<String> contexts = cache.getDataFlowContexts().get(dataFlow);
+        return CollectionUtils.isNotEmpty(contexts) ? contexts.get(0) : null;
+    }
 
 }

@@ -13,17 +13,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.mapper;
 
-import java.util.Collection;
-import java.util.List;
-
-import eu.europa.ec.fisheries.schema.rules.rule.v1.DataFlowAndExpressionType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ContextExpressionType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
-import eu.europa.ec.fisheries.uvms.rules.entity.DataFlowAndExpression;
 import eu.europa.ec.fisheries.uvms.rules.entity.Rule;
+import eu.europa.ec.fisheries.uvms.rules.entity.RuleContextExpression;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by padhyad on 4/10/2017.
@@ -34,7 +34,8 @@ public interface RuleMapper {
     RuleMapper INSTANCE = Mappers.getMapper(RuleMapper.class);
 
     @Mappings({
-            @Mapping(target = "createdOn", source = "audit.createdOn")
+            @Mapping(target = "createdOn", source = "audit.createdOn"),
+            @Mapping(target = "contextExpressionList", source = "ruleContextExpressionList")
     })
     RuleType mapToFactRuleType(Rule factRule);
 
@@ -43,8 +44,8 @@ public interface RuleMapper {
     @Mappings({
             @Mapping(target = "ruleId", source = "rule.id")
     })
-    DataFlowAndExpressionType mapToFactDataFlowAndExpressionType(DataFlowAndExpression factRules);
+    ContextExpressionType mapToFactDataFlowAndExpressionType(RuleContextExpression factRules);
 
-    List<DataFlowAndExpressionType> mapToAllFactDataFlowAndExpressionType(Collection<DataFlowAndExpression> factRules);
+    List<ContextExpressionType> mapToAllFactDataFlowAndExpressionType(Collection<RuleContextExpression> factRules);
 
 }

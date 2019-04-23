@@ -11,7 +11,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
 import java.util.Date;
-import lombok.Data;
 
 public class RuleFromMDR {
 
@@ -20,17 +19,17 @@ public class RuleFromMDR {
     private String expression;
     private String message;
     private String type;
-    private String dataFlow;
+    private String context;
     private Boolean active;
     private Date startDate;
     private Date endDate;
 
-    public RuleFromMDR(String note, String message, String type, Boolean active, String dataFlow) {
+    public RuleFromMDR(String note, String message, String type, Boolean active, String context) {
         this.note = note;
         this.message = message;
         this.type = type;
         this.active = active;
-        this.dataFlow = dataFlow;
+        this.context = context;
     }
 
     public String getTemplateEntityName() {
@@ -73,12 +72,12 @@ public class RuleFromMDR {
         this.type = type;
     }
 
-    public String getDataFlow() {
-        return dataFlow;
+    public String getContext() {
+        return context;
     }
 
-    public void setDataFlow(String dataFlow) {
-        this.dataFlow = dataFlow;
+    public void setContext(String context) {
+        this.context = context;
     }
 
     public Boolean isActive() {

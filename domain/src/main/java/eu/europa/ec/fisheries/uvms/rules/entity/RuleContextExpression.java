@@ -6,11 +6,11 @@ import lombok.ToString;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "data_flow_expression",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"data_flow", "expression"})})
+@Table(name = "context_expression",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"context", "expression"})})
 @ToString
 @Data
-public class DataFlowAndExpression {
+public class RuleContextExpression {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,8 +20,8 @@ public class DataFlowAndExpression {
     @JoinColumn(name = "rule_id", referencedColumnName = "rule_id")
     private Rule rule;
 
-    @Column(name = "data_flow")
-    private String dataFlow;
+    @Column(name = "context")
+    private String context;
 
     @Column(name = "expression", nullable = false)
     private String expression;

@@ -9,7 +9,7 @@ import java.util.Date;
 global org.slf4j.Logger logger;
 global eu.europa.ec.fisheries.uvms.rules.service.ValidationService validationService;
 global eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService salesService;
-import eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker;
+global eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker appliChecker;
 global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 
@@ -18,7 +18,7 @@ template "SanityRulesTemplate"
 
 rule "@{rulename}"
 when
-    $fact : RawMovementFact(RuleApplicabilityChecker.isApplicable("@{brid}", "@{dataflow}", getMessageDataFlow(), getCreationDateOfMessage(), mdrService) && @{expression})
+    $fact : RawMovementFact((appliChecker.isApplicable("@{brid}", "@{context}", getMessageDataFlow(), getCreationDateOfMessage(), mdrService)) && (@{expression}))
 then
     logger.info("\t==> Executing SANITY RULE '@{rulename}'");
     $fact.setOk(false);

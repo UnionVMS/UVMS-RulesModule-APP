@@ -21,6 +21,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 
 import javax.ejb.Local;
 import java.util.List;
+import java.util.Map;
 
 @Local
 public interface MDRCacheRuleService {
@@ -58,11 +59,21 @@ public interface MDRCacheRuleService {
 
     boolean isNotMostPreciseFAOArea(IdType id, DateTime creationDateOfMessage);
 
+    boolean validateFormat(List<IdType> ids, DateTime creationDateOfMessage);
+
+    boolean validateSchemeIdFormat(List<IdType> ids, String schemeID, DateTime creationDateOfMessage);
+
+    boolean validateFormat(IdType id, DateTime creationDateOfMessage);
+
+    boolean validateFormat(CodeType codeType, DateTime creationDateOfMessage);
+
     boolean isLocationNotInCountry(IdType id, IdType countryID, DateTime creationDateOfMessage);
 
     List<ObjectRepresentation> getObjectRepresentationList(MDRAcronymType mdrAcronym);
 
-    RuleFromMDR getFaBrForBrIdAndDf(String brId, String df);
+    RuleFromMDR getFaBrForBrIdAndContext(String brId, String df);
+
+    RuleFromMDR getFaBrForBrIdAndDataFlow(String brId, String dataFlow);
 
     String getErrorMessageForBrIdAndDF(String brid, String df);
 
@@ -72,4 +83,9 @@ public interface MDRCacheRuleService {
 
     boolean codeListExistsInMdr(String listName);
 
+    Map<String, List<String>> getRulesContexts();
+
+    boolean doesRuleExistInRulesTable(String brId, String context);
+
+    String findContextForDf(String dataFlow);
 }

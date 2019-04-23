@@ -40,7 +40,7 @@ public class GetValidationResultService {
     @EJB
     private MDRCacheRuleService mdrCacheService;
 
-    public String getValidationsForRawMessageUUID(String guid, String type) {
+    public String getValidationsForRawMessageUUID(String guid, String type, String dataFlow) {
         ValidationMessageTypeResponse validationsResponse = new ValidationMessageTypeResponse();
         try {
             validationsResponse.getValidationsListResponse().addAll(domainModel.getValidationMessagesByRawMsgGuid(guid, type));
@@ -48,7 +48,7 @@ public class GetValidationResultService {
             for (ValidationMessageType validationMessageType : validationsListResponse) {
                 if (validationMessageType != null){
                     String brId = validationMessageType.getBrId();
-                    loadValidationMessagesFromMDR(validationMessageType, brId);
+                    loadValidationMessagesFromMDR(validationMessageType, brId, dataFlow);
                 }
             }
             return JAXBUtils.marshallJaxBObjectToString(validationsResponse);
@@ -58,9 +58,8 @@ public class GetValidationResultService {
         return StringUtils.EMPTY;
     }
 
-    private void loadValidationMessagesFromMDR(ValidationMessageType validationMessageType, String brId) {
-        List<RuleFromMDR> errorMessageForBrId = mdrCacheService.getFaBrsForBrId(brId);
-        // Loop here
+    private void loadValidationMessagesFromMDR(ValidationMessageType validationMessageType, String brId, String dataFlow) {
+        RuleFromMDR errorMessageForBrId = mdrCacheService.getFaBrForBrIdAndDataFlow(brId, dataFlow);
         if (errorMessageForBrId != null){
             validationMessageType.setExpression(errorMessageForBrId.getExpression());
             validationMessageType.setMessage(errorMessageForBrId.getMessage());
