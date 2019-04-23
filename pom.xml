@@ -33,7 +33,7 @@
         <hibernate.version>5.1.9.Final</hibernate.version>
 
         <movement.model.version>4.0.15</movement.model.version>
-        <exchange.model.version>4.0.23</exchange.model.version>
+        <exchange.model.version>4.0.34</exchange.model.version>
         <mobileterminal.model.version>4.0.13</mobileterminal.model.version>
         <user.model.version>2.0.6</user.model.version>
 
