@@ -20,7 +20,7 @@ global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 template "@{tname}"
 
-rule "Vessel Transport means @{tname} - @{brid}"
+rule "Vessel Transport means @{tname} - @{brid} - Context : @{context}"
 
 when
 

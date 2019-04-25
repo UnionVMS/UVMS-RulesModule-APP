@@ -21,7 +21,7 @@ global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 template "@{tname}"
 
-rule "Sales FLUX Organization @{tname} - @{brid}"
+rule "Sales FLUX Organization @{tname} - @{brid} - Context : @{context}"
 
 when
 

@@ -22,7 +22,7 @@ global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 template "@{tname}"
 
-rule "Sales FLUX Response Document @{tname} - @{brid}"
+rule "Sales FLUX Response Document @{tname} - @{brid} - Context : @{context}"
 
 when
 

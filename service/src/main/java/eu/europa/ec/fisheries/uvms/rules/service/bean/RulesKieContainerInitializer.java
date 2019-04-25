@@ -16,7 +16,6 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ContextExpressionType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.TemplateFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -36,6 +35,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.*;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -46,9 +46,6 @@ public class RulesKieContainerInitializer {
 
     @EJB
     private RulesDomainModel rulesDb;
-
-    @EJB
-    private MDRCache mdrCache;
 
     private Map<ContainerType, KieContainer> containers;
 
@@ -64,16 +61,16 @@ public class RulesKieContainerInitializer {
             List<TemplateRuleMapDto> salesTemplatesAndRules = getSalesRules(allTemplates);
             List<TemplateRuleMapDto> faQueryTemplatesAndRules = getFaQueryRules(allTemplates);
 
-            log.info("Initializing templates and rules for FA-Report facts. Nr. of Rules : {}", faTemplatesAndRules.size());
+            log.info("Initializing templates and rules for FA-Report facts. Nr. of Rules : {}",  countRuleExpressions(faTemplatesAndRules));
             KieContainer faReportContainer = createContainer(faTemplatesAndRules);
 
-            log.info("Initializing templates and rules for FA-Response facts. Nr. of Rules : {}", faResponseTemplatesAndRules.size());
+            log.info("Initializing templates and rules for FA-Response facts. Nr. of Rules : {}",  countRuleExpressions(faResponseTemplatesAndRules));
             KieContainer faRespContainer = createContainer(faResponseTemplatesAndRules);
 
-            log.info("Initializing templates and rules for FA-Query facts. Nr. of Rules : {}", faQueryTemplatesAndRules.size());
+            log.info("Initializing templates and rules for FA-Query facts. Nr. of Rules : {}", countRuleExpressions(faQueryTemplatesAndRules));
             KieContainer faQueryContainer = createContainer(faQueryTemplatesAndRules);
 
-            log.info("Initializing templates and rules for Sales facts. Nr. of Rules : {}", salesTemplatesAndRules.size());
+            log.info("Initializing templates and rules for Sales facts. Nr. of Rules : {}", countRuleExpressions(salesTemplatesAndRules));
             KieContainer salesContainer = createContainer(salesTemplatesAndRules);
 
             containers = new EnumMap<>(ContainerType.class);
@@ -91,6 +88,17 @@ public class RulesKieContainerInitializer {
             log.error(e.getMessage(), e);
             throw new RuntimeException("Couldn't initialize rules engine!!");
         }
+    }
+
+    private int countRuleExpressions(List<TemplateRuleMapDto> templates) {
+        AtomicInteger nrOfFaRules = new AtomicInteger();
+        templates.forEach(temp -> {
+            temp.getRules().forEach(rule->{
+                log.info("Adding rule {} which has {} contextExpressions.", rule.getBrId(), rule.getContextExpressionList().size());
+                nrOfFaRules.addAndGet(rule.getContextExpressionList().size());
+            });
+        });
+        return nrOfFaRules.get();
     }
 
     private KieContainer createContainer(Collection<TemplateRuleMapDto> templates) {

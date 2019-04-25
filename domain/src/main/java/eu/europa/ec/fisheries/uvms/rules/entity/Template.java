@@ -21,7 +21,7 @@ import static eu.europa.ec.fisheries.uvms.rules.entity.Template.LIST_ALL_ENABLED
 @Table(name = "template")
 @ToString(exclude = {"factRules"})
 @NamedQueries({
-        @NamedQuery(name = LIST_ALL_ENABLED, query = "FROM Template t LEFT JOIN FETCH t.factRules f WHERE f.disabled IS NULL OR f.disabled <> true")
+        @NamedQuery(name = LIST_ALL_ENABLED, query = "SELECT DISTINCT t FROM Template t LEFT JOIN FETCH t.factRules f WHERE f.disabled IS NULL OR f.disabled <> true")
 })
 public class Template implements Serializable {
 

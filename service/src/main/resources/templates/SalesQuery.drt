@@ -21,7 +21,7 @@ global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 template "@{tname}"
 
-rule "Sales Query @{tname} - @{brid}"
+rule "Sales Query @{tname} - @{brid} - Context : @{context}"
 
 when
 

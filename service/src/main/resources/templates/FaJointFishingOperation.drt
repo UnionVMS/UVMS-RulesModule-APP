@@ -20,7 +20,7 @@ global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 template "@{tname}"
 
-rule "Fa Joint Fishing Operation @{tname} - @{brid}"
+rule "Fa Joint Fishing Operation @{tname} - @{brid} - Context : @{context}"
 
 when
 

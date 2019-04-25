@@ -21,7 +21,7 @@ global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 template "@{tname}"
 
-rule "Sales Structured Address @{tname} - @{brid}"
+rule "Sales Structured Address @{tname} - @{brid} - Context : @{context}"
 
 when
 

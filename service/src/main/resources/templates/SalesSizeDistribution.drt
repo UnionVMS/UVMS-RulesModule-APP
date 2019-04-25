@@ -21,7 +21,7 @@ global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 template "@{tname}"
 
-rule "Sales Size Distribution @{tname} - @{brid}"
+rule "Sales Size Distribution @{tname} - @{brid} - Context : @{context}"
 
 when
 

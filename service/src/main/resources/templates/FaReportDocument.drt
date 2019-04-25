@@ -20,7 +20,7 @@ global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
 
 template "@{tname}"
 
-rule "FA Report Document @{tname} - @{brid}"
+rule "FA Report Document @{tname} - @{brid} - Context : @{context}"
 
 when
 

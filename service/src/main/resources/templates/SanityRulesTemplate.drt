@@ -18,7 +18,7 @@ template "SanityRulesTemplate"
 
 rule "@{rulename}"
 when
-    $fact : RawMovementFact((appliChecker.isApplicable("@{brid}", "@{context}", getMessageDataFlow(), getCreationDateOfMessage(), mdrService)) && (@{expression}))
+    $fact : RawMovementFact(@{expression})
 then
     logger.info("\t==> Executing SANITY RULE '@{rulename}'");
     $fact.setOk(false);

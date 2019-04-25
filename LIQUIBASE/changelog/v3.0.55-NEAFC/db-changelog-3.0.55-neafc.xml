@@ -1,0 +1,1407 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet author="kovian" id="insert-initial-data-for-NEAFC-RELATEED_context_expression-table">
+
+        <!-- START : 160 existing rules -->
+
+        <insert tableName="context_expression">
+            <column name="id" value="200001"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(ids)"/>
+            <column name="rule_id" value="1"/>
+            <column name="failure_message" value="Message ID missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="200002"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; schemeIdContainsAll(ids, &quot;UUID&quot;)"/>
+            <column name="rule_id" value="2"/>
+            <column name="failure_message" value="Message ID has an invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="200003"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; mdrService.validateFormat(ids, creationDateOfMessage)"/>
+            <column name="rule_id" value="3"/>
+            <column name="failure_message" value="Message ID value not according to schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="200004"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="!isEmpty(nonUniqueIdsList) &amp;&amp; containsAny(ids, nonUniqueIdsList)"/>
+            <column name="rule_id" value="4"/>
+            <column name="failure_message" value="Message ID already exists."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="200005"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="creationDateTime == null"/>
+            <column name="rule_id" value="5"/>
+            <column name="failure_message" value="Message creation date/time missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="200006"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(creationDateTimeString) &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+            <column name="rule_id" value="6"/>
+            <column name="failure_message" value="Invalid message creation date/time."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="200007"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="creationDateTime != null &amp;&amp; dateNotInPast(creationDateTime, 10)"/>
+            <column name="rule_id" value="7"/>
+            <column name="failure_message" value="Message creation date/time not in the past."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="200008"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="purposeCode == null"/>
+            <column name="rule_id" value="8"/>
+            <column name="failure_message" value="PurposeCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="200009"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="purposeCode != null &amp;&amp; listIdContainsAll(purposeCode, &quot;FLUX_GP_PURPOSE&quot;)"/>
+            <column name="rule_id" value="9"/>
+            <column name="failure_message" value="PurposeCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000010"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="purposeCode != null &amp;&amp; purposeCode.value != 9"/>
+            <column name="rule_id" value="10"/>
+            <column name="failure_message" value="PurposeCode has an invalid value."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000014"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(ownerFluxPartyIds)"/>
+            <column name="rule_id" value="14"/>
+            <column name="failure_message" value="Message Owner ID missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000015"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(ownerFluxPartyIds) &amp;&amp; schemeIdContainsAll(ownerFluxPartyIds, &quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="rule_id" value="15"/>
+            <column name="failure_message" value="Message Owner ID has an invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000016"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(ownerFluxPartyIds) &amp;&amp; !matchWithFluxTL(ownerFluxPartyIds)"/>
+            <column name="rule_id" value="16"/>
+            <column name="failure_message" value="Message Owner ID not consistent with FLUX TL envelope parameters."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000017"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(faReportDocuments)"/>
+            <column name="rule_id" value="17"/>
+            <column name="failure_message" value="At least one report must be present in the message."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000020"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="purposeCode != null &amp;&amp; typeCode == null &amp;&amp; (purposeCode.value == &quot;9&quot; || purposeCode.value == &quot;5&quot;)"/>
+            <column name="rule_id" value="20"/>
+            <column name="failure_message" value="Report type must be present for new reports or corrections."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000021"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; listIdContainsAll(typeCode, &quot;FLUX_FA_REPORT_TYPE&quot;)"/>
+            <column name="rule_id" value="21"/>
+            <column name="failure_message" value="Report type has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000022"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="22"/>
+            <column name="failure_message" value="Invalid code for Report type."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000025"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="acceptanceDateTime == null"/>
+            <column name="rule_id" value="25"/>
+            <column name="failure_message" value="Acceptance date/time missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000026"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(acceptanceDateTimeString) &amp;&amp; !isIsoDateStringValidFormat(acceptanceDateTimeString)"/>
+            <column name="rule_id" value="26"/>
+            <column name="failure_message" value="Invalid acceptance date/time."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000027"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="acceptanceDateTime != null &amp;&amp; dateNotInPast(acceptanceDateTime, 10)"/>
+            <column name="rule_id" value="27"/>
+            <column name="failure_message" value="Acceptance date/time not in the past."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000028"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="relatedFLUXReportDocument == null"/>
+            <column name="rule_id" value="28"/>
+            <column name="failure_message" value="Report details missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000030"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; mdrService.validateFormat(ids, creationDateOfMessage)"/>
+            <column name="rule_id" value="30"/>
+            <column name="failure_message" value="Report ID value not according to schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000032"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="purposeCode == null"/>
+            <column name="rule_id" value="32"/>
+            <column name="failure_message" value="PurposeCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000033"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="purposeCode != null &amp;&amp; listIdContainsAll(purposeCode, &quot;FLUX_GP_PURPOSE&quot;)"/>
+            <column name="rule_id" value="33"/>
+            <column name="failure_message" value="PurposeCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000034"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="purposeCode != null &amp;&amp; !mdrService.isPresentInMDRList(purposeCode.listId, purposeCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="34"/>
+            <column name="failure_message" value="PurposeCode has an invalid value."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000035"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;3&quot; || purposeCode.value == &quot;5&quot;) &amp;&amp; (referencedID == null || (referencedID != null &amp;&amp; isEmpty(referencedID.value)))"/>
+            <column name="rule_id" value="35"/>
+            <column name="failure_message" value="Referenced Report ID missing. PurposeCode = 1, 3 or 5."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000036"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="referencedID != null &amp;&amp; referencedID.schemeId != &quot;UUID&quot;"/>
+            <column name="rule_id" value="36"/>
+            <column name="failure_message" value="Referenced Report ID has an invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000037"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="mdrService.validateFormat(referencedID, creationDateOfMessage)"/>
+            <column name="rule_id" value="37"/>
+            <column name="failure_message" value="Referenced Report ID value not according to schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000039"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="creationDateTime == null"/>
+            <column name="rule_id" value="39"/>
+            <column name="failure_message" value="Report creation date/time missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000040"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="!isIsoDateStringValidFormat(creationDateTimeString)"/>
+            <column name="rule_id" value="40"/>
+            <column name="failure_message" value="Invalid report creation date/time."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000041"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="creationDateTime != null &amp;&amp; dateNotInPast(creationDateTime, 10)"/>
+            <column name="rule_id" value="41"/>
+            <column name="failure_message" value="Report creation date/time not in the past."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000042"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="creationDateTime != null &amp;&amp; acceptanceDateTime != null &amp;&amp; !acceptanceDateNotBeforeCreationDate(creationDateTime, acceptanceDateTime, -10)"/>
+            <column name="rule_id" value="42"/>
+            <column name="failure_message" value="Acceptance date/time not before report creation date/time."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000043"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(ownerFluxPartyIds)"/>
+            <column name="rule_id" value="43"/>
+            <column name="failure_message" value="Report Owner ID missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000044"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(ownerFluxPartyIds) &amp;&amp; schemeIdContainsAll(ownerFluxPartyIds, &quot;FLUX_GP_PARTY&quot;) "/>
+            <column name="rule_id" value="44"/>
+            <column name="failure_message" value="Report Owner ID has an invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000045"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(ownerFluxPartyIds) &amp;&amp; idTypeValueContainsAny(ownerFluxPartyIds, &quot;XEU&quot;, &quot;XFA&quot;) &amp;&amp; !matchWithFluxTL(ownerFluxPartyIds)"/>
+            <column name="rule_id" value="45"/>
+            <column name="failure_message" value="Report Owner ID not consistent with FLUX TL envelope parameters."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000046"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;) &amp;&amp; specifiedVesselTransportMeans == null"/>
+            <column name="rule_id" value="46"/>
+            <column name="failure_message" value="Reporting vessel information missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000047"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="purposeCode != null &amp;&amp; (purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;9&quot;) &amp;&amp; !isValid(specifiedFishingActivities)"/>
+            <column name="rule_id" value="47"/>
+            <column name="failure_message" value="Fishing activity information missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000051"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="isFromFaReport &amp;&amp; !isEmpty(ids) &amp;&amp; !mdrService.isAllSchemeIdsPresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, ids, creationDateOfMessage)"/>
+            <column name="rule_id" value="51"/>
+            <column name="failure_message" value="Vessel ID has an invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000052"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="id != null &amp;&amp; mdrService.validateFormat(id, creationDateOfMessage)"/>
+            <column name="rule_id" value="52"/>
+            <column name="failure_message" value="Vessel ID value not according to schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000055"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="!isFromFaReport &amp;&amp; roleCode == null"/>
+            <column name="rule_id" value="55"/>
+            <column name="failure_message" value="Role of the related vessel missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000056"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="roleCode != null &amp;&amp; roleCode.listId != &quot;FA_VESSEL_ROLE&quot;"/>
+            <column name="rule_id" value="56"/>
+            <column name="failure_message" value="RoleCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000057"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="roleCode != null &amp;&amp; !mdrService.isPresentInMDRList(roleCode.listId, roleCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="57"/>
+            <column name="failure_message" value="RoleCode has an invalid value."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000058"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="registrationVesselCountryId == null || (registrationVesselCountryId != null &amp;&amp; isEmpty(registrationVesselCountryId.value))"/>
+            <column name="rule_id" value="58"/>
+            <column name="failure_message" value="Country of registration missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000059"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="registrationVesselCountryId != null &amp;&amp; (registrationVesselCountryId.schemeId != &quot;TERRITORY&quot;)"/>
+            <column name="rule_id" value="59"/>
+            <column name="failure_message" value="Invalid schemeID for country of registration."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000060"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="registrationVesselCountryId != null &amp;&amp;                                              !mdrService.isPresentInMDRList(registrationVesselCountryId.schemeId, registrationVesselCountryId.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="60"/>
+            <column name="failure_message" value="Invalid value for country of registration."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000062"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="registrationVesselCountryId != null &amp;&amp; transportMeans != null &amp;&amp; (transportMeans.asset == null  || (transportMeans.asset != null &amp;&amp; isEmpty(transportMeans.asset.countryCode)) || transportMeans.asset.countryCode != registrationVesselCountryId.value)"/>
+            <column name="rule_id" value="62"/>
+            <column name="failure_message" value="Inconsistent information of vessel ID and registration country."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000067"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isFromFaReport &amp;&amp; isEmpty(specifiedContactParties)"/>
+            <column name="rule_id" value="67"/>
+            <column name="failure_message" value="Contact details of the reporting vessel are missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000069"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(specifiedContactPartyRoleCodes) &amp;&amp; listIdContainsAll(specifiedContactPartyRoleCodes, &quot;FLUX_CONTACT_ROLE&quot;)"/>
+            <column name="rule_id" value="69"/>
+            <column name="failure_message" value="Contact RoleCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000070"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(specifiedContactPartyRoleCodes) &amp;&amp;                                              !mdrService.isCodeTypePresentInMDRList(&quot;FLUX_CONTACT_ROLE&quot;, specifiedContactPartyRoleCodes, creationDateOfMessage)"/>
+            <column name="rule_id" value="70"/>
+            <column name="failure_message" value="Contact RoleCode has an invalid value."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000072"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="checkContactListContainsAny(specifiedContactPersons, true, true)"/>
+            <column name="rule_id" value="72"/>
+            <column name="failure_message" value="Given name of the contact missing as no contact alias is provided."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000074"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="checkContactListContainsAny(specifiedContactPersons, true, false)"/>
+            <column name="rule_id" value="74"/>
+            <column name="failure_message" value="Family name of the contact missing as no contact alias is provided."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000076"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="checkAliasFromContactList(specifiedContactPersons, false)"/>
+            <column name="rule_id" value="76"/>
+            <column name="failure_message" value="Contact alias missing as either given or family name are missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000077"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(specifiedContactPersons) &amp;&amp; checkAliasFromContactList(specifiedContactPersons, true)"/>
+            <column name="rule_id" value="77"/>
+            <column name="failure_message" value="The contact alias cannot be empty."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000090"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="typeCode == null || isEmpty(typeCode.value)"/>
+            <column name="rule_id" value="90"/>
+            <column name="failure_message" value="Fishing activity TypeCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000091"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.listId != &quot;FLUX_FA_TYPE&quot;"/>
+            <column name="rule_id" value="91"/>
+            <column name="failure_message" value="Fishing activity TypeCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000092"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="92"/>
+            <column name="failure_message" value="Fishing activity TypeCode value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000094"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!subActivity &amp;&amp; occurrenceDateTime != null &amp;&amp; !isValid(occurrenceDateTime)"/>
+            <column name="rule_id" value="94"/>
+            <column name="failure_message" value="Invalid occurrence date/time of the activity."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2000097"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="reasonCode != null &amp;&amp; !mdrService.isPresentInMDRList(reasonCode.listId, reasonCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="97"/>
+            <column name="failure_message" value="ReasonCode value invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000101"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="speciesTargetCode != null &amp;&amp; !mdrService.isPresentInMDRList(speciesTargetCode.listId, speciesTargetCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="101"/>
+            <column name="failure_message" value="Invalid Target species."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000102"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="vesselRelatedActivityCode != null &amp;&amp; vesselRelatedActivityCode.listId != &quot;VESSEL_ACTIVITY&quot;"/>
+            <column name="rule_id" value="102"/>
+            <column name="failure_message" value="Vessel activity has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000103"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="vesselRelatedActivityCode != null &amp;&amp; !mdrService.isPresentInMDRList(vesselRelatedActivityCode.listId, vesselRelatedActivityCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="103"/>
+            <column name="failure_message" value="Invalid vessel activity."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000104"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="operationQuantity != null  &amp;&amp; !isPositiveIntegerValue(operationQuantity)"/>
+            <column name="rule_id" value="104"/>
+            <column name="failure_message" value="Not a positive integer."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000105"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="!isEmpty(durationMeasure) &amp;&amp; !isPositive(durationMeasure)"/>
+            <column name="rule_id" value="105"/>
+            <column name="failure_message" value="Not a positive number."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000106"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(durationMeasure) &amp;&amp; unitCodeContainsAll(durationMeasure, &quot;MIN&quot;)"/>
+            <column name="rule_id" value="106"/>
+            <column name="failure_message" value="Unit must be minutes."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000150"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="typeCode == null"/>
+            <column name="rule_id" value="150"/>
+            <column name="failure_message" value="TypeCode for this catch is missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000151"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.listId != null &amp;&amp; typeCode.listId != &quot;FA_CATCH_TYPE&quot;"/>
+            <column name="rule_id" value="151"/>
+            <column name="failure_message" value="TypeCode for this catch has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000152"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.listId != null &amp;&amp; typeCode.value != null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="152"/>
+            <column name="failure_message"
+                    value="Check code. Must be existing in the list specified in attribute listID "/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000153"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="speciesCode == null"/>
+            <column name="rule_id" value="153"/>
+            <column name="failure_message" value="Species code missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000154"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="speciesCode != null &amp;&amp; speciesCode.listId != null &amp;&amp; speciesCode.listId != &quot;FAO_SPECIES&quot;"/>
+            <column name="rule_id" value="154"/>
+            <column name="failure_message" value="Species code has an invalid listID"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000155"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="speciesCode != null &amp;&amp; speciesCode.listId != null &amp;&amp; speciesCode.value != null &amp;&amp; !mdrService.isPresentInMDRList(speciesCode.listId, speciesCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="155"/>
+            <column name="failure_message"
+                    value="Check code. Must be existing in the list specified in attribute listID "/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000160"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="weightMeasure != null &amp;&amp; weightMeasure.unitCode != null &amp;&amp; weightMeasure.unitCode != &quot;KGM&quot;"/>
+            <column name="rule_id" value="160"/>
+            <column name="failure_message" value="Unit of weight for this catch must be expressed in kilograms."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000161"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="weightMeasure != null &amp;&amp; weightMeasure.value != null &amp;&amp; (isNegative(weightMeasure.value) || (getNumberOfDecimalPlaces(weightMeasure.value, true) &gt; 2))"/>
+            <column name="rule_id" value="161"/>
+            <column name="failure_message"
+                    value="Not more than 2 decimals should be provided for the weight of this catch."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000166"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(sizeDistributionClassCode) &amp;&amp; listIdContainsAll(sizeDistributionClassCode, &quot;FISH_SIZE_CLASS&quot;)"/>
+            <column name="rule_id" value="166"/>
+            <column name="failure_message" value="The ClassCode listID is not valid for this size distribution."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000167"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(sizeDistributionClassCode) &amp;&amp; !mdrService.isCodeTypePresentInMDRList(&quot;FISH_SIZE_CLASS&quot;, sizeDistributionClassCode, creationDateOfMessage)"/>
+            <column name="rule_id" value="167"/>
+            <column name="failure_message" value="The size distribution ClassCode value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000190"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(ids)"/>
+            <column name="rule_id" value="190"/>
+            <column name="failure_message" value="Trip ID missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000192"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; mdrService.validateSchemeIdFormat(ids, &quot;EU_TRIP_ID&quot;, creationDateOfMessage)"/>
+            <column name="rule_id" value="192"/>
+            <column name="failure_message"
+                    value="Check format. Must be according to schemeID rules. For schemeID=EU_TRIP_ID: Starting with the ISO-3 code of the country, followed by a hyphen, followed by TRP, followed by a hyphen, followed by a unique string of at most 20 alphanumeric characters. The string can be formatted according to the following pattern [A- Za-z0-9-\/]{0,20} For other schemeIDs =&gt; ignore"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000195"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="typeCode == null"/>
+            <column name="rule_id" value="195"/>
+            <column name="failure_message" value="Location TypeCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000196"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; listIdContainsAll(typeCode, &quot;FLUX_LOCATION_TYPE&quot;)"/>
+            <column name="rule_id" value="196"/>
+            <column name="failure_message" value="Location TypeCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000197"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_LOCATION_TYPE&quot;, typeCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="197"/>
+            <column name="failure_message" value="Location TypeCode value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000201"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value != &quot;POSITION&quot; &amp;&amp; id == null"/>
+            <column name="rule_id" value="201"/>
+            <column name="failure_message" value="Location ID missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000203"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="id != null &amp;&amp; id.schemeId != null &amp;&amp; !mdrService.isPresentInMDRList(id.schemeId, id.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="203"/>
+            <column name="failure_message" value="Location ID value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000204"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="rfmo != null &amp;&amp; rfmo.listId != &quot;RFMO&quot;"/>
+            <column name="rule_id" value="204"/>
+            <column name="failure_message" value="RFMO code has an invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000205"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="rfmo != null &amp;&amp; !mdrService.isTypeCodeValuePresentInList(rfmo.listId, rfmo, creationDateOfMessage)"/>
+            <column name="rule_id" value="205"/>
+            <column name="failure_message" value="RFMO code value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000206"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value == &quot;POSITION&quot; &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate == null"/>
+            <column name="rule_id" value="206"/>
+            <column name="failure_message" value="Geographical coordinate missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000216"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(applicableFLUXCharacteristicTypeCode) &amp;&amp; listIdContainsAll(applicableFLUXCharacteristicTypeCode, &quot;FLUX_LOCATION_CHARACTERISTIC&quot;) "/>
+            <column name="rule_id" value="216"/>
+            <column name="failure_message" value="FLUX characteristic has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000207"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure == null"/>
+            <column name="rule_id" value="207"/>
+            <column name="failure_message" value="Latitude missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000210"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure == null"/>
+            <column name="rule_id" value="210"/>
+            <column name="failure_message" value="Longitude missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000120"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; listIdNotContains(typeCode, &quot;GEAR_TYPE&quot;)"/>
+            <column name="rule_id" value="120"/>
+            <column name="failure_message" value="Fishing gear TypeCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000121"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;GEAR_TYPE&quot;, typeCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="121"/>
+            <column name="failure_message" value="Fishing gear TypeCode is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000124"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="typeCode == null"/>
+            <column name="rule_id" value="124"/>
+            <column name="failure_message" value="GearCharacteristic TypeCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000125"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; listIdContainsAll(typeCode, &quot;FA_GEAR_CHARACTERISTIC&quot;)"/>
+            <column name="rule_id" value="125"/>
+            <column name="failure_message" value="GearCharacteristic TypeCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000126"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="126"/>
+            <column name="failure_message" value="GearCharacteristic TypeCode is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000128"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value !=null &amp;&amp; (mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;NUMBER&quot; || mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;MEASURE&quot;) &amp;&amp; valueMeasure == null"/>
+            <column name="rule_id" value="128"/>
+            <column name="failure_message"
+                    value="If UN_DATA_TYPE for the characteristic (specified in FLUXCharacteristic/TypeCode) is MEASURE or NUMBER, ValueMeasure must be present and have a value"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000129"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; valueIndicator == null "/>
+            <column name="rule_id" value="129"/>
+            <column name="failure_message" value="Expected indicator type missing. "/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000130"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;CODE&quot; &amp;&amp; isBlank(valueCode)"/>
+            <column name="rule_id" value="130"/>
+            <column name="failure_message" value="Expected code value missing. "/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000145"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="valueCode != null &amp;&amp; (isEmpty(valueCode.listId) || !mdrService.codeListExistsInMdr(valueCode.listId))"/>
+            <column name="rule_id" value="145"/>
+            <column name="failure_message"
+                    value="Check presence of attribute listID. Must be present and have a value of an existing code list in MDR."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000146"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="valueCode != null &amp;&amp; !isEmpty(valueCode.listId) &amp;&amp; !mdrService.isPresentInMDRList(valueCode.listId, valueCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="146"/>
+            <column name="failure_message"
+                    value="Check value. Must be existing on the MDR code list specified in listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000131"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value !=null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot;, typeCode.value) == &quot;TEXT&quot; &amp;&amp; isBlank(value)"/>
+            <column name="rule_id" value="131"/>
+            <column name="failure_message" value="Expected text value missing. "/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000132"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_GEAR_CHARACTERISTIC&quot; , typeCode.value) == &quot;QUANTITY&quot; &amp;&amp; isBlank(valueQuantity)"/>
+            <column name="rule_id" value="132"/>
+            <column name="failure_message" value="Expected quantity value missing. "/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000135"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="typeCode == null"/>
+            <column name="rule_id" value="135"/>
+            <column name="failure_message" value="Gear problem TypeCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000136"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; listIdNotContains(typeCode, &quot;FA_GEAR_PROBLEM&quot;)"/>
+            <column name="rule_id" value="136"/>
+            <column name="failure_message" value="Gear problem TypeCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000137"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FA_GEAR_PROBLEM&quot;, typeCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="137"/>
+            <column name="failure_message" value="The value of gear problem TypeCode is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000220"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="typeCode == null"/>
+            <column name="rule_id" value="220"/>
+            <column name="failure_message" value="FLUX characteristic TypeCode is missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000221"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; !mdrService.isTypeCodeValuePresentInList(typeCode.listId, typeCode, creationDateOfMessage)"/>
+            <column name="rule_id" value="221"/>
+            <column name="failure_message" value="The value of the FLUX characteristic TypeCode is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000223"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; (mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;NUMBER&quot; || mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;MEASURE&quot;) &amp;&amp; valueMeasure == null"/>
+            <column name="rule_id" value="223"/>
+            <column name="failure_message"
+                    value="If UN_DATA_TYPE for the characteristic (specified in FLUXCharacteristic/TypeCode) is MEASURE or NUMBER, ValueMeasure must be present and have a value"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000229"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;MEASURE&quot; &amp;&amp; valueMeasure != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_UNIT&quot;, valueMeasure.unitCode, creationDateOfMessage)"/>
+            <column name="rule_id" value="229"/>
+            <column name="failure_message" value="Unexpected unit code for Measure."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000224"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;DATETIME&quot; &amp;&amp; valueDateTime == null"/>
+            <column name="rule_id" value="224"/>
+            <column name="failure_message" value="Expected date/time type missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000225"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;BOOLEAN&quot; &amp;&amp; (valueIndicator == null || valueIndicator.isIndicator() == null)"/>
+            <column name="rule_id" value="225"/>
+            <column name="failure_message"
+                    value="If UN_DATA_TYPE23 for the characteristic (specified in FLUXCharacteristic/TypeCode) is BOOLEAN, ValueIndicator must be present and have a value."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000226"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;CODE&quot; &amp;&amp; (valueCode == null                     || valueCode != null  &amp;&amp; isEmpty(valueCode.value))"/>
+            <column name="rule_id" value="226"/>
+            <column name="failure_message" value="Expected code value missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000147"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="valueCode != null &amp;&amp; (isEmpty(valueCode.listId) || !mdrService.codeListExistsInMdr(valueCode.listId))"/>
+            <column name="rule_id" value="147"/>
+            <column name="failure_message"
+                    value="Check presence of attribute listID. Must be present and have a value of an existing code list in MDR."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000148"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="valueCode != null &amp;&amp; !isEmpty(valueCode.listId) &amp;&amp; !mdrService.isPresentInMDRList(valueCode.listId, valueCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="148"/>
+            <column name="failure_message"
+                    value="Check value. Must be existing on the MDR code list specified in listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000227"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;TEXT&quot; &amp;&amp; isEmpty(values)"/>
+            <column name="rule_id" value="227"/>
+            <column name="failure_message" value="Expected text value missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000228"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; mdrService.getDataTypeForMDRList(&quot;FA_CHARACTERISTIC&quot;, typeCode.value) == &quot;QUANTITY&quot; &amp;&amp;                           (valueQuantity == null || valueQuantity.value == null)"/>
+            <column name="rule_id" value="228"/>
+            <column name="failure_message" value="Expected quantity value missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000256"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="vesselRelatedActivityCode == null"/>
+            <column name="rule_id" value="256"/>
+            <column name="failure_message" value="Vessel Activity code missing for this fishing operation."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000260"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(relatedFishingActivities) &amp;&amp; !codeTypeValueContainsMatch(relatedFishingActivityTypeCodes,&quot;GEAR_SHOT&quot;,&quot;GEAR_RETRIEVAL&quot;)"/>
+            <column name="rule_id" value="260"/>
+            <column name="failure_message" value="Invalid sub-activity type for this fishing operation."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000610"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !noCatchesDeclaredForCodeTypes(&quot;GEAR_SHOT&quot;, &quot;GEAR_RETRIEVAL&quot;)"/>
+            <column name="rule_id" value="610"/>
+            <column name="failure_message"
+                    value="If the activity is a fishing operation declaration and the  RelatedFishingActivity/TypeCode is either GEAR_SHOT or GEAR_RETRIEVAL, then the  RelatedFishingActivity shall not contain SpecifiedFACatch entities."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000281"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(relatedFLUXLocations)"/>
+            <column name="rule_id" value="281"/>
+            <column name="failure_message" value="Location of the discard is missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000321"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(relatedFLUXLocations)"/>
+            <column name="rule_id" value="321"/>
+            <column name="failure_message" value="The transhipment location is missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000322"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(fluxLocationTypeCodes) &amp;&amp; valueContainsAny(fluxLocationTypeCodes,&quot;LOCATION&quot;) &amp;&amp; valueContainsAny(fluxLocationTypeCodes, &quot;POSITION&quot;)  "/>
+            <column name="rule_id" value="322"/>
+            <column name="failure_message" value="At least a port or position must be provided."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000323"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(relatedVesselTransportMeans)"/>
+            <column name="rule_id" value="323"/>
+            <column name="failure_message"
+                    value="Information concerning the other vessel involved in the transhipment is missing. "/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000291"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="occurrenceDateTime == null"/>
+            <column name="rule_id" value="291"/>
+            <column name="failure_message" value="Occurrence date/time missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000292"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="reasonCode == null"/>
+            <column name="rule_id" value="292"/>
+            <column name="failure_message" value="ReasonCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000293"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="listIdContainsAll(reasonCode, &quot;FA_REASON_ARRIVAL&quot;)"/>
+            <column name="rule_id" value="293"/>
+            <column name="failure_message" value="ReasonCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000294"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(relatedFLUXLocations)"/>
+            <column name="rule_id" value="294"/>
+            <column name="failure_message" value="Location information missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000295"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!anyFluxLocationTypeCodeContainsValue(relatedFLUXLocations, &quot;LOCATION&quot;)"/>
+            <column name="rule_id" value="295"/>
+            <column name="failure_message" value="Mandatory location TypeCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000296"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(reasonCode, &quot;LAN&quot;) &amp;&amp; isEmpty(specifiedFACatches)"/>
+            <column name="rule_id" value="296"/>
+            <column name="failure_message" value="Catch information missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000297"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(specifiedFACatches) &amp;&amp; (isEmpty(specifiedFACatchTypeCodes) || valueContainsAny(specifiedFACatchTypeCodes, &quot;ONBOARD&quot;))"/>
+            <column name="rule_id" value="297"/>
+            <column name="failure_message" value="Mandatory catch TypeCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000298"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(reasonCode, &quot;LAN&quot;) &amp;&amp; !isEmpty(specifiedFACatches) &amp;&amp; !isEmpty(specifiedFACatchTypeCodes) &amp;&amp;                            valueContainsAny(specifiedFACatchTypeCodes, &quot;UNLOADED&quot;)"/>
+            <column name="rule_id" value="298"/>
+            <column name="failure_message" value="Mandatory catch TypeCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000380"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; schemeIdContainsAll(ids, &quot;UUID&quot;)  "/>
+            <column name="rule_id" value="380"/>
+            <column name="failure_message" value="Response message ID has an invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000381"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; mdrService.validateFormat(ids, creationDateOfMessage)"/>
+            <column name="rule_id" value="381"/>
+            <column name="failure_message" value="Response message ID value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000382"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; (getValueForSchemeId(&quot;FA_RESPONSE&quot;, idsExistinigInTheDb) != null)"/>
+            <column name="rule_id" value="382"/>
+            <column name="failure_message"
+                    value="The identification of the FLUX response Document must be unique and not already exist"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000383"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="referencedID != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_GP_MSG_ID&quot;, referencedID.schemeId, creationDateOfMessage)"/>
+            <column name="rule_id" value="383"/>
+            <column name="failure_message" value="Response referenced ID has invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000384"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="referencedID != null &amp;&amp; mdrService.validateFormat(referencedID, creationDateOfMessage)  "/>
+            <column name="rule_id" value="384"/>
+            <column name="failure_message" value="Response referenced ID value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000385"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="messageType == &quot;PULL&quot; &amp;&amp; referencedID != null &amp;&amp; (getValueForSchemeId(&quot;FA_QUERY_ID&quot;, idsExistinigInTheDb) == null) &amp;&amp;                 (getValueForSchemeId(&quot;FA_MESSAGE_ID&quot;, idsExistinigInTheDb) == null)"/>
+            <column name="rule_id" value="385"/>
+            <column name="failure_message"
+                    value="The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000386"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="responseCode ==null"/>
+            <column name="rule_id" value="386"/>
+            <column name="failure_message" value="ResponseCode missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000387"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="responseCode != null &amp;&amp; listIdContainsAll(responseCode, &quot;FLUX_GP_RESPONSE&quot;)"/>
+            <column name="rule_id" value="387"/>
+            <column name="failure_message" value="ResponseCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000388"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="responseCode != null &amp;&amp; !mdrService.isPresentInMDRList(responseCode.listId, responseCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="388"/>
+            <column name="failure_message" value="ResponseCode value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000389"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="creationDateTime == null"/>
+            <column name="rule_id" value="389"/>
+            <column name="failure_message" value="Response creation date/time is missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000390"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="!isValid(creationDateTime)"/>
+            <column name="rule_id" value="390"/>
+            <column name="failure_message"
+                    value="Response creation date/time must be a valid UTC date and in the correct."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000391"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="creationDateTime != null &amp;&amp; dateNow().before(toDate(creationDateTime))"/>
+            <column name="rule_id" value="391"/>
+            <column name="failure_message" value="Response creation date/time must be in the past."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000553"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="respondentFLUXParty == null"/>
+            <column name="rule_id" value="553"/>
+            <column name="failure_message" value="Respondent party is missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000368"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="responseCode != null &amp;&amp; responseCode.value != null  &amp;&amp; responseCode.value != &quot;OK&quot; &amp;&amp; isEmpty(relatedValidationResultDocuments)  "/>
+            <column name="rule_id" value="368"/>
+            <column name="failure_message" value="Validation results are missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000392"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(fluxPartyIds)"/>
+            <column name="rule_id" value="392"/>
+            <column name="failure_message" value="The respondent ID is missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000393"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(fluxPartyIds) &amp;&amp; schemeIdContainsAll(fluxPartyIds, &quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="rule_id" value="393"/>
+            <column name="failure_message" value="Respondent ID has an invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000394"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="!isEmpty(fluxPartyIds) &amp;&amp; !matchWithFluxTL(fluxPartyIds)"/>
+            <column name="rule_id" value="394"/>
+            <column name="failure_message" value="Respondent ID is not consistent with FLUX TL envelope parameters."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000395"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="!isValidatorIdPresent(relatedValidationResultDocuments)"/>
+            <column name="rule_id" value="395"/>
+            <column name="failure_message" value="Validator ID is missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000396"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(validatorIDs) &amp;&amp; schemeIdContainsAll(validatorIDs, &quot;FLUX_GP_PARTY&quot;)  "/>
+            <column name="rule_id" value="396"/>
+            <column name="failure_message" value="Validator ID has an invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000555"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(validatorIDs) &amp;&amp; !mdrService.isIdTypePresentInMDRList(validatorIDs, creationDateOfMessage)"/>
+            <column name="rule_id" value="555"/>
+            <column name="failure_message" value="Validator ID value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000554"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!codeTypeValueEquals(responseCode, &quot;OK&quot;) &amp;&amp; !isValidationQualityAnalysisPresent(relatedValidationResultDocuments)"/>
+            <column name="rule_id" value="554"/>
+            <column name="failure_message" value="Quality analysis details are missing"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000397"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="id == null"/>
+            <column name="rule_id" value="397"/>
+            <column name="failure_message" value="Quality analysis ID is missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000398"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="id != null &amp;&amp; id.schemeId != &quot;FA_BR&quot;"/>
+            <column name="rule_id" value="398"/>
+            <column name="failure_message" value="Quality analysis ID has an invalid schemeID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000399"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="id != null &amp;&amp; !mdrService.isPresentInMDRList(id.schemeId, id.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="399"/>
+            <column name="failure_message" value="Quality analysis ID value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000400"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="levelCode == null"/>
+            <column name="rule_id" value="400"/>
+            <column name="failure_message" value="LevelCode is missing."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000401"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="levelCode != null &amp;&amp; levelCode.listId != &quot;FLUX_GP_VALIDATION_LEVEL&quot;"/>
+            <column name="rule_id" value="401"/>
+            <column name="failure_message" value="LevelCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000402"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="levelCode != null &amp;&amp; !mdrService.isPresentInMDRList(levelCode.listId, levelCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="402"/>
+            <column name="failure_message" value="LevelCode value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000403"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode != null &amp;&amp; typeCode.listId != &quot;FLUX_GP_VALIDATION_TYPE&quot;"/>
+            <column name="rule_id" value="403"/>
+            <column name="failure_message" value="TypeCode has an invalid listID."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000406"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="typeCode !=null &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId , typeCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="406"/>
+            <column name="failure_message" value="TypeCode value is invalid."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000404"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="containsEmptyStrings(results)"/>
+            <column name="rule_id" value="404"/>
+            <column name="failure_message" value="Textual description is empty."/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000405"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="id != null &amp;&amp; id.value != &quot;FA-L00-00-0000&quot; &amp;&amp; (codeTypeValueEquals(typeCode, &quot;ERR&quot;) || codeTypeValueEquals(typeCode, &quot;WAR&quot;)) &amp;&amp; containsOnlyEmptyStrings(referencedItems)"/>
+            <column name="rule_id" value="405"/>
+            <column name="failure_message" value="Referenced item(s) missing."/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
