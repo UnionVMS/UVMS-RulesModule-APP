@@ -94,7 +94,6 @@ public class RulesKieContainerInitializer {
         AtomicInteger nrOfFaRules = new AtomicInteger();
         templates.forEach(temp -> {
             temp.getRules().forEach(rule->{
-                log.info("Adding rule {} which has {} contextExpressions.", rule.getBrId(), rule.getContextExpressionList().size());
                 nrOfFaRules.addAndGet(rule.getContextExpressionList().size());
             });
         });
