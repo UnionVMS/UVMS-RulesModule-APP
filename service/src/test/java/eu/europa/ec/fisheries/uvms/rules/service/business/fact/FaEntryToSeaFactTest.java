@@ -27,7 +27,7 @@ public class FaEntryToSeaFactTest {
     public void testWithEffortZoneShouldPass(){
         faEntryToSeaFact.setFaReportDocumentTypeCode(objectsHelper.generateCodeType("DECLARATION",null));
         FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,"EFFORT_ZONE"));
-        boolean result= faEntryToSeaFact.fluxLocationIDIsValid(Collections.singletonList(fluxLocation));
+        boolean result= faEntryToSeaFact.fluxLocationIDIsValid(Collections.singletonList(fluxLocation), null, null, null);
         assertTrue(result);
     }
 
@@ -35,7 +35,7 @@ public class FaEntryToSeaFactTest {
     public void testWithEffortZoneAndAreaEntryShouldNotFail(){
         faEntryToSeaFact.setFaReportDocumentTypeCode(objectsHelper.generateCodeType("AREA_ENTRY",null));
         FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,"EFFORT_ZONE"));
-        boolean result= faEntryToSeaFact.fluxLocationIDIsValid(Collections.singletonList(fluxLocation));
+        boolean result= faEntryToSeaFact.fluxLocationIDIsValid(Collections.singletonList(fluxLocation), null, null, null);
         assertTrue(result);
     }
 
@@ -43,7 +43,7 @@ public class FaEntryToSeaFactTest {
     public void testWithStatRectangleZoneShouldFail(){
         faEntryToSeaFact.setFaReportDocumentTypeCode(objectsHelper.generateCodeType("DECLARATION",null));
         FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,"STAT_RECTANGLE"));
-        boolean result= faEntryToSeaFact.fluxLocationIDIsValid(Collections.singletonList(fluxLocation));
+        boolean result= faEntryToSeaFact.fluxLocationIDIsValid(Collections.singletonList(fluxLocation), null, null, null);
         assertFalse(result);
     }
 
@@ -51,7 +51,7 @@ public class FaEntryToSeaFactTest {
     public void testWithNullShouldFail(){
         faEntryToSeaFact.setFaReportDocumentTypeCode(objectsHelper.generateCodeType("DECLARATION",null));
         FLUXLocation fluxLocation= ActivityObjectsHelper.generateFLUXLocation(ActivityObjectsHelper.generateCodeTypeUNCEFACT("AREA",null),ActivityObjectsHelper.generateIdTypeUNCEFACT(null,null));
-        boolean result= faEntryToSeaFact.fluxLocationIDIsValid(Collections.singletonList(fluxLocation));
+        boolean result= faEntryToSeaFact.fluxLocationIDIsValid(Collections.singletonList(fluxLocation), null, null, null);
         assertFalse(result);
     }
 }

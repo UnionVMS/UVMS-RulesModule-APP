@@ -105,6 +105,7 @@ public class RulesResource {
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, fr);
             extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, gearMatrix.getMatrix());
+            extraValues.put(FISHING_GEAR_TYPE_NEAFC_CHARACTERISTICS, gearMatrix.getNeafcMatrix());
             extraValues.put(ASSET, assetClientBean.findHistoryOfAssetBy(request.getFAReportDocuments()));
             Set<FADocumentID> idsFromIncomingMessage = helper.mapToFADocumentID(request);
             List<FADocumentID> faDocumentIDS = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);

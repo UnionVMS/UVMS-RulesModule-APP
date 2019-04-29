@@ -383,20 +383,25 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
             xPathUtil.appendWithoutWrapping(partialXpath);
             Map<String, List<GearMatrix.Condition>> matrix = new HashMap<>();
+            Map<String, List<GearMatrix.Condition>> matrixNeafc = new HashMap<>();
             if (MapUtils.isNotEmpty(extraValueMap)){
-                Object o = extraValueMap.get(FISHING_GEAR_TYPE_CHARACTERISTICS);
-                if (o != null){
-                    matrix = (Map<String, List<GearMatrix.Condition>>) o;
+                Object gearMetrixObj = extraValueMap.get(FISHING_GEAR_TYPE_CHARACTERISTICS);
+                if (gearMetrixObj != null){
+                    matrix = (Map<String, List<GearMatrix.Condition>>) gearMetrixObj;
+                }
+                Object gearMetrixNEAFCObj = extraValueMap.get(FISHING_GEAR_TYPE_NEAFC_CHARACTERISTICS);
+                if (gearMetrixObj != null){
+                    matrixNeafc = (Map<String, List<GearMatrix.Condition>>) gearMetrixNEAFCObj;
                 }
             }
-            facts.addAll(activityFactMapper.generateFactsForFishingGears(fishingGears, gearType, matrix));
+            facts.addAll(activityFactMapper.generateFactsForFishingGears(fishingGears, gearType, matrix, matrixNeafc));
 
             int index = 1;
             for (FishingGear fishingGear : fishingGears) {
                 List<GearCharacteristic> gearCharacteristics = fishingGear.getApplicableGearCharacteristics();
                 if (CollectionUtils.isNotEmpty(gearCharacteristics)) {
                     xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(APPLICABLE_GEAR_CHARACTERISTIC, index);
-                    facts.addAll(activityFactMapper.generateFactsForGearCharacteristics(gearCharacteristics, APPLICABLE_GEAR_CHARACTERISTIC));
+                    facts.addAll(activityFactMapper.generateFactsForGearCharacteristics(gearCharacteristics, APPLICABLE_GEAR_CHARACTERISTIC, matrix, matrixNeafc));
                 }
                 index++;
             }

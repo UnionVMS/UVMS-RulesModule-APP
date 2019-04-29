@@ -179,12 +179,35 @@ public abstract class AbstractFact {
         return valLength > hits;
     }
 
+    public boolean schemIdContainsOnly(List<IdType> idTypes, String... valuesToMatch){
+        if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+            return true;
+        }
+        List<String> valuesAsList = Arrays.asList(valuesToMatch);
+        for (IdType IdType : idTypes) {
+            if (IdType != null && !valuesAsList.contains(IdType.getSchemeId())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean allIdsContainSameSchemeId(List<IdType> idTypes){
+        if(CollectionUtils.isEmpty(idTypes) || idTypes.size() == 1){
+            return true;
+        }
+        Set<String> uniqueIds = new HashSet<>();
+        idTypes.forEach(idType->{
+            uniqueIds.add(idType.getSchemeId());
+        });
+        return uniqueIds.size() < 2;
+    }
+
     @Deprecated
     public boolean isAllSchemeIdsPresent(List<IdType> idTypes) {
         if (CollectionUtils.isEmpty(idTypes)) {
             return false;
         }
-        idTypes = new ArrayList<>(idTypes);
         CollectionUtils.filter(idTypes, PredicateUtils.notNullPredicate());
         for (IdType idType : idTypes) {
             if (!isSchemeIdPresent(idType)) {
@@ -1225,7 +1248,7 @@ public abstract class AbstractFact {
         UVI("[a-zA-Z0-9]{7}"),
         ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
         GFCM("[a-zA-Z0-9]{1,13}"),
-        JFO("^(19|20)[0-9][0-9]-\\d{3}"),
+        JFO("^(19|20)\\d{2}-[0-9]{3}$"),
         //EU_TRIP_ID("[a-zA-Z]{3}-TRP-[a-zA-Z0-9]{0,20}"),
         EU_SALES_ID_COMMON("[A-Z]{3}-(SN|TOD|TRD|SN+TOD)-.*"),
         EU_SALES_ID_SPECIFIC("^[^-]*-[^-]*-[A-Za-z0-9\\-]{1,20}$"),

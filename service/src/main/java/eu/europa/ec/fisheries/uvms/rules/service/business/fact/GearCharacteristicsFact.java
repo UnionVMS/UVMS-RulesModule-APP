@@ -14,9 +14,16 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
+import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IndicatorType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @autor padhyad
@@ -30,6 +37,20 @@ public class GearCharacteristicsFact extends AbstractFact {
     private MeasureType valueQuantity;
     private CodeType valueCode;
     private IndicatorType valueIndicator;
+    private GearCharacteristic xmlGearCharacteristic;
+
+    private Map<String, List<GearMatrix.Condition>> matrix;
+    private Map<String, List<GearMatrix.Condition>> neafcMatrix;
+
+
+    public boolean valid(Map<String, List<GearMatrix.Condition>> matrix){
+        FishingGear fishGear = new FishingGear();
+        fishGear.setApplicableGearCharacteristics(Collections.singletonList(xmlGearCharacteristic));
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType();
+        codeType.setValue(valueMeasure.getUnitCode());
+        fishGear.setTypeCode(codeType);
+        return FishingGearFact.valid(fishGear, matrix);
+    }
 
     public GearCharacteristicsFact() {
         setFactType();
@@ -88,5 +109,27 @@ public class GearCharacteristicsFact extends AbstractFact {
         this.valueIndicator = valueIndicator;
     }
 
+    public GearCharacteristic getXmlGearCharacteristic() {
+        return xmlGearCharacteristic;
+    }
 
+    public void setXmlGearCharacteristic(GearCharacteristic xmlGearCharacteristic) {
+        this.xmlGearCharacteristic = xmlGearCharacteristic;
+    }
+
+    public Map<String, List<GearMatrix.Condition>> getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(Map<String, List<GearMatrix.Condition>> matrix) {
+        this.matrix = matrix;
+    }
+
+    public Map<String, List<GearMatrix.Condition>> getNeafcMatrix() {
+        return neafcMatrix;
+    }
+
+    public void setNeafcMatrix(Map<String, List<GearMatrix.Condition>> neafcMatrix) {
+        this.neafcMatrix = neafcMatrix;
+    }
 }

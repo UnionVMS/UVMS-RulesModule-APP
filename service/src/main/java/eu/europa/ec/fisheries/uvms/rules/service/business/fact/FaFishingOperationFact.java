@@ -33,24 +33,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FaFishingOperationFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
-
     private CodeType faReportDocumentTypeCode;
-
     private CodeType vesselRelatedActivityCode;
-
     private String operationsQuantity;
-
     private List<FLUXLocation> relatedFLUXLocations;
-
     private List<FishingActivity> relatedFishingActivities;
-
     private List<CodeType> fishingGearRoleCodes;
-
     private List<CodeType> relatedFishingActivityTypeCodes;
-
     private List<ContactParty> vesselTransportMeansContactParties;
-
     private List<VesselTransportMeans> vesselTransportMeans;
+    private CodeType faReportDocVesselRoleCode;
 
     public FaFishingOperationFact() {
         setFactType();
@@ -115,6 +107,14 @@ public class FaFishingOperationFact extends AbstractFact {
 
     public void setRelatedFishingActivityTypeCodes(List<CodeType> relatedFishingActivityTypeCodes) {
         this.relatedFishingActivityTypeCodes = relatedFishingActivityTypeCodes;
+    }
+
+    public CodeType getFaReportDocVesselRoleCode() {
+        return faReportDocVesselRoleCode;
+    }
+
+    public void setFaReportDocVesselRoleCode(CodeType faReportDocVesselRoleCode) {
+        this.faReportDocVesselRoleCode = faReportDocVesselRoleCode;
     }
 
     public boolean isFLUXLocationPresentForFishingActivity(List<FishingActivity> relatedFishingActivities) {

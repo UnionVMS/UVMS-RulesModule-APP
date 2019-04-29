@@ -30,11 +30,205 @@ public class GearMatrix {
     @Getter
     private Map<String, List<Condition>> matrix = new HashMap<>();
 
+    @Getter
+    private Map<String, List<Condition>> neafcMatrix = new HashMap<>();
+
     @PostConstruct
-    public void init(){
+    public void init() {
+        fillGearMetrix();
+        fillNEAFCGearMetrix();
+    }
+
+    private void fillNEAFCGearMetrix() {
+        ////////// NEAFCT Related Matrix
+
+        // Surrounding Nets
+        neafcMatrix.put("PS", Collections.emptyList());
+        neafcMatrix.put("PS1", Collections.emptyList());
+        neafcMatrix.put("PS2", Collections.emptyList());
+        neafcMatrix.put("LA", Collections.emptyList());
+        neafcMatrix.put("SUX", Collections.emptyList());
+
+        // SEINES
+        neafcMatrix.put("SB", Collections.emptyList());
+        neafcMatrix.put("SV", Collections.emptyList());
+        neafcMatrix.put("SDN", Collections.emptyList());
+        neafcMatrix.put("SSC", Collections.emptyList());
+        neafcMatrix.put("SPR", Collections.emptyList());
+        neafcMatrix.put("SX", Collections.emptyList());
+
+        // TRAWLS
+        neafcMatrix.put("TBB", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("OTB", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("OT", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("OTT", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("OTP", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("PTB", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("PT", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("TB", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("TBN", Arrays.asList(
+                new Condition("GN", false),
+                new Condition("", false))
+        );
+        neafcMatrix.put("TBS", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("PUK", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("PUL", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("OTM", Arrays.asList(
+                new Condition("GN", false),
+                new Condition("ME", false))
+        );
+        neafcMatrix.put("PTM", Arrays.asList(
+                new Condition("GN", false),
+                new Condition("ME", false))
+        );
+        neafcMatrix.put("TM", Arrays.asList(
+                new Condition("GN", false),
+                new Condition("ME", false))
+        );
+        neafcMatrix.put("TMS", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("TSP", Arrays.asList(
+                new Condition("GN", false),
+                new Condition("ME", false))
+        );
+        neafcMatrix.put("TX", Arrays.asList(
+                new Condition("GN", false))
+        );
+
+        // BREDGES
+        neafcMatrix.put("DRB", Arrays.asList(
+                new Condition("GN", false))
+        );
+
+        neafcMatrix.put("DRH", Arrays.asList(
+                new Condition("GN", false))
+        );
+
+        neafcMatrix.put("DRM", Arrays.asList(
+                new Condition("GN", false))
+        );
+
+        neafcMatrix.put("DRX", Arrays.asList(
+                new Condition("GN", false))
+        );
+
+        // LIFT NETS
+        neafcMatrix.put("LNP", Collections.emptyList());
+        neafcMatrix.put("LNB", Collections.emptyList());
+        neafcMatrix.put("LNS", Collections.emptyList());
+        neafcMatrix.put("LN", Collections.emptyList());
+
+        // FALLING GEAR
+        neafcMatrix.put("FCN", Collections.emptyList());
+        neafcMatrix.put("FCO", Collections.emptyList());
+        neafcMatrix.put("FG", Collections.emptyList());
+
+        // GILLNETS AND ENTANGLING NETS
+        neafcMatrix.put("GNS", Arrays.asList(
+                new Condition("GM", false))
+        );
+        neafcMatrix.put("GND", Arrays.asList(
+                new Condition("GM", false))
+        );
+        neafcMatrix.put("GNC", Arrays.asList(
+                new Condition("GM", false))
+        );
+        neafcMatrix.put("GNF", Arrays.asList(
+                new Condition("GM", false))
+        );
+        neafcMatrix.put("GTR", Arrays.asList(
+                new Condition("GM", false))
+        );
+        neafcMatrix.put("GTN", Arrays.asList(
+                new Condition("GM", false))
+        );
+        neafcMatrix.put("GEN", Arrays.asList(
+                new Condition("GM", false))
+        );
+        neafcMatrix.put("GN", Arrays.asList(
+                new Condition("GM", false))
+        );
+
+        // TRAPS
+        neafcMatrix.put("FPN", Collections.emptyList());
+        neafcMatrix.put("FPO", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("FYK", Collections.emptyList());
+        neafcMatrix.put("FSN", Collections.emptyList());
+        neafcMatrix.put("FWR", Collections.emptyList());
+        neafcMatrix.put("FAR", Collections.emptyList());
+        neafcMatrix.put("FIX", Collections.emptyList());
+
+        // HOOKS AND LINES
+        neafcMatrix.put("LHP", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("LHM", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("LLS", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("LLD", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("LL", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("LVT", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("LTL", Arrays.asList(
+                new Condition("GN", false))
+        );
+        neafcMatrix.put("LX", Arrays.asList(
+                new Condition("GN", false))
+        );
+
+        // MISCELLANEOUS GEAR
+        neafcMatrix.put("HAR", Collections.emptyList());
+        neafcMatrix.put("MHI", Collections.emptyList());
+        neafcMatrix.put("MPM", Collections.emptyList());
+        neafcMatrix.put("MEL", Collections.emptyList());
+        neafcMatrix.put("MPN", Collections.emptyList());
+        neafcMatrix.put("MSP", Collections.emptyList());
+        neafcMatrix.put("MDR", Collections.emptyList());
+        neafcMatrix.put("MDV", Collections.emptyList());
+        neafcMatrix.put("MIS", Collections.emptyList());
+        neafcMatrix.put("HMX", Collections.emptyList());
+        neafcMatrix.put("RG", Collections.emptyList());
+
+        // GEAR NOT KNOWN
+        neafcMatrix.put("NK", Collections.emptyList());
+    }
+
+    private void fillGearMetrix() {
 
         // Trawl nets
-
         matrix.put("OTB", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", true),
@@ -184,7 +378,7 @@ public class GearMatrix {
         matrix.put("FPO",
                 Collections.singletonList(new Condition("GN", false))
         );
-        matrix.put("FIX", Collections.<Condition>emptyList());
+        matrix.put("FIX", Collections.emptyList());
 
         // Hooks & Lines
         matrix.put("LHP", Arrays.asList(
@@ -207,20 +401,20 @@ public class GearMatrix {
                 new Condition("GN", false),
                 new Condition("NI", false))
         );
-        matrix.put("LTL", Collections.<Condition>emptyList());
-        matrix.put("LX", Collections.<Condition>emptyList());
+        matrix.put("LTL", Collections.emptyList());
+        matrix.put("LX", Collections.emptyList());
 
         // Harvesting machines
-        matrix.put("HMD", Collections.<Condition>emptyList());
+        matrix.put("HMD", Collections.emptyList());
 
         // Miscellaneous gear
-        matrix.put("MIS", Collections.<Condition>emptyList());
+        matrix.put("MIS", Collections.emptyList());
 
         // Recreational gear
-        matrix.put("RG", Collections.<Condition>emptyList());
+        matrix.put("RG", Collections.emptyList());
 
         // Gear not known or not specified
-        matrix.put("NK", Collections.<Condition>emptyList());
+        matrix.put("NK", Collections.emptyList());
     }
 
     @Data

@@ -10,16 +10,8 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
-import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.ActivityObjectsHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.FaResponseFactMapper;
@@ -34,8 +26,17 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
 import static java.util.Collections.singletonList;
@@ -269,7 +270,7 @@ public class ActivityFactMapperTest {
         GearCharacteristic gearCharacteristic = new GearCharacteristic();
         gearCharacteristic.setTypeCode(codeType);
 
-        List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(singletonList(gearCharacteristic), "null");
+        List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(singletonList(gearCharacteristic), "null", new HashMap<>(), new HashMap<>());
 
         assertEquals(codeType.getValue(), gearCharacteristicsFacts.get(0).getTypeCode().getValue());
 
@@ -707,10 +708,10 @@ public class ActivityFactMapperTest {
         final FaDepartureFact faDepartureFact = activityMapper.generateFactsForFaDeparture(null, null);
         final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(null,false, null);
         final FaLandingFact faLandingFact = activityMapper.generateFactsForLanding(null, null);
-        final List<GearCharacteristicsFact> gearList = activityMapper.generateFactsForGearCharacteristics(null, "null");
+        final List<GearCharacteristicsFact> gearList = activityMapper.generateFactsForGearCharacteristics(null, "null", new HashMap<>(), new HashMap<>());
         final List<FishingTripFact> fishingTripFacts = activityMapper.generateFactForFishingTrips(null, null);
         final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null, new ArrayList<AbstractFact>());
-        final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, null);
+        final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, null, new HashMap<>(), new HashMap<>());
         final FaResponseFact faResponseFact = new FaResponseFactMapper().generateFactsForFaResponse(null);
         final ValidationQualityAnalysisFact qualityAnalysisFact = activityMapper.generateFactsForValidationQualityAnalysis(null);
 
@@ -718,9 +719,9 @@ public class ActivityFactMapperTest {
         final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null, new ArrayList<AbstractFact>());
         final List<StructuredAddressFact> structuredAddressFacts = activityMapper.generateFactsForStructureAddresses(null, null);
         final FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(null, null);
-        final List<FishingGearFact> fishingGearFacts = activityMapper.generateFactsForFishingGears(null, null , new HashMap<String, List<GearMatrix.Condition>>());
+        final List<FishingGearFact> fishingGearFacts = activityMapper.generateFactsForFishingGears(null, null , new HashMap<>(), new HashMap<>());
         final FaReportDocumentFact faReportDocumentFact = activityMapper.generateFactForFaReportDocument(null);
-        final GearCharacteristicsFact gearCharacteristicsFact = activityMapper.generateFactsForGearCharacteristic(null);
+        final GearCharacteristicsFact gearCharacteristicsFact = activityMapper.generateFactsForGearCharacteristic(null, new HashMap<>(), new HashMap<>());
         final GearProblemFact gearProblemFact = activityMapper.generateFactsForGearProblem(null);
 
         final List<FaReportDocumentFact> faReportDocumentFacts = activityMapper.generateFactForFaReportDocuments(null, MessageType.PUSH, null);

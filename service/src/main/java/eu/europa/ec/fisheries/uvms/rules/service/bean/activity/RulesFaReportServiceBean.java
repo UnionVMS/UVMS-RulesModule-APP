@@ -229,6 +229,7 @@ public class RulesFaReportServiceBean {
         extraValues.put(ExtraValueType.ASSET, assetClientBean.findHistoryOfAssetBy(fluxfaReportMessage.getFAReportDocuments()));
         extraValues.put(FA_QUERY_AND_REPORT_IDS, faIdsMapper.mapToFishingActivityIdDto(reportAndMessageIdsFromDB));
         extraValues.put(FISHING_GEAR_TYPE_CHARACTERISTICS, fishingGearTypeCharacteristics.getMatrix());
+        extraValues.put(FISHING_GEAR_TYPE_NEAFC_CHARACTERISTICS, fishingGearTypeCharacteristics.getNeafcMatrix());
         if (isIncomingMessage) {
             extraValues.put(TRIP_ID, faIdsPerTripsListFromDb);
         }

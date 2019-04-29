@@ -643,7 +643,8 @@ public class ActivityFactMapper {
         return fishingGearFact;
     }
 
-    public List<FishingGearFact> generateFactsForFishingGears(List<FishingGear> fishingGears, String gearType, Map<String, List<GearMatrix.Condition>> matrix) {
+    public List<FishingGearFact> generateFactsForFishingGears(List<FishingGear> fishingGears, String gearType, Map<String, List<GearMatrix.Condition>> matrix,
+                                                              Map<String, List<GearMatrix.Condition>> matrixNeafc) {
         if (fishingGears == null) {
             xPathUtil.clear();
             return emptyList();
@@ -655,6 +656,7 @@ public class ActivityFactMapper {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(gearType, index);
             FishingGearFact fishingGearFact = generateFactsForFishingGear(fishingGear, gearType);
             fishingGearFact.setMatrix(matrix);
+            fishingGearFact.setNeafcMatrix(matrixNeafc);
             list.add(fishingGearFact);
             index++;
         }
@@ -662,7 +664,8 @@ public class ActivityFactMapper {
         return list;
     }
 
-    public GearCharacteristicsFact generateFactsForGearCharacteristic(GearCharacteristic gearCharacteristic) {
+    public GearCharacteristicsFact generateFactsForGearCharacteristic(GearCharacteristic gearCharacteristic, Map<String, List<GearMatrix.Condition>> matrix,
+                                                                      Map<String, List<GearMatrix.Condition>> matrixNeafc) {
         if (gearCharacteristic == null) {
             return null;
         }
@@ -689,24 +692,26 @@ public class ActivityFactMapper {
         gearCharacteristicsFact.setValueQuantity(mapToMeasureType(gearCharacteristic.getValueQuantity()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(VALUE_QUANTITY).storeInRepo(gearCharacteristicsFact, VALUE_QUANTITY_PROP);
 
+        gearCharacteristicsFact.setXmlGearCharacteristic(gearCharacteristic);
+        gearCharacteristicsFact.setMatrix(matrix);
+        gearCharacteristicsFact.setNeafcMatrix(matrixNeafc);
+
         return gearCharacteristicsFact;
     }
 
-    public List<GearCharacteristicsFact> generateFactsForGearCharacteristics(List<GearCharacteristic> gearCharacteristics, String gearType) {
+    public List<GearCharacteristicsFact> generateFactsForGearCharacteristics(List<GearCharacteristic> gearCharacteristics, String gearType,
+                                                                             Map<String, List<GearMatrix.Condition>> matrix, Map<String, List<GearMatrix.Condition>> matrixNeafc) {
         if (gearCharacteristics == null) {
             return emptyList();
         }
-
         String partialXpath = xPathUtil.getValue();
-
         List<GearCharacteristicsFact> list = new ArrayList<>();
         int index = 1;
         for (GearCharacteristic gearCharacteristic : gearCharacteristics) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(gearType, index);
-            list.add(generateFactsForGearCharacteristic(gearCharacteristic));
+            list.add(generateFactsForGearCharacteristic(gearCharacteristic, matrix, matrixNeafc));
             index++;
         }
-
         return list;
     }
 
@@ -1262,6 +1267,11 @@ public class ActivityFactMapper {
         if (faReportDocument != null) {
             faFishingOperationFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
             xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faFishingOperationFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
+
+            if (faReportDocument.getSpecifiedVesselTransportMeans() != null) {
+                faFishingOperationFact.setFaReportDocVesselRoleCode(mapToCodeType(faReportDocument.getSpecifiedVesselTransportMeans().getRoleCode()));
+            }
+            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, SPECIFIED_VESSEL_TRANSPORT_MEANS, ROLE_CODE).storeInRepo(faFishingOperationFact, "faReportDocVesselRoleCode");
         }
 
         return faFishingOperationFact;
@@ -2036,16 +2046,15 @@ public class ActivityFactMapper {
         if (measureType == null) {
             return null;
         }
-
         boolean notNullValue = measureType.getValue() != null;
+        MeasureType measureType1 = new MeasureType();
 
         if (notNullValue) {
-            MeasureType measureType1 = new MeasureType();
             measureType1.setUnitCode(measureType.getUnitCode());
             measureType1.setValue(measureType.getValue());
             return measureType1;
         }
-        return null;
+        return measureType1;
     }
 
     public IdType mapToIdType(IDType idType) {

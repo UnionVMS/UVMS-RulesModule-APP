@@ -35,6 +35,7 @@ public class FishingGearFact extends AbstractFact {
     private List<GearCharacteristic> applicableGearCharacteristics;
     private boolean fishingActivity;
     private Map<String, List<GearMatrix.Condition>> matrix;
+    private Map<String, List<GearMatrix.Condition>> neafcMatrix;
     private FishingGear fishingGear;
 
     public FishingGearFact() {
@@ -54,18 +55,16 @@ public class FishingGearFact extends AbstractFact {
         this.fishingActivity = fishingActivity;
     }
 
-    public boolean valid(FishingGear fishingGear) {
+    public static boolean valid(FishingGear fishingGear, Map<String, List<GearMatrix.Condition>> euOrNeafcatrix) {
         if (fishingGear == null || CollectionUtils.isEmpty(fishingGear.getApplicableGearCharacteristics())) {
             return false;
         }
-
         List<GearCharacteristic> gearCharacteristics = fishingGear.getApplicableGearCharacteristics();
         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = fishingGear.getTypeCode();
-        List<GearMatrix.Condition> conditions = matrix.get(codeType.getValue());
+        List<GearMatrix.Condition> conditions = euOrNeafcatrix.get(codeType.getValue());
         MutableInt optional = new MutableInt(0);
         MutableInt mandatoryHits = new MutableInt(0);
         MutableInt optionalHits = new MutableInt(0);
-
         if (CollectionUtils.isNotEmpty(conditions)){
             for (GearMatrix.Condition next : conditions) {
                 String value = next.getValue();
@@ -79,11 +78,10 @@ public class FishingGearFact extends AbstractFact {
                 }
             }
         }
-
         return ((optional.getValue() == 0) || (optional.getValue() > 0 && optionalHits.getValue() >= 1));
     }
 
-    private boolean valid(List<GearCharacteristic> incomingGearCharacteristics, MutableInt hits, String value) {
+    private static boolean valid(List<GearCharacteristic> incomingGearCharacteristics, MutableInt hits, String value) {
         for (GearCharacteristic incomingGearCharacteristic : incomingGearCharacteristics) {
             un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType code = incomingGearCharacteristic.getTypeCode();
             if (code != null){

@@ -921,7 +921,7 @@
             <column name="id" value="123"/>
             <column name="context" value="EU"/>
             <column name="expression"
-                    value="fishingActivity &amp;&amp; fishingGear != null &amp;&amp; !valid(fishingGear)"/>
+                    value="fishingActivity &amp;&amp; fishingGear != null &amp;&amp; !valid(fishingGear, matrix)"/>
             <column name="rule_id" value="123"/>
             <column name="failure_message" value="ApplicableGearCharacteristic missing"/>
         </insert>
@@ -1720,8 +1720,7 @@
         <insert tableName="context_expression">
             <column name="id" value="251"/>
             <column name="context" value="EU"/>
-            <column name="expression"
-                    value="!isEmpty(relatedFLUXLocations) &amp;&amp; !fluxLocationIDIsValid(relatedFLUXLocations)"/>
+            <column name="expression" value="!isEmpty(relatedFLUXLocations) &amp;&amp; !fluxLocationIDIsValid(relatedFLUXLocations, &quot;DECLARATION&quot;, &quot;AREA&quot;, &quot;EFFORT_ZONE&quot;)"/>
             <column name="rule_id" value="251"/>
             <column name="failure_message" value="Location ID has an invalid schemeID."/>
         </insert>

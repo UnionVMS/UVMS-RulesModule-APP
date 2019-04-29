@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
@@ -49,8 +50,9 @@ public class FaEntryToSeaFact extends AbstractFact {
         this.factType = FactType.FA_ENTRY_TO_SEA;
     }
 
-    public boolean fluxLocationIDIsValid(List<FLUXLocation> relatedFLUXLocations){
-        if (CollectionUtils.isEmpty(relatedFLUXLocations) || faReportDocumentTypeCode == null){
+    public boolean fluxLocationIDIsValid(List<FLUXLocation> relatedFLUXLocations, String reportTypeToConsider, String locationTypeTocConsider, String locationIdTocConsider){
+        if (CollectionUtils.isEmpty(relatedFLUXLocations) || faReportDocumentTypeCode == null
+                || StringUtils.isEmpty(reportTypeToConsider) || StringUtils.isEmpty(locationTypeTocConsider) || StringUtils.isEmpty(locationIdTocConsider)){
             return true;
         }
         if ("DECLARATION".equals(faReportDocumentTypeCode.getValue())) {
@@ -65,4 +67,5 @@ public class FaEntryToSeaFact extends AbstractFact {
         }
         return true;
     }
+
 }

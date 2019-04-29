@@ -62,7 +62,7 @@
         </update>
 
         <update tableName="rule">
-            <column name="expression" value="!isEmpty(fishingActivityIds) &amp;&amp; mdrService.validateFormat(fishingActivityIds, creationDateOfMessage)"/>
+            <column name="expression" value="!isEmpty(fishingActivityIds) &amp;&amp; validateFormat(fishingActivityIds)"/>
             <where>BR_ID = 'FA-L01-00-0110'</where>
         </update>
 

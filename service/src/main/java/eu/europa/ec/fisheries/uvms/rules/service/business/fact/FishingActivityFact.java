@@ -148,4 +148,16 @@ public class FishingActivityFact extends AbstractFact {
         return allRoleCodes.stream().filter(role -> role != null && value.equals(role.getValue())).count() > 1;
     }
 
+    public boolean allDurationMeasuresHaveUnitCodeProvidedWhenValueIsProvided(){
+        if(CollectionUtils.isEmpty(durationMeasure)){
+            return true;
+        }
+        for (MeasureType durMeas : durationMeasure) {
+            if ((durMeas.getValue() != null) && durMeas.getUnitCode() == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
