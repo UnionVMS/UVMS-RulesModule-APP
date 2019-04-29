@@ -2055,7 +2055,7 @@
         <insert tableName="context_expression">
             <column name="id" value="288"/>
             <column name="context" value="EU"/>
-            <column name="expression" value="!verifyFLUXLocationIDValue(relatedFLUXLocations)"/>
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; !verifyFLUXLocationIDValue(relatedFLUXLocations, &quot;AREA&quot;, &quot;EFFORT_ZONE&quot;)"/>
             <column name="rule_id" value="288"/>
             <column name="failure_message" value="Location ID has an invalid schemeID."/>
         </insert>

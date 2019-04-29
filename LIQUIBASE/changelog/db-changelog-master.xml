@@ -39,6 +39,8 @@
 
     <include file="changelog\v3.0.54\db-changelog-3.0.54.xml" />
 
-    <include file="changelog\v3.0.55-NEAFC\db-changelog-3.0.55-neafc.xml" />
+    <include file="changelog\v3.0.55\db-changelog-3.0.55-neafc-160.xml" />
+
+    <!-- include file="changelog\v3.0.56\db-changelog-3.0.56-neafc-40-modified.xml" / -->
 
 </databaseChangeLog>
