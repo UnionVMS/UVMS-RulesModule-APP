@@ -3,9 +3,10 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
     <!-- 40 Rules catagory : modified -->
 
-    <changeSet author="kovian" id="insert-initial-data-for-NEAFC-RELATEED_context_expression-table">
+    <changeSet author="kovian" id="insert-initial-data-for-NEAFC-RELATEED_context_expression-table_40-modified">
 
         <!-- 1 -->
 
@@ -226,7 +227,6 @@
             <column name="rule_id" value="20000213"/>
             <column name="br_id" value="FA-L01-00-0213"/>
             <column name="note" value="Boundaries follow the EPSG  definition for WGS84."/>
-            <column name="message" value="Invalid latitude value."/>
             <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-06-15 00:00:00.0"/>
@@ -242,7 +242,7 @@
                     value="specifiedPhysicalFLUXGeographicalCoordinate != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure != null &amp;&amp; specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value != null
                            &amp;&amp; (!isInRange(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, -90, 90) || getNumberOfDecimalPlaces(specifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure.value, false) &lt; 3)"/>
             <column name="rule_id" value="20000213"/>
-            <column name="failure_message" value=""/>
+            <column name="failure_message" value="Invalid latitude value."/>
         </insert>
 
         <!-- 11 -->
@@ -769,7 +769,7 @@
             <column name="context" value="NEAFC"/>
             <column name="expression"
                     value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; !isEmpty(vesselTransportMeansRoleCodes) &amp;&amp;
-                                             &amp;&amp; !codeTypeValueContainsOnly(vesselTransportMeansRoleCodes, &quot;RECEIVER&quot;)"/>
+                           !codeTypeValueContainsOnly(vesselTransportMeansRoleCodes, &quot;RECEIVER&quot;)"/>
             <column name="rule_id" value="20000412"/>
             <column name="failure_message" value="Invalid RoleCode for the related vessel."/>
         </insert>
@@ -912,30 +912,33 @@
             <column name="id" value="20000470"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; !verifyFLUXLocationIDValueNeafc(relatedFLUXLocations, &quot;AREA&quot;, &quot;MANAGEMENT_AREA&quot;)"/>
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; !verifyFLUXLocationIDValue(relatedFLUXLocations, &quot;AREA&quot;, &quot;MANAGEMENT_AREA&quot;)"/>
             <column name="rule_id" value="20000470"/>
             <column name="failure_message" value="Location ID has an invalid schemeID."/>
         </insert>
 
         <!-- 40 -->
 
-        <!-- 39 -->
-
-        <!-- 39 -->
-
-
-        <!--
-
-        <insert tableName="context_expression">
-            <column name="id" value="20000"/>
-            <column name="context" value="NEAFC"/>
-            <column name="expression" value=""/>
-            <column name="rule_id" value=""/>
-            <column name="failure_message" value=""/>
+        <insert tableName="rule">
+            <column name="rule_id" value="20002558"/>
+            <column name="br_id" value="FA-L02-00-0558"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="note" value="SpecifiedFA_ Catch TypeCode Must have at least one occurrence with Type ONBOARD."/>
+            <column name="template_id" value="23"/>
+            <column name="property_names" value="specifiedFACatchesTypeCodes"/>
+            <column name="disabled" value="false"/>
         </insert>
 
-         -->
-
+        <insert tableName="context_expression">
+            <column name="id" value="20002558"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp;
+                                             (isEmpty(specifiedFACatchesTypeCodes) || valueContainsAny(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;))"/>
+            <column name="rule_id" value="20002558"/>
+            <column name="failure_message" value="SpecifiedFA_ Catch TypeCode Must have at least one occurrence with Type ONBOARD."/>
+        </insert>
 
     </changeSet>
 
