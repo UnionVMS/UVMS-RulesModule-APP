@@ -29,17 +29,11 @@ import java.util.List;
 public class FaExitFromSeaFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
-
     private CodeType faReportDocumentTypeCode;
-
     private List<FLUXLocation> relatedFLUXLocations;
-
     private List<CodeType> specifiedFACatchesTypeCodes;
-
     private List<CodeType> relatedFluxLocationTypeCodes;
-
     private List<IdType> relatedFluxLocationIDs;
-
     private List<FishingActivity> relatedFishingActivities;
 
     public FaExitFromSeaFact() {
@@ -109,22 +103,22 @@ public class FaExitFromSeaFact extends AbstractFact {
 
     /**
      * For  Rule FA-L02-00-0251
+     *
      * @return
      */
-    public boolean verifyFLUXLocationIDValue(List<FLUXLocation> relatedFLUXLocations){
-        if(CollectionUtils.isEmpty(relatedFLUXLocations)){
+    public boolean verifyFLUXLocationIDValue(List<FLUXLocation> relatedFLUXLocations, String locationTypeCode, String locationId) {
+        if (CollectionUtils.isEmpty(relatedFLUXLocations)) {
             return false;
         }
-        if(faReportDocumentTypeCode!=null && faReportDocumentTypeCode.getValue().equals("DECLARATION")) {
-            for (FLUXLocation fluxLocation : relatedFLUXLocations) {
-                if (fluxLocation.getTypeCode() != null && "AREA".equals(fluxLocation.getTypeCode().getValue())) {
-                    IDType idType = fluxLocation.getID();
-                    if (idType == null || !"EFFORT_ZONE".equals(idType.getSchemeID())) {
-                        return false;
-                    }
+        for (FLUXLocation fluxLocation : relatedFLUXLocations) {
+            if (fluxLocation.getTypeCode() != null && "AREA".equals(fluxLocation.getTypeCode().getValue())) {
+                IDType idType = fluxLocation.getID();
+                if (idType == null || !"EFFORT_ZONE".equals(idType.getSchemeID())) {
+                    return false;
                 }
             }
         }
         return true;
     }
+
 }

@@ -461,14 +461,17 @@ public abstract class AbstractFact {
         return false;
     }
 
-    public boolean codeTypeValueContainsOnly(List<CodeType> codeTypes, String valueToMatch){
-        if(CollectionUtils.isEmpty(codeTypes) || StringUtils.isEmpty(valueToMatch)){
-            return false;
+    public boolean codeTypeValueContainsOnly(List<CodeType> codeTypes, String... valuesToMatch){
+        if(CollectionUtils.isEmpty(codeTypes)){
+            return valuesToMatch == null || valuesToMatch.length == 0;
+        } else if(valuesToMatch == null || valuesToMatch.length == 0){
+            return true;
         }
+        List<String> valusToMatch = Arrays.asList(valuesToMatch);
         for (CodeType codeType : codeTypes) {
-          if(!valueToMatch.equals(codeType.getValue())){
-              return false;
-          }
+            if(!valusToMatch.contains(codeType.getValue())){
+                return false;
+            }
         }
         return true;
     }
@@ -587,12 +590,9 @@ public abstract class AbstractFact {
         }
         DateTimeType startDateTime = delimitedPeriod.getStartDateTime();
         DateTimeType endDateTime = delimitedPeriod.getEndDateTime();
-        if ((start && end && ((startDateTime != null && startDateTime.getDateTime() != null) && (endDateTime != null && endDateTime.getDateTime() != null)))
+        return (start && end && ((startDateTime != null && startDateTime.getDateTime() != null) && (endDateTime != null && endDateTime.getDateTime() != null)))
                 || (start && !end && startDateTime != null && startDateTime.getDateTime() != null)
-                || (end && !start && endDateTime != null && endDateTime.getDateTime() != null)) {
-            return true;
-        }
-        return false;
+                || (end && !start && endDateTime != null && endDateTime.getDateTime() != null);
     }
 
     public boolean schemeIdContainsAll(IdType idType, String... values) {
@@ -953,7 +953,6 @@ public abstract class AbstractFact {
         if (valueToMatch == null || valueToMatch.length() == 0 || CollectionUtils.isEmpty(codeTypes)) {
             return true;
         }
-
         for (CodeType codeType : codeTypes) {
             if (!valueToMatch.equals(codeType.getValue())) {
                 return true;

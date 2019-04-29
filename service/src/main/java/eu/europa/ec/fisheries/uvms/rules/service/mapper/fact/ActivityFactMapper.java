@@ -1675,11 +1675,16 @@ public class ActivityFactMapper {
 
             faTranshipmentFact.setFluxCharacteristicTypeCodes(getApplicableFLUXCharacteristicsTypeCode(specifiedFLUXCharacteristics));
             xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faTranshipmentFact, "fluxCharacteristicTypeCodes");
+
+            faTranshipmentFact.setOccurrenceDateTime(fishingActivity.getOccurrenceDateTime());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(OCCURRENCE_DATE_TIME_PROP).storeInRepo(faTranshipmentFact, "occurrenceDateTime");
         }
         if (faReportDocument != null) {
             faTranshipmentFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument.getTypeCode()));
-            xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faTranshipmentFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
+            faTranshipmentFact.setSpecifiedVesselTransportMeansRoleCode(mapToVTMRoleCodeType(faReportDocument.getSpecifiedVesselTransportMeans()));
         }
+        xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, TYPE_CODE).storeInRepo(faTranshipmentFact, FA_REPORT_DOCUMENT_TYPE_CODE_PROP);
+        xPathUtil.append(FLUXFA_REPORT_MESSAGE, FA_REPORT_DOCUMENT, SPECIFIED_VESSEL_TRANSPORT_MEANS, ROLE_CODE).storeInRepo(faTranshipmentFact, "specifiedVesselTransportMeansRoleCodes");
 
         return faTranshipmentFact;
     }
@@ -2722,15 +2727,16 @@ public class ActivityFactMapper {
         }
         List<CodeType> codeTypes = new ArrayList<>();
         for (VesselTransportMeans vesselTransportMeans : vesselTransportMeanses) {
-
-            if (vesselTransportMeans.getRoleCode() != null) {
-                CodeType codeType = mapToCodeType(vesselTransportMeans.getRoleCode());
-                if (codeType != null){
-                    codeTypes.add(codeType);
-                }
-            }
+            codeTypes.add(mapToVTMRoleCodeType(vesselTransportMeans));
         }
         return codeTypes;
+    }
+
+    private CodeType mapToVTMRoleCodeType(VesselTransportMeans vesselTransportMeans) {
+        if (vesselTransportMeans.getRoleCode() != null) {
+            return mapToCodeType(vesselTransportMeans.getRoleCode());
+        }
+        return null;
     }
 
     /**

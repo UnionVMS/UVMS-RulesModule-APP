@@ -14,6 +14,9 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -21,10 +24,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 @Slf4j
 @Data
@@ -46,6 +51,8 @@ public class FaTranshipmentFact extends AbstractFact {
     private List<FLUXCharacteristic> specifiedFLUXCharacteristics;
     private List<IdType> specifiedFlCharSpecifiedLocatIDs;
     private List<CodeType> specifiedFlCharSpecifiedLocatTypeCodes;
+    private CodeType specifiedVesselTransportMeansRoleCode;
+    private DateTimeType occurrenceDateTime;
 
     public FaTranshipmentFact() {
         setFactType();
@@ -66,6 +73,22 @@ public class FaTranshipmentFact extends AbstractFact {
             }
         }
         return true;
+    }
+
+    public boolean thereAreAtLeastTwoDifferentTypeCodesForFaCatches(){
+        if(CollectionUtils.isEmpty(specifiedFACatches) || specifiedFACatches.size() < 2){
+            return false;
+        }
+        List<FACatch> nonNullFaCaches = specifiedFACatches.stream().filter(facatch ->
+                facatch != null && facatch.getTypeCode() != null && StringUtils.isNotEmpty(facatch.getTypeCode().getValue())
+        ).collect(Collectors.toList());
+        String typeCodeStr = nonNullFaCaches.get(0).getTypeCode().getValue();
+        for (FACatch nonNullFaCach : nonNullFaCaches) {
+            if(!typeCodeStr.equals(nonNullFaCach.getTypeCode().getValue())){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
