@@ -1,0 +1,1042 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <!-- 40 Rules catagory : NEW -->
+
+    <changeSet author="kovian" id="add-template-for-vessl-position-event-and-aap-stock">
+
+        <insert tableName="template">
+            <column name="template_id" value="33"/>
+            <column name="template_name" value="Vessel Position Event"/>
+            <column name="fact_template" value="FA_VESSEL_POSITION_EVENT"/>
+        </insert>
+
+        <insert tableName="template">
+            <column name="template_id" value="34"/>
+            <column name="template_name" value="Aap Stock"/>
+            <column name="fact_template" value="FA_AAP_STOCK"/>
+        </insert>
+
+    </changeSet>
+
+    <changeSet author="kovian" id="add_fact_date_to_validation_message">
+        <addColumn tableName="validationmessage">
+            <column name="fact_date" type="TIMESTAMP WITH TIME ZONE" remarks="Reported time of the FaReport or FaMessage."/>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="ticket" columnName="fact_date" />
+        </rollback>
+    </changeSet>
+
+    <changeSet author="kovian" id="insert-initial-data-for-NEAFC-RELATEED_context_expression-table_40-new">
+
+        <!-- 1 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000480"/>
+            <column name="br_id" value="FA-L00-00-0480"/>
+            <column name="note" value=""/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1"/>
+            <column name="property_names" value="fmcMarkerCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000480"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="fmcMarkerCode != null &amp;&amp; fmcMarkerCode.listId != &quot;FLUX_FA_FMC&quot;"/>
+            <column name="rule_id" value="20000480"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 2 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000481"/>
+            <column name="br_id" value="FA-L01-00-0481"/>
+            <column name="note" value=""/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1"/>
+            <column name="property_names" value="fmcMarkerCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000481"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="fmcMarkerCode != null &amp;&amp; !mdrService.isPresentInMDRList(fmcMarkerCode.listId, fmcMarkerCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="20000481"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 3 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000469"/>
+            <column name="br_id" value="FA-L02-00-0469"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="3"/>
+            <column name="property_names" value="vesselPositionEvents"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000469"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isFromFaReport &amp;&amp; codeTypeValueEquals(fishingActivityType, &quot;AREA_ENTRY&quot;) &amp;&amp; isEmpty(vesselPositionEvents)"/>
+            <column name="rule_id" value="20000469"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 4 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000458"/>
+            <column name="br_id" value="FA-L00-00-0458"/>
+            <column name="note" value=""/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="33"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000458"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="typeCode == null"/>
+            <column name="rule_id" value="20000458"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 5 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000459"/>
+            <column name="br_id" value="FA-L01-00-0459"/>
+            <column name="note" value=""/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="33"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000459"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="(typeCode != null) &amp;&amp; (&quot;FLUX_VESSEL_POSITION_TYPE&quot; != typeCode.listId)"/>
+            <column name="rule_id" value="20000459"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 6 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000460"/>
+            <column name="br_id" value="FA-L01-00-0460"/>
+            <column name="note" value=""/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="33"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000460"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="(typeCode != null) &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listId, typeCode.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="20000460"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 7 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000461"/>
+            <column name="br_id" value="FA-L00-00-0461"/>
+            <column name="note" value=""/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="33"/>
+            <column name="property_names" value="obtainedOccurrenceDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000461"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="isEmpty(obtainedOccurrenceDateTime)"/>
+            <column name="rule_id" value="20000461"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 8 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000462"/>
+            <column name="br_id" value="FA-L01-00-0462"/>
+            <column name="note" value=""/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="33"/>
+            <column name="property_names" value="obtainedOccurrenceDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000462"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="obtainedOccurrenceDateTime != null &amp;&amp; !isValid(obtainedOccurrenceDateTime)"/>
+            <column name="rule_id" value="20000462"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 9 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000463"/>
+            <column name="br_id" value="FA-L00-00-0463"/>
+            <column name="note" value=""/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="33"/>
+            <column name="property_names" value="specifiedVesselGeographicalCoordinate"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000463"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="specifiedVesselGeographicalCoordinate != null &amp;&amp; specifiedVesselGeographicalCoordinate.latitudeMeasure == null"/>
+            <column name="rule_id" value="20000463"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 10 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000455"/>
+            <column name="br_id" value="FA-L00-00-0455"/>
+            <column name="note" value=""/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="33"/>
+            <column name="property_names" value="specifiedVesselGeographicalCoordinate"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000455"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="specifiedVesselGeographicalCoordinate != null &amp;&amp; specifiedVesselGeographicalCoordinate.longitudeMeasure == null"/>
+            <column name="rule_id" value="20000455"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 11 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000464"/>
+            <column name="br_id" value="FA-L01-00-0464"/>
+            <column name="note" value=""/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="33"/>
+            <column name="property_names" value="specifiedVesselGeographicalCoordinate"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000464"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="specifiedVesselGeographicalCoordinate != null &amp;&amp; specifiedVesselGeographicalCoordinate.latitudeMeasure != null &amp;&amp;
+            (!isInRange(specifiedVesselGeographicalCoordinate.latitudeMeasure.value, -90, 90) || getNumberOfDecimalPlaces(specifiedVesselGeographicalCoordinate.latitudeMeasure.value, false) &lt; 3)"/>
+            <column name="rule_id" value="20000464"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 12 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000465"/>
+            <column name="br_id" value="FA-L01-00-0465"/>
+            <column name="note" value=""/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="33"/>
+            <column name="property_names" value="specifiedVesselGeographicalCoordinate"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000465"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="specifiedVesselGeographicalCoordinate != null &amp;&amp; specifiedVesselGeographicalCoordinate.longitudeMeasure != null &amp;&amp;
+            (!isInRange(specifiedVesselGeographicalCoordinate.longitudeMeasure.value, -180, 180) || getNumberOfDecimalPlaces(specifiedVesselGeographicalCoordinate.longitudeMeasure.value, false) &lt; 3)"/>
+            <column name="rule_id" value="20000465"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 13 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000491"/>
+            <column name="br_id" value="FA-L00-00-0491"/>
+            <column name="note" value=""/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="34"/>
+            <column name="property_names" value="idType"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000491"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="idType == null || isEmpty(idType.value)"/>
+            <column name="rule_id" value="20000491"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 14 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000492"/>
+            <column name="br_id" value="FA-L01-00-0492"/>
+            <column name="note" value=""/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="34"/>
+            <column name="property_names" value="idType"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000492"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="idType != null  &amp;&amp; (&quot;FA_NEAFC_STOCK&quot; != idType.schemeId)"/>
+            <column name="rule_id" value="20000492"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 15 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000493"/>
+            <column name="br_id" value="FA-L01-00-0493"/>
+            <column name="note" value=""/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="34"/>
+            <column name="property_names" value="idType"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000493"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="idType != null  &amp;&amp; !mdrService.isPresentInMDRList(idType.schemeId, idType.value, creationDateOfMessage)"/>
+            <column name="rule_id" value="20000493"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 16 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000591"/>
+            <column name="br_id" value="FA-L02-00-0591"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="9"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000591"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="containsMoreThanOneOccurrenceOfIdForGivenSchemeId()"/>
+            <column name="rule_id" value="20000591"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 17 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000540"/>
+            <column name="br_id" value="FA-L00-00-0540"/>
+            <column name="note" value=""/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="5"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000540"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression" value="typeCode == null"/>
+            <column name="rule_id" value="20000540"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 18 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000511"/>
+            <column name="br_id" value="FA-L02-00-0511"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="18"/>
+            <column name="property_names" value="reasonCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000511"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; reasonCode == null"/>
+            <column name="rule_id" value="20000511"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 19 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000517"/>
+            <column name="br_id" value="FA-L02-00-0517"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="18"/>
+            <column name="property_names" value="relatedFishingActivities"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000517"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="isEmpty(relatedFishingActivities) &amp;&amp;  codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp;
+                                             (reasonCode != null &amp;&amp; (codeTypeValueEquals(reasonCode, &quot;FIS&quot;) || codeTypeValueEquals(reasonCode, &quot;TRX&quot;)))"/>
+            <column name="rule_id" value="20000517"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 20 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000520"/>
+            <column name="br_id" value="FA-L02-00-0520"/>
+            <column name="note" value="20000520"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="typeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000520"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="subActivity &amp;&amp; (&quot;AREA_ENTRY&quot; == mainActivityType) &amp;&amp;
+                                             codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; (typeCode == null || &quot;START_ACTIVITY&quot; != typeCode.value)"/>
+            <column name="rule_id" value="20000520"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 21 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000521"/>
+            <column name="br_id" value="FA-L02-00-0521"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="occurrenceDateTime"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000521"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="subActivity &amp;&amp; (&quot;AREA_ENTRY&quot; == mainActivityType) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;)
+                                             &amp;&amp; occurrenceDateTime == null"/>
+            <column name="rule_id" value="20000521"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 22 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000523"/>
+            <column name="br_id" value="FA-L02-00-0523"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="relatedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000523"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="subActivity &amp;&amp; (&quot;AREA_ENTRY&quot; == mainActivityType) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;)
+                                             &amp;&amp; isEmpty(relatedFLUXLocations)"/>
+            <column name="rule_id" value="20000523"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 23 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000524"/>
+            <column name="br_id" value="FA-L02-00-0524"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="relatedActivityFluxLocationCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000524"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="subActivity &amp;&amp; (&quot;AREA_ENTRY&quot; == mainActivityType) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;)
+                                             &amp;&amp; valueCodeTypeContainsAny(relatedActivityFluxLocationCodes, &quot;POSITION&quot;)"/>
+            <column name="rule_id" value="20000524"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 24 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000535"/>
+            <column name="br_id" value="FA-L02-00-0535"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="operationsQuantity"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000535"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="isEmpty(operationsQuantity) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; isEmpty(relatedFishingActivities)"/>
+            <column name="rule_id" value="20000535"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 25 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000564"/>
+            <column name="br_id" value="FA-L02-00-0564"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="specifiedFACatches"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000564"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="isEmpty(specifiedFACatches) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
+                                             codeTypeValueEquals(vesselRelatedActivityCode, &quot;FIS&quot;)"/>
+            <column name="rule_id" value="20000564"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 26 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000536"/>
+            <column name="br_id" value="FA-L02-00-0536"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="specifiedFACatchesTypeCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000536"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(specifiedFACatches) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
+                                               !codeTypeValueContainsOnly(specifiedFACatchesTypeCodes, &quot;ONBOARD&quot;)"/>
+            <column name="rule_id" value="20000536"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 27 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000537"/>
+            <column name="br_id" value="FA-L02-00-0537"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="specifiedDelimitedPeriods"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000537"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(specifiedDelimitedPeriods) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
+                                             codeTypeValueEquals(vesselRelatedActivityCode, &quot;FIS&quot;) &amp;&amp; !allDelimitedPeriodsHaveDurationMeasures(specifiedDelimitedPeriods)"/>
+            <column name="rule_id" value="20000537"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 28 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000531"/>
+            <column name="br_id" value="FA-L02-00-0531"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="relatedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000531"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; codeTypeValueEquals(vesselRelatedActivityCode, &quot;FIS&quot;)
+                                             &amp;&amp; schemeIdContainsAny(relatedFLUXLocationIds, &quot;MANAGEMENT_AREA&quot;)"/>
+            <column name="rule_id" value="20000531"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 29 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000532"/>
+            <column name="br_id" value="FA-L02-00-0532"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="relatedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000532"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="isEmpty(relatedFishingActivities) &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
+                           (schemeIdContainsAny(relatedFLUXLocationIds, &quot;FAO_AREA&quot;) &amp;&amp; schemeIdContainsAny(relatedFLUXLocationIds, &quot;STAT_RECTANGLE&quot;))"/>
+            <column name="rule_id" value="20000532"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 30 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000545"/>
+            <column name="br_id" value="FA-L03-00-0545"/>
+            <column name="note" value=""/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="relatedFLUXLocationIds"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000545"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !faoIdsHaveThreeSubdivisions(relatedFLUXLocationIds)"/>
+            <column name="rule_id" value="20000545"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 31 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000546"/>
+            <column name="br_id" value="FA-L03-00-0546"/>
+            <column name="note" value=""/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="relatedFLUXLocationIds"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000546"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp;
+                                            !(isEmpty(relatedFishingActivities) || relatedFishingActivities.size() &gt; 1)"/>
+            <column name="rule_id" value="20000546"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 32 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000547"/>
+            <column name="br_id" value="FA-L02-00-0547"/>
+            <column name="note" value=""/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="relatedFishingActivitiesRelatedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000547"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; isEmpty(relatedFishingActivitiesRelatedFLUXLocations)"/>
+            <column name="rule_id" value="20000547"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 33 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000548"/>
+            <column name="br_id" value="FA-L02-00-0548"/>
+            <column name="note" value="Start Position"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="relatedFishingActivities"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000548"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(relatedFishingActivities)
+                                             &amp;&amp; !checkRelatedFishingActivitiesRelatedFluxLocationsTypeCodes(&quot;GEAR_SHOT&quot;)"/>
+            <column name="rule_id" value="20000548"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 34 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000549"/>
+            <column name="br_id" value="FA-L02-00-0549"/>
+            <column name="note" value="End position."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="relatedFishingActivities"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000549"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(relatedFishingActivities)
+                                             &amp;&amp; !checkRelatedFishingActivitiesRelatedFluxLocationsTypeCodes(&quot;GEAR_RETRIEVAL&quot;)"/>
+            <column name="rule_id" value="20000549"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 35 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000550"/>
+            <column name="br_id" value="FA-L02-00-0550"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="fluxCharacteristicsTypeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000550"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; (&quot;FISHING_OPERATION&quot; == mainActivityType) &amp;&amp;
+                                              !isEmpty(fluxCharacteristicsTypeCode) &amp;&amp;
+                                              (valueCodeTypeContainsAny(fluxCharacteristicsTypeCode, &quot;FISHING_DEPTH&quot;) || valueCodeTypeContainsAny(fluxCharacteristicsTypeCode, &quot;BOTTOM_DEPTH&quot;))"/>
+            <column name="rule_id" value="20000550"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 36 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000582"/>
+            <column name="br_id" value="FA-L01-00-0582"/>
+            <column name="note" value="The role of the other vessel involved in the activity must be specified."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="19"/>
+            <column name="property_names" value="vesselTransportMeansRoleCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000582"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(vesselTransportMeansRoleCodes)  &amp;&amp;
+                                            (valueCodeTypeContainsAny(vesselTransportMeansRoleCodes, &quot;PAIR_FISHING_PARTNER&quot;) &amp;&amp; valueCodeTypeContainsAny(vesselTransportMeansRoleCodes, &quot;DONOR&quot;))"/>
+            <column name="rule_id" value="20000582"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 37 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000533"/>
+            <column name="br_id" value="FA-L02-00-0533"/>
+            <column name="note" value="Location where the discarded catches were taken."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="22"/>
+            <column name="property_names" value="specifiedFaCatchSpecifiedFluxLocationIds"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000533"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(specifiedFaCatchSpecifiedFluxLocationIds)
+                                            &amp;&amp; schemeIdContainsAny(specifiedFaCatchSpecifiedFluxLocationIds, &quot;MANAGEMENT_AREA&quot;)"/>
+            <column name="rule_id" value="20000533"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 38 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000534"/>
+            <column name="br_id" value="FA-L02-00-0534"/>
+            <column name="note" value="Location where the discarded catches were taken."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="22"/>
+            <column name="property_names" value="specifiedFaCatchSpecifiedFluxLocationIds"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000534"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(specifiedFaCatchSpecifiedFluxLocationIds) &amp;&amp;
+                                             (schemeIdContainsAny(specifiedFaCatchSpecifiedFluxLocationIds, &quot;FAO_AREA&quot;) &amp;&amp; schemeIdContainsAny(specifiedFaCatchSpecifiedFluxLocationIds, &quot;STAT_RECTANGLE&quot;))"/>
+            <column name="rule_id" value="20000534"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 39 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000560"/>
+            <column name="br_id" value="FA-L02-00-0560"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="22"/>
+            <column name="property_names" value="reasonCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000560"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; reasonCode == null"/>
+            <column name="rule_id" value="20000560"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 40 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000568"/>
+            <column name="br_id" value="FA-L02-00-0568"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="22"/>
+            <column name="property_names" value="specifiedFLUXCharacteristicTypeCodes"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000568"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(specifiedFLUXCharacteristicTypeCodes) &amp;&amp; !codeTypeValueContainsOnly(specifiedFLUXCharacteristicTypeCodes, &quot;REMARK&quot;)"/>
+            <column name="rule_id" value="20000568"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 41 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000583"/>
+            <column name="br_id" value="FA-L02-00-0583"/>
+            <column name="note" value="Catches loaded and catches onboard after transhipment."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="27"/>
+            <column name="property_names" value="specifiedFACatches"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000583"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !thereAreAtLeastTwoDifferentTypeCodesInList(faCatchTypeCodes)"/>
+            <column name="rule_id" value="20000583"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 42 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000457"/>
+            <column name="br_id" value="FA-L02-00-0457"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="23"/>
+            <column name="property_names" value="relatedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000457"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; !isEmpty(relatedFLUXLocations) &amp;&amp; !codeTypeValueContainsOnly(relatedFluxLocationTypeCodes, &quot;POSITION&quot;, &quot;AREA&quot;)"/>
+            <column name="rule_id" value="20000457"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+        <!-- 43 -->
+
+        <insert tableName="rule">
+            <column name="rule_id" value="20000556"/>
+            <column name="br_id" value="FA-L02-00-0556"/>
+            <column name="note" value=""/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="24"/>
+            <column name="property_names" value="relatedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="20000"/>
+            <column name="context" value="NEAFC"/>
+            <column name="expression"
+                    value="!isEmpty(relatedFLUXLocationApplicableFLUXCharacteristicTypeCodes) &amp;&amp; !codeTypeValueContainsOnly(relatedFLUXLocationApplicableFLUXCharacteristicTypeCodes, &quot;LANDING_SITE&quot;)"/>
+            <column name="rule_id" value="20000556"/>
+            <column name="failure_message" value=""/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

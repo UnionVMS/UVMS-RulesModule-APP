@@ -41,8 +41,10 @@
 
     <include file="changelog\v3.0.55\db-changelog-3.0.55-neafc-160-initial.xml" />
 
-<!--    <include file="changelog\v3.0.56\db-changelog-3.0.56-neafc-40-modified.xml" />-->
+    <include file="changelog\v3.0.56\db-changelog-3.0.56-neafc-40-modified.xml" />
 
-    <!-- include file="changelog\v3.0.57\db-changelog-3.0.57-neafc-40-totally-new.xml" / -->
+    <include file="changelog\v3.0.57\db-changelog-3.0.57-neafc-40-new.xml" />
+
+    <include file="changelog\v3.0.58\db-changelog-3.0.58-br2.4-fixes.xml" />
 
 </databaseChangeLog>

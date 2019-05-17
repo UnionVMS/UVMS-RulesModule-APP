@@ -22,6 +22,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
@@ -56,11 +57,14 @@ public class FishingGearFact extends AbstractFact {
     }
 
     public static boolean valid(FishingGear fishingGear, Map<String, List<GearMatrix.Condition>> euOrNeafcatrix) {
-        if (fishingGear == null || CollectionUtils.isEmpty(fishingGear.getApplicableGearCharacteristics())) {
+        if (fishingGear == null) {
             return false;
         }
         List<GearCharacteristic> gearCharacteristics = fishingGear.getApplicableGearCharacteristics();
         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType = fishingGear.getTypeCode();
+        if(codeType == null || StringUtils.isEmpty(codeType.getValue())){
+            return false;
+        }
         List<GearMatrix.Condition> conditions = euOrNeafcatrix.get(codeType.getValue());
         MutableInt optional = new MutableInt(0);
         MutableInt mandatoryHits = new MutableInt(0);

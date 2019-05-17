@@ -11,10 +11,12 @@ public class IdTypeFact extends AbstractFact {
 
     public IdTypeFact() {
         super();
+        setFactType();
     }
 
     public IdTypeFact(IdType id) {
         this.id = id;
+        setFactType();
     }
 
     @Override

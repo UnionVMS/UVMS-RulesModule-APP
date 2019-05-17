@@ -166,7 +166,7 @@ public class RulesFaQueryServiceBean {
                 faReportRulesMessageBean.evaluateOutgoingFaReport(setFLUXFAReportMessageRequest);
             }
         } catch (UnmarshalException e) {
-            log.error("Error while trying to parse FLUXFAQueryMessage received message! It is malformed!");
+            log.error("Error while trying to parse FLUXFAQueryMessage received message! It is malformed! Reason : {{}}", e.getMessage());
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
             exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
@@ -217,7 +217,7 @@ public class RulesFaQueryServiceBean {
             idsFromIncommingMessage.removeAll(faQueryIdsFromDb);
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
         } catch (UnmarshalException e) {
-            log.error("Error while trying to parse FLUXFaQueryMessage received message! It is malformed!");
+            log.error("Error while trying to parse FLUXFaQueryMessage received message! It is malformed! Reason : {{}}", e.getMessage());
             exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
             exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException e) {

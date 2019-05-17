@@ -76,7 +76,7 @@ public class MdrCacheServiceBeanTest {
         //data set
         IdType id = new IdType("1");
 
-        //mock
+        //mockedMessage
         doReturn(getTestEntriesForMDRListFAO_AREA()).when(cache).getEntry(MDRAcronymType.FAO_AREA);
 
         //execute and verify
@@ -89,7 +89,7 @@ public class MdrCacheServiceBeanTest {
         //data set
         IdType id = new IdType("1.1");
 
-        //mock
+        //mockedMessage
         doReturn(getTestEntriesForMDRListFAO_AREA()).when(cache).getEntry(MDRAcronymType.FAO_AREA);
 
         //execute and verify
@@ -103,7 +103,7 @@ public class MdrCacheServiceBeanTest {
         IdType id = new IdType("NEAMS");
         IdType country = new IdType("BEL");
 
-        //mock
+        //mockedMessage
         doReturn(getTestEntriesForMDRListLOCATION()).when(cache).getEntry(MDRAcronymType.LOCATION);
 
         //execute and verify
@@ -117,7 +117,7 @@ public class MdrCacheServiceBeanTest {
         IdType id = new IdType("BEOST");
         IdType country = new IdType("BEL");
 
-        //mock
+        //mockedMessage
         doReturn(getTestEntriesForMDRListLOCATION()).when(cache).getEntry(MDRAcronymType.LOCATION);
 
         //execute and verify

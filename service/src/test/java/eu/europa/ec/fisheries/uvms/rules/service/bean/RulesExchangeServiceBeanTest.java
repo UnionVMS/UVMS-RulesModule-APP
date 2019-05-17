@@ -10,6 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import java.util.Date;
 import java.util.HashMap;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
@@ -17,8 +18,10 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SetFluxFaResponseMessageReq
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
@@ -36,6 +39,9 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+
+import javax.ejb.EJB;
+
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
@@ -53,6 +59,8 @@ public class RulesExchangeServiceBeanTest {
     @Mock private RulesConfigurationCache ruleModuleCache;
     @Mock private RulesDao rulesDaoBean;
     @Mock private RulesFaReportServiceBean faReportRulesMessageBean;
+    @Mock private RulesResponseConsumer rulesConsumer;
+    @Mock private RulesExchangeProducerBean exchangeProducer;
     @InjectMocks private RulesExchangeServiceBean rulesExchangeServiceBean;
     @Mock private RulesFLUXMessageHelper fluxMessageHelper;
 
@@ -98,7 +106,7 @@ public class RulesExchangeServiceBeanTest {
 
         ValidationResult validationResult = new ValidationResult();
         validationResult.setError(false);
-        Mockito.when(rulesService.checkAndUpdateValidationResultForGeneralBusinessRules(any(RuleError.class), anyString(), anyString(), any(RawMsgType.class))).thenReturn(validationResult);
+        Mockito.when(rulesService.checkAndUpdateValidationResultForGeneralBusinessRules(any(RuleError.class), anyString(), anyString(), any(RawMsgType.class), any(Date.class))).thenReturn(validationResult);
 
         rulesExchangeServiceBean.sendFLUXResponseMessageOnException("", "", new SetFaQueryMessageRequest(), new CodeTypeMapperImpl());
 

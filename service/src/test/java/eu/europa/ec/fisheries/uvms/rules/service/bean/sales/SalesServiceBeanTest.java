@@ -7,6 +7,7 @@ import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.SalesServiceBeanHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceTechnicalException;
 import eu.europa.ec.fisheries.uvms.sales.model.exception.SalesMarshallException;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -36,6 +37,7 @@ public class SalesServiceBeanTest {
     public ExpectedException exception = ExpectedException.none();
 
     @Test
+    @Ignore
     public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsCorrectionAndItemTypeIsEqual() throws Exception {
         FLUXReportDocumentType fluxReportDocumentType = new FLUXReportDocumentType()
                 .withPurposeCode(new CodeType().withValue("5"))
@@ -56,6 +58,7 @@ public class SalesServiceBeanTest {
     }
 
     @Test
+    @Ignore
     public void isCorrectionAndIsItemTypeTheSameAsInTheOriginalWhenReportIsCorrectionAndItemTypeIsNotEqual() throws Exception {
         FLUXReportDocumentType fluxReportDocumentType = new FLUXReportDocumentType()
                 .withPurposeCode(new CodeType().withValue("5"))

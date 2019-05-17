@@ -13,10 +13,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 import javax.xml.datatype.DatatypeFactory;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FaQueryFact;
@@ -94,6 +92,7 @@ public class ActivityQueryFactGeneratorTest {
         message.setFAQuery(faQuery);
 
         generator.setBusinessObjectMessage(message);
+        generator.setExtraValueMap(new HashMap<>());
 
     }
 

@@ -15,6 +15,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
 import java.util.List;
@@ -22,58 +24,20 @@ import java.util.List;
 /**
  * Created by padhyad on 4/21/2017.
  */
+@Data
 public class FaDiscardFact extends AbstractFact {
 
     private CodeType faReportDocumentTypeCode;
     private List<FLUXLocation> relatedFLUXLocations;
     private List<CodeType> fluxLocationTypeCode;
     private List<CodeType> specifiedFACatchTypeCode;
+    private List<IdType> specifiedFaCatchSpecifiedFluxLocationIds;
+    private List<FLUXCharacteristic> specifiedFluxCharacteristics;
+    private List<CodeType> specifiedFLUXCharacteristicTypeCodes;
     private CodeType reasonCode;
-
-
-    public CodeType getFaReportDocumentTypeCode() {
-        return faReportDocumentTypeCode;
-    }
-
-    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
-        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
-    }
-
-    public List<FLUXLocation> getRelatedFLUXLocations() {
-        return relatedFLUXLocations;
-    }
-
-    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
-        this.relatedFLUXLocations = relatedFLUXLocations;
-    }
-
-    public List<CodeType> getFluxLocationTypeCode() {
-        return fluxLocationTypeCode;
-    }
-
-    public void setFluxLocationTypeCode(List<CodeType> fluxLocationTypeCode) {
-        this.fluxLocationTypeCode = fluxLocationTypeCode;
-    }
-
-    public List<CodeType> getSpecifiedFACatchTypeCode() {
-        return specifiedFACatchTypeCode;
-    }
-
-    public void setSpecifiedFACatchTypeCode(List<CodeType> specifiedFACatchTypeCode) {
-        this.specifiedFACatchTypeCode = specifiedFACatchTypeCode;
-    }
 
     public FaDiscardFact() {
         setFactType();
-    }
-
-
-    public CodeType getReasonCode() {
-        return reasonCode;
-    }
-
-    public void setReasonCode(CodeType reasonCode) {
-        this.reasonCode = reasonCode;
     }
 
     @Override

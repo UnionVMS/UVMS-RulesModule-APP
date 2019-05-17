@@ -11,6 +11,7 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.rules.mapper;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
@@ -42,7 +43,7 @@ public class RuleMapperTest {
         RuleContextExpression dtEpr = new RuleContextExpression();
         dtEpr.setExpression("code.id == id");
         dtEpr.setFailureMessage("Result message");
-        ruleEntity.getRuleContextExpressionList().add(dtEpr);
+        ruleEntity.setRuleContextExpressionList(Collections.singletonList(dtEpr));
         ruleEntity.setLevel("001");
         ruleEntity.setBrId("ID_2291");
         ruleEntity.setErrorType(ErrorType.ERROR);
@@ -55,9 +56,9 @@ public class RuleMapperTest {
         RuleType ruleType = externalRuleTypes.get(0);
 
         assertNotNull(ruleType);
-        assertEquals("code.id == id", ruleType.getContextExpressionList().get(1).getExpression());
+        assertEquals("code.id == id", ruleType.getContextExpressionList().get(0).getExpression());
         assertEquals("001", ruleType.getLevel());
-        assertEquals("Result message", ruleType.getContextExpressionList().get(1).getFailureMessage());
+        assertEquals("Result message", ruleType.getContextExpressionList().get(0).getFailureMessage());
         assertEquals("ID_2291", ruleType.getBrId());
         assertEquals("Some Notes", ruleType.getNote());
         assertEquals(ErrorType.ERROR.toString(), ruleType.getErrorType().toString());

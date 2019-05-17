@@ -26,7 +26,8 @@ public enum ContainerType {
             FactType.FA_RELOCATION, FactType.FA_DISCARD, FactType.FA_EXIT_FROM_SEA,
             FactType.FA_NOTIFICATION_OF_ARRIVAL, FactType.FA_ARRIVAL, FactType.FA_LANDING,
             FactType.FA_TRANSHIPMENT, FactType.FA_NOTIFICATION_OF_TRANSHIPMENT_OR_RELOCATION,
-            FactType.FA_DECLARATION_OF_TRANSHIPMENT_OR_RELOCATION, FactType.SIMPLE_ID_TYPE_FACT),
+            FactType.FA_DECLARATION_OF_TRANSHIPMENT_OR_RELOCATION, FactType.SIMPLE_ID_TYPE_FACT,
+            FactType.FA_VESSEL_POSITION_EVENT, FactType.FA_AAP_STOCK),
 
     FA_QUERY("faQuery", "ec.europa.eu.faQuery", FactType.FA_QUERY,
             FactType.FA_QUERY_PARAMETER),

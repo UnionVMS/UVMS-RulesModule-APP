@@ -1,0 +1,35 @@
+template header
+
+tname
+expression
+brid
+rulemsg
+type
+level
+propertyNames
+context
+
+package eu.europa.ec.fisheries.uvms.rules.service.business.activity;
+
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.AAPStockFact;
+import java.util.Arrays;
+global eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker appliChecker;
+global eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService mdrService;
+
+
+
+template "@{tname}"
+
+rule "FAAAPStock @{tname} - @{brid} - Context : @{context}"
+
+when
+
+    $fact : AAPStockFact((appliChecker.isApplicable("@{brid}", "@{context}", getMessageDataFlow(), getCreationDateOfMessage(), mdrService)) && (@{expression}))
+
+then
+    $fact.setOk(false);
+    $fact.addWarningOrError(mdrService.getErrorTypeStrForForBrIAndDFAndValidity("@{brid}", "@{context}", $fact.getCreationJavaDateOfMessage()), mdrService.getErrorMessageForBrIAndDFAndValidity("@{brid}", "@{context}", $fact.getCreationJavaDateOfMessage()), "@{brid}", "@{level}", "@{propertyNames}");
+
+end
+
+end template

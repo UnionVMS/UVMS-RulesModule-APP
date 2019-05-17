@@ -12,9 +12,12 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 
 import com.google.common.cache.CacheLoader;
+import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
+import eu.europa.ec.fisheries.uvms.mdr.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMdrProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCacheServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -26,12 +29,19 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
+import un.unece.uncefact.data.standard.mdr.communication.MdrGetLastRefreshDateResponse;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
+import javax.jms.Destination;
 import javax.jms.TextMessage;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
@@ -45,10 +55,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class MdrCacheTest {
 
-    @Mock
+    @InjectMocks
     private MDRCacheServiceBean mdrCacheServiceBean;
 
-    @Mock
+    @InjectMocks
     private MDRCache mdrCache;
 
     @Mock
@@ -58,33 +68,48 @@ public class MdrCacheTest {
     private RulesMessageProducer producer;
 
     @Mock
-    private ActiveMQTextMessage textMessage;
+    private RulesMdrProducerBean mdrProducer;
+
+    @Mock
+    private ActiveMQTextMessage mdrResponseMessage;
+
+    @Mock
+    private ActiveMQTextMessage refreshDateTextMessage;
 
     @Mock
     ClientSession session;
 
+    private String mdrResponse;
+    private String mdrRefreshDateResponse;
+
     @Before
     @SneakyThrows
     public void setUp() {
-        mdrCache = new MDRCache();
-        mdrCacheServiceBean = new MDRCacheServiceBean();
-        textMessage = new ActiveMQTextMessage(session);
+        mdrRefreshDateResponse = createMdrGetLastRefreshDateResponse();
+        mdrResponse = getMockedSettingsResponse();
 
-        Whitebox.setInternalState(mdrCacheServiceBean, "cache", mdrCache);
-        Whitebox.setInternalState(mdrCache, "consumer", consumer);
-        Whitebox.setInternalState(mdrCache, "producer", producer);
-        Whitebox.setInternalState(textMessage, "text", new SimpleString(getMockedSettingsResponse()));
-        Whitebox.setInternalState(textMessage, "jmsCorrelationID", "SomeCorrId");
+        Whitebox.setInternalState(mdrResponseMessage, "text", new SimpleString(mdrResponse));
+        Whitebox.setInternalState(mdrResponseMessage, "jmsCorrelationID", "SomeCorrId");
 
+        Whitebox.setInternalState(refreshDateTextMessage, "text", new SimpleString(createMdrGetLastRefreshDateResponse()));
+        Whitebox.setInternalState(refreshDateTextMessage, "jmsCorrelationID", "DateCorrId");
     }
 
     @Test
     @SneakyThrows
     public void testGetListFromCache() {
-        when(producer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.MDR_EVENT))).thenReturn("SomeCorrId");
-        when(consumer.getMessage(anyString(), eq(TextMessage.class), anyLong())).thenReturn(textMessage);
+        when(mdrProducer.sendModuleMessageNonPersistent(anyString(), any(Destination.class), any(long.class))).thenReturn("SomeCorrId");
+        when(consumer.getMessage(eq("SomeCorrId"), eq(TextMessage.class), anyLong())).thenReturn(mdrResponseMessage);
+
+        when(mdrProducer.sendModuleMessageNonPersistent(eq(getMockedDateRequest()), any(Destination.class), any(long.class))).thenReturn("DateCorrId");
+        when(consumer.getMessage(eq("DateCorrId"), eq(TextMessage.class), anyLong())).thenReturn(refreshDateTextMessage);
+
+        when(refreshDateTextMessage.getText()).thenReturn(mdrRefreshDateResponse);
+        when(mdrResponseMessage.getText()).thenReturn(mdrResponse);
 
         mdrCache.init();
+        mdrCache.loadAllMdrCodeLists(true);
+
         List<ObjectRepresentation> faCatchTypeEntries = mdrCache.getEntry(MDRAcronymType.FA_CATCH_TYPE);
         assertTrue(CollectionUtils.isNotEmpty(faCatchTypeEntries));
     }
@@ -105,6 +130,13 @@ public class MdrCacheTest {
         assertTrue(faCatchTypeEntries.isEmpty());
     }
 
+    public String createMdrGetLastRefreshDateResponse() throws MdrModelMarshallException, DatatypeConfigurationException {
+        MdrGetLastRefreshDateResponse resp = new MdrGetLastRefreshDateResponse();
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(new Date());
+        resp.setLastRefreshDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
+        return JAXBMarshaller.marshallJaxBObjectToString(resp);
+    }
 
     public String getMockedSettingsResponse() {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
@@ -289,4 +321,14 @@ public class MdrCacheTest {
                 "    </validation>\n" +
                 "</ns2:MdrGetCodeListResponse>\n";
     }
+
+
+    public String getMockedDateRequest(){
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<ns2:MdrGetLastRefreshDateRequest xmlns:ns2=\"http://europa.eu/ec/fisheries/uvms/activity/model/schemas\">\n" +
+                "    <method>GET_LAST_REFRESH_DATE</method>\n" +
+                "</ns2:MdrGetLastRefreshDateRequest>\n";
+    }
+
+
 }

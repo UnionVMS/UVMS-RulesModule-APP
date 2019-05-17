@@ -42,6 +42,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.FAReportQueryResponseIds
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -97,12 +98,6 @@ public class RulesFaReportServiceBean {
     private IAssetClient assetClientBean;
 
     @EJB
-    private ActivityOutQueueConsumer activityConsumer;
-
-    @EJB
-    private RulesFAResponseServiceBean faResponseValidatorAndSender;
-
-    @EJB
     private RulesDao rulesDaoBean;
 
     private RulesFLUXMessageHelper fluxMessageHelper;
@@ -131,7 +126,7 @@ public class RulesFaReportServiceBean {
             Map<ExtraValueType, Object> extraValues = fetchExtraValues(request.getSenderOrReceiver(), fluxfaReportMessage, reportAndMessageIdsFromDB, faIdsPerTripsListFromDb, true);
             extraValues.put(XML, requestStr);
             extraValues.put(DATA_FLOW, dataFlow);
-            Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues, messageGUID != null ? messageGUID.get(0).getValue() : String.valueOf(messageGUID));
+            Collection<AbstractFact> faReportFacts = rulesEngine.evaluate(RECEIVING_FA_REPORT_MSG, fluxfaReportMessage, extraValues, CollectionUtils.isNotEmpty(messageGUID) ? messageGUID.get(0).getValue() : String.valueOf(messageGUID));
 
             idsFromIncomingMessage.removeAll(reportAndMessageIdsFromDB);
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
@@ -164,7 +159,7 @@ public class RulesFaReportServiceBean {
             exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, request.getType(), fluxMessageHelper.isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
 
         } catch (UnmarshalException e) {
-            log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
+            log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed! Reason : {{}}", e.getMessage());
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
             exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException | ServiceException e) {
@@ -206,7 +201,7 @@ public class RulesFaReportServiceBean {
             XPathRepository.INSTANCE.clear(faReportFacts);
 
         } catch (UnmarshalException e) {
-            log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed!");
+            log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed! Reason : {{}}", e.getMessage());
             exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
             exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
         } catch (RulesValidationException e) {

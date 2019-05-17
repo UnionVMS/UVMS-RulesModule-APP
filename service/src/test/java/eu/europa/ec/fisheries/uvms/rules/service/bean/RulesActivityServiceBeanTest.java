@@ -17,10 +17,10 @@ import javax.xml.bind.UnmarshalException;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
-import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivitySubsCheckProducer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesResponseQueueProducer;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -49,8 +49,9 @@ public class RulesActivityServiceBeanTest {
     @Mock private RulesResponseQueueProducer producer;
     @Mock private RulesResponseConsumer consumer;
     @Mock private RulesMessageProducer rulesMessageProducer;
+    @Mock private RulesActivitySubsCheckProducer rulesActivityServiceBean;
     @InjectMocks private RulesActivityServiceBean rulesActivityService;
-    TextMessage mock = mock(TextMessage.class);
+    TextMessage mockedMessage = mock(TextMessage.class);
 
     @Before
     public void before(){
@@ -59,44 +60,36 @@ public class RulesActivityServiceBeanTest {
 
     @Test
     public void testCheckSubscriptionPermissionsWithExceptionReturnsFalse() throws UnmarshalException, RulesValidationException, MessageException, JMSException {
-
         Mockito.when(rulesActivityProducer.sendModuleMessageWithProps(anyString(), any(javax.jms.Destination.class), anyMap())).thenReturn("value");
-        when(mock.getText()).thenReturn("sometext");
-        Mockito.when(consumer.getMessage(anyString(), anyLong())).thenReturn(mock);
+        when(mockedMessage.getText()).thenReturn("sometext");
+        Mockito.when(consumer.getMessage(anyString(), anyLong())).thenReturn(mockedMessage);
 
-        InOrder inOrder = inOrder( rulesActivityProducer, consumer);
+        rulesActivityService.checkSubscriptionPermissions("", MessageType.FLUX_FA_REPORT_MESSAGE);
 
+        InOrder inOrder = inOrder( rulesActivityServiceBean, rulesActivityProducer, consumer);
         assertFalse(rulesActivityService.checkSubscriptionPermissions("", MessageType.FLUX_FA_REPORT_MESSAGE));
-
-        inOrder.verify(rulesActivityProducer, times(1)).sendModuleMessageWithProps(anyString(), any(Destination.class), anyMap());
+        inOrder.verify(rulesActivityServiceBean, times(1)).sendModuleMessage(anyString(), any(Destination.class));
         inOrder.verify(consumer, times(1)).getMessage(anyString(), anyLong());
 
     }
 
     @Test
     public void testCheckSubscriptionPermissionsHappyReturnsFalse() throws UnmarshalException, RulesValidationException, MessageException, JMSException {
-
         Mockito.when(rulesActivityProducer.sendModuleMessageWithProps(anyString(), any(javax.jms.Destination.class), anyMap())).thenReturn("value");
-        when(mock.getText()).thenReturn("<ns2:SubscriptionPermissionResponse xmlns:ns2=\"module.subscription.wsdl.fisheries.ec.europa.eu\">\n" +
+        when(mockedMessage.getText()).thenReturn("<ns2:SubscriptionPermissionResponse xmlns:ns2=\"module.subscription.wsdl.fisheries.ec.europa.eu\">\n" +
                 "    <subscriptionCheck>NO</subscriptionCheck>\n" +
                 "</ns2:SubscriptionPermissionResponse>");
-        Mockito.when(consumer.getMessage(anyString(), anyLong())).thenReturn(mock);
-
-        InOrder inOrder = inOrder(rulesActivityProducer, consumer);
-
+        Mockito.when(consumer.getMessage(anyString(), anyLong())).thenReturn(mockedMessage);
+        InOrder inOrder = inOrder(rulesActivityServiceBean, rulesActivityProducer, consumer);
         assertFalse(rulesActivityService.checkSubscriptionPermissions("", MessageType.FLUX_FA_REPORT_MESSAGE));
-
-        inOrder.verify(rulesActivityProducer, times(1)).sendModuleMessageWithProps(anyString(), any(Destination.class), anyMap());
+        inOrder.verify(rulesActivityServiceBean, times(1)).sendModuleMessage(anyString(), any(Destination.class));
         inOrder.verify(consumer, times(1)).getMessage(anyString(), anyLong());
 
     }
 
     @Test
     public void testSendRequestToActivity() throws MessageException {
-
         rulesActivityService.sendRequestToActivity("", PluginType.FLUX, MessageType.FLUX_FA_QUERY_MESSAGE, "");
-
-        Mockito.verify(rulesMessageProducer, times(1)).sendDataSourceMessage(anyString(), any(DataSourceQueue.class));
-
+        Mockito.verify(rulesActivityProducer, times(1)).sendModuleMessage(anyString(), any(Destination.class));
     }
 }

@@ -1,0 +1,1772 @@
+<insert tableName="rule">
+    <column name="rule_id" value="200001"/>
+    <column name="br_id" value="FA-L00-00-0001"/>
+    <column name="note" value="ID Must be present."/>
+    <column name="level" value="L00"/>
+    <column name="error_type" value="ERROR"/>
+    <column name="rule_created_on"/>
+    <column name="template_id" value="2"/>
+    <column name="property_names" value="ids"/>
+    <column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="200002"/>
+<column name="br_id" value="FA-L01-00-0002"/>
+<column name="note" value="Check attribute schemeID. Must be UUID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="ids"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="200004"/>
+<column name="br_id" value="FA-L03-00-0004"/>
+<column name="note"
+        value="If it exists already, the contents are considered identical and the message may be ignored by the receiving party. It is expected to return the same validation results."/>
+<column name="level" value="L03"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="ids"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000045"/>
+<column name="br_id" value="FA-L03-00-0045"/>
+<column name="note" value="The party sending must be allowed to send the message"/>
+<column name="level" value="L03"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="ownerFluxPartyIds"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="200005"/>
+<column name="br_id" value="FA-L00-00-0005"/>
+<column name="note" value="Check presence. Must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="creationDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="200006"/>
+<column name="br_id" value="FA-L01-00-0006"/>
+<column name="note" value="Format must be date in UTC according to ISO8601"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="creationDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="200007"/>
+<column name="br_id" value="FA-L03-00-0007"/>
+<column name="note"
+        value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+<column name="level" value="L03"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="creationDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="200008"/>
+<column name="br_id" value="FA-L00-00-0008"/>
+<column name="note" value="PurposeCode must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="purposeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="200009"/>
+<column name="br_id" value="FA-L01-00-0009"/>
+<column name="note" value="ListId must be FLUX_GP_PURPOSE."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="purposeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000010"/>
+<column name="br_id" value="FA-L01-00-0010"/>
+<column name="note" value="Code must be value 9 (original data)."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="purposeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000014"/>
+<column name="br_id" value="FA-L00-00-0014"/>
+<column name="note" value="Must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="ownerFluxPartyIds"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000015"/>
+<column name="br_id" value="FA-L01-00-0015"/>
+<column name="note" value="ListId must be FLUX_GP_PARTY."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="ownerFluxPartyIds"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000017"/>
+<column name="br_id" value="FA-L00-00-0017"/>
+<column name="note" value="At least one occurrence must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="faReportDocuments"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000020"/>
+<column name="br_id" value="FA-L00-00-0020"/>
+<column name="note" value="PurposeCode 9 or 5."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="typeCode,purposeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000021"/>
+<column name="br_id" value="FA-L01-00-0021"/>
+<column name="note" value="Must be FLUX_FA_REPORT_TYPE."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000022"/>
+<column name="br_id" value="FA-L01-00-0022"/>
+<column name="note" value="Check code. Must be existing in the list specified in attribute listID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000025"/>
+<column name="br_id" value="FA-L00-00-0025"/>
+<column name="note" value="Must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="acceptanceDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000026"/>
+<column name="br_id" value="FA-L01-00-0026"/>
+<column name="note" value="Include the check if the date provided exists."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="acceptanceDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000027"/>
+<column name="br_id" value="FA-L03-00-0027"/>
+<column name="note"
+        value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+<column name="level" value="L03"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="acceptanceDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000028"/>
+<column name="br_id" value="FA-L01-00-0028"/>
+<column name="note" value="Check presence. Must be present."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="relatedFLUXReportDocument"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000032"/>
+<column name="br_id" value="FA-L00-00-0032"/>
+<column name="note" value="PurposeCode must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="purposeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000033"/>
+<column name="br_id" value="FA-L01-00-0033"/>
+<column name="note" value="Check attribute listID. Must be FLUX_GP_PURPOSE."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="purposeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000034"/>
+<column name="br_id" value="FA-L01-00-0034"/>
+<column name="note" value="Check code. Must be existing in the list specified in attribute listID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="purposeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000091"/>
+<column name="br_id" value="FA-L01-00-0091"/>
+<column name="note" value="check presence"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000035"/>
+<column name="br_id" value="FA-L03-00-0035"/>
+<column name="note"
+        value="Check presence. Must be present if correction, deletion or cancellation of an earlier report. PurposeCode = 1, 3 or 5."/>
+<column name="level" value="L03"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="referencedID"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000039"/>
+<column name="br_id" value="FA-L00-00-0039"/>
+<column name="note" value="CreationDateTime must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="creationDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000040"/>
+<column name="br_id" value="FA-L01-00-0040"/>
+<column name="note" value="Format must be date in UTC according to ISO8601."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="creationDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000041"/>
+<column name="br_id" value="FA-L03-00-0041"/>
+<column name="note"
+        value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+<column name="level" value="L03"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="creationDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000042"/>
+<column name="br_id" value="FA-L02-00-0042"/>
+<column name="note"
+        value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="acceptanceDateTime,creationDateTime "/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000043"/>
+<column name="br_id" value="FA-L00-00-0043"/>
+<column name="note" value="Check presence. Must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="ownerFluxPartyIds"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000044"/>
+<column name="br_id" value="FA-L01-00-0044"/>
+<column name="note" value="Check attribute schemeID. Must be FLUX_GP_PARTY"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="ownerFluxPartyIds"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000046"/>
+<column name="br_id" value="FA-L00-00-0046"/>
+<column name="note" value="If purposeCode 9 or 5, this entity is mandatory"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="specifiedVesselTransportMeans"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000047"/>
+<column name="br_id" value="FA-L00-00-0047"/>
+<column name="note"
+        value="If purposeCode 9 or 5, there must be exactly one occurrence of FishingActivity, except for fishing operations (code FISHING_OPERATION or JOINT_FISHING_OPERATION) on the same day."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="specifiedFishingActivities"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000051"/>
+<column name="br_id" value="FA-L01-00-0051"/>
+<column name="note" value="SchemeIDs must be present in the list FLUX_VESSEL_ID"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="ids"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000055"/>
+<column name="br_id" value="FA-L00-00-0055"/>
+<column name="note" value="Optional for the reporting vessel (i.e. used in FA_ReportDocument entity)"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="roleCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000056"/>
+<column name="br_id" value="FA-L01-00-0056"/>
+<column name="note" value="If provided"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="roleCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000057"/>
+<column name="br_id" value="FA-L01-00-0057"/>
+<column name="note" value="If provided."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="roleCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000059"/>
+<column name="br_id" value="FA-L01-00-0059"/>
+<column name="note" value="Check listId. Must be TERRITORY."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="registrationVesselCountryId"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000060"/>
+<column name="br_id" value="FA-L01-00-0060"/>
+<column name="note" value="Check code. Must be existing in the list specified in attribute listID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="registrationVesselCountryId"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000062"/>
+<column name="br_id" value="FA-L03-00-0062"/>
+<column name="note"
+        value="The vessel identification and registration location (flag state) must be consistent."/>
+<column name="level" value="L03"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="registrationVesselCountryId"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000067"/>
+<column name="br_id" value="FA-L00-00-0067"/>
+<column name="note"
+        value="Check presence. Must be present if used in entity FA_ReportDocument. Specifiedvessel_TransportMeans."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="specifiedContactParties"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000069"/>
+<column name="br_id" value="FA-L00-00-0069"/>
+<column name="note" value="e.g. MASTER, ..."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="specifiedContactPartyRoleCodes"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000070"/>
+<column name="br_id" value="FA-L01-00-0070"/>
+<column name="note" value="Check code. Must be existing in the list specified in attribute listID"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="specifiedContactPartyRoleCodes"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000076"/>
+<column name="br_id" value="FA-L00-00-0076"/>
+<column name="note"
+        value="Check presence. Must be present if GivenNameText or FamilyNameText is not present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="specifiedContactPersons"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000077"/>
+<column name="br_id" value="FA-L01-00-0077"/>
+<column name="note" value="Alias must not be empty if present."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="specifiedContactPersons"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000090"/>
+<column name="br_id" value="FA-L00-00-0090"/>
+<column name="note" value="check presence"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000092"/>
+<column name="br_id" value="FA-L01-00-0092"/>
+<column name="note" value="Check code. Must be existing in the list specified in attribute listID"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000094"/>
+<column name="br_id" value="FA-L01-00-0094"/>
+<column name="note" value="check presence"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="occurrenceDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000097"/>
+<column name="br_id" value="FA-L01-00-0097"/>
+<column name="note" value="If provided."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="reasonCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000101"/>
+<column name="br_id" value="FA-L01-00-0101"/>
+<column name="note" value="If provided."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="speciesTargetCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000102"/>
+<column name="br_id" value="FA-L01-00-0102"/>
+<column name="note" value="Check attribute list id"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="vesselRelatedActivityCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000103"/>
+<column name="br_id" value="FA-L01-00-0103"/>
+<column name="note" value="If provided."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="vesselRelatedActivityCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000104"/>
+<column name="br_id" value="FA-L01-00-0104"/>
+<column name="note" value="Check Format"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="operationQuantity"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000105"/>
+<column name="br_id" value="FA-L01-00-0105"/>
+<column name="note" value="Check Format. Must be a duration measure."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="durationMeasure"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000106"/>
+<column name="br_id" value="FA-L01-00-0106"/>
+<column name="note" value="Check attribute unit code"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="13"/>
+<column name="property_names" value="durationMeasure"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000120"/>
+<column name="br_id" value="FA-L01-00-0120"/>
+<column name="note" value="Attribute listId must be GEAR_TYPE"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="5"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000121"/>
+<column name="br_id" value="FA-L01-00-0121"/>
+<column name="note"
+        value="TypeCode(s) must be present in the list specified in the listID attribute named GEAR_TYPE"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="5"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000124"/>
+<column name="br_id" value="FA-L00-00-0124"/>
+<column name="note" value="Gear Characteristic type code is null."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="6"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000125"/>
+<column name="br_id" value="FA-L01-00-0125"/>
+<column name="note" value="Gear Characteristic list Id must be FA_GEAR_CHARACTERISTIC."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="6"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000126"/>
+<column name="br_id" value="FA-L01-00-0126"/>
+<column name="note"
+        value="Gear Characteristic typeCode value must be present in MDR list FA_GEAR_CHARACTERISTIC."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="6"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000130"/>
+<column name="br_id" value="FA-L00-00-0130"/>
+<column name="note" value="valueCode must be present. "/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="6"/>
+<column name="property_names" value="valueCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000131"/>
+<column name="br_id" value="FA-L00-00-0131"/>
+<column name="note" value="value must be present. "/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="6"/>
+<column name="property_names" value="value"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000132"/>
+<column name="br_id" value="FA-L00-00-0132"/>
+<column name="note" value="valueQuantity must be present. "/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="6"/>
+<column name="property_names" value="valueQuantity"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000135"/>
+<column name="br_id" value="FA-L00-00-0135"/>
+<column name="note" value="TypeCode must be present"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="7"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000136"/>
+<column name="br_id" value="FA-L01-00-0136"/>
+<column name="note" value="Attribute listId of the typeCode must be FA_GEAR_PROBLEM"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="7"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000137"/>
+<column name="br_id" value="FA-L01-00-0137"/>
+<column name="note"
+        value="TypeCode(s) must be present in the list specified in the listID attribute named FA_GEAR_PROBLEM"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="7"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000150"/>
+<column name="br_id" value="FA-L00-00-0150"/>
+<column name="note" value="TypeCode must be present"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="8"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000151"/>
+<column name="br_id" value="FA-L01-00-0151"/>
+<column name="note" value="Attribute listID of typeCode must be FA_CATCH_TYPE"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="8"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000152"/>
+<column name="br_id" value="FA-L01-00-0152"/>
+<column name="note" value="Check code. Must be existing in the list specified in attribute listID "/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="8"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000153"/>
+<column name="br_id" value="FA-L00-00-0153"/>
+<column name="note" value="SpeciesCode must be present"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="8"/>
+<column name="property_names" value="speciesCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000154"/>
+<column name="br_id" value="FA-L01-00-0154"/>
+<column name="note" value="Attribute listID of speciesCode must be FAO_SPECIES"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="8"/>
+<column name="property_names" value="speciesCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000155"/>
+<column name="br_id" value="FA-L01-00-0155"/>
+<column name="note" value="Check code. Must be existing in the list specified in attribute listID "/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="8"/>
+<column name="property_names" value="speciesCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000160"/>
+<column name="br_id" value="FA-L01-00-0160"/>
+<column name="note" value="Attribute UnitCode must be KGM (kilograms)"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="8"/>
+<column name="property_names" value="weightMeasure"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000166"/>
+<column name="br_id" value="FA-L01-00-0166"/>
+<column name="note" value="Si.e. BMS, LSC"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="8"/>
+<column name="property_names" value="sizeDistributionClassCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000167"/>
+<column name="br_id" value="FA-L01-00-0167"/>
+<column name="note" value="Si.e. BMS, LSC"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="8"/>
+<column name="property_names" value="sizeDistributionClassCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000190"/>
+<column name="br_id" value="FA-L00-00-0190"/>
+<column name="note" value="Check Presence.Ids Must be present"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="9"/>
+<column name="property_names" value="ids"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000195"/>
+<column name="br_id" value="FA-L00-00-0195"/>
+<column name="note" value="FLUX_Location typecode must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000196"/>
+<column name="br_id" value="FA-L01-00-0196"/>
+<column name="note" value="Check attribute listID. Must be FLUX_LOCATION_TYPE"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000197"/>
+<column name="br_id" value="FA-L01-00-0197"/>
+<column name="note" value="Check typeCode value it Must be present in MDR list FLUX_LOCATION_TYPE."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000201"/>
+<column name="br_id" value="FA-L02-00-0201"/>
+<column name="note" value="Optional for geographical location"/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="id"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000203"/>
+<column name="br_id" value="FA-L01-00-0203"/>
+<column name="note" value="Id value must be present in MDR list specified in schemeId of Id"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="id"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000206"/>
+<column name="br_id" value="FA-L02-00-0206"/>
+<column name="note" value="Must be present if location type is POSITION."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="specifiedPhysicalFLUXGeographicalCoordinate"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000207"/>
+<column name="br_id" value="FA-L00-00-0207"/>
+<column name="note" value="SpecifiedPhysicalFLUXGeographicalCoordinate.latitudeMeasure must be presence"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="specifiedPhysicalFLUXGeographicalCoordinate"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000210"/>
+<column name="br_id" value="FA-L00-00-0210"/>
+<column name="note" value="SpecifiedPhysicalFLUXGeographicalCoordinate.longitudeMeasure must be presence"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="specifiedPhysicalFLUXGeographicalCoordinate"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000216"/>
+<column name="br_id" value="FA-L01-00-0216"/>
+<column name="note" value="If provided"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="applicableFLUXCharacteristicTypeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000220"/>
+<column name="br_id" value="FA-L00-00-0220"/>
+<column name="note" value="TypeCode must be present"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000221"/>
+<column name="br_id" value="FA-L01-00-0221"/>
+<column name="note" value="TypeCode must be present in the list specified in the TypeCode''s listId"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000224"/>
+<column name="br_id" value="FA-L00-00-0224"/>
+<column name="note" value="Data type must be DATETIME"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="valueDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000226"/>
+<column name="br_id" value="FA-L00-00-0226"/>
+<column name="note" value="Data type must be CODE"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="valueCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000227"/>
+<column name="br_id" value="FA-L00-00-0227"/>
+<column name="note" value="Data type must be TEXT"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="values"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000228"/>
+<column name="br_id" value="FA-L00-00-0228"/>
+<column name="note" value="Data type must be QUANTITY"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="valueQuantity"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000256"/>
+<column name="br_id" value="FA-L02-00-0256"/>
+<column name="note" value="If fishing operation (FA-L02-00-0255)"/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="19"/>
+<column name="property_names" value="vesselRelatedActivityCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000260"/>
+<column name="br_id" value="FA-L02-00-0260"/>
+<column name="note" value="If fishing operation (FA-L02-00-0255)."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="19"/>
+<column name="property_names" value="relatedFishingActivityTypeCodes"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000281"/>
+<column name="br_id" value="FA-L02-00-0281"/>
+<column name="note" value="RelatedFLUX_ Location must be present."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="22"/>
+<column name="property_names" value="relatedFLUXLocations"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000291"/>
+<column name="br_id" value="FA-L00-00-0291"/>
+<column name="note" value="If arrival notification (FA-L02-00-0290)."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="24"/>
+<column name="property_names" value="occurrenceDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000292"/>
+<column name="br_id" value="FA-L02-00-0292"/>
+<column name="note" value="If arrival notification (FA-L02-00-0290)."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="24"/>
+<column name="property_names" value="reasonCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000293"/>
+<column name="br_id" value="FA-L02-00-0293"/>
+<column name="note" value="If arrival notification (FA-L02-00-0290)."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="24"/>
+<column name="property_names" value="reasonCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000294"/>
+<column name="br_id" value="FA-L02-00-0294"/>
+<column name="note" value="If arrival notification (FA-L02-00-0290)."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="24"/>
+<column name="property_names" value="relatedFLUXLocations"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000295"/>
+<column name="br_id" value="FA-L02-00-0295"/>
+<column name="note" value="If arrival notification (FA-L02-00-0290)."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="24"/>
+<column name="property_names" value="relatedFLUXLocationTypeCodes"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000296"/>
+<column name="br_id" value="FA-L02-00-0296"/>
+<column name="note"
+        value="Check presence. Must be present if the activity is an arrival notification and ReasonCode is LAN (landing)"/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="24"/>
+<column name="property_names" value="specifiedFACatches"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000297"/>
+<column name="br_id" value="FA-L02-00-0297"/>
+<column name="note"
+        value="Must have at least one occurrence with TypeCode ONBOARD if the activity is an arrival notification (and if SpecifiedFACatch provided)."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="24"/>
+<column name="property_names" value="specifiedFACatchTypeCodes"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000298"/>
+<column name="br_id" value="FA-L02-00-0298"/>
+<column name="note"
+        value="Must have at least one occurrence with TypeCode UNLOADED if the activity is an arrival notification and ReasonCode is LAN (and if SpecifiedFACatch entity provided)."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="24"/>
+<column name="property_names" value="specifiedFACatchTypeCodes"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000321"/>
+<column name="br_id" value="FA-L02-00-0321"/>
+<column name="note" value="At least 1 occurence of relatedFLUXLocations must be present."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="27"/>
+<column name="property_names" value="relatedFLUXLocations"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000322"/>
+<column name="br_id" value="FA-L02-00-0322"/>
+<column name="note" value="FLUXLocation typeCode Must be  LOCATION or POSITION. "/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="27"/>
+<column name="property_names" value="fluxLocationTypeCodes"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000323"/>
+<column name="br_id" value="FA-L02-00-0323"/>
+<column name="note" value="relatedVesselTransportMeans must be present. "/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="27"/>
+<column name="property_names" value="relatedVesselTransportMeans"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000380"/>
+<column name="br_id" value="FA-L00-00-0380"/>
+<column name="note" value="Ids --Check attribute schemeID. Must be UUID."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="ids"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000382"/>
+<column name="br_id" value="FA-L03-00-0382"/>
+<column name="note"
+        value="The identification of the FLUX response Document must be unique and not already exist"/>
+<column name="level" value="L03"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="ids"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000383"/>
+<column name="br_id" value="FA-L00-00-0383"/>
+<column name="note" value="Check attribute schemeID. Must be a valid value from code list FLUX_GP_MSG_ID."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="referencedID"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000385"/>
+<column name="br_id" value="FA-L03-00-0385"/>
+<column name="note"
+        value="referencedID value -- The identification must exist for a FLUXFAReportMessage or for a FLUXFAQuery message."/>
+<column name="level" value="L03"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="referencedID"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000386"/>
+<column name="br_id" value="FA-L00-00-0386"/>
+<column name="note" value="ResponseCode must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="responseCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000387"/>
+<column name="br_id" value="FA-L02-00-0387"/>
+<column name="note" value="ResponseCode ListId must be FLUX_GP_RESPONSE ."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="responseCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000388"/>
+<column name="br_id" value="FA-L02-00-0388"/>
+<column name="note" value="Check responseCode. Must be existing in the list specified in attribute listID"/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="responseCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000389"/>
+<column name="br_id" value="FA-L00-00-0389"/>
+<column name="note" value="creationDateTime must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="creationDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000390"/>
+<column name="br_id" value="FA-L01-00-0390"/>
+<column name="note" value="creationDateTime Format must be date in UTC according to ISO8601"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="creationDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000391"/>
+<column name="br_id" value="FA-L01-00-0391"/>
+<column name="note"
+        value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="creationDateTime"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000553"/>
+<column name="br_id" value="FA-L00-00-0553"/>
+<column name="note" value="Check presence. Must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="respondentFLUXParty"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000368"/>
+<column name="br_id" value="FA-L02-00-0368"/>
+<column name="note" value="At least one occurrence if ResponseCode != OK"/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="relatedValidationResultDocuments"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000392"/>
+<column name="br_id" value="FA-L00-00-0392"/>
+<column name="note" value="fluxPartyIds --Check presence. Must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="fluxPartyIds"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000393"/>
+<column name="br_id" value="FA-L01-00-0393"/>
+<column name="note" value="fluxPartyIds ListId must be FLUX_GP_PARTY."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="fluxPartyIds"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000394"/>
+<column name="br_id" value="FA-L03-00-0394"/>
+<column name="note"
+        value="The party sending the response must be the same as the one from the FR value of the FLUX TL envelope. Only the part before the first colon is to be considered: Eg. ABC:something => only ABC refres to the party for the purpose of this rule."/>
+<column name="level" value="L03"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="fluxPartyIds"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000395"/>
+<column name="br_id" value="FA-L00-00-0395"/>
+<column name="note" value="validatorID must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="relatedValidationResultDocuments"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000396"/>
+<column name="br_id" value="FA-L01-00-0396"/>
+<column name="note" value="validatorIDs -- Check Format. Must be according to the specified schemeID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="validatorIDs"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000555"/>
+<column name="br_id" value="FA-L01-00-0555"/>
+<column name="note" value="Check value. Must be value from the code list specified in schemeID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="validatorIDs"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000554"/>
+<column name="br_id" value="FA-L02-00-0554"/>
+<column name="note" value="At least one occurrence must be present if ResponseCode != OK."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="relatedValidationResultDocuments"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000397"/>
+<column name="br_id" value="FA-L00-00-0397"/>
+<column name="note" value="Id must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="30"/>
+<column name="property_names" value="id"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000398"/>
+<column name="br_id" value="FA-L01-00-0398"/>
+<column name="note" value="Id schemeId must be FA_BR."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="30"/>
+<column name="property_names" value="id"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000399"/>
+<column name="br_id" value="FA-L01-00-0399"/>
+<column name="note"
+        value="Id -Check value. Code must be value of the specified code schemeId in listID. FA_BR."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="30"/>
+<column name="property_names" value="id"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000400"/>
+<column name="br_id" value="FA-L02-00-0400"/>
+<column name="note" value="LevelCode Must be present."/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="30"/>
+<column name="property_names" value="levelCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000401"/>
+<column name="br_id" value="FA-L01-00-0401"/>
+<column name="note" value="Check levelCode listID. Must be FLUX_GP_VALIDATION_LEVEL."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="30"/>
+<column name="property_names" value="levelCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000402"/>
+<column name="br_id" value="FA-L01-00-0402"/>
+<column name="note"
+        value="Check levelCode. Must be in the list specified in listID FLUX_GP_VALIDATION_LEVEL."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="30"/>
+<column name="property_names" value="levelCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000403"/>
+<column name="br_id" value="FA-L01-00-0403"/>
+<column name="note"
+        value="Check typeCode listID. Must be FLUX_GP_VALIDATION_TYPE and Check Code. Must be in the list specified in listID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="30"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000404"/>
+<column name="br_id" value="FA-L00-00-0404"/>
+<column name="note" value="Each Result element  must be non Empty."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="30"/>
+<column name="property_names" value="results"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000405"/>
+<column name="br_id" value="FA-L01-00-0405"/>
+<column name="note" value="At least one non-empty occurrence of referencedItems if Type is ERR or WAR."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="WARNING"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="30"/>
+<column name="property_names" value="referencedItems"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000406"/>
+<column name="br_id" value="FA-L01-00-0406"/>
+<column name="note" value="Check value of TypeCode. Must be in the list specified in listID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="30"/>
+<column name="property_names" value="typeCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000204"/>
+<column name="br_id" value="FA-L01-00-0204"/>
+<column name="note" value="If provided"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="rfmo"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000205"/>
+<column name="br_id" value="FA-L01-00-0205"/>
+<column name="note" value="If provided"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="10"/>
+<column name="property_names" value="rfmo"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000229"/>
+<column name="br_id" value="FA-L00-00-0229"/>
+<column name="note" value="Unit code must be defined in the list FLUX_UNIT"/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="valueMeasure"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000223"/>
+<column name="br_id" value="FA-L00-00-0223"/>
+<column name="note" value=""/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="valueMeasure"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000128"/>
+<column name="br_id" value="FA-L00-00-0128"/>
+<column name="note" value=""/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="6"/>
+<column name="property_names" value="valueMeasure"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000129"/>
+<column name="br_id" value="FA-L00-00-0129"/>
+<column name="note" value="valueIndicator must be present. "/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="6"/>
+<column name="property_names" value="valueIndicator"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000225"/>
+<column name="br_id" value="FA-L00-00-0225"/>
+<column name="note" value=""/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="valueIndicator"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000058"/>
+<column name="br_id" value="FA-L00-00-0058"/>
+<column name="note" value="Check presence. Must be present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="registrationVesselCountryId"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000161"/>
+<column name="br_id" value="FA-L01-00-0161"/>
+<column name="note" value="Value must be with maximum 2 decimals."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="8"/>
+<column name="property_names" value="weightMeasure"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000072"/>
+<column name="br_id" value="FA-L00-00-0072"/>
+<column name="note" value="Check presence. Must be present if AliasText is not present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="specifiedContactPersons"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000074"/>
+<column name="br_id" value="FA-L00-00-0074"/>
+<column name="note" value="FamilyName must be present if Alias is not present."/>
+<column name="level" value="L00"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="3"/>
+<column name="property_names" value="specifiedContactPersons"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000036"/>
+<column name="br_id" value="FA-L01-00-0036"/>
+<column name="note" value="RelatedFLUXReportDocumentReferencedID must be UUID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="referencedID"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000016"/>
+<column name="br_id" value="FA-L03-00-0016"/>
+<column name="note" value="The party sending must be allowed to send the message."/>
+<column name="level" value="L03"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="ownerFluxPartyIds"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000610"/>
+<column name="br_id" value="FA-L02-00-0610"/>
+<column name="note" value=""/>
+<column name="level" value="L02"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="19"/>
+<column name="property_names" value="relatedFishingActivities"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000145"/>
+<column name="br_id" value="FA-L03-00-0145"/>
+<column name="note" value=""/>
+<column name="level" value="L03"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="6"/>
+<column name="property_names" value="valueCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000146"/>
+<column name="br_id" value="FA-L01-00-0146"/>
+<column name="note" value=""/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="6"/>
+<column name="property_names" value="valueCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000147"/>
+<column name="br_id" value="FA-L03-00-0147"/>
+<column name="note" value=""/>
+<column name="level" value="L03"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="valueCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000148"/>
+<column name="br_id" value="FA-L01-00-0148"/>
+<column name="note" value=""/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="11"/>
+<column name="property_names" value="valueCode"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="200003"/>
+<column name="br_id" value="FA-L01-00-0003"/>
+<column name="note" value="Must be according to RFC4122 format for UUID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="2"/>
+<column name="property_names" value="ids"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000030"/>
+<column name="br_id" value="FA-L01-00-0030"/>
+<column name="note" value="Must be according to RFC4122 format for UUID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="ids"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000052"/>
+<column name="br_id" value="FA-L01-00-0052"/>
+<column name="note" value="Check Format. Must be according to the specified schemeID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="31"/>
+<column name="property_names" value="id"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="2000037"/>
+<column name="br_id" value="FA-L01-00-0037"/>
+<column name="note" value="Must be according to RFC4122 format for UUID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="1"/>
+<column name="property_names" value="referencedID"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000381"/>
+<column name="br_id" value="FA-L01-00-0381"/>
+<column name="note" value="Check Format for Ids. Must be according to the specified schemeID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="ids"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000384"/>
+<column name="br_id" value="FA-L01-00-0384"/>
+<column name="note" value="referencedID -- Check Format. Must be according to the specified schemeID."/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="16"/>
+<column name="property_names" value="referencedID"/>
+<column name="disabled" value="false"/>
+</insert>
+<insert tableName="rule">
+<column name="rule_id" value="20000192"/>
+<column name="br_id" value="FA-L01-00-0192"/>
+<column name="note" value="Eg. BEL-TRP-0123456789AB/DE FG-IJ"/>
+<column name="level" value="L01"/>
+<column name="error_type" value="ERROR"/>
+<column name="rule_created_on"/>
+<column name="template_id" value="9"/>
+<column name="property_names" value="ids"/>
+<column name="disabled" value="false"/>
+</insert>

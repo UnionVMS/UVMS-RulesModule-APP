@@ -48,6 +48,8 @@ public enum DrtPathHelper {
     VESSEL_STORAGE_CHARACTERISTIC("/templates/VesselStorageCharacteristics.drt"),
     VESSEL_TRANSPORT_MEANS("/templates/VesselTransportMeans.drt"),
     FA_VALIDATION_QUALITY_ANALYSIS("/templates/FaValidationQualityAnalysis.drt"),
+    FA_VESSEL_POSITION_EVENT("/templates/FaVesselPositionEvent.drt"),
+    FA_AAP_STOCK("/templates/FAAAPStock.drt"),
     SIMPLE_ID_TYPE_FACT("/templates/IdTypeTemplate.drt"),
     SALES_FLUX_SALES_REPORT_MESSAGE("/templates/SalesFLUXSalesReportMessage.drt"),
     SALES_FLUX_REPORT_DOCUMENT("/templates/SalesFLUXReportDocument.drt"),

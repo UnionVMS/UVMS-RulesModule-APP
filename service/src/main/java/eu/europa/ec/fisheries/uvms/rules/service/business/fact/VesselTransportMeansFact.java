@@ -24,12 +24,14 @@ import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactPerson;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.StructuredAddress;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselPositionEvent;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class VesselTransportMeansFact extends AbstractFact {
 
     private boolean isFromFaReport;
+    private CodeType fishingActivityType;
     private List<IdType> ids;
     private IdType registrationVesselCountryId;
     private CodeType roleCode;
@@ -38,6 +40,11 @@ public class VesselTransportMeansFact extends AbstractFact {
     private List<CodeType> specifiedContactPartyRoleCodes;
     private List<ContactPerson> specifiedContactPersons;
     private VesselTransportMeansDto transportMeans;
+    private List<VesselPositionEvent> vesselPositionEvents;
+
+    public VesselTransportMeansFact() {
+        setFactType();
+    }
 
     public boolean containsAtLeastOneCorrectIdOfTheRequired(String schemeId){
         boolean containsValidSchemeId = false;

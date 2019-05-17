@@ -30,29 +30,17 @@ import java.util.List;
 public class FaDepartureFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
-
     private CodeType faReportDocumentTypeCode;
-
     private Date occurrenceDateTime;
-
     private CodeType reasonCode;
-
     private String purposeCode;
-
     private List<FLUXLocation> relatedFLUXLocations;
-
     private List<CodeType> relatedFLUXLocationTypeCodes;
-
     private List<CodeType> specifiedFishingGearRoleCodeTypes;
-
     private List<CodeType> specifiedFACatchCodeTypes;
-
     private FishingTrip specifiedFishingTrip;
-
     private List<IdType> specifiedFishingTripIds;
-
     private List<String> faTypesPerTrip;
-
     private boolean specifiedFishingGearsArePresent;
 
     public FaDepartureFact() {

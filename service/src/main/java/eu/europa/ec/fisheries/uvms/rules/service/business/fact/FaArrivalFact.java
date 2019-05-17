@@ -19,6 +19,7 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
@@ -38,6 +39,10 @@ public class FaArrivalFact extends AbstractFact {
     private List<String> faTypesPerTrip;
     private List<CodeType> specifiedFLUXCharacteristicsTypeCodes;
     private List<String> specifiedFLUXCharacteristicValueDateTimes;
+
+    public FaArrivalFact() {
+        setFactType();
+    }
 
     @Override
     public void setFactType() {

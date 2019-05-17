@@ -128,7 +128,42 @@
                 <artifactId>uvms-test</artifactId>
                 <version>${uvms.test.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.h2database</groupId>
+                        <artifactId>h2</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.ninja-squad</groupId>
+                        <artifactId>DbSetup</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.orbisgis</groupId>
+                        <artifactId>h2spatial-ext</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.4.199</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ninja-squad</groupId>
+                <artifactId>DbSetup</artifactId>
+                <version>2.1.0</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.orbisgis/h2spatial-ext -->
+            <dependency>
+                <groupId>org.orbisgis</groupId>
+                <artifactId>h2spatial-ext</artifactId>
+                <version>1.2.4</version>
+                <scope>test</scope>
+            </dependency>
+
+
             <dependency>
 	            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
 	            <artifactId>uvms-commons-message</artifactId>

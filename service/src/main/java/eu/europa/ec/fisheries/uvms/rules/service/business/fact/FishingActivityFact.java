@@ -48,12 +48,14 @@ public class FishingActivityFact extends AbstractFact {
     private DelimitedPeriod delimitedPeriod;
     private List<FLUXLocation> relatedFLUXLocations;
     private List<FLUXLocation> relatedActivityFluxLocations;
+    private List<CodeType> relatedActivityFluxLocationCodes;
     private CodeType vesselRelatedActivityCode;
     private CodeType faReportDocumentTypeCode;
     private List<CodeType> relatedFluxLocationRFMOCodeList;
     private List<FACatch> specifiedFaCatch;
 
     private List<CodeType> relatedVesselTransportMeansRoleCodes;
+    private List<CodeType> relFishActRelatedVesselTransportMeansRoleCodes;
     private List<CodeType> faRepDockSpecifiedVesselTransportMeansRoleCodes;
 
     public FishingActivityFact() {
@@ -73,7 +75,7 @@ public class FishingActivityFact extends AbstractFact {
     }
 
     public boolean validDelimitedPeriod(List<FishingActivity> relatedFishingActivities) {
-        Boolean isMatch = false;
+        boolean isMatch = false;
         if (CollectionUtils.isEmpty(relatedFishingActivities)) {
             return false;
         }
@@ -105,12 +107,8 @@ public class FishingActivityFact extends AbstractFact {
 
     public boolean isAllowedToHaveSubactivities() {
         if (!subActivity && !isEmpty(relatedFishingActivities)) {
-            if ((codeTypeValueEquals(faReportDocumentTypeCode, "DECLARATION") && (codeTypeValueEquals(typeCode, "FISHING_OPERATION") || codeTypeValueEquals(typeCode, "JOINT_FISHING_OPERATION")))
-                    || codeTypeValueEquals(faReportDocumentTypeCode, "NOTIFICATION") && codeTypeValueEquals(typeCode, "AREA_ENTRY")) {
-                return true;
-            } else {
-                return false;
-            }
+            return (codeTypeValueEquals(faReportDocumentTypeCode, "DECLARATION") && (codeTypeValueEquals(typeCode, "FISHING_OPERATION") || codeTypeValueEquals(typeCode, "JOINT_FISHING_OPERATION")))
+                    || codeTypeValueEquals(faReportDocumentTypeCode, "NOTIFICATION") && codeTypeValueEquals(typeCode, "AREA_ENTRY");
         }
         return true;
     }
@@ -139,8 +137,8 @@ public class FishingActivityFact extends AbstractFact {
         }
         List<CodeType> allRoleCodes = new ArrayList<>();
 
-        if (CollectionUtils.isNotEmpty(relatedVesselTransportMeansRoleCodes)){
-            allRoleCodes = new ArrayList<>(relatedVesselTransportMeansRoleCodes);
+        if (CollectionUtils.isNotEmpty(relFishActRelatedVesselTransportMeansRoleCodes)){
+            allRoleCodes = new ArrayList<>(relFishActRelatedVesselTransportMeansRoleCodes);
         }
         if(CollectionUtils.isNotEmpty(faRepDockSpecifiedVesselTransportMeansRoleCodes)){
             allRoleCodes.addAll(faRepDockSpecifiedVesselTransportMeansRoleCodes);

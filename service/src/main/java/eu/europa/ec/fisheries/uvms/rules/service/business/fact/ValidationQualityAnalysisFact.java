@@ -14,12 +14,14 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
 
 import java.util.List;
 
 /**
  * Created by sanera on 27/07/2017.
  */
+@Data
 public class ValidationQualityAnalysisFact extends AbstractFact {
 
     private IdType id;
@@ -28,44 +30,8 @@ public class ValidationQualityAnalysisFact extends AbstractFact {
     private List<String> results;
     private List<String> referencedItems;
 
-    public IdType getId() {
-        return id;
-    }
-
-    public void setId(IdType id) {
-        this.id = id;
-    }
-
-    public CodeType getLevelCode() {
-        return levelCode;
-    }
-
-    public void setLevelCode(CodeType levelCode) {
-        this.levelCode = levelCode;
-    }
-
-    public CodeType getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(CodeType typeCode) {
-        this.typeCode = typeCode;
-    }
-
-    public List<String> getResults() {
-        return results;
-    }
-
-    public void setResults(List<String> results) {
-        this.results = results;
-    }
-
-    public List<String> getReferencedItems() {
-        return referencedItems;
-    }
-
-    public void setReferencedItems(List<String> referencedItems) {
-        this.referencedItems = referencedItems;
+    public ValidationQualityAnalysisFact() {
+        setFactType();
     }
 
     @Override

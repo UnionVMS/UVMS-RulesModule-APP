@@ -148,7 +148,7 @@ public class RulesExchangeServiceBean {
         xpaths.add(errorMessage);
         RuleError ruleError = new RuleError(ServiceConstants.INVALID_XML_RULE, ServiceConstants.INVALID_XML_RULE_MESSAGE, "L00", xpaths);
         RawMsgType messageType = fluxMessageHelper.getMessageType(request.getMethod());
-        ValidationResult validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, rawMessage, request.getLogGuid(), messageType);
+        ValidationResult validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, rawMessage, request.getLogGuid(), messageType, new Date());
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
         FLUXResponseMessage fluxResponseMessage;

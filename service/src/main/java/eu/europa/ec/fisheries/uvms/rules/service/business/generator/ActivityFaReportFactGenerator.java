@@ -13,6 +13,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -116,7 +117,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
                 FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
 
-                if (relatedFLUXReportDocument != null){
+                if (relatedFLUXReportDocument != null){ // Set the feReport creation date
                     populateUniqueIDsAndFaReportDocumentDate(relatedFLUXReportDocument, factsByReport);
                 }
 
@@ -127,14 +128,16 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         facts.add(activityFactMapper.generateFactForFluxFaReportMessage(fluxfaReportMessage));
         List<VesselTransportMeansDto> transportMeans = activityFactMapper.getTransportMeans();
         int index = 0;
-        for (AbstractFact fact : facts) {
-            if (fact instanceof VesselTransportMeansFact && transportMeans != null){
-                try {
-                    VesselTransportMeansDto vesselTransportMeansDto = transportMeans.get(index);
-                    ((VesselTransportMeansFact) fact).setTransportMeans(vesselTransportMeansDto);
-                    index++;
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    log.warn(e.getMessage(), e);
+        if(transportMeans != null){
+            for (AbstractFact fact : facts) {
+                if (FactType.VESSEL_TRANSPORT_MEANS.equals(fact.getFactType())){
+                    try {
+                        VesselTransportMeansDto vesselTransportMeansDto = transportMeans.get(index);
+                        ((VesselTransportMeansFact) fact).setTransportMeans(vesselTransportMeansDto);
+                        index++;
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        log.warn(e.getMessage(), e);
+                    }
                 }
             }
         }
@@ -169,7 +172,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 facts.add(activityFactMapper.generateFishingActivityFact(fishingActivity, isSubActivity, faReportDocument, mainActivityType));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(fishingActivity.getRelatedVesselTransportMeans(), facts));
+                facts.addAll(activityFactMapper.generateFactForVesselTransportMeans(fishingActivity.getRelatedVesselTransportMeans(), facts, fishingActivity.getTypeCode()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 addFactsForVesselTransportMeansStructuresAddress(facts, fishingActivity.getRelatedVesselTransportMeans(), RELATED_VESSEL_TRANSPORT_MEANS);

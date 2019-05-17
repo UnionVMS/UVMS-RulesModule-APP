@@ -12,6 +12,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import javax.xml.bind.UnmarshalException;
 import java.util.ArrayList;
+import java.util.Date;
+
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
@@ -122,7 +124,7 @@ public class RulesFAResponseServiceBeanTest {
         ValidationResult validationResult = new ValidationResult();
         validationResult.setValidationMessages(new ArrayList<ValidationMessageType>());
 
-        Mockito.when(rulesService.checkAndUpdateValidationResultForGeneralBusinessRules(any(RuleError.class), anyString(), anyString(), any(RawMsgType.class))).thenReturn(validationResult);
+        Mockito.when(rulesService.checkAndUpdateValidationResultForGeneralBusinessRules(any(RuleError.class), anyString(), anyString(), any(RawMsgType.class), any(Date.class))).thenReturn(validationResult);
 
         eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest rulesBaseRequest = new SetFaQueryMessageRequest();
         rulesBaseRequest.setLogGuid("guid");

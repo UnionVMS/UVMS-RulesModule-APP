@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.Activ
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
@@ -36,7 +37,7 @@ public class FishingActivityTemplateTest {
     @Test
     public void testFishingActivityValidDatesWithOccurrenceDateShouldPass(){
         FishingActivity fishingActivity = objectsHelper.generateActivity("31-08-1982 10:20:56", "DEPARTURE");
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertTrue(specifiedActivityFact.validDates());
     }
@@ -44,7 +45,7 @@ public class FishingActivityTemplateTest {
     @Test
     public void testFishingActivityValidDatesWithoutOccurrenceDateShouldFail(){
         FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertFalse(specifiedActivityFact.validDates());
     }
@@ -54,7 +55,7 @@ public class FishingActivityTemplateTest {
         FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
         FishingActivity related = objectsHelper.generateActivity("31-08-1982 10:20:56", "DEPARTURE");
         fishingActivity.setRelatedFishingActivities(Collections.singletonList(related));
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity,  false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity,  false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertTrue(specifiedActivityFact.validDates());
     }
@@ -64,7 +65,7 @@ public class FishingActivityTemplateTest {
         FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
         FishingActivity related = objectsHelper.generateActivity(null, "DEPARTURE");
         fishingActivity.setRelatedFishingActivities(Collections.singletonList(related));
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity,  false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity,  false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertFalse(specifiedActivityFact.validDates());
     }
@@ -76,7 +77,7 @@ public class FishingActivityTemplateTest {
         DelimitedPeriod delimitedPeriod = new DelimitedPeriod();
         related.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod));
         fishingActivity.setRelatedFishingActivities(Collections.singletonList(related));
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertFalse(specifiedActivityFact.validDates());
     }
@@ -91,7 +92,7 @@ public class FishingActivityTemplateTest {
         delimitedPeriod.setEndDateTime(dateTimeType);
         related.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod));
         fishingActivity.setRelatedFishingActivities(Collections.singletonList(related));
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertFalse(specifiedActivityFact.validDates());
     }
@@ -106,7 +107,7 @@ public class FishingActivityTemplateTest {
         delimitedPeriod.setStartDateTime(dateTimeType);
         related.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod));
         fishingActivity.setRelatedFishingActivities(Collections.singletonList(related));
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity,  false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity,  false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertFalse(specifiedActivityFact.validDates());
     }
@@ -122,7 +123,7 @@ public class FishingActivityTemplateTest {
         delimitedPeriod.setEndDateTime(dateTimeType);
         related.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod));
         fishingActivity.setRelatedFishingActivities(Collections.singletonList(related));
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertTrue(specifiedActivityFact.validDates());
     }
@@ -149,7 +150,7 @@ public class FishingActivityTemplateTest {
         related2.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod2));
 
         fishingActivity.setRelatedFishingActivities(Arrays.asList(related, related2));
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertFalse(specifiedActivityFact.validDates());
     }
@@ -176,7 +177,7 @@ public class FishingActivityTemplateTest {
         related2.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod2));
 
         fishingActivity.setRelatedFishingActivities(Arrays.asList(related, related2));
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertFalse(specifiedActivityFact.validDates());
     }
@@ -204,7 +205,7 @@ public class FishingActivityTemplateTest {
         related2.setSpecifiedDelimitedPeriods(Collections.singletonList(delimitedPeriod2));
 
         fishingActivity.setRelatedFishingActivities(Arrays.asList(related, related2));
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         specifiedActivityFact.setRelatedFishingActivities(fishingActivity.getRelatedFishingActivities());
         assertTrue(specifiedActivityFact.validDates());
     }
@@ -212,7 +213,7 @@ public class FishingActivityTemplateTest {
     @Test
     public void testRffmoProvidedShouldFail(){
         FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         List<FLUXLocation> fluxLocations = objectsHelper.generateFluxLocationsWithPositionValue();
         fluxLocations.get(0).setRegionalFisheriesManagementOrganizationCode(null);
         assertFalse(specifiedActivityFact.rfmoProvided(fluxLocations));
@@ -221,7 +222,7 @@ public class FishingActivityTemplateTest {
     @Test
     public void testisAllowedToHaveSubactivitiesPass(){
         FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
-        FishingActivityFact actFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact actFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         assertTrue(actFact.isAllowedToHaveSubactivities());
     }
 
@@ -231,7 +232,7 @@ public class FishingActivityTemplateTest {
         FishingActivity subActivity = objectsHelper.generateActivity(null, "DEPARTURE");
         subActivity.setTypeCode(new CodeType("type","scheme","","","","","","","",""));
         fishingActivity.getRelatedFishingActivities().add(subActivity);
-        FishingActivityFact actFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact actFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         actFact.setFaReportDocumentTypeCode(new eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType("DECLARATION","scheme"));
         assertTrue(actFact.isAllowedToHaveSubactivities());
     }
@@ -242,14 +243,14 @@ public class FishingActivityTemplateTest {
         FishingActivity subActivity = objectsHelper.generateActivity(null, "DEPARTURE");
         subActivity.setTypeCode(new CodeType("type","scheme","","","","","","","",""));
         fishingActivity.getRelatedFishingActivities().add(subActivity);
-        FishingActivityFact actFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact actFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         assertFalse(actFact.isAllowedToHaveSubactivities());
     }
 
     @Test
     public void testRffmoProvidedShouldPass(){
         FishingActivity fishingActivity = objectsHelper.generateActivity(null, "DEPARTURE");
-        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, null, null);
+        FishingActivityFact specifiedActivityFact = activityFactMapper.generateFishingActivityFact(fishingActivity, false, new FAReportDocument(), null);
         List<FLUXLocation> fluxLocations = objectsHelper.generateFluxLocationsWithPositionValue();
         CodeType codeType = new CodeType();
         codeType.setValue("code");

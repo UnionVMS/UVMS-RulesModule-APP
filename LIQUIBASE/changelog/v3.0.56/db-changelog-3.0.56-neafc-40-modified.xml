@@ -84,7 +84,7 @@
             <column name="rule_id" value="20000482"/>
             <column name="br_id" value="FA-L03-00-0482"/>
             <column name="note" value="CFR or IRCS must be present"/>
-            <column name="level" value="L01"/>
+            <column name="level" value="L03"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="3"/>
@@ -178,7 +178,7 @@
             <column name="rule_id" value="20000487"/>
             <column name="br_id" value="FA-L00-00-0487"/>
             <column name="note" value="Check attribute schemeID .ids must be EU_TRIP_ID"/>
-            <column name="level" value="L01"/>
+            <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="9"/>
@@ -287,7 +287,7 @@
             <column name="id" value="20000592"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="fishingActivity &amp;&amp; fishingGear != null &amp;&amp; !valid(fishingGear, neafcMatrix)"/>
+                    value="fishingActivity &amp;&amp; (fishingGear != null) &amp;&amp; !valid(fishingGear, neafcMatrix)"/>
             <column name="rule_id" value="20000592"/>
             <column name="failure_message" value="ApplicableGearCharacteristic missing"/>
         </insert>
@@ -298,7 +298,7 @@
             <column name="rule_id" value="20000510"/>
             <column name="br_id" value="FA-L01-00-0510"/>
             <column name="note" value="ValueMeasure unitCode value must be present in MDR list  FLUX_UNIT"/>
-            <column name="level" value="L00"/>
+            <column name="level" value="L01"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
             <column name="template_id" value="6"/>
@@ -417,7 +417,7 @@
             <column name="rule_id" value="20000512"/>
             <column name="br_id" value="FA-L02-00-0512"/>
             <column name="note" value="If entry in area declaration (FA-L02-00-0245)."/>
-            <column name="level" value="L01"/>
+            <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="18"/>
@@ -500,7 +500,7 @@
             <column name="id" value="20000571"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; faReportDocVesselRoleCode == null"/>
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(vesselTransportMeans) &amp;&amp; faReportDocVesselRoleCode == null"/>
             <column name="rule_id" value="20000571"/>
             <column name="failure_message" value="The RoleCode of the related vessel is missing."/>
         </insert>
@@ -687,7 +687,7 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
-            <column name="template_id" value="27"/>
+            <column name="template_id" value="28"/>
             <column name="property_names" value="relatedFLUXLocations"/>
             <column name="disabled" value="false"/>
         </insert>
@@ -696,7 +696,7 @@
             <column name="id" value="20000407"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; isEmpty(relatedFLUXLocations)"/>
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; isEmpty(relatedFLUXLocations)"/>
             <column name="rule_id" value="20000407"/>
             <column name="failure_message" value="The transhipment location is missing."/>
         </insert>
@@ -710,7 +710,7 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
-            <column name="template_id" value="27"/>
+            <column name="template_id" value="28"/>
             <column name="property_names" value="fluxLocationTypeCodes"/>
             <column name="disabled" value="false"/>
         </insert>
@@ -719,8 +719,8 @@
             <column name="id" value="20000408"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp;
-            (isEmpty(fluxLocationTypeCodes) || valueContainsAny(fluxLocationTypeCodes, &quot;POSITION&quot;))"/>
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp;
+            (isEmpty(fluxLocationTypeCode) || valueContainsAny(fluxLocationTypeCode, &quot;POSITION&quot;))"/>
             <column name="rule_id" value="20000408"/>
             <column name="failure_message" value="At least a port or position must be provided."/>
         </insert>
@@ -734,7 +734,7 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
-            <column name="template_id" value="27"/>
+            <column name="template_id" value="28"/>
             <column name="property_names" value="relatedVesselTransportMeans"/>
             <column name="disabled" value="false"/>
         </insert>
@@ -743,7 +743,7 @@
             <column name="id" value="20000409"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; isEmpty(relatedVesselTransportMeans)"/>
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; isEmpty(relatedVesselTransportMeans)"/>
             <column name="rule_id" value="20000409"/>
             <column name="failure_message"
                     value="Information concerning the other vessel involved in the transhipment is missing."/>
@@ -759,7 +759,7 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
-            <column name="template_id" value="27"/>
+            <column name="template_id" value="28"/>
             <column name="property_names" value="vesselTransportMeansRoleCodes"/>
             <column name="disabled" value="false"/>
         </insert>
@@ -768,7 +768,7 @@
             <column name="id" value="20000412"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; !isEmpty(vesselTransportMeansRoleCodes) &amp;&amp;
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; !isEmpty(vesselTransportMeansRoleCodes) &amp;&amp;
                            !codeTypeValueContainsOnly(vesselTransportMeansRoleCodes, &quot;RECEIVER&quot;)"/>
             <column name="rule_id" value="20000412"/>
             <column name="failure_message" value="Invalid RoleCode for the related vessel."/>
@@ -780,10 +780,10 @@
             <column name="rule_id" value="20000452"/>
             <column name="br_id" value="FA-L00-00-0452"/>
             <column name="note" value="check presence"/>
-            <column name="level" value="L02"/>
+            <column name="level" value="L00"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
-            <column name="template_id" value="27"/>
+            <column name="template_id" value="28"/>
             <column name="property_names" value="occurrenceDateTime"/>
             <column name="disabled" value="false"/>
         </insert>
@@ -792,7 +792,7 @@
             <column name="id" value="20000452"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; (occurrenceDateTime == null)"/>
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp; (occurrenceDateTime == null)"/>
             <column name="rule_id" value="20000452"/>
             <column name="failure_message"
                     value="The activity or the sub-activity must have an occurrence date/time or a delimited period."/>
@@ -807,7 +807,7 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
-            <column name="template_id" value="27"/>
+            <column name="template_id" value="28"/>
             <column name="property_names" value="specifiedFACatches"/>
             <column name="disabled" value="false"/>
         </insert>
@@ -816,7 +816,8 @@
             <column name="id" value="20000557"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; !thereAreAtLeastTwoDifferentTypeCodesForFaCatches()"/>
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp;
+                           !thereAreAtLeastTwoDifferentTypeCodesInList(faCatchTypeCode)"/>
             <column name="rule_id" value="20000557"/>
             <column name="failure_message" value=""/>
         </insert>
@@ -830,7 +831,7 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-05 00:00:00.0"/>
-            <column name="template_id" value="27"/>
+            <column name="template_id" value="28"/>
             <column name="property_names" value="specifiedFACatches"/>
             <column name="disabled" value="false"/>
         </insert>
@@ -839,7 +840,8 @@
             <column name="id" value="20000551"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; !codeTypeValueContainsOnly(faCatchTypeCodes, &quot;UNLOADED&quot;, &quot;ONBOARD&quot;)"/>
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;NOTIFICATION&quot;) &amp;&amp; codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;) &amp;&amp;
+                           !codeTypeValueContainsOnly(faCatchTypeCode, &quot;UNLOADED&quot;, &quot;ONBOARD&quot;)"/>
             <column name="rule_id" value="20000551"/>
             <column name="failure_message" value=""/>
         </insert>

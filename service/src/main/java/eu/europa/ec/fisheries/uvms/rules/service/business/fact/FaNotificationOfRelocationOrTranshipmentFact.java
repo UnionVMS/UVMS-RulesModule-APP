@@ -16,6 +16,11 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -24,6 +29,23 @@ public class FaNotificationOfRelocationOrTranshipmentFact extends AbstractReloca
     @Override
     public void setFactType() {
         this.factType = FactType.FA_NOTIFICATION_OF_TRANSHIPMENT_OR_RELOCATION;
+    }
+
+    public boolean thereAreAtLeastTwoDifferentTypeCodesInList(List<CodeType> faCatchTypeCodes){
+        if(CollectionUtils.isEmpty(faCatchTypeCodes)){
+            return false;
+        }
+        List<CodeType> notNullOrEmptyTypeCodes = faCatchTypeCodes.stream().filter(typCode -> typCode != null && StringUtils.isNotEmpty(typCode.getValue())).collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(faCatchTypeCodes)){
+            return false;
+        }
+        String firstCode = notNullOrEmptyTypeCodes.get(0).getValue();
+        for (CodeType faCatchTypeCode : notNullOrEmptyTypeCodes) {
+            if(!firstCode.equals(faCatchTypeCode.getValue())){ // If there is one code != then the first one then not all are equal => hence we have at least 2 different codes!
+                return true;
+            }
+        }
+        return false;
     }
 
 }

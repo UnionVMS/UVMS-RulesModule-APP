@@ -36,7 +36,7 @@ public class FishingGearFactTest {
 
     @Test
     public void testWithNullShouldFail(){
-        Assert.assertFalse(factUnderTest.valid(null, new HashMap<>()));
+        Assert.assertFalse(factUnderTest.valid(null, matrix.getMatrix()));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class FishingGearFactTest {
         FishingGear otb = ActivityObjectsHelper.generateFishingGear("OTB");
         GearCharacteristic me = ActivityObjectsHelper.generateGearCharacteristic("ME");
         otb.setApplicableGearCharacteristics(Collections.singletonList(me));
-        Assert.assertFalse(factUnderTest.valid(otb, new HashMap<>()));
+        Assert.assertFalse(factUnderTest.valid(otb, matrix.getMatrix()));
     }
 
     @Test
@@ -58,7 +58,7 @@ public class FishingGearFactTest {
         GearCharacteristic me = ActivityObjectsHelper.generateGearCharacteristic("ME");
         GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
         otb.setApplicableGearCharacteristics(Arrays.asList(me, gm));
-        Assert.assertTrue(factUnderTest.valid(otb, new HashMap<>()));
+        Assert.assertTrue(factUnderTest.valid(otb, matrix.getMatrix()));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class FishingGearFactTest {
         GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
         GearCharacteristic gm2 = ActivityObjectsHelper.generateGearCharacteristic("GM");
         otb.setApplicableGearCharacteristics(Arrays.asList(me, gm, gm2));
-        Assert.assertTrue(factUnderTest.valid(otb, new HashMap<>()));
+        Assert.assertTrue(factUnderTest.valid(otb, matrix.getMatrix()));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class FishingGearFactTest {
         GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
         GearCharacteristic gm2 = ActivityObjectsHelper.generateGearCharacteristic("GM");
         otb.setApplicableGearCharacteristics(Arrays.asList(me, me2, gm, gm2));
-        Assert.assertTrue(factUnderTest.valid(otb, new HashMap<>()));
+        Assert.assertTrue(factUnderTest.valid(otb, matrix.getMatrix()));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class FishingGearFactTest {
         FishingGear sv = ActivityObjectsHelper.generateFishingGear("SV");
         GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
         sv.setApplicableGearCharacteristics(Collections.singletonList(gm));
-        Assert.assertFalse(factUnderTest.valid(sv, new HashMap<>()));
+        Assert.assertFalse(factUnderTest.valid(sv, matrix.getMatrix()));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class FishingGearFactTest {
         GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
         GearCharacteristic gm2 = ActivityObjectsHelper.generateGearCharacteristic("GM");
         sv.setApplicableGearCharacteristics(Arrays.asList(gm, gm2));
-        Assert.assertFalse(factUnderTest.valid(sv, new HashMap<>()));
+        Assert.assertFalse(factUnderTest.valid(sv, matrix.getMatrix()));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class FishingGearFactTest {
         GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
         GearCharacteristic me = ActivityObjectsHelper.generateGearCharacteristic("ME");
         sv.setApplicableGearCharacteristics(Arrays.asList(gm, me));
-        Assert.assertTrue(factUnderTest.valid(sv, new HashMap<>()));
+        Assert.assertTrue(factUnderTest.valid(sv, matrix.getMatrix()));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class FishingGearFactTest {
         GearCharacteristic me = ActivityObjectsHelper.generateGearCharacteristic("ME");
         GearCharacteristic me2 = ActivityObjectsHelper.generateGearCharacteristic("ME");
         sv.setApplicableGearCharacteristics(Arrays.asList(gm, me, me2));
-        Assert.assertTrue(factUnderTest.valid(sv, new HashMap<>()));
+        Assert.assertTrue(factUnderTest.valid(sv, matrix.getMatrix()));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class FishingGearFactTest {
         FishingGear tbb = ActivityObjectsHelper.generateFishingGear("TBB");
         GearCharacteristic mt = ActivityObjectsHelper.generateGearCharacteristic("MT");
         tbb.setApplicableGearCharacteristics(Collections.singletonList(mt));
-        Assert.assertFalse(factUnderTest.valid(tbb, new HashMap<>()));
+        Assert.assertFalse(factUnderTest.valid(tbb, matrix.getMatrix()));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class FishingGearFactTest {
         GearCharacteristic mt = ActivityObjectsHelper.generateGearCharacteristic("MT");
         GearCharacteristic gn = ActivityObjectsHelper.generateGearCharacteristic("GN");
         tbb.setApplicableGearCharacteristics(Arrays.asList(mt, gn));
-        Assert.assertFalse(factUnderTest.valid(tbb, new HashMap<>()));
+        Assert.assertFalse(factUnderTest.valid(tbb, matrix.getMatrix()));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class FishingGearFactTest {
         GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
         GearCharacteristic gn = ActivityObjectsHelper.generateGearCharacteristic("GN");
         tbb.setApplicableGearCharacteristics(Arrays.asList(me, gn, gm));
-        Assert.assertTrue(factUnderTest.valid(tbb, new HashMap<>()));
+        Assert.assertTrue(factUnderTest.valid(tbb, matrix.getMatrix()));
     }
 
     @Test
@@ -151,7 +151,7 @@ public class FishingGearFactTest {
         GearCharacteristic me = ActivityObjectsHelper.generateGearCharacteristic("ME");
         GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
         tbb.setApplicableGearCharacteristics(Arrays.asList(me, gm));
-        Assert.assertTrue(factUnderTest.valid(tbb, new HashMap<>()));
+        Assert.assertTrue(factUnderTest.valid(tbb, matrix.getMatrix()));
     }
 
     @Test
@@ -159,7 +159,7 @@ public class FishingGearFactTest {
         FishingGear tbb = ActivityObjectsHelper.generateFishingGear("DRB");
         GearCharacteristic he = ActivityObjectsHelper.generateGearCharacteristic("HE");
         tbb.setApplicableGearCharacteristics(Collections.singletonList(he));
-        Assert.assertFalse(factUnderTest.valid(tbb, new HashMap<>()));
+        Assert.assertFalse(factUnderTest.valid(tbb, matrix.getMatrix()));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class FishingGearFactTest {
         GearCharacteristic nn = ActivityObjectsHelper.generateGearCharacteristic("NN");
         GearCharacteristic qg = ActivityObjectsHelper.generateGearCharacteristic("QG");
         gn.setApplicableGearCharacteristics(Arrays.asList(nn, qg));
-        Assert.assertFalse(factUnderTest.valid(gn, new HashMap<>()));
+        Assert.assertFalse(factUnderTest.valid(gn, matrix.getMatrix()));
     }
 
     @Test
@@ -181,7 +181,7 @@ public class FishingGearFactTest {
         GearCharacteristic me = ActivityObjectsHelper.generateGearCharacteristic("ME");
         GearCharacteristic qg = ActivityObjectsHelper.generateGearCharacteristic("QG");
         gn.setApplicableGearCharacteristics(Arrays.asList(nn, gm, nl, nl, he, gm, gm, me, qg));
-        Assert.assertTrue(factUnderTest.valid(gn, new HashMap<>()));
+        Assert.assertTrue(factUnderTest.valid(gn, matrix.getMatrix()));
     }
 
     @Test
@@ -191,7 +191,7 @@ public class FishingGearFactTest {
         GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
         GearCharacteristic gd = ActivityObjectsHelper.generateGearCharacteristic("GD");
         gn.setApplicableGearCharacteristics(Arrays.asList(me, gm, gd));
-        Assert.assertTrue(factUnderTest.valid(gn, new HashMap<>()));
+        Assert.assertTrue(factUnderTest.valid(gn, matrix.getMatrix()));
     }
 
     @Test
@@ -200,7 +200,7 @@ public class FishingGearFactTest {
         GearCharacteristic me = ActivityObjectsHelper.generateGearCharacteristic("ME");
         GearCharacteristic gd = ActivityObjectsHelper.generateGearCharacteristic("GD");
         gn.setApplicableGearCharacteristics(Arrays.asList(me, gd));
-        Assert.assertFalse(factUnderTest.valid(gn, new HashMap<>()));
+        Assert.assertFalse(factUnderTest.valid(gn, matrix.getMatrix()));
     }
 
     @Test
@@ -209,6 +209,6 @@ public class FishingGearFactTest {
         GearCharacteristic gm = ActivityObjectsHelper.generateGearCharacteristic("GM");
         GearCharacteristic gd = ActivityObjectsHelper.generateGearCharacteristic("GD");
         gn.setApplicableGearCharacteristics(Arrays.asList(gm, gd));
-        Assert.assertFalse(factUnderTest.valid(gn, new HashMap<>()));
+        Assert.assertFalse(factUnderTest.valid(gn, matrix.getMatrix()));
     }
 }

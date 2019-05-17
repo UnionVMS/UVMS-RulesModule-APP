@@ -114,5 +114,6 @@ public class XPathConstants {
     public static final String REFERENCED_ITEM = "ReferencedItem";
     public static final String RESPONSE_CODE = "ResponseCode";
     public static final String RESPONDENT_FLUX_PARTY = "RespondentFLUXParty";
+    public static final String SPECIFIED_VESSELPOSITION_EVENT = "SpecifiedVesselPositionEvent";
 
 }

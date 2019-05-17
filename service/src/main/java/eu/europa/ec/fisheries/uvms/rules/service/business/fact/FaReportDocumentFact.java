@@ -56,9 +56,14 @@ public class FaReportDocumentFact extends AbstractFact {
     private List<String> faTypesPerTrip;
     private Map<String, Integer> fishingActivitiesArrivalDeclarationList;
     private Map<String, Integer> fishingActivitiesDepartureDeclarationList;
+    private CodeType fmcMarkerCode;
 
     private Map<FishingActivityType, List<String>> tripsPerFaTypeFromMessage = new EnumMap<>(FishingActivityType.class);
     private Map<FishingActivityType, List<String>> tripsPerFaTypeFromThisReport = new EnumMap<>(FishingActivityType.class);
+
+    public FaReportDocumentFact() {
+        setFactType();
+    }
 
     public boolean isValid(List<FishingActivity> specifiedFishingActivities){
         if (CollectionUtils.isEmpty(specifiedFishingActivities)){
@@ -199,10 +204,6 @@ public class FaReportDocumentFact extends AbstractFact {
         }
 
         return false;
-    }
-
-    public FaReportDocumentFact() {
-        setFactType();
     }
 
     @Override

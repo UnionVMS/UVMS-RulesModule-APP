@@ -67,6 +67,7 @@
             <xsd:element name="note" type="xsd:string"/>
             <xsd:element name="expression" type="xsd:string"/>
             <xsd:element name="entity" type="xsd:string"/>
+            <xsd:element name="factDate" type="xsd:date"/>
         </xsd:sequence>
     </xsd:complexType>
 

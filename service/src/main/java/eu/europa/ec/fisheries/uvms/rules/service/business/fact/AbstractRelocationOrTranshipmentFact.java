@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 import java.util.List;
 
@@ -28,6 +29,11 @@ public abstract class AbstractRelocationOrTranshipmentFact extends AbstractFact 
     protected List<CodeType> fluxCharacteristicTypeCodes;
     protected List<FLAPDocument> specifiedFLAPDocuments;
     protected List<IdType> flapDocumentIdTypes;
+    protected DateTimeType occurrenceDateTime;
+
+    public AbstractRelocationOrTranshipmentFact() {
+        setFactType();
+    }
 
     /**
      * This method checks if Every FACatch with typeCode LOADED has atleast one AREA FluxLocation

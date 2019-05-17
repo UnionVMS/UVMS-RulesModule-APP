@@ -13,12 +13,15 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections.CollectionUtils;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -29,6 +32,24 @@ public class FishingTripFact extends AbstractFact {
 
     public FishingTripFact() {
         setFactType();
+    }
+
+    public boolean containsMoreThanOneOccurrenceOfIdForGivenSchemeId(){
+        if(CollectionUtils.isEmpty(ids)){
+            return true;
+        }
+        List<String> schemeIds = new ArrayList<>();
+        List<IdType> duplicatedIds = ids.stream().filter(id -> {
+            boolean isPresent = false;
+            if (id != null) {
+                if (schemeIds.contains(id.getSchemeId())) {
+                    isPresent = true;
+                }
+                schemeIds.add(id.getSchemeId());
+            }
+            return isPresent;
+        }).collect(Collectors.toList());
+        return duplicatedIds.size() > 0;
     }
 
     @Override

@@ -33,6 +33,7 @@ import org.mockito.junit.MockitoRule;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 
 import static junit.framework.Assert.*;
 
@@ -85,7 +86,7 @@ public class RulesPostProcessBeanTest {
         AbstractFact fact = new FaReportDocumentFact();
         fact.setOk(true);
         RuleError ruleError= new RuleError(ServiceConstants.INVALID_XML_RULE,  ServiceConstants.INVALID_XML_RULE_MESSAGE,  "L00", null);;
-        ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT);
+        ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleError, "<FLUXFAReportMessage></FLUXFAReportMessage>", "ggg-uuu-iddd", RawMsgType.FA_REPORT, new Date());
         assertFalse(validationResult.isError());
         assertFalse(validationResult.isWarning());
         assertFalse(validationResult.isOk());

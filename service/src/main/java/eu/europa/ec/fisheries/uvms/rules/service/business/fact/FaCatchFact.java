@@ -58,6 +58,8 @@ public class FaCatchFact extends AbstractFact {
     private List<IdType> fishActRelatedFluxLocationIds;
     private boolean isSubActivity = false;
 
+
+
     public boolean containsAtLeastOneGfcmGsaWithValidValue(List<IdType> ids){
         if(CollectionUtils.isEmpty(ids)){
             return false;

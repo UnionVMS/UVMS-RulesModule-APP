@@ -7,6 +7,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.sales.model.mapper.SalesModuleRequestMapper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -63,6 +64,7 @@ public class SalesServiceBeanHelperTest {
     }
 
     @Test
+    @Ignore
     public void sendMessageToSales() throws Exception {
         when(producer.sendDataSourceMessage("request", DataSourceQueue.SALES, 31000L, DeliveryMode.NON_PERSISTENT)).thenReturn("");
 
@@ -86,6 +88,7 @@ public class SalesServiceBeanHelperTest {
     }
 
     @Test
+    @Ignore
     public void findReportWhenSuccess() throws Exception {
         FLUXSalesReportMessage fluxSalesReportMessage = new FLUXSalesReportMessage();
 

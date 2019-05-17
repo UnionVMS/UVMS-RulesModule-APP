@@ -20,6 +20,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 
 import javax.ejb.Local;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -73,11 +74,13 @@ public interface MDRCacheRuleService {
 
     RuleFromMDR getFaBrForBrIdAndContext(String brId, String df);
 
-    RuleFromMDR getFaBrForBrIdAndDataFlow(String brId, String dataFlow);
+    List<RuleFromMDR> getFaBrListForBrIdAndContext(String brId, String context);
 
-    String getErrorMessageForBrIdAndDF(String brid, String df);
+    RuleFromMDR getFaBrForBrIdAndDataFlow(String brId, String dataFlow, Date factDate);
 
-    String getErrorTypeStrForBrIdAndDF(String brid, String df);
+    String getErrorMessageForBrIAndDFAndValidity(String brid, String df, Date msgDate);
+
+    String getErrorTypeStrForForBrIAndDFAndValidity(String brid, String df, Date msgDate);
 
     List<String> getDataFlowListForBRId(String brId);
 

@@ -11,6 +11,7 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageTypeResponse;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
@@ -59,12 +60,13 @@ public class GetValidationResultService {
     }
 
     private void loadValidationMessagesFromMDR(ValidationMessageType validationMessageType, String brId, String dataFlow) {
-        RuleFromMDR errorMessageForBrId = mdrCacheService.getFaBrForBrIdAndDataFlow(brId, dataFlow);
+        RuleFromMDR errorMessageForBrId = mdrCacheService.getFaBrForBrIdAndDataFlow(brId, dataFlow, validationMessageType.getFactDate());
         if (errorMessageForBrId != null){
             validationMessageType.setExpression(errorMessageForBrId.getExpression());
             validationMessageType.setMessage(errorMessageForBrId.getMessage());
             validationMessageType.setNote(errorMessageForBrId.getNote());
             validationMessageType.setEntity(errorMessageForBrId.getTemplateEntityName());
+            validationMessageType.setErrorType(ErrorType.fromValue(errorMessageForBrId.getType()));
         }
     }
 }

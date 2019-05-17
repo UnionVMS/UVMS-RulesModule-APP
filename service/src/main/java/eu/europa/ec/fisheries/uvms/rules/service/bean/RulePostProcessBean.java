@@ -26,12 +26,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
 
 import javax.ejb.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Stateless
 @LocalBean
@@ -50,14 +48,15 @@ public class RulePostProcessBean {
             for (AbstractFact fact : facts) {
                 if (fact!=null && fact.hasWarOrErr()) {
                     List<String> uniqueIds = fact.getUniqueIds();
+                    Date factDate = fact.getCreationJavaDateOfMessage();
                     for (RuleError error : fact.getErrors()) {
                         isError = true;
-                        ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), uniqueIds, error.getXpaths());
+                        ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), uniqueIds, error.getXpaths(), factDate);
                         validationMessages.add(validationMessage);
                     }
                     for (RuleWarning warning : fact.getWarnings()) {
                         isWarning = true;
-                        ValidationMessageType validationMessage = createValidationMessageFromParams(warning.getRuleId(), ErrorType.WARNING, warning.getMessage(), warning.getLevel(), uniqueIds, warning.getXpaths());
+                        ValidationMessageType validationMessage = createValidationMessageFromParams(warning.getRuleId(), ErrorType.WARNING, warning.getMessage(), warning.getLevel(), uniqueIds, warning.getXpaths(), factDate);
                         validationMessages.add(validationMessage);
                     }
                 }
@@ -71,9 +70,9 @@ public class RulePostProcessBean {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public ValidationResult checkAndUpdateValidationResultForGeneralBusinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesServiceException {
+    public ValidationResult checkAndUpdateValidationResultForGeneralBusinessRules(RuleError error, String rawMessage, String rawMsgGuid, RawMsgType type, Date factDate) throws RulesServiceException {
         try {
-            final ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), Collections.<String>emptyList(), Collections.<String>emptyList());
+            final ValidationMessageType validationMessage = createValidationMessageFromParams(error.getRuleId(), ErrorType.ERROR, error.getMessage(), error.getLevel(), Collections.emptyList(), Collections.emptyList(), factDate);
             List<ValidationMessageType> validationMessages = new ArrayList<>();
             validationMessages.add(validationMessage);
             saveValidationResult(validationMessages, rawMessage, rawMsgGuid, type);
@@ -105,7 +104,7 @@ public class RulePostProcessBean {
         return validationResultDto;
     }
 
-    private ValidationMessageType createValidationMessageFromParams(String ruleId, ErrorType warning2, String message, String level, List<String> uniqueIds, List<String> xpaths) {
+    private ValidationMessageType createValidationMessageFromParams(String ruleId, ErrorType warning2, String message, String level, List<String> uniqueIds, List<String> xpaths, Date factDate) {
         ValidationMessageType validationMessage = new ValidationMessageType();
         validationMessage.setBrId(ruleId);
         validationMessage.setErrorType(warning2);
@@ -113,6 +112,7 @@ public class RulePostProcessBean {
         validationMessage.setLevel(level);
         validationMessage.getMessageId().addAll(uniqueIds);
         validationMessage.getXpaths().addAll(xpaths);
+        validationMessage.setFactDate(factDate);
         return validationMessage;
     }
 

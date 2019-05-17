@@ -205,7 +205,7 @@ public class RulesFLUXMessageHelper {
         try {
             return JAXBUtils.unMarshallMessage(request, FLUXFAReportMessage.class, loadXSDSchema(FLUXFAREPORT_MESSAGE_3P1_XSD));
         } catch (Exception e) {
-            throw new UnmarshalException(e.getMessage());
+            throw new UnmarshalException(e.getCause().getLocalizedMessage());
         }
     }
 
@@ -213,7 +213,7 @@ public class RulesFLUXMessageHelper {
         try {
             return JAXBUtils.unMarshallMessage(request, FLUXFAQueryMessage.class, loadXSDSchema(FLUXFAQUERY_MESSAGE_3P0_XSD));
         } catch (Exception e) {
-            throw new UnmarshalException(e.getMessage());
+            throw new UnmarshalException(e.getCause().getLocalizedMessage());
         }
     }
 
@@ -221,7 +221,7 @@ public class RulesFLUXMessageHelper {
         try {
             return JAXBUtils.unMarshallMessage(request, FLUXResponseMessage.class, loadXSDSchema(FLUXFARESPONSE_MESSAGE_6P0_XSD));
         } catch (Exception e) {
-            throw new UnmarshalException(e.getMessage());
+            throw new UnmarshalException(e.getCause().getLocalizedMessage());
         }
     }
 

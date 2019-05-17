@@ -47,6 +47,7 @@ public class ActivityResponseFactGeneratorTest {
     public void before(){
 
         generator = new ActivityResponseFactGenerator(null, new FaResponseFactMapper(), MessageType.PUSH);
+        generator.setExtraValueMap(new HashMap<>());
         SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         date = sdf.parse("31-08-1982 10:20:56");
 

@@ -17,6 +17,9 @@ import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
+import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
@@ -31,8 +34,11 @@ import org.mockito.*;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.mockito.runners.MockitoJUnitRunner;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 
+import javax.ejb.EJB;
+import javax.jms.Destination;
 import javax.xml.bind.UnmarshalException;
 
 import static org.mockito.Matchers.*;
@@ -49,6 +55,9 @@ public class RulesFAReportServiceBeanTest {
     @Mock private IAssetClient assetServiceBean;
     @Mock private RulePostProcessBean rulesService;
     @Mock private RulesFLUXMessageHelper fluxMessageHelper;
+    @Mock private RulesResponseConsumer rulesConsumer;
+    @Mock private RulesActivityProducerBean activityProducer;
+    @Mock private RulesExchangeProducerBean exchangeProducer;
     @Mock private GearMatrix fishingGearTypeCharacteristics;
     @InjectMocks private RulesFaReportServiceBean rulesFaReportServiceBean;
 
@@ -59,10 +68,12 @@ public class RulesFAReportServiceBeanTest {
     @Before
     public void before(){
         fluxfaReportMessageRequest = new SetFLUXFAReportMessageRequest();
+        fluxfaReportMessageRequest.setType(PluginType.FLUX);
         fluxfaReportMessageRequest.setLogGuid("guid");
         rulesFaReportServiceBean.init();
         Whitebox.setInternalState(rulesFaReportServiceBean, "fluxMessageHelper", fluxMessageHelper);
         fluxfaReportMessage.setFLUXReportDocument(fluxReportDocument);
+        fluxfaReportMessage.getFAReportDocuments().add(new FAReportDocument());
     }
 
     @Test
@@ -85,7 +96,6 @@ public class RulesFAReportServiceBeanTest {
         inOrder.verify(rulesEngine, times(1)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), Matchers.anyString());
         inOrder.verify(rulesService, times(1)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
         inOrder.verify(rulesActivityService, times(1)).checkSubscriptionPermissions(anyString(), any(MessageType.class));
-        inOrder.verify(rulesActivityService, times(1)).sendRequestToActivity(anyString(), any(PluginType.class), any(MessageType.class), anyString());
         inOrder.verify(rulesDaoBean, times(1)).saveFaIdsPerTripList(anyList());
 
     }
@@ -100,14 +110,14 @@ public class RulesFAReportServiceBeanTest {
 
         rulesFaReportServiceBean.evaluateOutgoingFaReport(fluxfaReportMessageRequest);
 
-        InOrder inOrder = inOrder(rulesDaoBean, assetServiceBean, rulesEngine, rulesService, exchangeServiceBean, rulesActivityService);
+        InOrder inOrder = inOrder(rulesDaoBean, assetServiceBean, rulesEngine, rulesService, exchangeServiceBean, rulesActivityService, exchangeProducer);
 
         inOrder.verify(rulesDaoBean, times(1)).loadFADocumentIDByIdsByIds(anySet());
         inOrder.verify(rulesDaoBean, times(1)).loadExistingFaIdsPerTrip(anyList());
         inOrder.verify(assetServiceBean, times(1)).findHistoryOfAssetBy(anyList());
         inOrder.verify(rulesEngine, times(1)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), Matchers.anyString());
         inOrder.verify(rulesService, times(1)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
-        inOrder.verify(exchangeServiceBean, times(1)).sendToExchange(anyString());
+        inOrder.verify(exchangeProducer, times(1)).sendModuleMessage(anyString(), any(Destination.class));
 
     }
 }

@@ -109,7 +109,7 @@ public class RulesFAResponseServiceBean {
             XPathRepository.INSTANCE.clear(fluxFaResponseFacts);
 
         } catch (UnmarshalException e) {
-            log.debug("Error while trying to parse FLUXResponseMessage received message! It is malformed!", e);
+            log.debug("Error while trying to parse FLUXResponseMessage received message! It is malformed! Reason : {{}}", e.getMessage());
             exchangeServiceBean.updateExchangeMessage(logGuid, fluxMessageHelper.calculateMessageValidationStatus(failure));
             throw new RulesServiceException(e.getMessage(), e);
         } catch (RulesValidationException e) {
@@ -130,8 +130,7 @@ public class RulesFAResponseServiceBean {
             ruleWarning = new RuleError(ServiceConstants.PERMISSION_DENIED_RULE, ServiceConstants.PERMISSION_DENIED_RULE_MESSAGE, "L00", Collections.<String>singletonList(null));
         }
 
-        ValidationResult validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage,
-                request.getLogGuid(), FA_QUERY);
+        ValidationResult validationResultDto = ruleService.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage, request.getLogGuid(), FA_QUERY, request.getDate());
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
 

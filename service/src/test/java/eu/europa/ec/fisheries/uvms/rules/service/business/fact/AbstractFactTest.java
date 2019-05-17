@@ -1712,6 +1712,7 @@ public class AbstractFactTest {
                 IOUtils.toString(new FileInputStream("src/test/resources/testData/faRepDocForEmptynessCheck.xml")), FLUXFAReportMessage.class);
         ActivityFaReportFactGenerator generator = new ActivityFaReportFactGenerator(MessageType.PUSH);
         generator.setBusinessObjectMessage(message);
+        generator.setExtraValueMap(new HashMap<>());
         for (AbstractFact abstractFact : generator.generateAllFacts()) {
             if(abstractFact instanceof FaReportDocumentFact){
                 FaReportDocumentFact repDoc = (FaReportDocumentFact) abstractFact;

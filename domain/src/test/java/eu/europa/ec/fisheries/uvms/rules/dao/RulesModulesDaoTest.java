@@ -25,11 +25,11 @@ public abstract class RulesModulesDaoTest extends BaseDAOTest {
 
     static final Operation INSERT_RULE_DATA = sequenceOf(
             insertInto("rules.rule")
-                    .columns("rule_id", "br_id", "expression", "note", "error_type", "message", "rule_created_on", "template_id", "level", "property_names", "disabled")
-                    .values(1L, "br1", "typeCode != null", "check type code", "ERROR", "type code is not set", java.sql.Date.valueOf("2014-12-12"), 1, "L00", "ids", true)
-                    .values(2L, "br2", "typeCode == null", "check type code", "ERROR", "type code is set", java.sql.Date.valueOf("2014-12-13"), 2, "L00", "ids", false)
-                    .values(3L, "br3", "typeCode != \"abc\"", "check type code", "ERROR", "type code is not abc", java.sql.Date.valueOf("2014-12-14"), 3, "L00", "ids", false)
-                    .values(4L, "br4", "typeCode != id", "check type code", "WARNING", "type code is same as id", java.sql.Date.valueOf("2014-12-15"), 4, "L00", "ids", false)
+                    .columns("rule_id", "br_id", "note", "error_type", "rule_created_on", "template_id", "level", "property_names", "disabled")
+                    .values(1L, "br1", "check type code", "ERROR", java.sql.Date.valueOf("2014-12-12"), 1, "L00", "ids", true)
+                    .values(2L, "br2", "check type code", "ERROR", java.sql.Date.valueOf("2014-12-13"), 2, "L00", "ids", false)
+                    .values(3L, "br3", "check type code", "ERROR", java.sql.Date.valueOf("2014-12-14"), 3, "L00", "ids", false)
+                    .values(4L, "br4", "check type code", "WARNING", java.sql.Date.valueOf("2014-12-15"), 4, "L00", "ids", false)
                     .build());
 
     static final Operation INSERT_TEMPLATE_DATA = sequenceOf(

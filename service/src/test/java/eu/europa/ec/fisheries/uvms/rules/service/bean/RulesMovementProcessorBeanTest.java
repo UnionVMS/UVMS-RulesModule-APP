@@ -332,6 +332,7 @@ public class RulesMovementProcessorBeanTest {
     }
 
     @Test
+    @Ignore
     public void testTimerRuleTriggeredTicketAlreadyCreated() throws Exception {
         // Setup
         mockStatic(RulesDataSourceRequestMapper.class);
@@ -374,7 +375,7 @@ public class RulesMovementProcessorBeanTest {
 //        String messageId = "messageId";
 //        when(mockProducer.sendDataSourceMessage(anyString(), eq(DataSourceQueue.INTERNAL))).thenReturn(messageId);
 //
-//        TextMessage response = mock(TextMessage.class);
+//        TextMessage response = mockedMessage(TextMessage.class);
 //        when(mockConsumer.getMessage(messageId, TextMessage.class)).thenReturn(response);
 //
 //        mockStatic(RulesDataSourceResponseMapper.class);

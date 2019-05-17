@@ -40,6 +40,7 @@ import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @ToString
@@ -49,13 +50,14 @@ public abstract class AbstractFact {
     private static volatile int counter = 0;
 
     protected FactType factType;
-    protected eu.europa.ec.fisheries.uvms.rules.service.business.MessageType messageType;
+    protected MessageType messageType;
     protected String senderOrReceiver;
     protected List<RuleWarning> warnings;
     protected List<RuleError> errors;
     protected List<String> uniqueIds;
     protected boolean ok = true;
     protected DateTime creationDateOfMessage;
+    protected Date creationJavaDateOfMessage;
     private Integer sequence = 0;
 
     private String messageDataFlow;
@@ -75,6 +77,7 @@ public abstract class AbstractFact {
         this.uniqueIds = new ArrayList<>();
         this.warnings = new ArrayList<>();
         this.errors = new ArrayList<>();
+        setFactType();
     }
 
     public static int getNumOfInstances() {
@@ -144,18 +147,18 @@ public abstract class AbstractFact {
      * Checks if one of the String... array elements exists in the idTypes list.
      *
      * @param idTypes
-     * @param values
+     * @param schemeIdValuesToBeMatched
      * @return
      */
-    public boolean schemeIdContainsAny(List<IdType> idTypes, String... values) {
-        if (values == null || values.length == 0 || CollectionUtils.isEmpty(idTypes)) {
+    public boolean schemeIdContainsAny(List<IdType> idTypes, String... schemeIdValuesToBeMatched) {
+        if (schemeIdValuesToBeMatched == null || schemeIdValuesToBeMatched.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
         idTypes = new ArrayList<>(idTypes);
         CollectionUtils.filter(idTypes, PredicateUtils.notNullPredicate());
-        for (String val : values) {
+        for (String valToBeMatched : schemeIdValuesToBeMatched) {
             for (IdType IdType : idTypes) {
-                if (val.equals(IdType.getSchemeId())) {
+                if (valToBeMatched.equals(IdType.getSchemeId())) {
                     return false;
                 }
             }
@@ -467,9 +470,9 @@ public abstract class AbstractFact {
         } else if(valuesToMatch == null || valuesToMatch.length == 0){
             return true;
         }
-        List<String> valusToMatch = Arrays.asList(valuesToMatch);
+        List<String> valuesToMatchList = Arrays.asList(valuesToMatch);
         for (CodeType codeType : codeTypes) {
-            if(!valusToMatch.contains(codeType.getValue())){
+            if(!valuesToMatchList.contains(codeType.getValue())){
                 return false;
             }
         }
@@ -604,7 +607,7 @@ public abstract class AbstractFact {
     }
 
     public Date dateNow() {
-        return eu.europa.ec.fisheries.uvms.commons.date.DateUtils.nowUTC().toDate();
+        return DateUtils.nowUTC().toDate();
     }
 
     public boolean dateNotInPast(Date creationDate) {
@@ -642,7 +645,7 @@ public abstract class AbstractFact {
 
         boolean notInPast = true;
         if (creationDate != null) {
-            DateTime now = eu.europa.ec.fisheries.uvms.commons.date.DateUtils.nowUTC();
+            DateTime now = DateUtils.nowUTC();
             log.debug("now is {}", now.toString());
             now = now.plusMinutes(minutes);
             DateTime creationDateUTC = new DateTime(creationDate).toDateTime(DateTimeZone.UTC);
@@ -752,14 +755,14 @@ public abstract class AbstractFact {
         return !isMatchFound;
     }
 
-    public boolean idTypeValueContainsAny(List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypes, String... valuesToMatch) { // FIXME change logic true false
+    public boolean idTypeValueContainsAny(List<IdType> idTypes, String... valuesToMatch) {
         if (valuesToMatch == null || valuesToMatch.length == 0 || CollectionUtils.isEmpty(idTypes)) {
             return true;
         }
-        ImmutableList<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> removeNull = ImmutableList.copyOf(Iterables.filter(idTypes, Predicates.notNull()));
+        ImmutableList<IdType> removeNull = ImmutableList.copyOf(Iterables.filter(idTypes, Predicates.notNull()));
         boolean isMatchFound = false;
         for (String val : valuesToMatch) {
-            for (eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType idType : removeNull) {
+            for (IdType idType : removeNull) {
                 if (val.equals(idType.getValue())) {
                     isMatchFound = true;
                     break;
@@ -767,6 +770,21 @@ public abstract class AbstractFact {
             }
         }
         return !isMatchFound;
+    }
+
+    public boolean idTypeValueBeginsWith(List<IdType> idTypes, String valueToMatch) {
+        if (StringUtils.isEmpty(valueToMatch) || CollectionUtils.isEmpty(idTypes)) {
+            return false;
+        }
+        ImmutableList<IdType> removeNull = ImmutableList.copyOf(idTypes.stream().filter(id -> id != null && StringUtils.isNotEmpty(id.getValue())).collect(Collectors.toList()));
+        boolean isMatchFound = false;
+        for (IdType idType : removeNull) {
+            if (idType.getValue().startsWith(valueToMatch)) {
+                isMatchFound = true;
+                break;
+             }
+        }
+        return isMatchFound;
     }
 
     public boolean isPositive(MeasureType value) {
@@ -1048,12 +1066,16 @@ public abstract class AbstractFact {
      * @param string
      * @return true | false
      */
-    public boolean isEmpty( String string ){
+    public boolean isEmpty(String string){
         return string == null || string.trim().length() == 0;
     }
 
     public boolean isEmpty( BigDecimal bigDecimal ){
         return bigDecimal == null || isEmpty(bigDecimal.toString());
+    }
+
+    public boolean isEmpty(DateTimeType dateTimeType ){
+        return dateTimeType == null || dateTimeType.getDateTime() == null;
     }
 
     public boolean isEmpty( MeasureType measureType ){
@@ -1214,6 +1236,7 @@ public abstract class AbstractFact {
 
     public void setCreationDateOfMessage(DateTime creationDateOfMessage) {
         this.creationDateOfMessage = creationDateOfMessage;
+        this.creationJavaDateOfMessage = creationDateOfMessage != null ? creationDateOfMessage.toDate() : null;
     }
 
     public void setSenderOrReceiver(String senderOrReceiver) {
@@ -1440,7 +1463,7 @@ public abstract class AbstractFact {
         return textType == null || StringUtils.isBlank(textType.getValue());
     }
 
-    public boolean isBlank(eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType codeType) {
+    public boolean isBlank(CodeType codeType) {
         return codeType == null || StringUtils.isBlank(codeType.getValue());
     }
 
@@ -1467,7 +1490,6 @@ public abstract class AbstractFact {
         }
         for (FLUXLocation fluxLocation : fluxLocations) {
             un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType typeCode = fluxLocation.getTypeCode();
-
             if (typeCode != null && value.equals(typeCode.getValue())) {
                 return true;
             }
@@ -1508,4 +1530,7 @@ public abstract class AbstractFact {
         return creationDateOfMessage;
     }
 
+    public Date getCreationJavaDateOfMessage() {
+        return creationJavaDateOfMessage;
+    }
 }

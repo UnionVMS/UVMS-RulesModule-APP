@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections.CollectionUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FACatch;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
@@ -37,6 +38,7 @@ public class FaNotificationOfArrivalFact extends AbstractFact {
     private CodeType reasonCode;
     private List<CodeType> specifiedFACatchTypeCodes;
     private List<FACatch> specifiedFACatches;
+    private List<CodeType> relatedFLUXLocationApplicableFLUXCharacteristicTypeCodes;
 
     public FaNotificationOfArrivalFact() {
         setFactType();

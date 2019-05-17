@@ -38,6 +38,7 @@ import javax.xml.bind.JAXBException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.fisheries.uvms.activity.model.mapper.JAXBMarshaller.unmarshallTextMessage;
 import static java.util.Collections.emptyList;
@@ -267,7 +268,7 @@ public class MDRCache {
             TextMessage message = rulesConsumer.getMessage(corrId, TextMessage.class, ONE_MINUTES_IN_MILLIS);
             long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
             if (elapsed > 100) {
-                log.info("Loading {} took {} CODELIST_STATUS ", stopwatch);
+                log.info("Loading CODELIST_STATUS took {} ", stopwatch);
             }
             if (message != null) {
                 MdrGetCodeListResponse response = unmarshallTextMessage(message.getText(), MdrGetCodeListResponse.class);
@@ -384,7 +385,7 @@ public class MDRCache {
                     isActive = "Y".equals(columnValue);
                 }
             }
-            RuleFromMDR err = new RuleFromMDR(note, errorMessage, errType.contains("ERR") ? ErrorType.ERROR.value() : ErrorType.WARNING.value(), isActive, context);
+            RuleFromMDR err = new RuleFromMDR(note, errorMessage, (errType != null && errType.contains("ERR")) ? ErrorType.ERROR.value() : ErrorType.WARNING.value(), isActive, context);
             err.setEndDate(endDate != null ? DateUtils.parseToUTCDate(endDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.END_OF_TIME.toDate());
             err.setStartDate(startDate != null ? DateUtils.parseToUTCDate(startDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.START_OF_TIME.toDate());
             if (enrichedBRMessageMap.get(brId) != null) {
@@ -401,6 +402,12 @@ public class MDRCache {
         loadAllMdrCodeLists(false);
         List<RuleFromMDR> rulesFromMdr = this.geFaBRsByBrId(brId);
         return CollectionUtils.isNotEmpty(rulesFromMdr) ? rulesFromMdr.stream().filter((ruleMdr) -> StringUtils.equals(ruleMdr.getContext(), context)).findFirst().orElse(null) : null;
+    }
+
+    public List<RuleFromMDR> getFaBrListForBrIdAndContext(String brId, String context) {
+        loadAllMdrCodeLists(false);
+        List<RuleFromMDR> rulesFromMdr = this.geFaBRsByBrId(brId);
+        return CollectionUtils.isNotEmpty(rulesFromMdr) ? rulesFromMdr.stream().filter((ruleMdr) -> StringUtils.equals(ruleMdr.getContext(), context)).collect(Collectors.toList()) : Collections.emptyList();
     }
 
     public List<RuleFromMDR> geFaBRsByBrId(String brId) {

@@ -7,3 +7,135 @@ drop table if exists rules.rule cascade
 drop table if exists rules.template cascade
 drop table if exists rules.validationmessage cascade
 drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence
+alter table rules.context_expression drop constraint FK8vs5y07j703mcempqhodg1fmr
+alter table rules.messageid drop constraint FKt7r2o8i4r93s7bpobpipcfqv3
+alter table rules.rule drop constraint FKmx113051ieint865l7rs8g5ao
+alter table rules.validationmessage drop constraint FK9kyla6nb7ejou8gisc1hkem8q
+drop table if exists rules.context_expression cascade
+drop table if exists rules.messageid cascade
+drop table if exists rules.rawmessage cascade
+drop table if exists rules.rule cascade
+drop table if exists rules.template cascade
+drop table if exists rules.validationmessage cascade
+drop sequence rules.hibernate_sequence

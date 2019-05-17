@@ -312,7 +312,7 @@ public class ActivityFactMapperTest {
         }});
         faActivity.setRelatedFLUXLocations(null);
 
-        FaCatchFact faCatchFact = activityMapper.generateFactsForFaCatch(faActivity,false, null).get(0);
+        FaCatchFact faCatchFact = (FaCatchFact) activityMapper.generateFactsForFaCatch(faActivity,false, null).get(0);
 
 
         assertEquals(codeType.getValue(), faCatchFact.getTypeCode().getValue());
@@ -325,7 +325,7 @@ public class ActivityFactMapperTest {
         ActivityFactMapper activityFactMapper = new ActivityFactMapper();
         MeasureType measureType = ActivityObjectsHelper.generateMeasureType("code", null);
         eu.europa.ec.fisheries.uvms.rules.service.business.fact.MeasureType measureType1 = activityFactMapper.mapToMeasureType(measureType);
-        assertNull(measureType1);
+        assertNull(measureType1.getValue());
     }
 
     @Test
@@ -706,17 +706,16 @@ public class ActivityFactMapperTest {
         final FaFishingOperationFact faFishingOperationFact = activityMapper.generateFactsForFishingOperation(null, null);
         final FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(null, false, null, null, null);
         final FaDepartureFact faDepartureFact = activityMapper.generateFactsForFaDeparture(null, null);
-        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(null,false, null);
         final FaLandingFact faLandingFact = activityMapper.generateFactsForLanding(null, null);
         final List<GearCharacteristicsFact> gearList = activityMapper.generateFactsForGearCharacteristics(null, "null", new HashMap<>(), new HashMap<>());
         final List<FishingTripFact> fishingTripFacts = activityMapper.generateFactForFishingTrips(null, null);
-        final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null, new ArrayList<AbstractFact>());
+        final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null, new ArrayList<>(), null);
         final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, null, new HashMap<>(), new HashMap<>());
         final FaResponseFact faResponseFact = new FaResponseFactMapper().generateFactsForFaResponse(null);
         final ValidationQualityAnalysisFact qualityAnalysisFact = activityMapper.generateFactsForValidationQualityAnalysis(null);
 
         final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxFaReportMessage(null);
-        final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null, new ArrayList<AbstractFact>());
+        final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null, new ArrayList<>(), null);
         final List<StructuredAddressFact> structuredAddressFacts = activityMapper.generateFactsForStructureAddresses(null, null);
         final FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(null, null);
         final List<FishingGearFact> fishingGearFacts = activityMapper.generateFactsForFishingGears(null, null , new HashMap<>(), new HashMap<>());
@@ -736,7 +735,6 @@ public class ActivityFactMapperTest {
 
         assertTrue(isEmpty(vesselStorageCharacteristicsFacts));
         assertTrue(isEmpty(fluxCharacteristicsFacts));
-        assertTrue(isEmpty(faCatchFacts));
         assertTrue(isEmpty(gearList));
         assertTrue(isEmpty(fishingTripFacts));
         assertTrue(isEmpty(gearCharacteristicsFacts));
@@ -797,17 +795,6 @@ public class ActivityFactMapperTest {
         IDType idType = activityMapper.vesselTransportMeanRegistrationVesselCountryID(vesselTransportMeans);
 
         assertEquals(idType.getValue(), idType.getValue());
-    }
-
-    @Test //FIXME
-    public void testNullInsideObjects() {
-        FishingActivity faAct = new FishingActivity();
-        final List<FaCatchFact> faCatchFacts = activityMapper.generateFactsForFaCatch(faAct,false, null);
-
-        List<GearProblem> gearList = new ArrayList<GearProblem>() {{
-            add(new GearProblem());
-        }};
-        activityMapper.generateFactsForGearProblems(gearList);
     }
 
     @Test

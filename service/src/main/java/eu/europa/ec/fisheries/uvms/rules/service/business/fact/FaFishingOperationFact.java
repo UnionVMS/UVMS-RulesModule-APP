@@ -15,21 +15,23 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ContactParty;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * @author padhyad
  * @author Gregory Rinaldi
  */
+@Data
 public class FaFishingOperationFact extends AbstractFact {
 
     private CodeType fishingActivityTypeCode;
@@ -37,12 +39,18 @@ public class FaFishingOperationFact extends AbstractFact {
     private CodeType vesselRelatedActivityCode;
     private String operationsQuantity;
     private List<FLUXLocation> relatedFLUXLocations;
+    private List<FLUXLocation> relatedFishingActivitiesRelatedFLUXLocations;
+    private List<IdType> relatedFLUXLocationIds;
     private List<FishingActivity> relatedFishingActivities;
     private List<CodeType> fishingGearRoleCodes;
     private List<CodeType> relatedFishingActivityTypeCodes;
     private List<ContactParty> vesselTransportMeansContactParties;
     private List<VesselTransportMeans> vesselTransportMeans;
+    private List<CodeType> vesselTransportMeansRoleCodes;
+    private List<FACatch> specifiedFACatches;
+    private List<CodeType> specifiedFACatchesTypeCodes;
     private CodeType faReportDocVesselRoleCode;
+    private List<DelimitedPeriod> specifiedDelimitedPeriods;
 
     public FaFishingOperationFact() {
         setFactType();
@@ -53,69 +61,6 @@ public class FaFishingOperationFact extends AbstractFact {
         this.factType = FactType.FA_FISHING_OPERATION;
     }
 
-    public CodeType getFishingActivityTypeCode() {
-        return fishingActivityTypeCode;
-    }
-
-    public void setFishingActivityTypeCode(CodeType fishingActivityTypeCode) {
-        this.fishingActivityTypeCode = fishingActivityTypeCode;
-    }
-
-    public CodeType getFaReportDocumentTypeCode() {
-        return faReportDocumentTypeCode;
-    }
-
-    public void setFaReportDocumentTypeCode(CodeType faReportDocumentTypeCode) {
-        this.faReportDocumentTypeCode = faReportDocumentTypeCode;
-    }
-
-    public CodeType getVesselRelatedActivityCode() {
-        return vesselRelatedActivityCode;
-    }
-
-    public void setVesselRelatedActivityCode(CodeType vesselRelatedActivityCode) {
-        this.vesselRelatedActivityCode = vesselRelatedActivityCode;
-    }
-
-    public String getOperationsQuantity() {
-        return operationsQuantity;
-    }
-
-    public void setOperationsQuantity(String operationsQuantity) {
-        this.operationsQuantity = operationsQuantity;
-    }
-
-    public List<FLUXLocation> getRelatedFLUXLocations() {
-        return relatedFLUXLocations;
-    }
-
-    public void setRelatedFLUXLocations(List<FLUXLocation> relatedFLUXLocations) {
-        this.relatedFLUXLocations = relatedFLUXLocations;
-    }
-
-    public List<FishingActivity> getRelatedFishingActivities() {
-        return relatedFishingActivities;
-    }
-
-    public void setRelatedFishingActivities(List<FishingActivity> relatedFishingActivities) {
-        this.relatedFishingActivities = relatedFishingActivities;
-    }
-
-    public List<CodeType> getRelatedFishingActivityTypeCodes() {
-        return relatedFishingActivityTypeCodes;
-    }
-
-    public void setRelatedFishingActivityTypeCodes(List<CodeType> relatedFishingActivityTypeCodes) {
-        this.relatedFishingActivityTypeCodes = relatedFishingActivityTypeCodes;
-    }
-
-    public CodeType getFaReportDocVesselRoleCode() {
-        return faReportDocVesselRoleCode;
-    }
-
-    public void setFaReportDocVesselRoleCode(CodeType faReportDocVesselRoleCode) {
-        this.faReportDocVesselRoleCode = faReportDocVesselRoleCode;
-    }
 
     public boolean isFLUXLocationPresentForFishingActivity(List<FishingActivity> relatedFishingActivities) {
         if (CollectionUtils.isEmpty(relatedFishingActivities)) {
@@ -129,22 +74,6 @@ public class FaFishingOperationFact extends AbstractFact {
         return true;
     }
 
-    public List<CodeType> getFishingGearRoleCodes() {
-        return fishingGearRoleCodes;
-    }
-
-    public void setFishingGearRoleCodes(List<CodeType> fishingGearRoleCodes) {
-        this.fishingGearRoleCodes = fishingGearRoleCodes;
-    }
-
-    public List<ContactParty> getVesselTransportMeansContactParties() {
-        return vesselTransportMeansContactParties;
-    }
-
-    public void setVesselTransportMeansContactParties(List<ContactParty> vesselTransportMeansContactParties) {
-        this.vesselTransportMeansContactParties = vesselTransportMeansContactParties;
-    }
-
     public boolean noCatchesDeclaredForCodeTypes(String... codeValues) {
         AtomicBoolean noCatchesDeclared = new AtomicBoolean(true);
         if (CollectionUtils.isNotEmpty(relatedFishingActivities)) {
@@ -155,7 +84,6 @@ public class FaFishingOperationFact extends AbstractFact {
                 codeValuesToMatch.forEach((valToMatch) -> {
                     if (valToMatch.equals(codeVal) && CollectionUtils.isNotEmpty(relatedFishAct.getSpecifiedFACatches())) {
                         noCatchesDeclared.set(false);
-                        return;
                     }
                 });
             });
@@ -186,14 +114,63 @@ public class FaFishingOperationFact extends AbstractFact {
             }
         }
         return false;
-
     }
 
-    public List<VesselTransportMeans> getVesselTransportMeans() {
-        return vesselTransportMeans;
+    public boolean allDelimitedPeriodsHaveDurationMeasures(List<DelimitedPeriod> delimitedPeriods) {
+        if (CollectionUtils.isNotEmpty(delimitedPeriods)) {
+            for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
+                if (delimitedPeriod.getDurationMeasure() == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
-    public void setVesselTransportMeans(List<VesselTransportMeans> vesselTransportMeans) {
-        this.vesselTransportMeans = vesselTransportMeans;
+    public boolean faoIdsHaveThreeSubdivisions(List<IdType> ids){
+        String devisionDevider = ".";
+        for (IdType id : ids) {
+            if(id != null && "FAO_AREA".equals(id.getSchemeId())){
+                String value = id.getValue() != null ? id.getValue() : StringUtils.EMPTY;
+                int lastIndex = 0;
+                int count = 0;
+                while(lastIndex != -1){
+                    lastIndex = value.indexOf(devisionDevider,lastIndex);
+                    if(lastIndex != -1){
+                        count ++;
+                        lastIndex += devisionDevider.length();
+                    }
+                }
+                System.out.println(count);
+                if(count < 2){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
+
+    public boolean checkRelatedFishingActivitiesRelatedFluxLocationsTypeCodes(String fishingActivityTypeCode){
+        if(StringUtils.isEmpty(fishingActivityTypeCode)){
+            return true;
+        }
+        for (FishingActivity relatedFishingActivity : relatedFishingActivities) {
+            if(relatedFishingActivity != null && relatedFishingActivity.getTypeCode() != null && fishingActivityTypeCode.equals(relatedFishingActivity.getTypeCode().getValue())){
+                List<FLUXLocation> relatedFluxLocations = collectRelatedFluxLocations(relatedFishingActivity);
+                if(!anyFluxLocationTypeCodeContainsValue(relatedFluxLocations, "POSITION")){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private List<FLUXLocation> collectRelatedFluxLocations(FishingActivity relatedFishingActivity) {
+        List<FLUXLocation> nonNullFlucLocations = new ArrayList<>();
+        if(relatedFishingActivity != null && CollectionUtils.isNotEmpty(relatedFishingActivity.getRelatedFLUXLocations())){
+            nonNullFlucLocations = relatedFishingActivity.getRelatedFLUXLocations().stream().filter(Objects::nonNull).collect(Collectors.toList());
+        }
+        return nonNullFlucLocations;
+    }
+
 }

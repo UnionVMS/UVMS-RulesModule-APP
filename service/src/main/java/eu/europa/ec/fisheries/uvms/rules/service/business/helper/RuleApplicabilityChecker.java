@@ -3,18 +3,52 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.helper;
 import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import java.util.Date;
+import java.util.List;
 
 
 @Stateless
 @LocalBean
 @Slf4j
 public class RuleApplicabilityChecker {
+
+
+  /*  public boolean isApplicable(String thisRulesBrId, String ruleContext, String messageDataFlow, DateTime messageCreationDate, MDRCacheRuleService mdrService) {
+        String msgContext = mdrService.findContextForDf(messageDataFlow);
+        if (StringUtils.isEmpty(msgContext)) {
+            return false;
+        }
+        RuleFromMDR faBrForBrIdAndContext = null;
+        if (StringUtils.isNotEmpty(msgContext)) {
+            faBrForBrIdAndContext = mdrService.getFaBrForBrIdAndContext(thisRulesBrId, msgContext);
+            if (faBrForBrIdAndContext == null) {
+                faBrForBrIdAndContext = mdrService.getFaBrForBrIdAndContext(thisRulesBrId, null);
+            }
+        }
+        if (StringUtils.isEmpty(ruleContext) || "NULL".equals(ruleContext)) { // Case : rule.context == null. Rule is applicable only if for this msg.context and this thisRulesBrId cannot be found a rule in rules table.
+            if (!mdrService.doesRuleExistInRulesTable(thisRulesBrId, msgContext)) {
+                return checkMdrRuleValidity(messageCreationDate, faBrForBrIdAndContext);
+            }
+        } else {// Case : rule.context != null and == msg.context. We apply this rule only if a perfect match can be found in MDR
+            if (StringUtils.equals(ruleContext, msgContext)) {
+                return checkMdrRuleValidity(messageCreationDate, faBrForBrIdAndContext);
+            }
+        }
+        return false;
+    }
+
+    private boolean checkMdrRuleValidity(DateTime messageCreationDate, RuleFromMDR faBrForBrIdAndContext) {
+        return faBrForBrIdAndContext != null
+                && faBrForBrIdAndContext.isActive()
+                && isDateInRange(messageCreationDate, faBrForBrIdAndContext.getStartDate(), faBrForBrIdAndContext.getEndDate())
+                && isRuleApplicableForCountry();
+    }*/
 
     /**
      * Most important parameters :
@@ -46,36 +80,43 @@ public class RuleApplicabilityChecker {
         if (StringUtils.isEmpty(msgContext)) {
             return false;
         }
-        RuleFromMDR faBrForBrIdAndContext = null;
+        List<RuleFromMDR> faBrListForBrIdAndContext = null;
         if (StringUtils.isNotEmpty(msgContext)) {
-            faBrForBrIdAndContext = mdrService.getFaBrForBrIdAndContext(thisRulesBrId, msgContext);
-            if (faBrForBrIdAndContext == null) {
-                faBrForBrIdAndContext = mdrService.getFaBrForBrIdAndContext(thisRulesBrId, null);
+            faBrListForBrIdAndContext = mdrService.getFaBrListForBrIdAndContext(thisRulesBrId, msgContext);
+            if (CollectionUtils.isEmpty(faBrListForBrIdAndContext)) {
+                faBrListForBrIdAndContext = mdrService.getFaBrListForBrIdAndContext(thisRulesBrId, null);
             }
         }
         if (StringUtils.isEmpty(ruleContext) || "NULL".equals(ruleContext)) { // Case : rule.context == null. Rule is applicable only if for this msg.context and this thisRulesBrId cannot be found a rule in rules table.
             if (!mdrService.doesRuleExistInRulesTable(thisRulesBrId, msgContext)) {
-                return checkMdrRuleValidity(messageCreationDate, faBrForBrIdAndContext);
+                return checkMdrRuleValidity(messageCreationDate, faBrListForBrIdAndContext);
             }
-        } else {// Case : rule.context != null and == msg.context. We apply this rule only if a perfect match can be found in MDR
+        } else {// Case : rule.context != null and == msg.context. We apply this rule only if a perfect match (and valid and active) can be found in MDR
             if (StringUtils.equals(ruleContext, msgContext)) {
-                return checkMdrRuleValidity(messageCreationDate, faBrForBrIdAndContext);
+                return checkMdrRuleValidity(messageCreationDate, faBrListForBrIdAndContext);
             }
         }
         return false;
     }
 
-    private boolean checkMdrRuleValidity(DateTime messageCreationDate, RuleFromMDR faBrForBrIdAndContext) {
-        return faBrForBrIdAndContext != null
-                && faBrForBrIdAndContext.isActive()
-                && isDateInRange(messageCreationDate, faBrForBrIdAndContext.getStartDate(), faBrForBrIdAndContext.getEndDate())
-                && isRuleApplicableForCountry();
+    private boolean checkMdrRuleValidity(DateTime messageCreationDate, List<RuleFromMDR> faBrForBrIdAndContext) {
+        if (CollectionUtils.isNotEmpty(faBrForBrIdAndContext)) {
+            for (RuleFromMDR ruleFromMDR : faBrForBrIdAndContext) {
+                if (ruleFromMDR != null
+                        && ruleFromMDR.isActive()
+                        && isDateInRange(messageCreationDate, ruleFromMDR.getStartDate(), ruleFromMDR.getEndDate())
+                        && isRuleApplicableForCountry()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
      *  TODO : When MDR's <FA_BR.country> field is ready => implement me!
      *
-     * @return
+     * @return true / false
      */
     private boolean isRuleApplicableForCountry() {
         return true;

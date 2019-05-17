@@ -55,11 +55,11 @@ public class FaEntryToSeaFact extends AbstractFact {
                 || StringUtils.isEmpty(reportTypeToConsider) || StringUtils.isEmpty(locationTypeTocConsider) || StringUtils.isEmpty(locationIdTocConsider)){
             return true;
         }
-        if ("DECLARATION".equals(faReportDocumentTypeCode.getValue())) {
+        if (reportTypeToConsider.equals(faReportDocumentTypeCode.getValue())) {
             for (FLUXLocation fluxLocation : relatedFLUXLocations) {
-                if (fluxLocation.getTypeCode() != null && "AREA".equals(fluxLocation.getTypeCode().getValue())) {
+                if (fluxLocation.getTypeCode() != null && locationTypeTocConsider.equals(fluxLocation.getTypeCode().getValue())) {
                     IDType idType = fluxLocation.getID();
-                    if (idType == null || !"EFFORT_ZONE".equals(idType.getSchemeID())) {
+                    if (idType == null || !locationIdTocConsider.equals(idType.getSchemeID())) {
                         return false;
                     }
                 }

@@ -75,16 +75,17 @@ public class FaTranshipmentFact extends AbstractFact {
         return true;
     }
 
-    public boolean thereAreAtLeastTwoDifferentTypeCodesForFaCatches(){
-        if(CollectionUtils.isEmpty(specifiedFACatches) || specifiedFACatches.size() < 2){
+    public boolean thereAreAtLeastTwoDifferentTypeCodesInList(List<CodeType> faCatchTypeCodes){
+        if(CollectionUtils.isEmpty(faCatchTypeCodes)){
             return false;
         }
-        List<FACatch> nonNullFaCaches = specifiedFACatches.stream().filter(facatch ->
-                facatch != null && facatch.getTypeCode() != null && StringUtils.isNotEmpty(facatch.getTypeCode().getValue())
-        ).collect(Collectors.toList());
-        String typeCodeStr = nonNullFaCaches.get(0).getTypeCode().getValue();
-        for (FACatch nonNullFaCach : nonNullFaCaches) {
-            if(!typeCodeStr.equals(nonNullFaCach.getTypeCode().getValue())){
+        List<CodeType> notNullOrEmptyTypeCodes = faCatchTypeCodes.stream().filter(typCode -> typCode != null &&StringUtils.isNotEmpty(typCode.getValue())).collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(faCatchTypeCodes)){
+            return false;
+        }
+        String firstCode = notNullOrEmptyTypeCodes.get(0).getValue();
+        for (CodeType faCatchTypeCode : notNullOrEmptyTypeCodes) {
+            if(!firstCode.equals(faCatchTypeCode.getValue())){ // If there is one code != then the first one then not all are equal => hence we have at least 2 different codes!
                 return true;
             }
         }

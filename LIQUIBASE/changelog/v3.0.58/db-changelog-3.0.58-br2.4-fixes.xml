@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <changeSet id="br2.4_fixes" author="kovian">
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(fishingActivityIds) &amp;&amp; validateFormat(fishingActivityIds)"/>
+            <where>rule_id = '110'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="property_names" value="relFishActRelatedVesselTransportMeansRoleCodes"/>
+            <where>BR_ID = 'FA-L02-00-0605'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="br_id" value="FA-L02-00-0045"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="WARNING"/>
+            <where>BR_ID = 'FA-L03-00-0045'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="property_names" value="relFishActRelatedVesselTransportMeansRoleCodes"/>
+            <where>BR_ID = 'FA-L02-00-0605'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !verifyFLUXLocationIDValue(relatedFLUXLocations, &quot;AREA&quot;, &quot;EFFORT_ZONE&quot;)"/>
+            <where>rule_id = '288'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="registrationVesselCountryId != null &amp;&amp; (transportMeans == null || (transportMeans.asset == null  || (transportMeans.asset != null &amp;&amp; isEmpty(transportMeans.asset.countryCode)) || transportMeans.asset.countryCode != registrationVesselCountryId.value))"/>
+            <where>rule_id = '62'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(faReportMessageOwnerFluxPartyIds) &amp;&amp; !idTypeValueBeginsWith(faReportMessageOwnerFluxPartyIds, &quot;X&quot;) &amp;&amp; !idTypesListsAreEqual(ownerFluxPartyIds, faReportMessageOwnerFluxPartyIds)"/>
+            <where>rule_id = '45'</where>
+        </update>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="2100045"/>
+            <column name="br_id" value="FA-L03-00-0045"/>
+            <column name="note" value="The party sending must be allowed to send the message"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="WARNING"/>
+            <column name="rule_created_on"/>
+            <column name="template_id" value="1"/>
+            <column name="property_names" value="ownerFluxPartyIds"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="2100045"/>
+            <column name="context" value="EU"/>
+            <column name="expression" value="!isEmpty(faReportMessageOwnerFluxPartyIds) &amp;&amp; !idTypeValueBeginsWith(faReportMessageOwnerFluxPartyIds, &quot;X&quot;) &amp;&amp; !matchWithFluxTL(ownerFluxPartyIds)"/>
+            <column name="rule_id" value="2100045"/>
+            <column name="failure_message" value="Report Owner ID not consistent with FLUX TL envelope parameters."/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

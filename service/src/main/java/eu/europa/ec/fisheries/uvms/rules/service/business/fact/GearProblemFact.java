@@ -15,6 +15,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import lombok.Data;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.QuantityType;
 
@@ -23,47 +24,13 @@ import java.util.List;
 /**
  * Created by padhyad on 4/21/2017.
  */
+@Data
 public class GearProblemFact extends AbstractFact {
 
     private CodeType typeCode;
-
     private QuantityType affectedQuantity;
-
     private List<CodeType> recoveryMeasureCodes;
-
     private List<FLUXLocation> specifiedFluxLocations;
-
-    public CodeType getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(CodeType typeCode) {
-        this.typeCode = typeCode;
-    }
-
-    public QuantityType getAffectedQuantity() {
-        return affectedQuantity;
-    }
-
-    public void setAffectedQuantity(QuantityType affectedQuantity) {
-        this.affectedQuantity = affectedQuantity;
-    }
-
-    public List<CodeType> getRecoveryMeasureCodes() {
-        return recoveryMeasureCodes;
-    }
-
-    public void setRecoveryMeasureCodes(List<CodeType> recoveryMeasureCodes) {
-        this.recoveryMeasureCodes = recoveryMeasureCodes;
-    }
-
-    public List<FLUXLocation> getSpecifiedFluxLocations() {
-        return specifiedFluxLocations;
-    }
-
-    public void setSpecifiedFluxLocations(List<FLUXLocation> specifiedFluxLocations) {
-        this.specifiedFluxLocations = specifiedFluxLocations;
-    }
 
     public GearProblemFact() {
         setFactType();

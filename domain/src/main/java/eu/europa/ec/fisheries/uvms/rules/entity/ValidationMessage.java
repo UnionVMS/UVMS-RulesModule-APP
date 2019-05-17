@@ -17,6 +17,7 @@ import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -61,6 +62,10 @@ public class ValidationMessage implements Serializable {
 
     @Column(name = "level", nullable = false)
     private String level;
+
+    @Column(name = "fact_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date factDate;
 
     public Long getId() {
         return id;
@@ -109,5 +114,11 @@ public class ValidationMessage implements Serializable {
     }
     public void setXpathList(String xpathList) {
         this.xpathList = xpathList;
+    }
+    public Date getFactDate() {
+        return factDate;
+    }
+    public void setFactDate(Date factDate) {
+        this.factDate = factDate;
     }
 }
