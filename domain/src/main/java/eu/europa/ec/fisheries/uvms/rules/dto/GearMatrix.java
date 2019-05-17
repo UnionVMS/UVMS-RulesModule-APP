@@ -10,18 +10,14 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dto;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import java.util.*;
 
 @Singleton
 @Startup

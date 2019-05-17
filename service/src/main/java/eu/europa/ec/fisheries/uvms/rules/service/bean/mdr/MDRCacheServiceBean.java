@@ -74,13 +74,22 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     @Override
     public boolean isPresentInMDRList(String listName, String codeValue, DateTime validityDate) {
         if (validityDate == null) {
-            return true;
+            return isPresentInMDRList(listName, codeValue);
         }
         MDRAcronymType mdrAcronymType = EnumUtils.getEnum(MDRAcronymType.class, listName);
         if (mdrAcronymType == null) {
             return false;
         }
         List<String> values = getValues(mdrAcronymType, validityDate);
+        return CollectionUtils.isNotEmpty(values) && values.contains(codeValue);
+    }
+
+    private boolean isPresentInMDRList(String listName, String codeValue) {
+        MDRAcronymType mdrAcronymType = EnumUtils.getEnum(MDRAcronymType.class, listName);
+        if (mdrAcronymType == null) {
+            return false;
+        }
+        List<String> values = getValues(mdrAcronymType);
         return CollectionUtils.isNotEmpty(values) && values.contains(codeValue);
     }
 
@@ -122,6 +131,11 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     private List<String> getValues(MDRAcronymType anEnum, DateTime date) {
         List<ObjectRepresentation> entry = cache.getEntry(anEnum);
         return getList(entry, date);
+    }
+
+    private List<String> getValues(MDRAcronymType anEnum) {
+        List<ObjectRepresentation> entry = cache.getEntry(anEnum);
+        return getList(entry);
     }
 
     /**
@@ -587,6 +601,24 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             if (code.isPresent() && startDate.isPresent() && endDate.isPresent()
                     && date.isAfter(ObjectRepresentationHelper.parseDate(startDate.get()))
                     && date.isBefore(ObjectRepresentationHelper.parseDate(endDate.get()))) {
+                codeColumnValues.add(code.get());
+            }
+        }
+        return codeColumnValues;
+    }
+
+    private List<String> getList(List<ObjectRepresentation> entry) {
+        List<String> codeColumnValues = new ArrayList<>();
+        if (CollectionUtils.isEmpty(entry)) {
+            return Collections.emptyList();
+        }
+        for (ObjectRepresentation representation : entry) {
+            List<ColumnDataType> columnDataTypes = representation.getFields();
+            if (CollectionUtils.isEmpty(columnDataTypes)) {
+                continue;
+            }
+            Optional<String> code = ObjectRepresentationHelper.getValueOfColumn(CODE_COLUMN_NAME, representation);
+            if (code.isPresent()) {
                 codeColumnValues.add(code.get());
             }
         }

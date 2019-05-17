@@ -16,12 +16,14 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.GearCharacteristic;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IndicatorType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,8 @@ public class GearCharacteristicsFact extends AbstractFact {
     private Map<String, List<GearMatrix.Condition>> matrix;
     private Map<String, List<GearMatrix.Condition>> neafcMatrix;
 
+    private Map<String, String> valueMeasureMap;
+
 
     public boolean valid(Map<String, List<GearMatrix.Condition>> matrix){
         FishingGear fishGear = new FishingGear();
@@ -52,8 +56,34 @@ public class GearCharacteristicsFact extends AbstractFact {
         return FishingGearFact.valid(fishGear, matrix);
     }
 
+    public boolean validateValueMeasureValue(){
+        if(typeCode == null){
+            return true;
+        }
+        String valueToCheckWithValueMeasureUnitCode = valueMeasureMap.get(typeCode.getValue());
+        if(StringUtils.isEmpty(valueToCheckWithValueMeasureUnitCode)){
+            return false;
+        }
+        if(valueMeasure == null){
+            return true;
+        }
+        return valueToCheckWithValueMeasureUnitCode.equals(valueMeasure.getUnitCode());
+    }
+
     public GearCharacteristicsFact() {
         setFactType();
+        fillValueMeasureValues();
+    }
+
+    private void fillValueMeasureValues() {
+        valueMeasureMap = new HashMap<>();
+
+        valueMeasureMap.put("ME", "MMT");
+        valueMeasureMap.put("GO", "MMT");
+
+        valueMeasureMap.put("GM", "MTR");
+        valueMeasureMap.put("HE", "MTR");
+        valueMeasureMap.put("NL", "MTR");
     }
 
     @Override

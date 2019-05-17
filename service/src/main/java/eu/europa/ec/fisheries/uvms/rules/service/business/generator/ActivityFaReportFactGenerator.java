@@ -110,7 +110,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 List<AbstractFact> factsByReport = new ArrayList<>(addFacts(faReportDocument.getSpecifiedFishingActivities(), faReportDocument, false, null));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index).append(SPECIFIED_VESSEL_TRANSPORT_MEANS);
-                factsByReport.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true, facts));
+                factsByReport.add(activityFactMapper.generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), true, factsByReport));
 
                 xPathUtil.append(FLUXFA_REPORT_MESSAGE).appendWithIndex(FA_REPORT_DOCUMENT, index);
                 addFactsForVesselTransportMeansStructuresAddress(factsByReport, Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans()), SPECIFIED_VESSEL_TRANSPORT_MEANS);

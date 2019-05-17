@@ -311,8 +311,8 @@
             <column name="id" value="20000510"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="valueMeasure != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_UNIT&quot;, valueMeasure.unitCode, creationDateOfMessage)
-                                            &amp;&amp; !valid(neafcMatrix)"/>
+                    value="valueMeasure != null &amp;&amp; (!mdrService.isPresentInMDRList(&quot;FLUX_UNIT&quot;, valueMeasure.unitCode, creationDateOfMessage)
+                                            || !valid(neafcMatrix) || !validateValueMeasureValue())"/>
             <column name="rule_id" value="20000510"/>
             <column name="failure_message" value="Unexpected unit code for Measure."/>
         </insert>
