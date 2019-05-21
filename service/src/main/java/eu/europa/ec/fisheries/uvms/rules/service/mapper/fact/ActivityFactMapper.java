@@ -790,6 +790,7 @@ public class ActivityFactMapper {
         for (GearCharacteristic gearCharacteristic : gearCharacteristics) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(APPLICABLE_GEAR_CHARACTERISTIC, index);
             list.add(generateFactsForGearCharacteristic(gearCharacteristic, matrix, matrixNeafc));
+            index++;
         }
         return list;
     }

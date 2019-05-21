@@ -71,15 +71,12 @@ public class RulesExchangeGetValidationConsumerBean implements MessageListener {
         try {
             RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
             RulesModuleMethod method = request.getMethod();
-            LOG.info("\nRequest message method: {}", method.value());
-            switch (method) {
-                case GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST:
-                    getValidationResultsByRawMsgGuid.fire(new EventMessage(textMessage));
-                    break;
-                default:
-                    LOG.error("[ Request method '{}' is not implemented ]", method.name());
-                    errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + method.name())));
-                    break;
+            LOG.info("Request message method: {}", method.value());
+            if (method == RulesModuleMethod.GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST) {
+                getValidationResultsByRawMsgGuid.fire(new EventMessage(textMessage));
+            } else {
+                LOG.error("[ Request method '{}' is not implemented ]", method.name());
+                errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + method.name())));
             }
         } catch (NullPointerException | RulesModelMarshallException e) {
             LOG.error("[ Error when receiving message in rules: {}]", e.getMessage());
