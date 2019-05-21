@@ -780,8 +780,7 @@ public class ActivityFactMapper {
         return gearCharacteristicsFact;
     }
 
-    public List<GearCharacteristicsFact> generateFactsForGearCharacteristics(List<GearCharacteristic> gearCharacteristics, String gearType,
-                                                                             Map<String, List<GearMatrix.Condition>> matrix, Map<String, List<GearMatrix.Condition>> matrixNeafc) {
+    public List<GearCharacteristicsFact> generateFactsForGearCharacteristics(List<GearCharacteristic> gearCharacteristics, Map<String, List<GearMatrix.Condition>> matrix, Map<String, List<GearMatrix.Condition>> matrixNeafc) {
         if (gearCharacteristics == null) {
             return emptyList();
         }
@@ -789,9 +788,8 @@ public class ActivityFactMapper {
         List<GearCharacteristicsFact> list = new ArrayList<>();
         int index = 1;
         for (GearCharacteristic gearCharacteristic : gearCharacteristics) {
-            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(gearType, index);
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(APPLICABLE_GEAR_CHARACTERISTIC, index);
             list.add(generateFactsForGearCharacteristic(gearCharacteristic, matrix, matrixNeafc));
-            index++;
         }
         return list;
     }

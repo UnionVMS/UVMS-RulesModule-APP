@@ -26,6 +26,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -37,6 +38,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
@@ -76,14 +78,14 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         activityFactMapper.setTransportMeans(assets);
         List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypeList = (List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType>) extraValueMap.get(FA_QUERY_AND_REPORT_IDS);
 
-        if (CollectionUtils.isNotEmpty(idTypeList)){
+        if (CollectionUtils.isNotEmpty(idTypeList)) {
             for (eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType idType : idTypeList) {
                 String type = idType.getSchemeId();
-                if (FAUUIDType.FA_REPORT_ID.name().equals(type)){
+                if (FAUUIDType.FA_REPORT_ID.name().equals(type)) {
                     activityFactMapper.getFaRelatedReportIds().add(idType);
                 } else if (FAUUIDType.FA_MESSAGE_ID.name().equals(type)) {
                     activityFactMapper.getFaReportMessageIds().add(idType);
-                } else if(FAUUIDType.FA_QUERY_ID.name().equals(type)){
+                } else if (FAUUIDType.FA_QUERY_ID.name().equals(type)) {
                     activityFactMapper.getFaQueryIds().add(idType);
                 }
             }
@@ -117,7 +119,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
                 FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
 
-                if (relatedFLUXReportDocument != null){ // Set the feReport creation date
+                if (relatedFLUXReportDocument != null) { // Set the feReport creation date
                     populateUniqueIDsAndFaReportDocumentDate(relatedFLUXReportDocument, factsByReport);
                 }
 
@@ -126,21 +128,8 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
             }
         }
         facts.add(activityFactMapper.generateFactForFluxFaReportMessage(fluxfaReportMessage));
-        List<VesselTransportMeansDto> transportMeans = activityFactMapper.getTransportMeans();
-        int index = 0;
-        if(transportMeans != null){
-            for (AbstractFact fact : facts) {
-                if (FactType.VESSEL_TRANSPORT_MEANS.equals(fact.getFactType())){
-                    try {
-                        VesselTransportMeansDto vesselTransportMeansDto = transportMeans.get(index);
-                        ((VesselTransportMeansFact) fact).setTransportMeans(vesselTransportMeansDto);
-                        index++;
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        log.warn(e.getMessage(), e);
-                    }
-                }
-            }
-        }
+        enrichVesselTransoprtMeanFacts(facts);
+
         String df = (String) extraValueMap.get(DATA_FLOW);
         List<AbstractFact> nonNullFacts = facts.stream().filter(Objects::nonNull).collect(Collectors.toList());
         nonNullFacts.forEach(fact -> fact.setMessageDataFlow(df));
@@ -148,8 +137,48 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         return nonNullFacts;
     }
 
+    private void enrichVesselTransoprtMeanFacts(List<AbstractFact> facts) {
+        List<VesselTransportMeansDto> transportMeansFromAssets = activityFactMapper.getTransportMeans();
+        List<AbstractFact> vessTrpMeansFacts = facts.stream().filter(fact -> fact != null && FactType.VESSEL_TRANSPORT_MEANS.equals(fact.getFactType())).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(vessTrpMeansFacts) && CollectionUtils.isNotEmpty(transportMeansFromAssets)) {
+            vessTrpMeansFacts.forEach(vessAbstrFact -> {
+                VesselTransportMeansFact vessFact = (VesselTransportMeansFact) vessAbstrFact;
+                List<IdType> vessFactIds = vessFact.getIds();
+                transportMeansFromAssets.forEach(assetVessTrpMeans -> {
+                    Asset asset = assetVessTrpMeans.getAsset();
+                    if (asset != null && CollectionUtils.isNotEmpty(vessFactIds)) { // Check if all the XML Ids match with the ids of this Asset from Assets!
+                        AtomicBoolean matches = new AtomicBoolean(true);
+                        vessFactIds.forEach(factId -> {
+                            String factIdValue = factId.getValue();
+                            switch (factId.getSchemeId()) {
+                                case "CFR":
+                                    if(!StringUtils.equals(factIdValue, asset.getCfr())){
+                                        matches.set(false);
+                                    }
+                                    break;
+                                case "IRCS":
+                                    if(!StringUtils.equals(factIdValue, asset.getIrcs())){
+                                        matches.set(false);
+                                    }
+                                    break;
+                                case "ICCAT":
+                                    if(!StringUtils.equals(factIdValue, asset.getIccat())){
+                                        matches.set(false);
+                                    }
+                                    break;
+                            }
+                        });
+                        if(matches.get()){
+                            vessFact.setTransportMeans(assetVessTrpMeans);
+                        }
+                    }
+                });
+            });
+        }
+    }
+
     private List<IdType> getFaMessageOwnerParty(FLUXFAReportMessage faReportMessage) {
-        if(faReportMessage != null && faReportMessage.getFLUXReportDocument() != null && faReportMessage.getFLUXReportDocument().getOwnerFLUXParty() != null){
+        if (faReportMessage != null && faReportMessage.getFLUXReportDocument() != null && faReportMessage.getFLUXReportDocument().getOwnerFLUXParty() != null) {
             return activityFactMapper.mapToIdTypes(faReportMessage.getFLUXReportDocument().getOwnerFLUXParty().getIDS());
         }
         return null;
@@ -178,7 +207,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 addFactsForVesselTransportMeansStructuresAddress(facts, fishingActivity.getRelatedVesselTransportMeans(), RELATED_VESSEL_TRANSPORT_MEANS);
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.addAll(activityFactMapper.generateFactsForFaCatch(fishingActivity,isSubActivity, faReportDocument));
+                facts.addAll(activityFactMapper.generateFactsForFaCatch(fishingActivity, isSubActivity, faReportDocument));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 addFactsForFaCatches(facts, fishingActivity.getSpecifiedFACatches(), fishingActivity.getTypeCode(), faReportDocument.getTypeCode());
@@ -353,7 +382,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                     case TRANSHIPMENT:
                     case RELOCATION:
                         if (DECLARATION_STR.equals(faRepTypeCodeVal)) {
-                            if(RELOCATION.equals(fishingActivityType)){
+                            if (RELOCATION.equals(fishingActivityType)) {
                                 abstractFacts.add(activityFactMapper.generateFactsForRelocation(activity, faReportDocument, isSubActivity));
                             } else {
                                 abstractFacts.add(activityFactMapper.generateFactsForTranshipment(activity, faReportDocument));
@@ -387,13 +416,13 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
             xPathUtil.appendWithoutWrapping(partialXpath);
             Map<String, List<GearMatrix.Condition>> matrix = new HashMap<>();
             Map<String, List<GearMatrix.Condition>> matrixNeafc = new HashMap<>();
-            if (MapUtils.isNotEmpty(extraValueMap)){
+            if (MapUtils.isNotEmpty(extraValueMap)) {
                 Object gearMetrixObj = extraValueMap.get(FISHING_GEAR_TYPE_CHARACTERISTICS);
-                if (gearMetrixObj != null){
+                if (gearMetrixObj != null) {
                     matrix = (Map<String, List<GearMatrix.Condition>>) gearMetrixObj;
                 }
                 Object gearMetrixNEAFCObj = extraValueMap.get(FISHING_GEAR_TYPE_NEAFC_CHARACTERISTICS);
-                if (gearMetrixObj != null){
+                if (gearMetrixObj != null) {
                     matrixNeafc = (Map<String, List<GearMatrix.Condition>>) gearMetrixNEAFCObj;
                 }
             }
@@ -403,8 +432,8 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
             for (FishingGear fishingGear : fishingGears) {
                 List<GearCharacteristic> gearCharacteristics = fishingGear.getApplicableGearCharacteristics();
                 if (CollectionUtils.isNotEmpty(gearCharacteristics)) {
-                    xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(APPLICABLE_GEAR_CHARACTERISTIC, index);
-                    facts.addAll(activityFactMapper.generateFactsForGearCharacteristics(gearCharacteristics, APPLICABLE_GEAR_CHARACTERISTIC, matrix, matrixNeafc));
+                    xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(gearType, index);
+                    facts.addAll(activityFactMapper.generateFactsForGearCharacteristics(gearCharacteristics, matrix, matrixNeafc));
                 }
                 index++;
             }
@@ -416,11 +445,12 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
     /**
      * This method is setting unique UUIDs to a list of facts
      * eg. FaReportDocumentIDS, FluxReportMessageIDs, FAResponseMessageIDs
+     *
      * @param fluxRepDoc
      * @param facts
      */
     private void populateUniqueIDsAndFaReportDocumentDate(FLUXReportDocument fluxRepDoc, List<AbstractFact> facts) {
-        if (fluxRepDoc != null){
+        if (fluxRepDoc != null) {
             List<String> strIDs = getIds(fluxRepDoc.getIDS());
             facts.removeAll(Collections.singleton(null));
             DateTime creationDateTime = activityFactMapper.mapToJodaDateTime(fluxRepDoc.getCreationDateTime());
@@ -437,7 +467,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
         if (CollectionUtils.isEmpty(idTypes)) {
             return ids;
         }
-        if (CollectionUtils.isNotEmpty(idTypes)){
+        if (CollectionUtils.isNotEmpty(idTypes)) {
             ids = new ArrayList<>();
             for (IDType idType : idTypes) {
                 String value = idType.getValue();

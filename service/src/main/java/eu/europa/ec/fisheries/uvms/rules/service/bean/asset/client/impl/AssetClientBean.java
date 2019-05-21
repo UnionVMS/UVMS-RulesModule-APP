@@ -66,7 +66,7 @@ public class AssetClientBean implements IAssetClient {
             String ircs = ids.get("IRCS");
             String extMark = ids.get("EXT_MARK");
             String iccat = ids.get("ICCAT");
-            log.info("Find history of asset by reportDate: {}, cfr: {}, regCountry: {}, ircs: {}, extMark: {}, iccat: {} ", reportDate, cfr, regCountry, ircs, extMark, iccat);
+            log.debug("Find history of asset by reportDate: {}, cfr: {}, regCountry: {}, ircs: {}, extMark: {}, iccat: {} ", reportDate, cfr, regCountry, ircs, extMark, iccat);
             List<Asset> assets = iAssetFacade.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat);
             if (CollectionUtils.isNotEmpty(assets)) {
                 vesselTransportMeansDto.setAsset(assets.get(0));

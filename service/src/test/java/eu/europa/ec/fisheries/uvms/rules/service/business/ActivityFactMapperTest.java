@@ -270,7 +270,7 @@ public class ActivityFactMapperTest {
         GearCharacteristic gearCharacteristic = new GearCharacteristic();
         gearCharacteristic.setTypeCode(codeType);
 
-        List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(singletonList(gearCharacteristic), "null", new HashMap<>(), new HashMap<>());
+        List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(singletonList(gearCharacteristic), new HashMap<>(), new HashMap<>());
 
         assertEquals(codeType.getValue(), gearCharacteristicsFacts.get(0).getTypeCode().getValue());
 
@@ -707,10 +707,10 @@ public class ActivityFactMapperTest {
         final FluxLocationFact fluxLocationFact = activityMapper.generateFactForFluxLocation(null, false, null, null, null);
         final FaDepartureFact faDepartureFact = activityMapper.generateFactsForFaDeparture(null, null);
         final FaLandingFact faLandingFact = activityMapper.generateFactsForLanding(null, null);
-        final List<GearCharacteristicsFact> gearList = activityMapper.generateFactsForGearCharacteristics(null, "null", new HashMap<>(), new HashMap<>());
+        final List<GearCharacteristicsFact> gearList = activityMapper.generateFactsForGearCharacteristics(null, new HashMap<>(), new HashMap<>());
         final List<FishingTripFact> fishingTripFacts = activityMapper.generateFactForFishingTrips(null, null);
         final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null, new ArrayList<>(), null);
-        final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, null, new HashMap<>(), new HashMap<>());
+        final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, new HashMap<>(), new HashMap<>());
         final FaResponseFact faResponseFact = new FaResponseFactMapper().generateFactsForFaResponse(null);
         final ValidationQualityAnalysisFact qualityAnalysisFact = activityMapper.generateFactsForValidationQualityAnalysis(null);
 
