@@ -740,7 +740,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on"/>
             <column name="template_id" value="19"/>
-            <column name="property_names" value="relatedFLUXLocationIds"/>
+            <column name="property_names" value="relatedFishingActivities"/>
             <column name="disabled" value="false"/>
         </insert>
 

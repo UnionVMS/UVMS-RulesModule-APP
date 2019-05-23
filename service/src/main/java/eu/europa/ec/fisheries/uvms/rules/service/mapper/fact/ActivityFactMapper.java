@@ -596,7 +596,7 @@ public class ActivityFactMapper {
             VesselPositionEventFact vessPositionFact = new VesselPositionEventFact();
 
             vessPositionFact.setTypeCode(mapToCodeType(specifiedVesselPositionEvent.getTypeCode()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(TYPE_CODE).storeInRepo(vessPositionFact, "typeCode");
+            xPathUtil.appendWithoutWrapping(partialXpath).storeInRepo(vessPositionFact, "typeCode");
 
             vessPositionFact.setObtainedOccurrenceDateTime(specifiedVesselPositionEvent.getObtainedOccurrenceDateTime());
             xPathUtil.appendWithoutWrapping(partialXpath).append("ObtainedOccurrenceDateTime").storeInRepo(vessPositionFact, "obtainedOccurrenceDateTime");

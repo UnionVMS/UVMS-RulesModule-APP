@@ -711,7 +711,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="28"/>
-            <column name="property_names" value="fluxLocationTypeCodes"/>
+            <column name="property_names" value="fluxLocationTypeCode"/>
             <column name="disabled" value="false"/>
         </insert>
 
