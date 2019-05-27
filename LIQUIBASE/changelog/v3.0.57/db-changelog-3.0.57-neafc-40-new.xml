@@ -772,7 +772,7 @@
             <column name="id" value="20000547"/>
             <column name="context" value="NEAFC"/>
             <column name="expression"
-                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; isEmpty(relatedFishingActivitiesRelatedFLUXLocations)"/>
+                    value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; isEmpty(relatedFishingActivitiesRelatedFLUXLocations)"/>
             <column name="rule_id" value="20000547"/>
             <column name="failure_message" value=""/>
         </insert>
