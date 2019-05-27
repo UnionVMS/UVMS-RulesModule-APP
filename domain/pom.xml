@@ -5,12 +5,12 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.2-MARE</version>
+        <version>3.3-MARE-SNAPSHOT</version>
     </parent>
 
     <name>${project.parent.artifactId}-domain</name>
     <artifactId>rules-dbaccess-domain</artifactId>
-    <version>3.2-MARE</version>
+    <version>3.3-MARE-SNAPSHOT</version>
     <packaging>ejb</packaging>
 
     <!-- PROPERTIES USED FOR LOGBACK -->
