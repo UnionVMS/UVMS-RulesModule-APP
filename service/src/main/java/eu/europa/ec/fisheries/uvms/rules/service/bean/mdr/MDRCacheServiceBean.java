@@ -21,8 +21,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.ObjectRepresentationHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.extern.slf4j.Slf4j;
-import ma.glasnost.orika.impl.util.StringUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -304,7 +304,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         String flagStateBis = XEU;
 
         Map<String, String> terrManagMap = retrieveCountryFromLocationList(specifiedFLUXLocations, validityDate);
-        if(terrManagMap == null){
+        if(MapUtils.isEmpty(terrManagMap)){
             return false; // Case 1 : Country cannot be determined.
         }
         territory = terrManagMap.get("territory");

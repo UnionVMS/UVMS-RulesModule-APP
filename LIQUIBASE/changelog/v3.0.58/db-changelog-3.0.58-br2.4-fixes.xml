@@ -64,6 +64,16 @@
             <column name="failure_message" value="Report Owner ID not consistent with FLUX TL envelope parameters."/>
         </insert>
 
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; (transportMeans == null || transportMeans.asset == null)"/>
+            <where>rule_id = '64'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;ICCAT&quot;) &amp;&amp; (transportMeans == null || transportMeans.asset == null)"/>
+            <where>rule_id = '65'</where>
+        </update>
+
     </changeSet>
 
 </databaseChangeLog>
