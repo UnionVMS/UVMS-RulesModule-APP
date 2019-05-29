@@ -69,6 +69,11 @@
             <where>rule_id = '64'</where>
         </update>
 
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; (transportMeans == null  || transportMeans.asset == null)"/>
+            <where>rule_id = '66'</where>
+        </update>
+
     </changeSet>
 
 </databaseChangeLog>
