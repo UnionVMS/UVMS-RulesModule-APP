@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
         <artifactId>rules</artifactId>
-        <version>3.3-MARE-SNAPSHOT</version>
+        <version>3.3-MARE</version>
     </parent>
 
     <artifactId>liquibase</artifactId>
