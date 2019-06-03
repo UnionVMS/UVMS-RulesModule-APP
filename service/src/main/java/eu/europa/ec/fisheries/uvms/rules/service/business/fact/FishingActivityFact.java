@@ -137,8 +137,8 @@ public class FishingActivityFact extends AbstractFact {
         }
         List<CodeType> allRoleCodes = new ArrayList<>();
 
-        if (CollectionUtils.isNotEmpty(relFishActRelatedVesselTransportMeansRoleCodes)){
-            allRoleCodes = new ArrayList<>(relFishActRelatedVesselTransportMeansRoleCodes);
+        if (CollectionUtils.isNotEmpty(relatedVesselTransportMeansRoleCodes)){
+            allRoleCodes = new ArrayList<>(relatedVesselTransportMeansRoleCodes);
         }
         if(CollectionUtils.isNotEmpty(faRepDockSpecifiedVesselTransportMeansRoleCodes)){
             allRoleCodes.addAll(faRepDockSpecifiedVesselTransportMeansRoleCodes);
