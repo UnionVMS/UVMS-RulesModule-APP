@@ -69,11 +69,6 @@
             <where>rule_id = '66'</where>
         </update>
 
-        <update tableName="rule">
-            <column name="template_id" value="20"/>
-            <where>BR_ID = 'FA-L02-00-0605'</where>
-        </update>
-
     </changeSet>
 
 </databaseChangeLog>
