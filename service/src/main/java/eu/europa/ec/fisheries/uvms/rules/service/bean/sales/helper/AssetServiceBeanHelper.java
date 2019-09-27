@@ -54,50 +54,50 @@ public class AssetServiceBeanHelper {
         return receiveMessageFromAsset(correlationID);
     }
 
-    public List<Asset> findHistoryOfAssetBy(String reportDate, String cfr, String regCountry, String ircs, String extMark, String iccat) {
-        AssetListCriteria assetListCriteria = new AssetListCriteria();
-        if (StringUtils.isNotEmpty(reportDate)){
-            createCriteriaPair(reportDate, assetListCriteria, ConfigSearchField.DATE);
-        }
-        else {
-            return new ArrayList<>();
-        }
-        if (StringUtils.isNotEmpty(cfr)){
-            createCriteriaPair(cfr, assetListCriteria, ConfigSearchField.CFR);
-        }
-        else {
-            if (StringUtils.isNotEmpty(regCountry)){
-                createCriteriaPair(regCountry, assetListCriteria, ConfigSearchField.FLAG_STATE);
-            }
-            else {
-                return new ArrayList<>();
-            }
-            if (StringUtils.isNotEmpty(ircs)){
-                createCriteriaPair(ircs, assetListCriteria, ConfigSearchField.IRCS);
-            }
-
-            else if (StringUtils.isNotEmpty(extMark)){
-                createCriteriaPair(extMark.replace("-", "").toUpperCase(), assetListCriteria, ConfigSearchField.EXTERNAL_MARKING);
-            }
-            else if (StringUtils.isNotEmpty(iccat)){
-                createCriteriaPair(iccat, assetListCriteria, ConfigSearchField.ICCAT);
-            }
-            else {
-                return new ArrayList<>();
-            }
-        }
-
-        String createActivityRulesAssetModuleRequest;
-
-        try {
-            createActivityRulesAssetModuleRequest = AssetModuleRequestMapper.createActivityRulesAssetModuleRequest(assetListCriteria);
-            String correlationID = sendMessageToAsset(createActivityRulesAssetModuleRequest);
-            return receiveMessageFromAsset(correlationID);
-        } catch (AssetModelMarshallException | MessageException e) {
-            log.warn(e.getMessage(), e);
-            return new ArrayList<>();
-        }
-    }
+//    public List<Asset> findHistoryOfAssetBy(String reportDate, String cfr, String regCountry, String ircs, String extMark, String iccat) {
+//        AssetListCriteria assetListCriteria = new AssetListCriteria();
+//        if (StringUtils.isNotEmpty(reportDate)){
+//            createCriteriaPair(reportDate, assetListCriteria, ConfigSearchField.DATE);
+//        }
+//        else {
+//            return new ArrayList<>();
+//        }
+//        if (StringUtils.isNotEmpty(cfr)){
+//            createCriteriaPair(cfr, assetListCriteria, ConfigSearchField.CFR);
+//        }
+//        else {
+//            if (StringUtils.isNotEmpty(regCountry)){
+//                createCriteriaPair(regCountry, assetListCriteria, ConfigSearchField.FLAG_STATE);
+//            }
+//            else {
+//                return new ArrayList<>();
+//            }
+//            if (StringUtils.isNotEmpty(ircs)){
+//                createCriteriaPair(ircs, assetListCriteria, ConfigSearchField.IRCS);
+//            }
+//
+//            else if (StringUtils.isNotEmpty(extMark)){
+//                createCriteriaPair(extMark.replace("-", "").toUpperCase(), assetListCriteria, ConfigSearchField.EXTERNAL_MARKING);
+//            }
+//            else if (StringUtils.isNotEmpty(iccat)){
+//                createCriteriaPair(iccat, assetListCriteria, ConfigSearchField.ICCAT);
+//            }
+//            else {
+//                return new ArrayList<>();
+//            }
+//        }
+//
+//        String createActivityRulesAssetModuleRequest;
+//
+//        try {
+//            createActivityRulesAssetModuleRequest = AssetModuleRequestMapper.createActivityRulesAssetModuleRequest(assetListCriteria);
+//            String correlationID = sendMessageToAsset(createActivityRulesAssetModuleRequest);
+//            return receiveMessageFromAsset(correlationID);
+//        } catch (AssetModelMarshallException | MessageException e) {
+//            log.warn(e.getMessage(), e);
+//            return new ArrayList<>();
+//        }
+//    }
 
     private void createCriteriaPair(String reportDate, AssetListCriteria assetListCriteria, ConfigSearchField date) {
         AssetListCriteriaPair assetListCriteriaPair = new AssetListCriteriaPair();

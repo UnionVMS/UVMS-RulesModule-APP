@@ -238,7 +238,7 @@ public class CustomRulesRestResource {
             valid = false;
         } else if(customRule.getTimeIntervals()!=null && !customRule.getTimeIntervals().isEmpty()){
             for (CustomRuleIntervalType intervalType : customRule.getTimeIntervals()){
-                if(DateUtil.parseToUTCDate(intervalType.getStart()).after(DateUtil.parseToUTCDate(intervalType.getEnd()))){
+                if(DateUtil.parseToUTCDate(intervalType.getStart()).isAfter(DateUtil.parseToUTCDate(intervalType.getEnd()))){
                     valid = false;
                     break;
                 }
