@@ -73,9 +73,7 @@ import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminal
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.exception.MobileTerminalUnmarshallException;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalModuleResponseMapper;
-import eu.europa.ec.fisheries.uvms.movement.model.exception.ModelMapperException;
-import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementDuplicateException;
-import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementFaultException;
+import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementModelException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -124,6 +122,8 @@ import javax.xml.bind.JAXBException;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 import java.util.concurrent.*;
+
+import static eu.europa.ec.fisheries.uvms.movement.model.exception.ErrorCode.MOVEMENT_DUPLICATE_ERROR;
 
 
 @Stateless
@@ -642,10 +642,14 @@ public class RulesMovementProcessorBean {
                 TextMessage movJmsResponse = consumer.getMessage(messageId, TextMessage.class, 2400000L);
                 log.debug("Received response message");
                 movementSimpleResponse = MovementModuleResponseMapper.mapToCreateMovementBatchResponse(movJmsResponse);
-            } catch (JMSException | MovementFaultException | ModelMapperException | MessageException e) {
-                log.error(" Error when getting movementResponse from Movement , movementResponse from JMS Queue is null..");
-            } catch (MovementDuplicateException e) {
-                log.error(" Error when getting movementResponse from Movement, tried to create duplicate movement..");
+            } catch (JMSException | MessageException e) {
+                log.error(" Error when getting movementResponse from Movement , movementResponse from JMS Queue is null..", e);
+            } catch (MovementModelException e) {
+                if (e.getCode() == MOVEMENT_DUPLICATE_ERROR) {
+                    log.error(" Error when getting movementResponse from Movement, tried to create duplicate movement..", e);
+                } else {
+                    log.error(" Other Movement error", e);
+                }
             }
             auditLog("Time to get movement from Movement Module:", auditTimestamp);
             return movementSimpleResponse;
@@ -909,10 +913,14 @@ public class RulesMovementProcessorBean {
             log.debug("Received response message");
             CreateMovementResponse createMovementResponse = MovementModuleResponseMapper.mapToCreateMovementResponseFromMovementResponse(movementResponse);
             createdMovement = createMovementResponse.getMovement();
-        } catch (JMSException | MovementFaultException | ModelMapperException | MessageException e) {
-            log.error(" Error when getting movementResponse from Movement , movementResponse from JMS Queue is null..");
-        } catch (MovementDuplicateException e) {
-            log.error(" Error when getting movementResponse from Movement, tried to create duplicate movement..");
+        } catch (JMSException | MessageException e) {
+            log.error(" Error when getting movementResponse from Movement , movementResponse from JMS Queue is null..", e);
+        } catch (MovementModelException e) {
+            if (e.getCode() == MOVEMENT_DUPLICATE_ERROR) {
+                log.error(" Error when getting movementResponse from Movement, tried to create duplicate movement..", e);
+            } else {
+                log.error(" Other Movement error", e);
+            }
         }
         auditLog("Time to get movement from Movement Module:", auditTimestamp);
         return createdMovement;
