@@ -237,15 +237,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.6</version>
 				<goals>
 					<goal>deploy-file</goal>
 				</goals>
 				<configuration>
-					<repositoryId>${repository.id}</repositoryId>
 					<packaging>zip</packaging>
 					<generatePom>true</generatePom>
-					<url>${repository.url}</url>
 					<artifactId>${project.artifactId}</artifactId>
 					<groupId>${project.groupId}</groupId>
 					<version>${project.version}</version>
