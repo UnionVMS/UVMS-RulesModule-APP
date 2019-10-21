@@ -95,22 +95,22 @@
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-service</artifactId>
-            <version>${uvms.common.version}</version>
+            <version>${uvms.commons.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-date</artifactId>
-            <version>${uvms.common.version}</version>
+            <version>${uvms.commons.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-domain</artifactId>
-            <version>${uvms.common.version}</version>
+            <version>${uvms.commons.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-dao</artifactId>
-            <version>${uvms.common.version}</version>
+            <version>${uvms.commons.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms</groupId>
