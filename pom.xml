@@ -2,14 +2,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>fish.focus.uvms.maven</groupId>
-        <artifactId>uvms-pom</artifactId>
-        <version>1.20</version>
+        <groupId>eu.europa.ec.fisheries.uvms</groupId>
+        <artifactId>mare-pom</artifactId>
+        <version>1.6.0-MARE</version>
+        <relativePath />
     </parent>
 
     <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
     <artifactId>rules</artifactId>
-    <version>3.4-MARE-SNAPSHOT</version>
+    <version>${uvms.rules.module.version}</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -32,23 +33,30 @@
 
         <hibernate.version>5.1.9.Final</hibernate.version>
 
-        <movement.model.version>5.1.8-SNAPSHOT</movement.model.version>
-        <exchange.model.version>4.0.34</exchange.model.version>
+        <!-- TODO: aren't these circular dependencies? -->
         <mobileterminal.model.version>4.0.13</mobileterminal.model.version>
         <user.model.version>2.0.6</user.model.version>
-
-        <activity.model.version>1.0.8</activity.model.version>
-        <mdr.model.version>1.0.5</mdr.model.version>
         <subscription.model.version>1.3</subscription.model.version>
-        <asset.model.version>4.0.24-SNAPSHOT</asset.model.version>
-        <asset.ejb.client.version>4.0.24-SNAPSHOT</asset.ejb.client.version>
-        <audit.model.version>4.0.10</audit.model.version>
+        <flux.movement.client.version>2.0.1</flux.movement.client.version>
+
+        <movement.model.version>${uvms.movement.module.version}</movement.model.version>
+        <exchange.model.version>${uvms.exchange.model.version}</exchange.model.version>
+        <activity.model.version>${uvms.activity.model.version}</activity.model.version>
+        <mdr.model.version>${uvms.mdr.model.version}</mdr.model.version>
+        <asset.model.version>${uvms.asset.module.version}</asset.model.version>
+        <asset.ejb.client.version>${uvms.asset.module.version}</asset.ejb.client.version>
+        <audit.model.version>${uvms.audit.module.version}</audit.model.version>
         <rules.model.version>${project.version}</rules.model.version>
-        <sales.model.version>1.0.11</sales.model.version>
+        <sales.model.version>${uvms.sales.model.version}</sales.model.version>
+
+        <!-- UVMS Libraries -->
+        <usm4uvms.version>${uvms.uvms4usm.version}</usm4uvms.version>
+        <uvms.config.version>${uvms.config.library.version}</uvms.config.version>
+        <uvms.commons.version>${uvms.commonsLibrary.version}</uvms.commons.version>
+
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.json.version>1.0.4</javax.json.version>
         <maven-release-plugin>2.5.3</maven-release-plugin>
-        <flux.movement.client.version>2.0.1</flux.movement.client.version>
         <project.scm.id>github</project.scm.id>
         <dozer.version>5.5.1</dozer.version>
 
@@ -56,11 +64,6 @@
         <docker.liquibase.changeLogFile>LIQUIBASE/changelog/db-changelog-master.xml</docker.liquibase.changeLogFile>
         <docker.liquibase.db.user>rules</docker.liquibase.db.user>
         <docker.liquibase.db.passwd>rules</docker.liquibase.db.passwd>
-
-        <!-- UVMS Libraries -->
-        <usm4uvms.version>4.0.15.1-SNAPSHOT</usm4uvms.version>
-        <uvms.config.version>4.2-SNAPSHOT</uvms.config.version>
-        <uvms.common.version>3.4-SNAPSHOT</uvms.common.version>
 
         <!-- Packages that need to be excluded from sonar coverage -->
         <sonar.exclusions>
@@ -167,7 +170,7 @@
             <dependency>
 	            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
 	            <artifactId>uvms-commons-message</artifactId>
-				<version>${uvms.common.version}</version>
+				<version>${uvms.commons.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.geotools</groupId>
