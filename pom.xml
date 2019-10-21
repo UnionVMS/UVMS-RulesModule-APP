@@ -35,10 +35,10 @@
 
         <!-- TODO: aren't these circular dependencies? -->
         <mobileterminal.model.version>4.0.13</mobileterminal.model.version>
-        <user.model.version>2.0.6</user.model.version>
         <subscription.model.version>1.3</subscription.model.version>
         <flux.movement.client.version>2.0.1</flux.movement.client.version>
 
+        <user.model.version>${uvms.user.module.version}</user.model.version>
         <movement.model.version>${uvms.movement.module.version}</movement.model.version>
         <exchange.model.version>${uvms.exchange.model.version}</exchange.model.version>
         <activity.model.version>${uvms.activity.model.version}</activity.model.version>
