@@ -4,3 +4,4 @@ target
 logging.properties
 /rest/src/main/webapp
 *.DS_Store
+.flattened-pom.xml
