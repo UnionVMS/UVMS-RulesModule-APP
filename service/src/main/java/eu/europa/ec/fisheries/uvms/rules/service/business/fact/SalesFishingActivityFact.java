@@ -233,12 +233,14 @@ public class SalesFishingActivityFact extends SalesAbstractFact {
                 Objects.equals(specifiedDelimitedPeriods, that.specifiedDelimitedPeriods) &&
                 Objects.equals(specifiedFishingTrip, that.specifiedFishingTrip) &&
                 Objects.equals(relatedVesselTransportMeans, that.relatedVesselTransportMeans) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, typeCode, occurrenceDateTime, reasonCode, vesselRelatedActivityCode, fisheryTypeCode, speciesTargetCode, operationsQuantity, fishingDurationMeasure, specifiedFACatches, relatedFLUXLocations, specifiedGearProblems, specifiedFLUXCharacteristics, specifiedFishingGears, sourceVesselStorageCharacteristic, destinationVesselStorageCharacteristic, relatedFishingActivities, specifiedFLAPDocuments, specifiedDelimitedPeriods, specifiedFishingTrip, relatedVesselTransportMeans, creationDateOfMessage);
+        return Objects.hash(ids, typeCode, occurrenceDateTime, reasonCode, vesselRelatedActivityCode, fisheryTypeCode, speciesTargetCode, operationsQuantity, fishingDurationMeasure, specifiedFACatches, relatedFLUXLocations, specifiedGearProblems, specifiedFLUXCharacteristics, specifiedFishingGears, sourceVesselStorageCharacteristic, destinationVesselStorageCharacteristic, relatedFishingActivities, specifiedFLAPDocuments, specifiedDelimitedPeriods, specifiedFishingTrip, relatedVesselTransportMeans, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 
     public boolean isRelatedFLUXLocationsEmptyOrTypeLocation() {

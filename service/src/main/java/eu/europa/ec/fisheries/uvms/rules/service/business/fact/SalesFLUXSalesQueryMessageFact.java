@@ -31,11 +31,13 @@ public class SalesFLUXSalesQueryMessageFact extends SalesAbstractFact {
         if (!(o instanceof SalesFLUXSalesQueryMessageFact)) return false;
         SalesFLUXSalesQueryMessageFact that = (SalesFLUXSalesQueryMessageFact) o;
         return Objects.equals(salesQuery, that.salesQuery) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(salesQuery, creationDateOfMessage);
+        return Objects.hash(salesQuery, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

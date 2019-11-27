@@ -41,12 +41,14 @@ public class SalesSizeDistributionFact extends SalesAbstractFact {
         SalesSizeDistributionFact that = (SalesSizeDistributionFact) o;
         return Objects.equals(categoryCode, that.categoryCode) &&
                 Objects.equals(classCodes, that.classCodes) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(categoryCode, classCodes, creationDateOfMessage);
+        return Objects.hash(categoryCode, classCodes, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 
 

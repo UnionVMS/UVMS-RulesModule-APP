@@ -186,12 +186,14 @@ public class SalesDocumentFact extends SalesAbstractFact {
                 Objects.equals(totalSalesPrice, that.totalSalesPrice) &&
                 Objects.equals(departureSpecifiedFLUXLocation, that.departureSpecifiedFLUXLocation) &&
                 Objects.equals(arrivalSpecifiedFLUXLocation, that.arrivalSpecifiedFLUXLocation) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, currencyCode, transportDocumentIDs, salesNoteIDs, takeoverDocumentIDs, specifiedSalesBatches, specifiedSalesEvents, specifiedFishingActivities, specifiedFLUXLocations, specifiedSalesParties, specifiedVehicleTransportMeans, relatedValidationResultDocuments, totalSalesPrice, departureSpecifiedFLUXLocation, arrivalSpecifiedFLUXLocation, creationDateOfMessage);
+        return Objects.hash(ids, currencyCode, transportDocumentIDs, salesNoteIDs, takeoverDocumentIDs, specifiedSalesBatches, specifiedSalesEvents, specifiedFishingActivities, specifiedFLUXLocations, specifiedSalesParties, specifiedVehicleTransportMeans, relatedValidationResultDocuments, totalSalesPrice, departureSpecifiedFLUXLocation, arrivalSpecifiedFLUXLocation, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 
     public boolean doesDocumentContainDuplicateSalesPartyRoles() {

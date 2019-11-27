@@ -152,11 +152,13 @@ public class SalesContactPartyFact extends SalesAbstractFact {
                 Objects.equals(faxTelecommunicationCommunications, that.faxTelecommunicationCommunications) &&
                 Objects.equals(uriEmailCommunications, that.uriEmailCommunications) &&
                 Objects.equals(specifiedUniversalCommunications, that.specifiedUniversalCommunications) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, name, descriptions, nationalityCountryIDs, languageCodes, residenceCountryID, roleCodes, specifiedStructuredAddresses, specifiedContactPersons, telephoneTelecommunicationCommunications, faxTelecommunicationCommunications, uriEmailCommunications, specifiedUniversalCommunications, creationDateOfMessage);
+        return Objects.hash(ids, name, descriptions, nationalityCountryIDs, languageCodes, residenceCountryID, roleCodes, specifiedStructuredAddresses, specifiedContactPersons, telephoneTelecommunicationCommunications, faxTelecommunicationCommunications, uriEmailCommunications, specifiedUniversalCommunications, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

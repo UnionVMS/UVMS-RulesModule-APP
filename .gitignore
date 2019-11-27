@@ -9,3 +9,4 @@ logging.properties
 .classpath
 .settings/
 pom.xml.versionsBackup
+*.factorypath

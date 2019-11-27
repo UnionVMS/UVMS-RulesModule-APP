@@ -60,7 +60,7 @@ public abstract class AbstractFact {
     protected Date creationJavaDateOfMessage;
     private Integer sequence = 0;
 
-    private String messageDataFlow;
+    protected String messageDataFlow;
 
     public boolean hasWarOrErr(){
         return CollectionUtils.isNotEmpty(warnings) || CollectionUtils.isNotEmpty(errors);

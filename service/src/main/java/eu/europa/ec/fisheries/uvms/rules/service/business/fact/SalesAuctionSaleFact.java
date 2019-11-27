@@ -51,11 +51,13 @@ public class SalesAuctionSaleFact extends SalesAbstractFact {
         return Objects.equals(countryCode, that.countryCode) &&
                 salesCategory == that.salesCategory &&
                 Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage) &&
                 Objects.equals(supplier, that.supplier);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(countryCode, salesCategory, creationDateOfMessage, supplier);
+        return Objects.hash(countryCode, salesCategory, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage, supplier);
     }
 }

@@ -52,11 +52,13 @@ public class SalesFishingTripFact extends SalesAbstractFact {
         return Objects.equals(ids, that.ids) &&
                 Objects.equals(typeCode, that.typeCode) &&
                 Objects.equals(specifiedDelimitedPeriods, that.specifiedDelimitedPeriods) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, typeCode, specifiedDelimitedPeriods, creationDateOfMessage);
+        return Objects.hash(ids, typeCode, specifiedDelimitedPeriods, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

@@ -191,11 +191,13 @@ public class SalesStructuredAddressFact extends SalesAbstractFact {
                 Objects.equals(floorIdentification, that.floorIdentification) &&
                 Objects.equals(roomIdentification, that.roomIdentification) &&
                 Objects.equals(postalArea, that.postalArea) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, postcodeCode, buildingName, streetName, cityName, countryID, citySubDivisionName, countryName, countrySubDivisionName, blockName, plotIdentification, postOfficeBox, buildingNumber, staircaseNumber, floorIdentification, roomIdentification, postalArea, creationDateOfMessage);
+        return Objects.hash(id, postcodeCode, buildingName, streetName, cityName, countryID, citySubDivisionName, countryName, countrySubDivisionName, blockName, plotIdentification, postOfficeBox, buildingNumber, staircaseNumber, floorIdentification, roomIdentification, postalArea, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

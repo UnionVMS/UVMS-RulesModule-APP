@@ -43,11 +43,13 @@ public class SalesFLUXSalesReportMessageFact extends SalesAbstractFact {
         SalesFLUXSalesReportMessageFact that = (SalesFLUXSalesReportMessageFact) o;
         return Objects.equals(fluxReportDocument, that.fluxReportDocument) &&
                 Objects.equals(salesReports, that.salesReports) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fluxReportDocument, salesReports, creationDateOfMessage);
+        return Objects.hash(fluxReportDocument, salesReports, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

@@ -87,12 +87,14 @@ public class SalesQueryFact extends SalesAbstractFact {
                 Objects.equals(specifiedDelimitedPeriod, that.specifiedDelimitedPeriod) &&
                 Objects.equals(submitterFLUXParty, that.submitterFLUXParty) &&
                 Objects.equals(simpleSalesQueryParameters, that.simpleSalesQueryParameters) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, submittedDateTime, typeCode, specifiedDelimitedPeriod, submitterFLUXParty, simpleSalesQueryParameters, creationDateOfMessage);
+        return Objects.hash(id, submittedDateTime, typeCode, specifiedDelimitedPeriod, submitterFLUXParty, simpleSalesQueryParameters, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 
     public boolean anyQueryParameterOfTypeRoleWithValue(){

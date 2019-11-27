@@ -94,11 +94,13 @@ public class SalesPartyFact extends SalesAbstractFact {
                 Objects.equals(roleCodes, that.roleCodes) &&
                 Objects.equals(specifiedStructuredAddresses, that.specifiedStructuredAddresses) &&
                 Objects.equals(specifiedFLUXOrganization, that.specifiedFLUXOrganization) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, typeCode, countryID, roleCodes, specifiedStructuredAddresses, specifiedFLUXOrganization, creationDateOfMessage);
+        return Objects.hash(id, name, typeCode, countryID, roleCodes, specifiedStructuredAddresses, specifiedFLUXOrganization, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

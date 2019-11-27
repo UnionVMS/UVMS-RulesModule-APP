@@ -82,11 +82,13 @@ public class SalesValidationQualityAnalysisFact extends SalesAbstractFact {
                 Objects.equals(id, that.id) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(referencedItems, that.referencedItems) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(levelCode, typeCode, results, id, description, referencedItems, creationDateOfMessage);
+        return Objects.hash(levelCode, typeCode, results, id, description, referencedItems, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

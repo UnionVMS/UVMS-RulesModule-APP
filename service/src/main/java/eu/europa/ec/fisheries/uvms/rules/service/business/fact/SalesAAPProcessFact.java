@@ -65,12 +65,14 @@ public class SalesAAPProcessFact extends SalesAbstractFact {
                 Objects.equals(usedFACatches, that.usedFACatches) &&
                 Objects.equals(resultAAPProducts, that.resultAAPProducts) &&
                 Objects.equals(source, that.source) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(typeCodes, conversionFactorNumeric, usedFACatches, resultAAPProducts, source, creationDateOfMessage);
+        return Objects.hash(typeCodes, conversionFactorNumeric, usedFACatches, resultAAPProducts, source, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 
 }

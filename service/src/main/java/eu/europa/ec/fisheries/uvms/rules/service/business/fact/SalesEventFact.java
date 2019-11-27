@@ -64,12 +64,14 @@ public class SalesEventFact extends SalesAbstractFact {
                 Objects.equals(sellerName, that.sellerName) &&
                 Objects.equals(buyerName, that.buyerName) &&
                 Objects.equals(relatedSalesBatches, that.relatedSalesBatches) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(occurrenceDateTime, sellerName, buyerName, relatedSalesBatches, creationDateOfMessage);
+        return Objects.hash(occurrenceDateTime, sellerName, buyerName, relatedSalesBatches, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 
 }

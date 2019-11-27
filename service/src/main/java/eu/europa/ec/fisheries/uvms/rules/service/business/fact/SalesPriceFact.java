@@ -33,12 +33,14 @@ public class SalesPriceFact extends SalesAbstractFact {
         if (!(o instanceof SalesPriceFact)) return false;
         SalesPriceFact that = (SalesPriceFact) o;
         return Objects.equals(chargeAmounts, that.chargeAmounts) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(chargeAmounts, creationDateOfMessage);
+        return Objects.hash(chargeAmounts, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 
     public boolean allValuesGreaterOrEqualToZero(List<AmountType> amountTypes) {

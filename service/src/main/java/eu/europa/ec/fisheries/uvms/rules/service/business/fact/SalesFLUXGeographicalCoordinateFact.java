@@ -61,11 +61,13 @@ public class SalesFLUXGeographicalCoordinateFact extends SalesAbstractFact {
                 Objects.equals(latitudeMeasure, that.latitudeMeasure) &&
                 Objects.equals(altitudeMeasure, that.altitudeMeasure) &&
                 Objects.equals(systemID, that.systemID) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(longitudeMeasure, latitudeMeasure, altitudeMeasure, systemID, creationDateOfMessage);
+        return Objects.hash(longitudeMeasure, latitudeMeasure, altitudeMeasure, systemID, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }
