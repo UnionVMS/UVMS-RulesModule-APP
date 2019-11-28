@@ -30,11 +30,13 @@ public class SalesVesselCountryFact extends SalesAbstractFact {
         if (!(o instanceof SalesVesselCountryFact)) return false;
         SalesVesselCountryFact that = (SalesVesselCountryFact) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, creationDateOfMessage);
+        return Objects.hash(id, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

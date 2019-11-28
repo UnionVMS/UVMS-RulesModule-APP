@@ -69,12 +69,14 @@ public class SalesReportFact extends SalesAbstractFact {
                 Objects.equals(itemTypeCode, that.itemTypeCode) &&
                 Objects.equals(includedSalesDocuments, that.includedSalesDocuments) &&
                 Objects.equals(includedValidationResultDocuments, that.includedValidationResultDocuments) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, itemTypeCode, includedSalesDocuments, includedValidationResultDocuments, creationDateOfMessage);
+        return Objects.hash(id, itemTypeCode, includedSalesDocuments, includedValidationResultDocuments, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 
     public boolean isProviderRoleNotSpecifiedForSalesNote(){

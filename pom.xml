@@ -71,6 +71,8 @@
         </sonar.exclusions>
 
         <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-RulesModule-APP.git</scm.connection>
+        <!-- automatically run annotation processors within the incremental compilation -->
+  		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
 
     </properties>
 

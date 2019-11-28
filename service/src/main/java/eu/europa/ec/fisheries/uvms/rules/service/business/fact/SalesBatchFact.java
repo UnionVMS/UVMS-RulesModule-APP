@@ -53,11 +53,13 @@ public class SalesBatchFact extends SalesAbstractFact {
         return Objects.equals(ids, that.ids) &&
                 Objects.equals(specifiedAAPProducts, that.specifiedAAPProducts) &&
                 Objects.equals(totalSalesPrice, that.totalSalesPrice) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, specifiedAAPProducts, totalSalesPrice, creationDateOfMessage);
+        return Objects.hash(ids, specifiedAAPProducts, totalSalesPrice, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

@@ -43,11 +43,13 @@ public class SalesFLUXOrganizationFact extends SalesAbstractFact {
         SalesFLUXOrganizationFact that = (SalesFLUXOrganizationFact) o;
         return Objects.equals(name, that.name) &&
                 Objects.equals(postalStructuredAddresses, that.postalStructuredAddresses) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, postalStructuredAddresses, creationDateOfMessage);
+        return Objects.hash(name, postalStructuredAddresses, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

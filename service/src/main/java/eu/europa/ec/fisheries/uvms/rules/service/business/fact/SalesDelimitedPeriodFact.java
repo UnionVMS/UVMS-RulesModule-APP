@@ -53,11 +53,13 @@ public class SalesDelimitedPeriodFact extends SalesAbstractFact {
         return Objects.equals(startDateTime, that.startDateTime) &&
                 Objects.equals(endDateTime, that.endDateTime) &&
                 Objects.equals(durationMeasure, that.durationMeasure) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDateTime, endDateTime, durationMeasure, creationDateOfMessage);
+        return Objects.hash(startDateTime, endDateTime, durationMeasure, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

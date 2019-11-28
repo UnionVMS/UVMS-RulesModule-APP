@@ -53,11 +53,13 @@ public class SalesValidationResultDocumentFact extends SalesAbstractFact {
         return Objects.equals(validatorID, that.validatorID) &&
                 Objects.equals(creationDateTime, that.creationDateTime) &&
                 Objects.equals(relatedValidationQualityAnalysises, that.relatedValidationQualityAnalysises) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(validatorID, creationDateTime, relatedValidationQualityAnalysises, creationDateOfMessage);
+        return Objects.hash(validatorID, creationDateTime, relatedValidationQualityAnalysises, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

@@ -42,11 +42,13 @@ public class SalesReportWrapperFact extends SalesAbstractFact {
         SalesReportWrapperFact that = (SalesReportWrapperFact) o;
         return Objects.equals(fluxSalesReportMessage, that.fluxSalesReportMessage) &&
                 Objects.equals(auctionSale, that.auctionSale) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fluxSalesReportMessage, auctionSale, creationDateOfMessage);
+        return Objects.hash(fluxSalesReportMessage, auctionSale, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }

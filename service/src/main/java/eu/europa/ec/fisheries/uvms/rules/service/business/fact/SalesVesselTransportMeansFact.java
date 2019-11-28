@@ -306,11 +306,13 @@ public class SalesVesselTransportMeansFact extends SalesAbstractFact {
                 Objects.equals(applicableVesselStorageCharacteristics, that.applicableVesselStorageCharacteristics) &&
                 Objects.equals(applicableVesselTechnicalCharacteristics, that.applicableVesselTechnicalCharacteristics) &&
                 Objects.equals(grantedFLAPDocuments, that.grantedFLAPDocuments) &&
-                Objects.equals(creationDateOfMessage, that.creationDateOfMessage);
+                Objects.equals(creationDateOfMessage, that.creationDateOfMessage) &&
+                Objects.equals(messageDataFlow, that.messageDataFlow) &&
+                Objects.equals(creationJavaDateOfMessage, that.creationJavaDateOfMessage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ids, names, typeCodes, commissioningDateTime, operationalStatusCode, hullMaterialCode, draughtMeasure, speedMeasure, trawlingSpeedMeasure, roleCode, registrationVesselCountry, specifiedVesselPositionEvents, specifiedRegistrationEvents, specifiedConstructionEvent, attachedVesselEngines, specifiedVesselDimensions, onBoardFishingGears, applicableVesselEquipmentCharacteristics, applicableVesselAdministrativeCharacteristics, illustrateFLUXPictures, specifiedContactParties, specifiedVesselCrew, applicableVesselStorageCharacteristics, applicableVesselTechnicalCharacteristics, grantedFLAPDocuments, creationDateOfMessage);
+        return Objects.hash(ids, names, typeCodes, commissioningDateTime, operationalStatusCode, hullMaterialCode, draughtMeasure, speedMeasure, trawlingSpeedMeasure, roleCode, registrationVesselCountry, specifiedVesselPositionEvents, specifiedRegistrationEvents, specifiedConstructionEvent, attachedVesselEngines, specifiedVesselDimensions, onBoardFishingGears, applicableVesselEquipmentCharacteristics, applicableVesselAdministrativeCharacteristics, illustrateFLUXPictures, specifiedContactParties, specifiedVesselCrew, applicableVesselStorageCharacteristics, applicableVesselTechnicalCharacteristics, grantedFLAPDocuments, creationDateOfMessage, messageDataFlow, creationJavaDateOfMessage);
     }
 }
