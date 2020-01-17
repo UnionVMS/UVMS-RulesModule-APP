@@ -79,6 +79,11 @@
 			<version>${javax.json.version}</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <artifactId>uvms-commons-rest</artifactId>
+            <version>${uvms.commons.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
