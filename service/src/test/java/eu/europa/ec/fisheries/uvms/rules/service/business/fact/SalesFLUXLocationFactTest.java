@@ -17,7 +17,7 @@ public class SalesFLUXLocationFactTest {
                 .withPrefabValues(FLUXLocationType.class, new FLUXLocationType().withID(new IDType().withValue("a")), new FLUXLocationType().withID(new IDType().withValue("b")))
                 .withPrefabValues(FLUXCharacteristicType.class, new FLUXCharacteristicType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("a")), new FLUXCharacteristicType().withTypeCode(new eu.europa.ec.fisheries.schema.sales.CodeType().withValue("b")))
                 .withRedefinedSuperclass()
-                .withIgnoredFields("messageType", "factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin")
+                .withIgnoredFields("messageType", "factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin", "creationJavaDateOfMessage", "messageDataFlow", "creationJavaDateOfMessage", "messageDataFlow")
                 .verify();
     }
 
