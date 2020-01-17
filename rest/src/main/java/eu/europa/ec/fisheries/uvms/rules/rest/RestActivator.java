@@ -13,6 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.rest;
 
 import eu.europa.ec.fisheries.uvms.rest.security.UnionVMSFeatureFilter;
 import eu.europa.ec.fisheries.uvms.rules.rest.constants.RestConstants;
+import eu.europa.ec.fisheries.uvms.commons.rest.filter.EncodingResponseFilter;
 import eu.europa.ec.fisheries.uvms.rules.rest.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ public class RestActivator extends Application {
         set.add(UnionVMSFeatureFilter.class);
         set.add(SanityRulesRestResource.class);
         set.add(RulesResource.class);
+        set.add(EncodingResponseFilter.class);
         LOG.info(RestConstants.MODULE_NAME + " module starting up");
     }
 
