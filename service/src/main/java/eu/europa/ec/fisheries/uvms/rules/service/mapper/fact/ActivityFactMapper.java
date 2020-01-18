@@ -591,7 +591,7 @@ public class ActivityFactMapper {
                 continue;
             }
 
-            String partialXpath = xPathUtil.append(strToAppend).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).getValue();
+            String partialXpath = xPathUtil.appendWithoutWrapping(strToAppend).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).getValue();
 
             VesselPositionEventFact vessPositionFact = new VesselPositionEventFact();
 
@@ -626,7 +626,7 @@ public class ActivityFactMapper {
         int index = 1;
         for (IDType id : ids) {
             IdTypeFact idTypeFact = generateFactForSimpleIdType(id);
-            xPathUtil.append(partialXpath).appendWithIndex(ID, index).storeInRepo(idTypeFact, "id");
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(ID, index).storeInRepo(idTypeFact, "id");
             facts.add(idTypeFact);
             index++;
         }
