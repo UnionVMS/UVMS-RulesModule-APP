@@ -118,6 +118,8 @@ public class RulesFaReportServiceBean {
             List<IDType> messageGUID = collectReportMessageIds(fluxfaReportMessage);
 
             Set<FADocumentID> idsFromIncomingMessage = fluxMessageHelper.mapToFADocumentID(fluxfaReportMessage);
+            rulesDaoBean.takeNoteOfDocumentIds(idsFromIncomingMessage);
+            rulesDaoBean.lockDocumentIds(idsFromIncomingMessage);
             List<FADocumentID> reportAndMessageIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);
 
             List<String> faIdsPerTripsFromMessage = fluxMessageHelper.collectFaIdsAndTripIds(fluxfaReportMessage);

@@ -13,19 +13,24 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.dao.bean;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 import eu.europa.ec.fisheries.uvms.rules.dao.FADocumentIDDAO;
+import eu.europa.ec.fisheries.uvms.rules.dao.FaDocumentIdLockDao;
 import eu.europa.ec.fisheries.uvms.rules.dao.FaIdsPerTripDao;
 import eu.europa.ec.fisheries.uvms.rules.dao.RawMessageDao;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
@@ -61,6 +66,9 @@ public class RulesDaoBean implements RulesDao {
     private ValidationMessageDao validationMessageDao;
     private FADocumentIDDAO fishingActivityIdDao;
     private FaIdsPerTripDao faIdsPerTripDao;
+
+    @EJB
+    private FaDocumentIdLockDao faDocumentIdLockDao;
 
     @PersistenceContext(unitName = "rulesPostgresPU")
     public EntityManager em;
@@ -571,6 +579,33 @@ public class RulesDaoBean implements RulesDao {
     @Override
     public List<FADocumentID> loadFADocumentIDByIdsByIds(Set<FADocumentID> incomingIDs) {
         return fishingActivityIdDao.loadFADocumentIDByIdsByIds(incomingIDs);
+    }
+
+    @Override
+    public void takeNoteOfDocumentIds(Set<FADocumentID> incomingIDs) {
+        incomingIDs.stream()
+                .map(FADocumentID::getUuid)
+                .sorted()
+                .forEach(this::takeNoteOfDocumentIdAllowingDuplicates);
+    }
+
+    private void takeNoteOfDocumentIdAllowingDuplicates(String documentId) {
+        try {
+            faDocumentIdLockDao.takeNoteOfDocumentIdInNewTx(documentId);
+        } catch( EntityExistsException eee ) {
+            // ignore it
+// temporary for debugging!!!
+} catch( PersistenceException pe ) {
+throw pe;
+        }
+    }
+
+    public List<String> lockDocumentIds(Set<FADocumentID> incomingIDs) {
+        return incomingIDs.stream()
+                .map(FADocumentID::getUuid)
+                .sorted()
+                .peek(faDocumentIdLockDao::lock)
+                .collect(Collectors.toList());
     }
 
     @Override

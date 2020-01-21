@@ -164,6 +164,10 @@ public interface RulesDao {
 
     List<FADocumentID> loadFADocumentIDByIdsByIds(Set<FADocumentID> incomingIDs);
 
+    void takeNoteOfDocumentIds(Set<FADocumentID> incomingIDs);
+
+    List<String> lockDocumentIds(Set<FADocumentID> incomingIDs);
+
     void createFaDocumentIdEntity(Set<FADocumentID> incomingID) throws ServiceException;
 
     void saveFaIdsPerTripList(List<String> tripList);

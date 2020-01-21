@@ -47,4 +47,11 @@
 
     <include file="changelog\v3.0.58\db-changelog-3.0.58-br2.4-fixes.xml" />
 
+    <include file="changelog\v3.4\db-changelog-UNIONVMS-4296.xml" />
+
+    <include file="changelog\v3.4\db-changelog-UNIONVMS-4313.xml" />
+
+    <include file="changelog\v3.4\db-changelog-UNIONVMS-4326.xml" />
+
+    <include file="changelog\v3.4\db-changelog-UNIONVMS-4335.xml" />
 </databaseChangeLog>
