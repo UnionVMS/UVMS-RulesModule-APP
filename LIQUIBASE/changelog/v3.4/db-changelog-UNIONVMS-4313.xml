@@ -1,0 +1,26 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+ <changeSet id="UNIONVMS-4313" author="nomikosi">
+        <update tableName="context_expression">
+            <column name = "expression" value="(codeTypeValueEquals(typeCode, &quot;FISHING_OPERATION&quot;) || codeTypeValueEquals(typeCode, &quot;JOINT_FISHING_OPERATION&quot;) || codeTypeValueEquals(typeCode, &quot;AREA_EXIT&quot;)) &amp;&amp; (speciesTargetCode != null &amp;&amp; (speciesTargetCode.listId != &quot;FAO_SPECIES&quot;))"/>
+            <where> rule_id=(select rule_id from rules."rule" where br_id='FA-L02-00-0601') </where>
+        </update>
+		<update tableName="context_expression">
+            <column name = "expression" value="codeTypeValueEquals(typeCode, &quot;AREA_ENTRY&quot;) &amp;&amp; (speciesTargetCode != null &amp;&amp; (speciesTargetCode.listId != &quot;TARGET_SPECIES_GROUP&quot;))"/>
+            <where> rule_id=(select rule_id from rules."rule" where br_id='FA-L02-00-0600') </where>
+        </update>
+        <rollback>
+            <update tableName="context_expression">
+            <column name = "expression" value="(codeTypeValueEquals(typeCode, &quot;FISHING_OPERATION&quot;) || codeTypeValueEquals(typeCode, &quot;JOINT_FISHING_OPERATION&quot;) || codeTypeValueEquals(typeCode, &quot;AREA_EXIT&quot;)) &amp;&amp; (speciesTargetCode == null &amp;&amp; (speciesTargetCode.listId != &quot;FAO_SPECIES&quot;))"/>
+            <where> rule_id=(select rule_id from rules."rule" where br_id='FA-L02-00-0601') </where>
+			</update>
+			<update tableName="context_expression">
+            <column name = "expression" value="codeTypeValueEquals(typeCode, &quot;AREA_ENTRY&quot;) &amp;&amp; (speciesTargetCode != null || (speciesTargetCode.listId != &quot;TARGET_SPECIES_GROUP&quot;))"/>
+            <where> rule_id=(select rule_id from rules."rule" where br_id='FA-L02-00-0600') </where>
+			</update>
+        </rollback>
+ </changeSet>
+</databaseChangeLog>
