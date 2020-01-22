@@ -574,10 +574,14 @@ public class RulesDaoBean implements RulesDao {
     }
 
     @Override
-    public void createFaDocumentIdEntity(Set<FADocumentID> incomingIDsList) throws ServiceException {
+    public void createFaDocumentIdEntity(Set<FADocumentID> incomingIDsList,boolean flush) throws ServiceException {
         if(CollectionUtils.isNotEmpty(incomingIDsList)){
             for (FADocumentID faDocumentID : incomingIDsList) {
-                fishingActivityIdDao.createEntity(faDocumentID);
+                if(flush) {
+                    fishingActivityIdDao.createEntityAndFlush(faDocumentID);
+                } else {
+                    fishingActivityIdDao.createEntity(faDocumentID);
+                }
             }
         }
     }

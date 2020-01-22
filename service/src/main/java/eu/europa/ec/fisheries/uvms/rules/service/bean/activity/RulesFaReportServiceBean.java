@@ -50,8 +50,10 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.validation.ConstraintViolationException;
 import javax.xml.bind.UnmarshalException;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_REPORT_MSG;
@@ -140,12 +142,12 @@ public class RulesFaReportServiceBean {
                 if (hasPermissions) {
                     rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
                     log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
-                    sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid);
 
                     Set<FADocumentID> result = idsFromIncomingMessage.stream().filter(faDocumentID -> !FAUUIDType.FA_REPORT_REF_ID.equals(faDocumentID.getType()))
                             .collect(Collectors.toSet());
 
-                    rulesDaoBean.createFaDocumentIdEntity(result);// remove ref ids
+                    rulesDaoBean.createFaDocumentIdEntity(result,true);// remove ref ids
+                    sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid);
                 } else {
                     log.debug(" Request doesn't have permissions!");
                 }
