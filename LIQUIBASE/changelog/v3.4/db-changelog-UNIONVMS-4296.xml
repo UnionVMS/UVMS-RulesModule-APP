@@ -1,0 +1,29 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+
+ <changeSet id="UNIONVMS-4296" author="nomikosi">
+        <sql>delete from rules.fadocumentid f
+			using
+			rules.fadocumentid fa
+			where f.id>fa.id
+			and f."type" = fa."type"
+			and f.uuid = fa.uuid
+		</sql>
+
+<addUniqueConstraint catalogName="cat"
+            columnNames="uuid, type"
+            constraintName="uuidf_type_un"            
+            disabled="false"            
+            initiallyDeferred="true"
+            schemaName="rules"
+            tableName="fadocumentid"            
+            />
+<rollback>
+<sql>ALTER TABLE rules.fadocumentid DROP CONSTRAINT uuidf_type_un</sql>
+</rollback>
+ </changeSet>
+</databaseChangeLog>
+
+       
