@@ -13,9 +13,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.FANamespaceMapper;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
@@ -131,7 +129,7 @@ public class RulesExchangeServiceBean {
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
 
             idsFromIncommingMessage.removeAll(matchingIdsFromDB); // To avoid duplication in DB.
-            rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage,true);
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
             log.info("FLUXFAResponse successfully sent back to Exchange.");
         } catch (JAXBException e) {
             log.error(e.getMessage(), e);
