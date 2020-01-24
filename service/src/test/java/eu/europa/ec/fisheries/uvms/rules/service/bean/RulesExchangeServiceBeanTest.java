@@ -95,7 +95,7 @@ public class RulesExchangeServiceBeanTest {
         inOrder.verify(rulesDaoBean, times(1)).loadFADocumentIDByIdsByIds(anySet());
         inOrder.verify(rulesEngine, times(1)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap());
         inOrder.verify(rulesService, times(1)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
-        inOrder.verify(rulesDaoBean, times(1)).createFaDocumentIdEntity(anySet(),false);
+        inOrder.verify(rulesDaoBean, times(1)).createFaDocumentIdEntity(anySet());
 
     }
 
