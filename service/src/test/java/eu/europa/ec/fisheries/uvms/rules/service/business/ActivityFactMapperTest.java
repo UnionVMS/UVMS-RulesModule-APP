@@ -28,6 +28,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.*;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.NumericType;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FISHING_GEAR;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_FLUX_CHARACTERISTIC;
@@ -47,6 +49,8 @@ import static org.junit.Assert.*;
  * @author Gregory Rinaldi
  */
 public class ActivityFactMapperTest {
+
+    private static final String FORMAT = "Format";
 
     String testXmlPath = "src/test/resources/testData/fluxFaResponseMessage.xml";
     FLUXFAReportMessage fluxFaTestMessage;
@@ -132,6 +136,7 @@ public class ActivityFactMapperTest {
         appliedAAPProcesses = new ArrayList<>();
         AAPProcess aapProcess = new AAPProcess();
         aapProcess.setTypeCodes(singletonList(codeType));
+        aapProcess.setConversionFactorNumeric(new NumericType(BigDecimal.TEN, FORMAT));
 
         measureType = new MeasureType();
         measureType.setUnitCode("unitCode");
@@ -912,4 +917,33 @@ public class ActivityFactMapperTest {
         assertNull(dateTime);
     }
 
+    @Test
+    public void testFaAppliedAAPProcessFacts() {
+
+        final FACatch faCatch = new FACatch();
+        faCatch.setTypeCode(codeType);
+        faCatch.setSpeciesCode(codeType);
+        faCatch.setUnitQuantity(quantityType);
+        faCatch.setWeightMeasure(measureType);
+
+        SizeDistribution sizeDistribution = new SizeDistribution();
+        sizeDistribution.setClassCodes(codeTypeList);
+        faCatch.setSpecifiedSizeDistribution(sizeDistribution);
+
+        faCatch.setAppliedAAPProcesses(appliedAAPProcesses);
+
+        FishingActivity faActivity = new FishingActivity();
+        faActivity.setSpecifiedFACatches(new ArrayList<FACatch>() {{
+            add(faCatch);
+        }});
+        faActivity.setRelatedFLUXLocations(specifiedFluxLocation);
+
+        List<AbstractFact> facts = activityMapper.generateFactsForFaCatch(faActivity, false, null);
+
+        List<FaAppliedAAPProcessFact> aapFacts = facts.stream().filter(FaAppliedAAPProcessFact.class::isInstance).map(FaAppliedAAPProcessFact.class::cast).collect(Collectors.toList());
+        assertEquals(1, aapFacts.size());
+        FaAppliedAAPProcessFact fact = aapFacts.get(0);
+        assertEquals(BigDecimal.TEN, fact.getConversionFactorNumeric().getValue());
+        assertEquals(FORMAT, fact.getConversionFactorNumeric().getFormat());
+    }
 }

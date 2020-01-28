@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,7 +210,6 @@ public class XPathRepositoryTest {
 
     @Test
     @SneakyThrows
-    @Ignore
     public void testXpathCorrectness(){
 
         String filePath = new File(".", testXmlPath).getAbsolutePath();
@@ -354,7 +354,9 @@ public class XPathRepositoryTest {
 
     private void generateFactList() throws RulesValidationException {
         factList = new ArrayList<>();
-        AbstractGenerator generator = new ActivityFaReportFactGenerator(MessageType.PULL);
+        @SuppressWarnings("unchecked")
+        AbstractGenerator<FLUXFAReportMessage> generator = new ActivityFaReportFactGenerator(MessageType.PULL);
+        generator.setExtraValueMap(Collections.emptyMap());
         generator.setBusinessObjectMessage(fluxMessage);
         factList.addAll(generator.generateAllFacts());
     }

@@ -40,6 +40,7 @@
             <xsd:enumeration value="FA_ARRIVAL"/>
             <xsd:enumeration value="FA_LANDING"/>
             <xsd:enumeration value="FA_TRANSHIPMENT"/>
+            <xsd:enumeration value="FA_APPLIED_AAP_PROCESS"/>
             <xsd:enumeration value="FA_NOTIFICATION_OF_TRANSHIPMENT_OR_RELOCATION"/>
             <xsd:enumeration value="FA_DECLARATION_OF_TRANSHIPMENT_OR_RELOCATION"/>
             <xsd:enumeration value="FA_VALIDATION_QUALITY_ANALYSIS"/>

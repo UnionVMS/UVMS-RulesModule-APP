@@ -74,8 +74,10 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
     @Override
     public void setAdditionalValidationObject() {
+        @SuppressWarnings("unchecked")
         List<VesselTransportMeansDto> assets = (List<VesselTransportMeansDto>) extraValueMap.get(ASSET);
         activityFactMapper.setTransportMeans(assets);
+        @SuppressWarnings("unchecked")
         List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType> idTypeList = (List<eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType>) extraValueMap.get(FA_QUERY_AND_REPORT_IDS);
 
         if (CollectionUtils.isNotEmpty(idTypeList)) {
@@ -92,6 +94,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
             activityFactMapper.setFaRelatedReportIds(idTypeList);
         }
 
+        @SuppressWarnings("unchecked")
         List<String> stringListMap = (List<String>) extraValueMap.get(TRIP_ID);
         activityFactMapper.setFishingActivitiesWithTripIds(stringListMap);
 

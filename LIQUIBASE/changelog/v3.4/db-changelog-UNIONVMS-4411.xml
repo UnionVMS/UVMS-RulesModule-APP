@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	<changeSet id="UNIONVMS-4411-template-for-AppliedAAPProcess" author="nikospara">
+		<insert tableName="template">
+			<column name="template_id" value="35" />
+			<column name="template_name" value="AppliedAAPProcess" />
+			<column name="fact_template" value="FA_APPLIED_AAP_PROCESS" />
+		</insert>
+
+		<rollback>
+			<delete tableName="template">
+				<where>template_id = 35</where>
+			</delete>
+		</rollback>
+	</changeSet>
+
+	<changeSet id="UNIONVMS-4411-update-FA-L03-00-0175" author="nikospara">
+		<update tableName="rule">
+			<column name="template_id" value="35" />
+			<column name="property_names" value="conversionFactorNumeric, specifiedFLUXLocations, typeCodes, speciesCode, creationDateOfMessage, farepDocSpecVesselTrpmRegVesselCountryId" />
+			<where>br_id=:value</where>
+			<whereParams>
+				<param name="value" value="FA-L03-00-0175" />
+			</whereParams>
+		</update>
+		<update tableName="context_expression">
+			<column name="expression" value="conversionFactorNumeric == null &amp;&amp; !mdrService.combinationExistsInConversionFactorList(specifiedFLUXLocations, typeCodes, speciesCode, creationDateOfMessage, farepDocSpecVesselTrpmRegVesselCountryId)"/>
+			<where>rule_id=:value</where>
+			<whereParams>
+				<param name="value" valueNumeric="175" />
+			</whereParams>
+		</update>
+
+		<rollback>
+			<update tableName="rule">
+				<column name="template_id" value="8" />
+				<column name="property_names" value="appliedAAPProcessConversionFactorNumber, appliedAAPProcessTypeCodes, speciesCode, specifiedFLUXLocations" />
+				<where>br_id=:value</where>
+				<whereParams>
+					<param name="value" value="FA-L03-00-0175" />
+				</whereParams>
+			</update>
+			<update tableName="context_expression">
+				<column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; isEmpty(appliedAAPProcessConversionFactorNumber) &amp;&amp; !mdrService.combinationExistsInConversionFactorList(specifiedFLUXLocations, appliedAAPProcessTypeCodes, speciesCode, creationDateOfMessage, farepDocSpecVesselTrpmRegVesselCountryId)"/>
+				<where>rule_id=:value</where>
+				<whereParams>
+					<param name="value" valueNumeric="175" />
+				</whereParams>
+			</update>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
