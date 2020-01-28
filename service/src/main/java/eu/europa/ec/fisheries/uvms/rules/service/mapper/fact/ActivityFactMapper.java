@@ -955,6 +955,7 @@ public class ActivityFactMapper {
 
                 xPathUtil.appendWithoutWrapping(partialXPath);
                 addFactsForAAPStock(faCatch.getRelatedAAPStocks(), facts);
+                addFactsForAppliedAAPProcess(faCatchFact, index, faCatch, facts);
 
                 index++;
             }
@@ -980,7 +981,26 @@ public class ActivityFactMapper {
             facts.add(aapStockFact);
             index++;
         }
+    }
 
+    private void addFactsForAppliedAAPProcess(FaCatchFact faCatchFact, int faCatchFactIndex, FACatch faCatch, List<AbstractFact> facts) {
+        if(CollectionUtils.isEmpty(faCatch.getAppliedAAPProcesses())) {
+            xPathUtil.clear();
+            return;
+        }
+        String partialXpath = xPathUtil.getValue();
+        int index = 1;
+        for (AAPProcess aap : faCatch.getAppliedAAPProcesses()) {
+            FaAppliedAAPProcessFact fact = new FaAppliedAAPProcessFact();
+            fact.setTypeCodes(mapToCodeTypes(aap.getTypeCodes()));
+            fact.setConversionFactorNumeric(toNumericType(aap.getConversionFactorNumeric()));
+            fact.setFarepDocSpecVesselTrpmRegVesselCountryId(faCatchFact.getFarepDocSpecVesselTrpmRegVesselCountryId());
+            fact.setSpeciesCode(faCatchFact.getSpeciesCode());
+            fact.setSpecifiedFLUXLocations(faCatchFact.getSpecifiedFLUXLocations());
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FA_CATCH, faCatchFactIndex).appendWithIndex("AppliedAAPProcess", index).storeInRepo(fact, "conversionFactorNumeric");
+            facts.add(fact);
+            index++;
+        }
     }
 
     public VesselStorageCharacteristicsFact generateFactsForVesselStorageCharacteristic(VesselStorageCharacteristic vesselStorageCharacteristic) {
@@ -2224,17 +2244,13 @@ public class ActivityFactMapper {
     }
 
     private List<CodeType> mapToCodeTypes(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType> codeTypes) {
-        if (codeTypes == null) {
-            return emptyList();
-        }
-        List<CodeType> codeTypeArrayList = new ArrayList<>();
-        for (un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType codeType : codeTypes) {
-            CodeType codeType1 = mapToCodeType(codeType);
-            if (codeType1 != null){
-                codeTypeArrayList.add(codeType1);
-            }
-        }
-        return codeTypeArrayList;
+        return Optional.ofNullable(codeTypes)
+                .map(ct -> ct.stream()
+                        .map(this::mapToCodeType)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList())
+                )
+                .orElseGet(Collections::emptyList);
     }
 
     public List<MeasureType> mapToMeasureType(List<un.unece.uncefact.data.standard.unqualifieddatatype._20.MeasureType> measureTypes) {
@@ -2527,16 +2543,23 @@ public class ActivityFactMapper {
         List<NumericType> numericTypeList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(aapProcesses)) {
             for (AAPProcess aapProcess : aapProcesses) {
-                un.unece.uncefact.data.standard.unqualifieddatatype._20.NumericType conversionFactorNumeric = aapProcess.getConversionFactorNumeric();
-                if (conversionFactorNumeric != null) {
-                    NumericType numericType = new NumericType();
-                    numericType.setValue(conversionFactorNumeric.getValue());
-                    numericType.setFormat(conversionFactorNumeric.getFormat());
+                NumericType numericType = toNumericType(aapProcess.getConversionFactorNumeric());
+                if (numericType != null) {
                     numericTypeList.add(numericType);
                 }
             }
         }
         return numericTypeList;
+    }
+
+    private static NumericType toNumericType(un.unece.uncefact.data.standard.unqualifieddatatype._20.NumericType input) {
+        if (input != null) {
+            NumericType result = new NumericType();
+            result.setValue(input.getValue());
+            result.setFormat(input.getFormat());
+            return result;
+        }
+        return null;
     }
 
     private static List<IdType> mapFLUXLocationIDs(List<FLUXLocation> fluxLocations) {

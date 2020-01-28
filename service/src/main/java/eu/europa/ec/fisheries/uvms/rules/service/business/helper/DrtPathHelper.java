@@ -37,6 +37,7 @@ public enum DrtPathHelper {
     FA_RELOCATION("/templates/FaRelocation.drt"),
     FA_RESPONSE("/templates/FaResponse.drt"),
     FA_TRANSHIPMENT("/templates/FaTranshipment.drt"),
+    FA_APPLIED_AAP_PROCESS("/templates/FaAppliedAAPProcess.drt"),
     FISHING_GEAR("/templates/FishingGear.drt"),
     FISHING_TRIP("/templates/FishingTrip.drt"),
     FLUX_CHARACTERISTIC("/templates/FluxCharacteristics.drt"),
