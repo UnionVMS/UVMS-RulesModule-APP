@@ -239,11 +239,12 @@ public class ActivityFactMapper {
         }
         int index = 1;
         List<FaReportDocumentFact> reportFactsList = new ArrayList<>();
-        Map<FishingActivityType, List<String>> tripsPerFaTypeFromMessage = collectTripsPerFaTypeFromMessage(faReportDocuments);
+        Map<FishingActivityType, List<FaReportDocumentFact.TripIdAndReportIndex>> tripsPerFaTypeFromMessage = collectTripsPerFaTypeFromMessage(faReportDocuments);
         String partialXpath = xPathUtil.append(FLUXFA_REPORT_MESSAGE).getValue();
         for (FAReportDocument fAReportDocument : faReportDocuments) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(FA_REPORT_DOCUMENT, index);
             FaReportDocumentFact faReportDocumentFact = generateFactForFaReportDocument(fAReportDocument);
+            faReportDocumentFact.setIndexInMessage(index);
             faReportDocumentFact.setMessageType(messageType);
             faReportDocumentFact.setFaReportMessageOwnerFluxPartyIds(fluxRepMessageOwnerIds);
             xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, OWNER_FLUX_PARTY, ID).storeInRepo(faReportDocumentFact,"faReportMessageOwnerFluxPartyIds");
@@ -257,33 +258,35 @@ public class ActivityFactMapper {
         return reportFactsList;
     }
 
-    private Map<FishingActivityType, List<String>> collectTripsPerFaTypeFromMessage(List<FAReportDocument> faReportDocuments) {
-        HashMap<FishingActivityType, List<String>> tripsPerFaTypeFromFasInReports = new HashMap<>();
+    private Map<FishingActivityType, List<FaReportDocumentFact.TripIdAndReportIndex>> collectTripsPerFaTypeFromMessage(List<FAReportDocument> faReportDocuments) {
+        HashMap<FishingActivityType, List<FaReportDocumentFact.TripIdAndReportIndex>> tripsPerFaTypeFromFasInReports = new HashMap<>();
         tripsPerFaTypeFromFasInReports.put(FishingActivityType.ARRIVAL, new ArrayList<>());
         tripsPerFaTypeFromFasInReports.put(FishingActivityType.DEPARTURE, new ArrayList<>());
         if (CollectionUtils.isEmpty(faReportDocuments)){
             return tripsPerFaTypeFromFasInReports;
         }
+        int reportIndex = 1;
         for (FAReportDocument faReportDocument : faReportDocuments) {
             if(CollectionUtils.isNotEmpty(faReportDocument.getSpecifiedFishingActivities())){
+                String faRepoDocTypeCode = "";
+                String faReportPurposeCode = "";
+                un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faReportDocumentTypeCode = faReportDocument.getTypeCode();
+                if (faReportDocumentTypeCode != null){
+                    faRepoDocTypeCode = faReportDocumentTypeCode.getValue();
+                }
+                if(faReportDocument.getRelatedFLUXReportDocument() != null && faReportDocument.getRelatedFLUXReportDocument().getPurposeCode() != null){
+                    faReportPurposeCode = faReportDocument.getRelatedFLUXReportDocument().getPurposeCode().getValue();
+                }
                 for (FishingActivity fishingActivity : faReportDocument.getSpecifiedFishingActivities()) {
-                    String faRepoDocTypeCode = "";
-                    String faReportPurposeCode = "";
-                    un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faReportDocumentTypeCode = faReportDocument.getTypeCode();
-                    if (faReportDocumentTypeCode != null){
-                        faRepoDocTypeCode = faReportDocumentTypeCode.getValue();
-                    }
-                    if(faReportDocument.getRelatedFLUXReportDocument() != null && faReportDocument.getRelatedFLUXReportDocument().getPurposeCode() != null){
-                        faReportPurposeCode = faReportDocument.getRelatedFLUXReportDocument().getPurposeCode().getValue();
-                    }
                     FishingActivityType activityType = fetchActivityType(fishingActivity.getTypeCode());
                     FishingTrip specifiedFishingTrip = fishingActivity.getSpecifiedFishingTrip();
                     if(specifiedFishingTrip != null && CollectionUtils.isNotEmpty(specifiedFishingTrip.getIDS()) && "DECLARATION".equals(faRepoDocTypeCode) && !"5".equals(faReportPurposeCode) &&
                             (FishingActivityType.DEPARTURE.equals(activityType) || FishingActivityType.ARRIVAL.equals(activityType))){
-                        tripsPerFaTypeFromFasInReports.get(activityType).add(specifiedFishingTrip.getIDS().get(0).getValue());
+                        tripsPerFaTypeFromFasInReports.get(activityType).add(new FaReportDocumentFact.TripIdAndReportIndex(specifiedFishingTrip.getIDS().get(0).getValue(), reportIndex));
                     }
                 }
             }
+            reportIndex++;
         }
         return tripsPerFaTypeFromFasInReports;
     }

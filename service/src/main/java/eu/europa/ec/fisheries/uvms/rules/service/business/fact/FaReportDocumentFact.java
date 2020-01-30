@@ -14,10 +14,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +35,14 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class FaReportDocumentFact extends AbstractFact {
+
+    @Data
+    @EqualsAndHashCode
+    @AllArgsConstructor
+    public static class TripIdAndReportIndex {
+        private String tripId;
+        private int reportIndex;
+    }
 
     private static final String DASH = "-";
 
@@ -57,9 +68,10 @@ public class FaReportDocumentFact extends AbstractFact {
     private Map<String, Integer> fishingActivitiesArrivalDeclarationList;
     private Map<String, Integer> fishingActivitiesDepartureDeclarationList;
     private CodeType fmcMarkerCode;
+    private int indexInMessage;
 
-    private Map<FishingActivityType, List<String>> tripsPerFaTypeFromMessage = new EnumMap<>(FishingActivityType.class);
-    private Map<FishingActivityType, List<String>> tripsPerFaTypeFromThisReport = new EnumMap<>(FishingActivityType.class);
+    private Map<FishingActivityType, List<TripIdAndReportIndex>> tripsPerFaTypeFromMessage = new EnumMap<>(FishingActivityType.class);
+    private Map<FishingActivityType, List<TripIdAndReportIndex>> tripsPerFaTypeFromThisReport = new EnumMap<>(FishingActivityType.class);
 
     public FaReportDocumentFact() {
         setFactType();
@@ -113,7 +125,7 @@ public class FaReportDocumentFact extends AbstractFact {
 
     @Data
     @EqualsAndHashCode
-    private class DayMonthYearType {
+    private static class DayMonthYearType {
         private int day;
         private int month;
         private int year;
@@ -143,10 +155,10 @@ public class FaReportDocumentFact extends AbstractFact {
     }
 
     public boolean containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType type) {
-        List<String> declaredArrivalInMessageList = new ArrayList<>();
-        List<String> declaredDepartureInMessageList = new ArrayList<>();
-        List<String> declaredArrivalInFaReportList = new ArrayList<>();
-        List<String> declaredDepartureInFaReportList = new ArrayList<>();
+        List<TripIdAndReportIndex> declaredArrivalInMessageList = new ArrayList<>();
+        List<TripIdAndReportIndex> declaredDepartureInMessageList = new ArrayList<>();
+        List<TripIdAndReportIndex> declaredArrivalInFaReportList = new ArrayList<>();
+        List<TripIdAndReportIndex> declaredDepartureInFaReportList = new ArrayList<>();
         if (FishingActivityType.ARRIVAL.equals(type)) {
             declaredArrivalInMessageList = tripsPerFaTypeFromMessage.get(FishingActivityType.ARRIVAL);
             declaredArrivalInFaReportList = tripsPerFaTypeFromThisReport.get(FishingActivityType.ARRIVAL);
@@ -155,15 +167,15 @@ public class FaReportDocumentFact extends AbstractFact {
             declaredDepartureInFaReportList = tripsPerFaTypeFromThisReport.get(FishingActivityType.DEPARTURE);
         }
         if (CollectionUtils.isNotEmpty(declaredArrivalInFaReportList)){
-            for (String s : declaredArrivalInFaReportList) {
-                if (Collections.frequency(declaredArrivalInMessageList, s) >= 2){
+            for (TripIdAndReportIndex s : declaredArrivalInFaReportList) {
+                if (declaredArrivalInMessageList.stream().anyMatch(t -> t.getReportIndex() < this.indexInMessage && t.getTripId().equals(s.getTripId()))) {
                     return true;
                 }
             }
         }
         if (CollectionUtils.isNotEmpty(declaredDepartureInFaReportList)){
-            for (String s : declaredDepartureInFaReportList) {
-                if (Collections.frequency(declaredDepartureInMessageList, s) >= 2){
+            for (TripIdAndReportIndex s : declaredDepartureInFaReportList) {
+                if (declaredDepartureInMessageList.stream().anyMatch(t -> t.getReportIndex() < this.indexInMessage && t.getTripId().equals(s.getTripId()))) {
                     return true;
                 }
             }
@@ -193,11 +205,11 @@ public class FaReportDocumentFact extends AbstractFact {
             messageTripIds.add(faSpecifiedFishingTripId.getValue() + DASH + faSpecifiedFishingTripId.getSchemeId() + DASH + faType.toString() + DASH + "DECLARATION");
         }
 
-        List<String> strings = tripsPerFaTypeFromThisReport.get(faType);
+        List<TripIdAndReportIndex> strings = tripsPerFaTypeFromThisReport.get(faType);
 
         if (CollectionUtils.isNotEmpty(strings)) {
-            for (String tripId : strings) {
-                if (messageTripIds.contains(tripId + DASH + "EU_TRIP_ID" + DASH + faType.toString() + DASH + "DECLARATION")){
+            for (TripIdAndReportIndex t : strings) {
+                if (messageTripIds.contains(t.getTripId() + DASH + "EU_TRIP_ID" + DASH + faType.toString() + DASH + "DECLARATION")){
                     return true;
                 }
             }
@@ -210,7 +222,4 @@ public class FaReportDocumentFact extends AbstractFact {
     public void setFactType() {
         this.factType = FactType.FA_REPORT_DOCUMENT;
     }
-
 }
-
-
