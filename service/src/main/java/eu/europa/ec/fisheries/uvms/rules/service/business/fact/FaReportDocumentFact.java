@@ -13,8 +13,16 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivityWithIdentifiers;
@@ -69,6 +77,7 @@ public class FaReportDocumentFact extends AbstractFact {
     private Map<String, Integer> fishingActivitiesDepartureDeclarationList;
     private CodeType fmcMarkerCode;
     private int indexInMessage;
+    private Set<IdType> reportIdsInTheGroup;
 
     private Map<FishingActivityType, List<TripIdAndReportIndex>> tripsPerFaTypeFromMessage = new EnumMap<>(FishingActivityType.class);
     private Map<FishingActivityType, List<TripIdAndReportIndex>> tripsPerFaTypeFromThisReport = new EnumMap<>(FishingActivityType.class);
@@ -221,5 +230,20 @@ public class FaReportDocumentFact extends AbstractFact {
     @Override
     public void setFactType() {
         this.factType = FactType.FA_REPORT_DOCUMENT;
+    }
+
+    /**
+     * Retrieve the ids of all the reports in the message, excluding our own.
+     *
+     * @return The ids of the other reports in the message
+     */
+    public Set<IdType> getOtherReportIdsInTheGroup() {
+        return Optional.ofNullable(reportIdsInTheGroup)
+                .map(groupIds -> (Set<IdType>) new HashSet<>(groupIds))
+                .map(groupIds -> {
+                    groupIds.removeAll(this.ids);
+                    return groupIds;
+                })
+                .orElseGet(Collections::emptySet);
     }
 }

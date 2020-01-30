@@ -15,7 +15,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.generator.helper.Activ
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FishingActivityType;
 import org.junit.Test;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class FAReportDocumentFactTest {
@@ -136,5 +139,22 @@ public class FAReportDocumentFactTest {
 
         boolean shouldntFail1 = reportDocumentFact.containsMoreThenOneArrivalOrDepartureInFaReportsOfTheMessage(FishingActivityType.ARRIVAL);
         assertFalse(shouldntFail1);
+    }
+
+    @Test
+    public void testGetOtherReportIdsInTheGroup() {
+        // null case
+        FaReportDocumentFact sut = new FaReportDocumentFact();
+        assertNotNull("getOtherReportIdsInTheGroup() returns non-null, even if the set of other reports is null", sut.getOtherReportIdsInTheGroup());
+        assertTrue("getOtherReportIdsInTheGroup() returns an empty set when the set of other reports is null", sut.getOtherReportIdsInTheGroup().isEmpty());
+
+        // general case
+        String myId = UUID.randomUUID().toString();
+        String otherId = UUID.randomUUID().toString();
+        sut.setReportIdsInTheGroup(new HashSet<>(Arrays.asList(new IdType(myId, "UUID"), new IdType(otherId, "UUID"))));
+        sut.setIds(Collections.singletonList(new IdType(myId, "UUID")));
+        Set<IdType> result = sut.getOtherReportIdsInTheGroup();
+        assertEquals(1, result.size());
+        assertEquals(otherId, result.iterator().next().getValue());
     }
 }

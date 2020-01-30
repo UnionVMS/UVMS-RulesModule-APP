@@ -682,7 +682,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      * Validate the format of the value depending on the schemeId for single IdType
      *
      * @param id IdType
-     * @return
+     * @return Whether the given {@code IdType} is <strong><em>INVALID</em></strong> - which is the opposite of what you would expect from a method called "validate", so BEWARE!
      */
     @Override
     public boolean validateFormat(IdType id, DateTime creationDateOfMessage) {

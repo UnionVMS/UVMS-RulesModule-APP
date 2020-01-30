@@ -241,12 +241,22 @@ public class ActivityFactMapper {
         List<FaReportDocumentFact> reportFactsList = new ArrayList<>();
         Map<FishingActivityType, List<FaReportDocumentFact.TripIdAndReportIndex>> tripsPerFaTypeFromMessage = collectTripsPerFaTypeFromMessage(faReportDocuments);
         String partialXpath = xPathUtil.append(FLUXFA_REPORT_MESSAGE).getValue();
+        Set<IdType> reportIdsInTheGroup = faReportDocuments.stream()
+                .map(FAReportDocument::getRelatedFLUXReportDocument)
+                .filter(Objects::nonNull)
+                .map(FLUXReportDocument::getIDS)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .filter(Objects::nonNull)
+                .map(this::mapToIdType)
+                .collect(Collectors.toSet());
         for (FAReportDocument fAReportDocument : faReportDocuments) {
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(FA_REPORT_DOCUMENT, index);
             FaReportDocumentFact faReportDocumentFact = generateFactForFaReportDocument(fAReportDocument);
             faReportDocumentFact.setIndexInMessage(index);
             faReportDocumentFact.setMessageType(messageType);
             faReportDocumentFact.setFaReportMessageOwnerFluxPartyIds(fluxRepMessageOwnerIds);
+            faReportDocumentFact.setReportIdsInTheGroup(reportIdsInTheGroup);
             xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, OWNER_FLUX_PARTY, ID).storeInRepo(faReportDocumentFact,"faReportMessageOwnerFluxPartyIds");
             if(fAReportDocument.getRelatedFLUXReportDocument() != null){
                 faReportDocumentFact.setCreationDateOfMessage(mapToJodaDateTime(fAReportDocument.getRelatedFLUXReportDocument().getCreationDateTime()));
