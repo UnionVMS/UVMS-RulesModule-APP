@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	<changeSet id="UNIONVMS-4203-update-FA-L03-00-0038" author="nikospara">
+		<update tableName="context_expression">
+			<column name="expression" value="&quot;PULL&quot;.equals(messageType) &amp;&amp; purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;) &amp;&amp; referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; !mdrService.validateFormat(referencedID, creationDateOfMessage) &amp;&amp; !containsAny(nonUniqueIdsList, Arrays.asList(referencedID)) &amp;&amp; !containsAny(otherReportIdsInTheGroup, Arrays.asList(referencedID))" />
+			<where>rule_id=:value</where>
+			<whereParams>
+				<param name="value" valueNumeric="38" />
+			</whereParams>
+		</update>
+
+		<rollback>
+			<update tableName="context_expression">
+				<column name="expression" value="&quot;PULL&quot;.equals(messageType) &amp;&amp; (referencedID != null || (purposeCode != null &amp;&amp; (purposeCode.value == &quot;1&quot; || purposeCode.value == &quot;5&quot; || purposeCode.value == &quot;3&quot;))) &amp;&amp; referencedID != null &amp;&amp; referencedID.schemeId == &quot;UUID&quot; &amp;&amp; !mdrService.validateFormat(referencedID, creationDateOfMessage) &amp;&amp; !containsAny(nonUniqueIdsList, Arrays.asList(referencedID))" />
+				<where>rule_id=:value</where>
+				<whereParams>
+					<param name="value" valueNumeric="38" />
+				</whereParams>
+			</update>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
