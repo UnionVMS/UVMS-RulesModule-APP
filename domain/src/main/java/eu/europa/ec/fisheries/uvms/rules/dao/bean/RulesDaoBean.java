@@ -594,9 +594,6 @@ public class RulesDaoBean implements RulesDao {
             faDocumentIdLockDao.takeNoteOfDocumentIdInNewTx(documentId);
         } catch( EntityExistsException eee ) {
             // ignore it
-// temporary for debugging!!!
-} catch( PersistenceException pe ) {
-throw pe;
         }
     }
 
