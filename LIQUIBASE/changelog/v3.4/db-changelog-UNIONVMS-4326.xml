@@ -3,7 +3,20 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
 
-    <changeSet id="UNIONVMS-4326" author="nomikosi">
+ <changeSet id="UNIONVMS-4326" author="nomikosi">
+        <update tableName="context_expression">
+            <column name = "expression" value="(typeCode != null &amp;&amp; id != null)   &amp;&amp; ((typeCode.value == &quot;AREA&quot; &amp;&amp; id.schemeId != &quot;FAO_AREA&quot; &amp;&amp; id.schemeId != &quot;STAT_RECTANGLE&quot; &amp;&amp; id.schemeId != &quot;MANAGEMENT_AREA&quot; &amp;&amp; id.schemeId != &quot;TERRITORY&quot; &amp;&amp; id.schemeId != &quot;EFFORT_ZONE&quot; &amp;&amp; id.schemeId != &quot;GFCM_GSA&quot; &amp;&amp; id.schemeId != &quot;STAT_RECTANGLE&quot; &amp;&amp; id.schemeId != &quot;GFCM_STAT_RECTANGLE&quot;)  || (typeCode.value == &quot;LOCATION&quot; &amp;&amp; id.schemeId != &quot;LOCATION&quot; &amp;&amp; id.schemeId != &quot;FARM&quot; )) || id.schemeId == &quot;GFCM_STAT_RECTANGLE&quot;"/>
+            <where> rule_id=(select rule_id from rules."rule" where br_id='FA-L01-00-0202') </where>
+        </update>
+        <rollback>
+            <update tableName="context_expression">
+            <column name = "expression" value="(typeCode != null &amp;&amp; id != null)   &amp;&amp; ((typeCode.value == &quot;AREA&quot; &amp;&amp; id.schemeId != &quot;FAO_AREA&quot; &amp;&amp; id.schemeId != &quot;STAT_RECTANGLE&quot; &amp;&amp; id.schemeId != &quot;MANAGEMENT_AREA&quot; &amp;&amp; id.schemeId != &quot;TERRITORY&quot; &amp;&amp; id.schemeId != &quot;EFFORT_ZONE&quot; &amp;&amp; id.schemeId != &quot;GFCM_GSA&quot; &amp;&amp; id.schemeId != &quot;STAT_RECTANGLE&quot; &amp;&amp; id.schemeId != &quot;GFCM_STAT_RECTANGLE&quot;)  || (typeCode.value == &quot;LOCATION&quot; &amp;&amp; id.schemeId != &quot;LOCATION&quot; &amp;&amp; id.schemeId != &quot;FARM&quot; ))"/>
+            <where> rule_id=(select rule_id from rules."rule" where br_id='FA-L01-00-0202') </where>
+        </update>
+        </rollback>
+ </changeSet>
+
+    <changeSet id="UNIONVMS-4326-correction" author="nomikosi">
         <update tableName="context_expression">
             <column name = "expression" value="(typeCode != null &amp;&amp; id != null)   &amp;&amp; ((typeCode.value == &quot;AREA&quot; &amp;&amp; id.schemeId != &quot;FAO_AREA&quot; &amp;&amp; id.schemeId != &quot;STAT_RECTANGLE&quot; &amp;&amp; id.schemeId != &quot;MANAGEMENT_AREA&quot; &amp;&amp; id.schemeId != &quot;TERRITORY&quot; &amp;&amp; id.schemeId != &quot;EFFORT_ZONE&quot; &amp;&amp; id.schemeId != &quot;GFCM_GSA&quot; )  || (typeCode.value == &quot;LOCATION&quot; &amp;&amp; id.schemeId != &quot;LOCATION&quot; &amp;&amp; id.schemeId != &quot;FARM&quot; )) "/>
             <where> rule_id=(select rule_id from rules."rule" where br_id='FA-L01-00-0202') </where>
