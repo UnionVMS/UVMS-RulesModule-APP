@@ -1,8 +1,6 @@
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
-
-
  <changeSet id="UNIONVMS-4335" author="nomikosi">
         <update tableName="context_expression">
             <column name = "expression" value="valueMeasure != null &amp;&amp;  mdrService.isPresentInMDRList(&quot;FLUX_UNIT&quot;, valueMeasure.unitCode, creationDateOfMessage)"/>
@@ -15,4 +13,17 @@
         </update>
         </rollback>
  </changeSet>
+
+    <changeSet id="UNIONVMS-4335-correction-1" author="nikospara">
+        <update tableName="context_expression">
+            <column name="expression" value="typeCode != null &amp;&amp; valueMeasure != null &amp;&amp; ((typeCode.value == &quot;ME&quot; &amp;&amp; valueMeasure.unitCode != &quot;MMT&quot;) || (typeCode.value == &quot;GM&quot; &amp;&amp; valueMeasure.unitCode != &quot;MTR&quot;) || (typeCode.value == &quot;HE&quot; &amp;&amp; valueMeasure.unitCode != &quot;MTR&quot;) || (typeCode.value == &quot;NL&quot; &amp;&amp; valueMeasure.unitCode != &quot;MTR&quot;))" />
+            <where>rule_id = (select rule_id from rules."rule" where br_id='FA-L00-00-0133')</where>
+        </update>
+        <rollback>
+            <update tableName="context_expression">
+                <column name="expression" value="valueMeasure != null &amp;&amp;  mdrService.isPresentInMDRList(&quot;FLUX_UNIT&quot;, valueMeasure.unitCode, creationDateOfMessage)" />
+                <where>rule_id = (select rule_id from rules."rule" where br_id='FA-L00-00-0133')</where>
+            </update>
+        </rollback>
+    </changeSet>
 </databaseChangeLog>
