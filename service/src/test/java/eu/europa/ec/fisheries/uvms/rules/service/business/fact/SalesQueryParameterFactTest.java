@@ -22,7 +22,7 @@ public class SalesQueryParameterFactTest {
                 .suppress(Warning.STRICT_INHERITANCE)
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withRedefinedSuperclass()
-                .withIgnoredFields("messageType","factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin", "creationJavaDateOfMessage", "messageDataFlow")
+                .withIgnoredFields("messageType","factType", "warnings", "errors", "uniqueIds", "ok", "sequence", "source", "senderOrReceiver", "salesCategoryType", "originatingPlugin")
                 .verify();
     }
 
