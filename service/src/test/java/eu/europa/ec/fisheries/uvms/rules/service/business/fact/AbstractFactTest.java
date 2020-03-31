@@ -759,7 +759,7 @@ public class AbstractFactTest {
 
     @Test
     public void dateNotInPastWhenDateInFuture() {
-        DateTime dt = new DateTime(2020, 3, 26, 12, 0, 0, 0);
+        DateTime dt = DateTime.now().plusYears(1);
         assertTrue(fact.dateNotInPast(dt.toDate()));
     }
 
