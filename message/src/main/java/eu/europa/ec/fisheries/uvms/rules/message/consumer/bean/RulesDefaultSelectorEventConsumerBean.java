@@ -84,21 +84,22 @@ public class RulesDefaultSelectorEventConsumerBean implements MessageListener {
             RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
             RulesModuleMethod method = request.getMethod();
             LOG.info("Request message method: {}", method.value());
+            EventMessage eventMessage = new EventMessage(textMessage, request);
             switch (method) {
                 case RECEIVE_SALES_QUERY:
-                    receiveSalesQueryEvent.fire(new EventMessage(textMessage));
+                    receiveSalesQueryEvent.fire(eventMessage);
                     break;
                 case RECEIVE_SALES_RESPONSE:
-                    receiveSalesResponseEvent.fire(new EventMessage(textMessage));
+                    receiveSalesResponseEvent.fire(eventMessage);
                     break;
                 case RECEIVE_SALES_REPORT:
-                    receiveSalesReportEvent.fire(new EventMessage(textMessage));
+                    receiveSalesReportEvent.fire(eventMessage);
                     break;
                 case SEND_SALES_REPORT:
-                    sendSalesReportEvent.fire(new EventMessage(textMessage));
+                    sendSalesReportEvent.fire(eventMessage);
                     break;
                 case SEND_SALES_RESPONSE:
-                    sendSalesResponseEvent.fire(new EventMessage(textMessage));
+                    sendSalesResponseEvent.fire(eventMessage);
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", method.name());

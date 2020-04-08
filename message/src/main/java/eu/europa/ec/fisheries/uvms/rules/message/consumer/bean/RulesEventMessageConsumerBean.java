@@ -124,45 +124,46 @@ public class RulesEventMessageConsumerBean implements MessageListener {
             RulesBaseRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, RulesBaseRequest.class);
             RulesModuleMethod method = request.getMethod();
             LOG.info("Request message method: {}", method.value());
+            EventMessage eventMessage = new EventMessage(textMessage, request);
             switch (method) {
                 case RECEIVE_MOVEMENT_BATCH:
-                    setMovementReportBatchRecievedEvent.fire(new EventMessage(textMessage));
+                    setMovementReportBatchRecievedEvent.fire(eventMessage);
                     break;
                 case PING:
-                    pingReceivedEvent.fire(new EventMessage(textMessage));
+                    pingReceivedEvent.fire(eventMessage);
                     break;
                 case GET_CUSTOM_RULE:
-                    getCustomRuleRecievedEvent.fire(new EventMessage(textMessage));
+                    getCustomRuleRecievedEvent.fire(eventMessage);
                     break;
                 case GET_TICKETS_BY_MOVEMENTS:
-                    getTicketsByMovementsEvent.fire(new EventMessage(textMessage));
+                    getTicketsByMovementsEvent.fire(eventMessage);
                     break;
                 case COUNT_TICKETS_BY_MOVEMENTS:
-                    countTicketByMovementsEvent.fire(new EventMessage(textMessage));
+                    countTicketByMovementsEvent.fire(eventMessage);
                     break;
                 case GET_TICKETS_AND_RULES_BY_MOVEMENTS:
-                    getTicketsAndRulesByMovementsEvent.fire(new EventMessage(textMessage));
+                    getTicketsAndRulesByMovementsEvent.fire(eventMessage);
                     break;
                 case SET_FLUX_FA_REPORT :
-                    setFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
+                    setFLUXFAReportMessageReceivedEvent.fire(eventMessage);
                     break;
                 case SEND_FLUX_FA_REPORT :
-                    sendFLUXFAReportMessageReceivedEvent.fire(new EventMessage(textMessage));
+                    sendFLUXFAReportMessageReceivedEvent.fire(eventMessage);
                     break;
                 case SET_FLUX_FA_QUERY :
-                    setFaQueryReceivedEvent.fire(new EventMessage(textMessage));
+                    setFaQueryReceivedEvent.fire(eventMessage);
                     break;
                 case SEND_FLUX_FA_QUERY :
-                    sendFaQueryReceivedEvent.fire(new EventMessage(textMessage));
+                    sendFaQueryReceivedEvent.fire(eventMessage);
                     break;
                 case RCV_FLUX_RESPONSE:
-                    rcvFluxResponse.fire(new EventMessage(textMessage));
+                    rcvFluxResponse.fire(eventMessage);
                     break;
                 case SET_FLUX_MDR_SYNC_REQUEST :
-                    setFLUXMDRSyncMessageReceivedEvent.fire(new EventMessage(textMessage));
+                    setFLUXMDRSyncMessageReceivedEvent.fire(eventMessage);
                     break;
                 case GET_FLUX_MDR_SYNC_RESPONSE :
-                    getFluxMdrSynchMessageResponse.fire(new EventMessage(textMessage));
+                    getFluxMdrSynchMessageResponse.fire(eventMessage);
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", method.name());
@@ -184,5 +185,4 @@ public class RulesEventMessageConsumerBean implements MessageListener {
             return 0;
         }
     }
-
 }

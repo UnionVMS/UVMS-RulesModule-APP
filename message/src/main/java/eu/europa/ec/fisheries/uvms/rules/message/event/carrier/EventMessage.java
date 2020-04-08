@@ -12,6 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.message.event.carrier;
 
 import eu.europa.ec.fisheries.schema.rules.common.v1.RulesFault;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 
 import javax.jms.TextMessage;
 
@@ -19,14 +20,24 @@ public class EventMessage {
 
     private TextMessage jmsMessage;
     private RulesFault fault;
+    private RulesBaseRequest rulesBaseRequest;
 
     public EventMessage(TextMessage jmsMessage) {
         this.jmsMessage = jmsMessage;
     }
 
+    public EventMessage(TextMessage jmsMessage,RulesBaseRequest request) {
+        this.jmsMessage = jmsMessage;
+        this.rulesBaseRequest = request;
+    }
+
     public EventMessage(TextMessage jmsMessage, RulesFault fault) {
         this.jmsMessage = jmsMessage;
         this.fault = fault;
+    }
+
+    public RulesBaseRequest getRulesBaseRequest() {
+        return rulesBaseRequest;
     }
 
     public RulesFault getFault() {
