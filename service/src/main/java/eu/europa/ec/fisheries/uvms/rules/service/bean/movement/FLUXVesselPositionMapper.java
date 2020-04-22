@@ -51,28 +51,6 @@ public class FLUXVesselPositionMapper {
     private static final String MOVEMENTTYPE_MAN = "MAN";
 
     /**
-     * This method can be removed when not needed as a historical record of what was happening in the plugin!
-     *
-     * @param fluxVesselPositionMessage
-     * @param registerClassName
-     * @return
-     */
-    public static List<SetReportMovementType> mapToReportMovementTypes(FLUXVesselPositionMessage fluxVesselPositionMessage, String registerClassName) {
-        VesselTransportMeansType positionReport = fluxVesselPositionMessage.getVesselTransportMeans();
-        List<SetReportMovementType> movementList = new ArrayList<>();
-        for (VesselPositionEventType col : positionReport.getSpecifiedVesselPositionEvents()) {
-            SetReportMovementType movementType = new SetReportMovementType();
-            movementType.setMovement(mapResponse(col, positionReport));
-            movementType.setPluginType(PluginType.FLUX);
-            movementType.setPluginName(registerClassName);
-            movementType.setTimestamp(DateUtils.getNowDateUTC());
-            movementList.add(movementType);
-        }
-        return movementList;
-    }
-
-
-    /**
      * The transformations happening in the
      * 1. Plugin From FLUXVesselPositionMessage to List<SetReportMovementType>
      * and then in
@@ -84,11 +62,11 @@ public class FLUXVesselPositionMapper {
      * @param registerClassName
      * @return
      */
-    public static List<RawMovementType> mapToRawMovementTypes(FLUXVesselPositionMessage fluxVesselPositionMessage, String registerClassName) {
+    public static List<RawMovementType> mapToRawMovementTypes(FLUXVesselPositionMessage fluxVesselPositionMessage, String registerClassName, String pluginType) {
         VesselTransportMeansType positionReport = fluxVesselPositionMessage.getVesselTransportMeans();
         List<RawMovementType> rowMovements = new ArrayList<>();
         for (VesselPositionEventType col : positionReport.getSpecifiedVesselPositionEvents()) {
-            MovementBaseType baseMovement = mapResponse(col, positionReport);
+            MovementBaseType baseMovement = mapResponse(col, positionReport,pluginType);
             RawMovementType rawMovement = MovementMapper.getInstance().getMapper().map(baseMovement, RawMovementType.class);
             final eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId assetId = rawMovement.getAssetId();
             if (assetId != null && assetId.getAssetIdList() != null) {
@@ -105,7 +83,7 @@ public class FLUXVesselPositionMapper {
         return rowMovements;
     }
 
-    private static MovementBaseType mapResponse(VesselPositionEventType response, VesselTransportMeansType report) {
+    private static MovementBaseType mapResponse(VesselPositionEventType response, VesselTransportMeansType report, String pluginType) {
         MovementBaseType movement = new MovementBaseType();
         HashMap<String, String> extractAssetIds = extractAssetIds(report.getIDS());
         movement.setAssetId(mapToAssetId(extractAssetIds));
@@ -119,7 +97,7 @@ public class FLUXVesselPositionMapper {
         }
         setCourseAndSpeed(response, movement);
         movement.setComChannelType(MovementComChannelType.FLUX);
-        movement.setSource(MovementSourceType.OTHER);
+        movement.setSource(MovementSourceType.MANUAL.name().equals(pluginType)? MovementSourceType.MANUAL : MovementSourceType.OTHER);
         return movement;
     }
 

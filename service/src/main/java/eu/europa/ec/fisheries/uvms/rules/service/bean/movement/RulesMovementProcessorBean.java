@@ -190,7 +190,7 @@ public class RulesMovementProcessorBean {
         String registeredPluginClassName = request.getRegisteredClassName();
         try {
             fluxVesselPositionMessage = JAXBUtils.unMarshallMessage(request.getRequest(), FLUXVesselPositionMessage.class, null);
-            List<RawMovementType> movementReportsList = FLUXVesselPositionMapper.mapToRawMovementTypes(fluxVesselPositionMessage, registeredPluginClassName);
+            List<RawMovementType> movementReportsList = FLUXVesselPositionMapper.mapToRawMovementTypes(fluxVesselPositionMessage, registeredPluginClassName,pluginType);
 
             // If no movements were received then there is no sense to continue, so just going to update the exchange log status to FAILED!
             if (CollectionUtils.isEmpty(movementReportsList)) {
