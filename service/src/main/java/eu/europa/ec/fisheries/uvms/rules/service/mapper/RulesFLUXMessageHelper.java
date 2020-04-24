@@ -57,9 +57,9 @@ import static java.util.Collections.singletonList;
 public class RulesFLUXMessageHelper {
 
     public static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
-    public static final String FLUXFAREPORT_MESSAGE_3P1_XSD = "xsd/contract/fa/data/standard/FLUXFAReportMessage_3p1.xsd";
-    public static final String FLUXFAQUERY_MESSAGE_3P0_XSD = "xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd";
-    public static final String FLUXFARESPONSE_MESSAGE_6P0_XSD = "xsd/contract/fa/data/standard/FLUXResponseMessage_6p0.xsd";
+    public static final String FLUXFAREPORT_MESSAGE_3P1_XSD = "xsd/contract/fa/data/standard/light/FLUXFAReportMessage_3p1.xsd";
+    public static final String FLUXFAQUERY_MESSAGE_3P0_XSD = "xsd/contract/fa/data/standard/light/FLUXFAQueryMessage_3p0.xsd";
+    public static final String FLUXFARESPONSE_MESSAGE_6P0_XSD = "xsd/contract/fa/data/standard/light/FLUXResponseMessage_6p0.xsd";
     private static final String DASH = "-";
 
     private FAReportQueryResponseIdsMapper faIdsMapper = new FAReportQueryResponseIdsMapperImpl();
