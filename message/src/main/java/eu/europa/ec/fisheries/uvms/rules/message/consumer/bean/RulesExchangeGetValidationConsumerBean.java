@@ -73,7 +73,7 @@ public class RulesExchangeGetValidationConsumerBean implements MessageListener {
             RulesModuleMethod method = request.getMethod();
             LOG.info("Request message method: {}", method.value());
             if (method == RulesModuleMethod.GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST) {
-                getValidationResultsByRawMsgGuid.fire(new EventMessage(textMessage));
+                getValidationResultsByRawMsgGuid.fire(new EventMessage(textMessage,request));
             } else {
                 LOG.error("[ Request method '{}' is not implemented ]", method.name());
                 errorEvent.fire(new EventMessage(textMessage, ModuleResponseMapper.createFaultMessage(FaultCode.RULES_MESSAGE, "Method not implemented:" + method.name())));

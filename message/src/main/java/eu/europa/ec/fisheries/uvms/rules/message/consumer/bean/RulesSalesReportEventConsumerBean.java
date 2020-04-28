@@ -67,7 +67,7 @@ public class RulesSalesReportEventConsumerBean implements MessageListener {
             LOG.info("Request message method: {}", method.value());
 
             if (RulesModuleMethod.RECEIVE_SALES_REPORT.equals(method)) {
-                receiveSalesReportEvent.fire(new EventMessage(textMessage));
+                receiveSalesReportEvent.fire(new EventMessage(textMessage,request));
             } else {
                 String methodName = method.name();
                 LOG.error("[ Request method '{}' is not implemented ]", methodName);

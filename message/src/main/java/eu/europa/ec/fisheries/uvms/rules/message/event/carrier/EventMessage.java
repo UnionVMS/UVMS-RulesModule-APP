@@ -22,10 +22,6 @@ public class EventMessage {
     private RulesFault fault;
     private RulesBaseRequest rulesBaseRequest;
 
-    public EventMessage(TextMessage jmsMessage) {
-        this.jmsMessage = jmsMessage;
-    }
-
     public EventMessage(TextMessage jmsMessage,RulesBaseRequest request) {
         this.jmsMessage = jmsMessage;
         this.rulesBaseRequest = request;
