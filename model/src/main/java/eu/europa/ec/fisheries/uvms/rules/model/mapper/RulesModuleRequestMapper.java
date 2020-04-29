@@ -74,7 +74,7 @@ public class RulesModuleRequestMapper {
         SetFaQueryMessageRequest request = new SetFaQueryMessageRequest();
         request.setMethod(RulesModuleMethod.SET_FLUX_FA_QUERY);
         request.setRequest(faQueryMessageStr);
-        request.setType(type);
+        request.setPluginType(type);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
