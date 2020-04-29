@@ -97,7 +97,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">
                             <xsd:sequence>
-                                <xsd:element name="type" type="exchange:PluginType"/>
+                                <xsd:element name="pluginType" type="exchange:PluginType"/>
                                 <xsd:element name="request" type="xsd:string"/>
                             </xsd:sequence>
                         </xsd:extension>

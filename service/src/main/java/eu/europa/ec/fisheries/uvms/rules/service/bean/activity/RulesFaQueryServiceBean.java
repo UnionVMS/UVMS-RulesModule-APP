@@ -136,7 +136,7 @@ public class RulesFaQueryServiceBean {
                 boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_QUERY_MESSAGE);
                 if (hasPermissions) { // Send query to activity.
                     log.debug("Request has permissions. Going to send FaQuery to Activity Module...");
-                    setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getType(), exchangeLogGuid);
+                    setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getPluginType(), exchangeLogGuid);
                     if (setFLUXFAReportMessageRequest.isIsEmptyReport()) {
                         log.info("[WARN] The report generated from Activity doesn't contain data (Empty report)!");
                         updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS);
@@ -158,7 +158,7 @@ public class RulesFaQueryServiceBean {
             // A Response won't be sent only in the case of permissionDenied from Subscription,
             // since in this particular case a response will be send in the spot, and there's no need to send it here also.
             if (needToSendToExchange) {
-                exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessageType, request, request.getType(), fluxMessageHelper.isCorrectUUID(Collections.singletonList(faQueryGUID)), MDC.getCopyOfContextMap());
+                exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessageType, request, request.getPluginType(), fluxMessageHelper.isCorrectUUID(Collections.singletonList(faQueryGUID)), MDC.getCopyOfContextMap());
             }
 
             // We have received a SetFLUXFAReportMessageRequest (from activity) and it contains reports so needs to be processed (validated/sent through the normal flow).
