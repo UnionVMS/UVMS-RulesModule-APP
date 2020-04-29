@@ -45,11 +45,6 @@ public class FLUXVesselPositionMapper {
     private static final String ASSET_UVI_CODE = "UVI";
     private static final String ASSET_CFR_CODE = "CFR";
 
-    private static final String MOVEMENTTYPE_POS = "POS";
-    private static final String MOVEMENTTYPE_EXI = "EXI";
-    private static final String MOVEMENTTYPE_ENT = "ENT";
-    private static final String MOVEMENTTYPE_MAN = "MAN";
-
     /**
      * The transformations happening in the
      * 1. Plugin From FLUXVesselPositionMessage to List<SetReportMovementType>
@@ -62,11 +57,11 @@ public class FLUXVesselPositionMapper {
      * @param registerClassName
      * @return
      */
-    public static List<RawMovementType> mapToRawMovementTypes(FLUXVesselPositionMessage fluxVesselPositionMessage, String registerClassName, String pluginType) {
+    public static List<RawMovementType> mapToRawMovementTypes(FLUXVesselPositionMessage fluxVesselPositionMessage, String registerClassName, String pluginType, Map<String, MovementTypeType> mapToMovementType) {
         VesselTransportMeansType positionReport = fluxVesselPositionMessage.getVesselTransportMeans();
         List<RawMovementType> rowMovements = new ArrayList<>();
         for (VesselPositionEventType col : positionReport.getSpecifiedVesselPositionEvents()) {
-            MovementBaseType baseMovement = mapResponse(col, positionReport,pluginType);
+            MovementBaseType baseMovement = mapResponse(col, positionReport,pluginType ,mapToMovementType);
             RawMovementType rawMovement = MovementMapper.getInstance().getMapper().map(baseMovement, RawMovementType.class);
             final eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId assetId = rawMovement.getAssetId();
             if (assetId != null && assetId.getAssetIdList() != null) {
@@ -83,13 +78,13 @@ public class FLUXVesselPositionMapper {
         return rowMovements;
     }
 
-    private static MovementBaseType mapResponse(VesselPositionEventType response, VesselTransportMeansType report, String pluginType) {
+    private static MovementBaseType mapResponse(VesselPositionEventType response, VesselTransportMeansType report, String pluginType, Map<String, MovementTypeType> mapToMovementType) {
         MovementBaseType movement = new MovementBaseType();
         HashMap<String, String> extractAssetIds = extractAssetIds(report.getIDS());
         movement.setAssetId(mapToAssetId(extractAssetIds));
         movement.setExternalMarking(extractAssetIds.get(ASSET_EXT_MARKING_CODE));
         movement.setIrcs(extractAssetIds.get(ASSET_IRCS_CODE));
-        movement.setMovementType(mapToMovementTypeFromPositionType(movement, response.getTypeCode()));
+        movement.setMovementType(mapToMovementTypeFromPositionType(response.getTypeCode(),mapToMovementType));
         setFlagState(movement, report.getRegistrationVesselCountry());
         movement.setPosition(mapToMovementPoint(response.getSpecifiedVesselGeographicalCoordinate()));
         if (response.getObtainedOccurrenceDateTime() != null) {
@@ -125,31 +120,14 @@ public class FLUXVesselPositionMapper {
         }
     }
 
-    private static MovementTypeType mapToMovementTypeFromPositionType(MovementBaseType movement, CodeType vessPosTypeCode) {
-        MovementTypeType movType;
-        if (vessPosTypeCode != null) {
-            switch (vessPosTypeCode.getValue()) {
-                case MOVEMENTTYPE_POS:
-                    movType = MovementTypeType.POS;
-                    break;
-                case MOVEMENTTYPE_EXI:
-                    movType = MovementTypeType.EXI;
-                    break;
-                case MOVEMENTTYPE_ENT:
-                    movType = MovementTypeType.ENT;
-                    break;
-                case MOVEMENTTYPE_MAN:
-                    movType = MovementTypeType.MAN;
-                    break;
-                default:
-                    movType = null;
-                    log.error("[ERROR] Movement type couldn't be mapped", vessPosTypeCode.getValue());
-            }
-        } else {
-            movType = MovementTypeType.POS;
-            log.error("[ERROR] Couldn't map to movementType, vessPosTypeCode was null!");
+    private static MovementTypeType mapToMovementTypeFromPositionType(CodeType vessPosTypeCode, Map<String, MovementTypeType> mapToMovementType) {
+        MovementTypeType movementTypeType = mapToMovementType.get(vessPosTypeCode.getValue());
+        if(movementTypeType != null){
+            return movementTypeType;
         }
-        return movType;
+
+        log.warn("Movement type couldn't be mapped: "+ vessPosTypeCode.getValue());
+        return null;
     }
 
     private static MovementPoint mapToMovementPoint(VesselGeographicalCoordinateType coordinate) {

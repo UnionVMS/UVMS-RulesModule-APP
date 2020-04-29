@@ -10,13 +10,14 @@
  * copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
- package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefTypeType;
+import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
@@ -88,10 +89,12 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
@@ -111,6 +114,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -132,8 +136,11 @@ import static eu.europa.ec.fisheries.uvms.movement.model.exception.ErrorCode.MOV
 @Slf4j
 public class RulesMovementProcessorBean {
 
-    private static final double VICINITY_RADIUS = 0.05;
     private static final long TWENTYFOUR_HOURS_IN_MILLISEC = 86400000;
+    private static final String MOVEMENTTYPE_POS = "POS";
+    private static final String MOVEMENTTYPE_EXI = "EXIT";
+    private static final String MOVEMENTTYPE_ENT = "ENTRY";
+    private static final String MOVEMENTTYPE_MAN = "MANUAL";
 
     @EJB
     private RulesResponseConsumer consumer;
@@ -184,6 +191,36 @@ public class RulesMovementProcessorBean {
     @AlarmReportCountEvent
     private Event<NotificationMessage> alarmReportCountEvent;
 
+    private Map<String, MovementTypeType> mapToMovementType;
+
+    @Inject
+    void setMdrCache(MDRCache mdrCache) {
+        mapToMovementType = new HashMap<>();
+        List<ObjectRepresentation> mdrCacheEntries = mdrCache.getEntry(MDRAcronymType.FLUX_VESSEL_POSITION_TYPE);
+        mdrCacheEntries.stream().map(ObjectRepresentation::getFields)
+                .forEach(t ->  t.forEach( s -> {
+                    if ("code".equals(s.getColumnName())) {
+                        String columnValue = s.getColumnValue();
+                        switch (columnValue) {
+                            case MOVEMENTTYPE_POS:
+                                mapToMovementType.put(columnValue, MovementTypeType.POS);
+                                break;
+                            case MOVEMENTTYPE_EXI:
+                                mapToMovementType.put(columnValue, MovementTypeType.EXI);
+                                break;
+                            case MOVEMENTTYPE_ENT:
+                                mapToMovementType.put(columnValue, MovementTypeType.ENT);
+                                break;
+                            case MOVEMENTTYPE_MAN:
+                                mapToMovementType.put(columnValue, MovementTypeType.MAN);
+                                break;
+                            default:
+                                log.warn("Movement type couldn't be mapped: "+ columnValue);
+                        }
+                    }
+                }));
+    }
+
     public void sendMovementReport(SendFLUXMovementReportRequest request, String messageGuid) throws RulesServiceException {
         log.info("Sending Movement Report to exchange");
         try {
@@ -201,8 +238,7 @@ public class RulesMovementProcessorBean {
         String registeredPluginClassName = request.getRegisteredClassName();
         try {
             fluxVesselPositionMessage = JAXBUtils.unMarshallMessage(request.getRequest(), FLUXVesselPositionMessage.class, null);
-            List<RawMovementType> movementReportsList = FLUXVesselPositionMapper.mapToRawMovementTypes(fluxVesselPositionMessage, registeredPluginClassName,pluginType);
-
+            List<RawMovementType> movementReportsList = FLUXVesselPositionMapper.mapToRawMovementTypes(fluxVesselPositionMessage, registeredPluginClassName,pluginType,mapToMovementType);
             // If no movements were received then there is no sense to continue, so just going to update the exchange log status to FAILED!
             if (CollectionUtils.isEmpty(movementReportsList)) {
                 log.warn("The list of rawMovements is EMPTY! Not going to proceed neither validation not sending to Movement Module!");
