@@ -9,11 +9,18 @@ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the impl
 FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
 copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
-package eu.europa.ec.fisheries.uvms.rules.service.bean;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.schema.mobileterminal.module.v1.MobileTerminalBatchListResponse;
+import eu.europa.ec.fisheries.schema.movement.common.v1.SimpleResponse;
+import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementBatchRequest;
+import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementBatchResponse;
+import eu.europa.ec.fisheries.schema.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
+import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
@@ -22,17 +29,22 @@ import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketByAssetAndRuleResp
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetTicketListByQueryResponse;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.commons.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.constants.DataSourceQueue;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.RulesMessageProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMobilTerminalProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMovementProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.MovementValidationServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
+import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -45,13 +57,25 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
+import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
+import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselPositionEventType;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselTransportMeansType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
 
 import javax.enterprise.event.Event;
+import javax.jms.JMSException;
 import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -64,10 +88,14 @@ import static org.powermock.api.mockito.PowerMockito.*;
 @PrepareForTest({RulesDataSourceRequestMapper.class, RulesDataSourceResponseMapper.class})
 public class RulesMovementProcessorBeanTest {
 
+    private static final String USERNAME = "USERNAME";
+
     @Mock
     RulesMessageProducer mockProducer;
     @Mock
     RulesResponseConsumer mockConsumer;
+    @Mock
+    RulesMobilTerminalProducerBean mobileTerminalProducer;
     @Mock
     Event<NotificationMessage> ticketEvent;
     @Mock
@@ -78,6 +106,12 @@ public class RulesMovementProcessorBeanTest {
     MovementValidationServiceBean mockValidationServiceBean;
     @Mock
     Event<NotificationMessage> alarmReportCountEvent;
+    @Mock
+    RulesMovementProducerBean movementProducer;
+    @Mock
+    MDRCache mdrCache;
+    @Mock
+    RulesExchangeProducerBean exchangeProducer;
 
     @InjectMocks
     RulesMovementProcessorBean rulesMovementProcessorBean;
@@ -499,15 +533,73 @@ public class RulesMovementProcessorBeanTest {
         TicketType mock = mock(TicketType.class);
         when(rulesDomainModel.getTicketByGuid(guid)).thenReturn(mock);
         rulesMovementProcessorBean.getTicketByGuid(guid);
-
     }
 
-    public void testReprocessAlarm() throws Exception {
-
-    }
-
+    @Test
     public void testSetMovementReportReceived() throws Exception {
+        mockStatic(RulesDataSourceRequestMapper.class);
+        setupMdrCache();
+        SetFLUXMovementReportRequest request = new SetFLUXMovementReportRequest();
+        request.setType(PluginType.FLUX);
+        request.setUsername(USERNAME);
+        setupFluxVesselPositionMessage(request);
+        setupMobileTerminalConversation();
+        setupMovementModuleConversation();
+        String messageGuid = UUID.randomUUID().toString();
 
+        rulesMovementProcessorBean.setMovementReportReceived(request, messageGuid);
+
+        ArgumentCaptor<String> createMovementRequestCaptor = ArgumentCaptor.forClass(String.class);
+        verify(movementProducer).sendModuleMessage(createMovementRequestCaptor.capture(), any());
+        CreateMovementBatchRequest createMovementBatchRequest = JAXBUtils.unMarshallMessage(createMovementRequestCaptor.getValue(), CreateMovementBatchRequest.class);
+        assertNotNull(createMovementBatchRequest);
+        assertNotNull(createMovementBatchRequest.getMovement());
+        assertEquals(1, createMovementBatchRequest.getMovement().size());
+        assertEquals(MovementTypeType.MAN, createMovementBatchRequest.getMovement().get(0).getMovementType());
     }
 
+    private void setupMdrCache() {
+        List<ObjectRepresentation> mdrCacheEntries = Arrays.asList(
+                new ObjectRepresentation(Collections.singletonList(new ColumnDataType("code", "POS", null))),
+                new ObjectRepresentation(Collections.singletonList(new ColumnDataType("code", "EXIT", null))),
+                new ObjectRepresentation(Collections.singletonList(new ColumnDataType("code", "ENTRY", null))),
+                new ObjectRepresentation(Collections.singletonList(new ColumnDataType("code", "MANUAL", null)))
+        );
+        when(mdrCache.getEntry(MDRAcronymType.FLUX_VESSEL_POSITION_TYPE)).thenReturn(mdrCacheEntries);
+        rulesMovementProcessorBean.setMdrCache(mdrCache);
+    }
+
+    private void setupFluxVesselPositionMessage(SetFLUXMovementReportRequest request) throws JAXBException {
+        FLUXVesselPositionMessage fluxVesselPositionMessage = new FLUXVesselPositionMessage();
+        VesselTransportMeansType vesselTransportMeans = new VesselTransportMeansType();
+        fluxVesselPositionMessage.setVesselTransportMeans(vesselTransportMeans);
+        VesselPositionEventType vesselPositionEvent = new VesselPositionEventType();
+        vesselPositionEvent.setTypeCode(new CodeType());
+        vesselPositionEvent.getTypeCode().setValue("MANUAL");
+        vesselTransportMeans.getSpecifiedVesselPositionEvents().add(vesselPositionEvent);
+        request.setRequest(JAXBUtils.marshallJaxBObjectToString(fluxVesselPositionMessage, "UTF-8", true));
+    }
+
+    private void setupMobileTerminalConversation() throws MessageException, JMSException, JAXBException {
+        String getMobileTerminalMessageId = UUID.randomUUID().toString();
+        when(mobileTerminalProducer.sendModuleMessage(anyString(), any())).thenReturn(getMobileTerminalMessageId);
+        TextMessage getMobileTerminalResponse = mock(TextMessage.class);
+        String textMessageCorrelationID = UUID.randomUUID().toString();
+        when(getMobileTerminalResponse.getJMSCorrelationID()).thenReturn(textMessageCorrelationID);
+        MobileTerminalBatchListResponse mobileTerminalBatchListResponse = new MobileTerminalBatchListResponse();
+        when(getMobileTerminalResponse.getText()).thenReturn(JAXBUtils.marshallJaxBObjectToString(mobileTerminalBatchListResponse, "UTF-8", true));
+        when(mockConsumer.getMessage(eq(getMobileTerminalMessageId), eq(TextMessage.class))).thenReturn(getMobileTerminalResponse);
+    }
+
+    private void setupMovementModuleConversation() throws MessageException, JMSException, JAXBException {
+        String movementMessageId = UUID.randomUUID().toString();
+        when(movementProducer.sendModuleMessage(anyString(), any())).thenReturn(movementMessageId);
+        TextMessage movJmsResponse = mock(TextMessage.class);
+        String movJmsResponseCorrId = UUID.randomUUID().toString();
+        when(movJmsResponse.getJMSCorrelationID()).thenReturn(movJmsResponseCorrId);
+        CreateMovementBatchResponse createMovementBatchResponse = new CreateMovementBatchResponse();
+        createMovementBatchResponse.setResponse(SimpleResponse.OK);
+        when(movJmsResponse.getText()).thenReturn(JAXBUtils.marshallJaxBObjectToString(createMovementBatchResponse, "UTF-8", true));
+        when(mockConsumer.getMessage(eq(movementMessageId), eq(TextMessage.class), anyLong())).thenReturn(movJmsResponse);
+    }
 }
