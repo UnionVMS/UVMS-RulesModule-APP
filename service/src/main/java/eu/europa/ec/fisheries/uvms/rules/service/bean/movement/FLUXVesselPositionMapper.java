@@ -42,6 +42,7 @@ import java.util.Optional;
 public class FLUXVesselPositionMapper {
 
     private static final String ASSET_EXT_MARKING_CODE = "EXT_MARKING";
+    public static final String ASSET_EXT_MARK = "EXT_MARK";
     private static final String ASSET_IRCS_CODE = "IRCS";
     private static final String ASSET_UVI_CODE = "UVI";
     private static final String ASSET_CFR_CODE = "CFR";
@@ -174,6 +175,9 @@ public class FLUXVesselPositionMapper {
                         break;
                     case ASSET_UVI_CODE:
                         assetIdList.add(mapToVesselId(AssetIdType.IMO, vesselId.getValue()));
+                        break;
+                    case ASSET_EXT_MARK:
+                    case ASSET_EXT_MARKING_CODE:
                         break;
                     default:
                         log.error("VesselId type not mapped {}", vesselId.getKey());
