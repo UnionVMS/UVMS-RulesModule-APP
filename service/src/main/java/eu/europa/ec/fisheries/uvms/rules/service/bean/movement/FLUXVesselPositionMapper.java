@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 public class FLUXVesselPositionMapper {
@@ -121,13 +122,7 @@ public class FLUXVesselPositionMapper {
     }
 
     private static MovementTypeType mapToMovementTypeFromPositionType(CodeType vessPosTypeCode, Map<String, MovementTypeType> mapToMovementType) {
-        MovementTypeType movementTypeType = mapToMovementType.get(vessPosTypeCode.getValue());
-        if(movementTypeType != null){
-            return movementTypeType;
-        }
-
-        log.warn("Movement type couldn't be mapped: "+ vessPosTypeCode.getValue());
-        return null;
+        return Optional.ofNullable(vessPosTypeCode).map(CodeType::getValue).map(mapToMovementType::get).orElse(null);
     }
 
     private static MovementPoint mapToMovementPoint(VesselGeographicalCoordinateType coordinate) {

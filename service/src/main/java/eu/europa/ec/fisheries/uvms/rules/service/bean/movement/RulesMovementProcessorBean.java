@@ -279,14 +279,13 @@ public class RulesMovementProcessorBean {
             if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
                 // Here when ready needs to happen the validation with the list returned from movements! movementBatchResponse.getMovements();
                 status = ExchangeLogStatusTypeType.SUCCESSFUL;
-                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
             } else {
                 status = ExchangeLogStatusTypeType.FAILED;
-                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
             }
+            sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
             updateRequestMessageStatusInExchange(exchangeLogGuid, status);
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException e) {
-            throw new RulesServiceException(e.getMessage());
+            throw new RulesServiceException(e.getMessage(), e);
         }
     }
 
