@@ -127,6 +127,7 @@ import javax.xml.bind.JAXBException;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.fisheries.uvms.movement.model.exception.ErrorCode.MOVEMENT_DUPLICATE_ERROR;
 
@@ -684,7 +685,9 @@ public class RulesMovementProcessorBean {
             try {
                 String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementBatchRequest(movementBatch, username);
                 log.debug("Send CreateMovementRequest message to Movement");
-                String messageId = movementProducer.sendModuleMessage(createMovementRequest, consumer.getDestination());
+                warnOnMultipleConnectIds(connectIds);
+                String connectId = connectIds.get(0);
+                String messageId = movementProducer.sendModuleMessageInGroup(createMovementRequest, consumer.getDestination(), connectId);
                 TextMessage movJmsResponse = consumer.getMessage(messageId, TextMessage.class, 2400000L);
                 log.debug("Received response message");
                 movementSimpleResponse = MovementModuleResponseMapper.mapToCreateMovementBatchResponse(movJmsResponse);
@@ -701,6 +704,16 @@ public class RulesMovementProcessorBean {
             return movementSimpleResponse;
         } catch (RulesServiceException | NullPointerException e) {
             throw new RulesServiceException("Error likely caused by a duplicate movement.", e);
+        }
+    }
+
+    private void warnOnMultipleConnectIds(List<String> connectIds) {
+        if (connectIds.size() == 1) {
+            return;
+        }
+        Set<String> uniqueConnectIds = new HashSet<>(connectIds);
+        if (uniqueConnectIds.size() > 1) {
+            log.warn("*** connectIds with {} different elements, the JMSXGroupId will be wrong! The first two elements are: {} ***", uniqueConnectIds.size(), uniqueConnectIds.stream().limit(2).collect(Collectors.joining(",","[","]")));
         }
     }
 
