@@ -169,7 +169,7 @@ public class RulesMessageServiceBeanTest {
 
         SetFLUXFAReportMessageRequest req = new SetFLUXFAReportMessageRequest();
         req.setRequest(IOUtils.toString(new FileInputStream(testXmlPath)));
-        req.setType(PluginType.MANUAL);
+        req.setPluginType(PluginType.MANUAL);
         req.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
         req.setLogGuid("SOME-GUID");
         messageServiceBean.evaluateIncomingFLUXFAReport(req);
