@@ -68,7 +68,7 @@ public class RulesFAReportServiceBeanTest {
     @Before
     public void before(){
         fluxfaReportMessageRequest = new SetFLUXFAReportMessageRequest();
-        fluxfaReportMessageRequest.setType(PluginType.FLUX);
+        fluxfaReportMessageRequest.setPluginType(PluginType.FLUX);
         fluxfaReportMessageRequest.setLogGuid("guid");
         rulesFaReportServiceBean.init();
         Whitebox.setInternalState(rulesFaReportServiceBean, "fluxMessageHelper", fluxMessageHelper);

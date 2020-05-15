@@ -142,7 +142,7 @@ public class RulesFaReportServiceBean {
                 if (hasPermissions) {
                     rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
                     log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
-                    sendRequestToActivity(requestStr, request.getType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid);
+                    sendRequestToActivity(requestStr, request.getPluginType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid);
 
                     Set<FADocumentID> result = idsFromIncomingMessage.stream().filter(faDocumentID -> !FAUUIDType.FA_REPORT_REF_ID.equals(faDocumentID.getType()))
                             .collect(Collectors.toSet());
@@ -158,7 +158,7 @@ public class RulesFaReportServiceBean {
             FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
             XPathRepository.INSTANCE.clear(faReportFacts);
 
-            exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, request.getType(), fluxMessageHelper.isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
+            exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, request.getPluginType(), fluxMessageHelper.isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
 
         } catch (UnmarshalException e) {
             log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed! Reason : {{}}", e.getMessage());
