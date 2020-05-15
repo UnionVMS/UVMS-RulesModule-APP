@@ -54,7 +54,7 @@ public class RulesModuleRequestMapper {
         SetFLUXFAReportMessageRequest request = new SetFLUXFAReportMessageRequest();
         request.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
         request.setRequest(fluxFAReportMessage);
-        request.setType(type);
+        request.setPluginType(type);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
