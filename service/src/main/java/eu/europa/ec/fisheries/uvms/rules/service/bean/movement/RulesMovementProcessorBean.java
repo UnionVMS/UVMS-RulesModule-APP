@@ -248,8 +248,9 @@ public class RulesMovementProcessorBean {
                 return;
             }
             // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
-            // processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
-            enrichAndSenMovementsAsBatch(movementReportsList, userName, request.getLogGuid());
+            EnrichedMovementWrapper enrichedWrapper = processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
+//            enrichAndSenMovementsAsBatch(enrichedWrapper, movementReportsList, userName, request.getLogGuid());
+//            enrichAndSenMovementsAsBatch(null, movementReportsList, userName, request.getLogGuid());
             // Send some response to Movement, if it originated from there (manual movement)
             if (MovementSourceType.MANUAL.equals(movementReportsList.get(0).getSource())) {// A person has created a position
                 ProcessedMovementAck response = MovementModuleResponseMapper.mapProcessedMovementAck(eu.europa.ec.fisheries.schema.movement.common.v1.AcknowledgeTypeType.OK,
@@ -271,7 +272,7 @@ public class RulesMovementProcessorBean {
      * @param exchangeLogGuid
      * @throws RulesServiceException
      */
-    private void enrichAndSenMovementsAsBatch(List<RawMovementType> rawMovements, String username, String exchangeLogGuid) throws RulesServiceException {
+    private void enrichAndSenMovementsAsBatch(EnrichedMovementWrapper enrichedWrapper1, List<RawMovementType> rawMovements, String username, String exchangeLogGuid) throws RulesServiceException {
         try {
             // Enrich with MobilTerminal and Assets data. Get Mobile Terminal if it exists.
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
@@ -290,7 +291,7 @@ public class RulesMovementProcessorBean {
         }
     }
 
-    private void processReceivedMovementsAsBatch(List<RawMovementType> rawMovements, String pluginType, String username, String exchangeLogGuid) throws RulesServiceException {
+    private EnrichedMovementWrapper processReceivedMovementsAsBatch(List<RawMovementType> rawMovements, String pluginType, String username, String exchangeLogGuid) throws RulesServiceException {
         try {
             // Enrich with MobilTerminal and Assets data. Get Mobile Terminal if it exists.
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
@@ -317,6 +318,7 @@ public class RulesMovementProcessorBean {
                 updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
                 sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.ALARM, username);
             }
+            return enrichedWrapper;
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException e) {
             throw new RulesServiceException(e.getMessage());
         }
