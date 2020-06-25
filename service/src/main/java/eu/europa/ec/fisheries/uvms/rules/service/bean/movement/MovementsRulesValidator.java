@@ -186,7 +186,7 @@ public class MovementsRulesValidator {
     @Lock(LockType.READ)
     public void evaluate(List<RawMovementFact> facts) {
         KieSession ksession = getKieSession();
-        ksession.setGlobal(LOGGER_STR, log);
+//        ksession.setGlobal(LOGGER_STR, log);
         for (RawMovementFact fact : facts) {
             ksession.insert(fact);
         }
