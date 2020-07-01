@@ -86,6 +86,8 @@
             <xsd:enumeration value="SALES_QUERY_PARAMETER"/>
             <xsd:enumeration value="SALES_FLUX_SALES_RESPONSE_MESSAGE"/>
 
+            <!-- Movements -->
+            <xsd:enumeration value="MOVEMENT_REPORT_DOCUMENT"/>
         </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>

@@ -60,6 +60,7 @@ public class RulesKieContainerInitializer {
             List<TemplateRuleMapDto> faTemplatesAndRules = getFaMessageRules(allTemplates);
             List<TemplateRuleMapDto> salesTemplatesAndRules = getSalesRules(allTemplates);
             List<TemplateRuleMapDto> faQueryTemplatesAndRules = getFaQueryRules(allTemplates);
+            List<TemplateRuleMapDto> movementTemplatesAndRules = getMovementRules(allTemplates);
 
             log.info("Initializing templates and rules for FA-Report facts. Nr. of Rules : {}",  countRuleExpressions(faTemplatesAndRules));
             KieContainer faReportContainer = createContainer(faTemplatesAndRules);
@@ -73,11 +74,16 @@ public class RulesKieContainerInitializer {
             log.info("Initializing templates and rules for Sales facts. Nr. of Rules : {}", countRuleExpressions(salesTemplatesAndRules));
             KieContainer salesContainer = createContainer(salesTemplatesAndRules);
 
+            log.info("Initializing templates and rules for Movement facts. Nr. of Rules : {}", countRuleExpressions(movementTemplatesAndRules));
+            KieContainer movementContainer = createContainer(movementTemplatesAndRules);
+
+
             containers = new EnumMap<>(ContainerType.class);
             containers.put(ContainerType.FA_REPORT, faReportContainer);
             containers.put(ContainerType.FA_RESPONSE, faRespContainer);
             containers.put(ContainerType.FA_QUERY, faQueryContainer);
             containers.put(ContainerType.SALES, salesContainer);
+            containers.put(ContainerType.MOVEMENTS, movementContainer);
 
             // To make sure that we have deployed all the templates!
             if (!allTemplates.isEmpty()) {
@@ -212,6 +218,18 @@ public class RulesKieContainerInitializer {
         }
         allTemplates.removeAll(faQueryTemplates);
         return faQueryTemplates;
+    }
+
+    private List<TemplateRuleMapDto> getMovementRules(List<TemplateRuleMapDto> allTemplates) {
+        List<TemplateRuleMapDto> movementTemplates = new ArrayList<>();
+        List<FactType> factTypesList = ContainerType.MOVEMENTS.getFactTypesList();
+        for (TemplateRuleMapDto actualTemplate : allTemplates) {
+            if (factTypesList.contains(actualTemplate.getTemplateType().getType())) {
+                movementTemplates.add(actualTemplate);
+            }
+        }
+        allTemplates.removeAll(movementTemplates);
+        return movementTemplates;
     }
 
     public KieContainer getContainerByType(ContainerType containerType) {

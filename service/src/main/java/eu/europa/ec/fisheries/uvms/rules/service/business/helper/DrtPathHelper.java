@@ -34,6 +34,7 @@ public enum DrtPathHelper {
     FISHING_ACTIVITY("/templates/FishingActivity.drt"),
     FA_QUERY("/templates/FaQuery.drt"),
     FA_QUERY_PARAMETER("/templates/FaQueryParameter.drt"),
+    MOVEMENT_REPORT_DOCUMENT("/templates/MovementReportDocument.drt"),
     FA_RELOCATION("/templates/FaRelocation.drt"),
     FA_RESPONSE("/templates/FaResponse.drt"),
     FA_TRANSHIPMENT("/templates/FaTranshipment.drt"),

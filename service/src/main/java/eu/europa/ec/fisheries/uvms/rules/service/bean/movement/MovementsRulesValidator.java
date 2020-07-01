@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.ValidationService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.CustomRuleDto;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomRuleParser;
 import org.drools.template.parser.DefaultTemplateContainer;
@@ -172,7 +173,7 @@ public class MovementsRulesValidator {
     }
 
     @Lock(LockType.READ)
-    public void evaluate(List<MovementFact> factList, boolean justToAvoidErasure) {
+    public void evaluate(List<MovementFact> factList) {
         log.info("Verifying user defined rules");
         KieSession ksession = getKieSession();
         // TODO : decomment as soon as the "Unexpected global [validationService]" is resolved
@@ -186,9 +187,9 @@ public class MovementsRulesValidator {
 
 
     @Lock(LockType.READ)
-    public void evaluate(List<RawMovementFact> facts) {
+    public void evaluateRawList(List<RawMovementFact> facts) {
         KieSession ksession = getKieSession();
-//        ksession.setGlobal(LOGGER_STR, log);
+        ksession.setGlobal(LOGGER_STR, log);
         for (RawMovementFact fact : facts) {
             ksession.insert(fact);
         }

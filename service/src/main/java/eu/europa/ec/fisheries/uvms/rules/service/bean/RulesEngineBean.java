@@ -17,7 +17,14 @@ import eu.europa.ec.fisheries.uvms.rules.service.SalesRulesService;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.generator.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.AbstractGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityFaReportFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityQueryFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.ActivityResponseFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.MovementFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesQueryFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesReportFactGenerator;
+import eu.europa.ec.fisheries.uvms.rules.service.business.generator.SalesResponseFactGenerator;
 import eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -36,12 +43,19 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.business.MessageType.PULL;
 import static eu.europa.ec.fisheries.uvms.rules.service.business.MessageType.PUSH;
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.*;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 
 @Stateless
 @Slf4j
@@ -65,6 +79,7 @@ public class RulesEngineBean {
 
     @EJB
     private SalesResponseFactGenerator salesResponseFactGenerator;
+
 
 
     private FaResponseFactMapper faResponseFactMapper;
@@ -180,6 +195,22 @@ public class RulesEngineBean {
                 globals.put("appliChecker", appliChecker);
 
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
+            }
+            else if (businessObjectType == BusinessObjectType.RECEIVING_MOVEMENT_MSG){
+                StopWatch stopWatch = StopWatch.createStarted();
+                AbstractGenerator generator = new MovementFactGenerator(PUSH);
+                generator.setBusinessObjectMessage(businessObject);
+                generator.setExtraValueMap(extraValues);
+
+                List<AbstractFact> facts = generator.generateAllFacts();
+                log.info("Flow Report, Generating the facts took: {} ms", stopWatch.getTime());
+                stopWatch.reset();
+                stopWatch.start();
+
+                Map<String, Object> globals = new HashMap<>();
+                globals.put("mdrService", mdrCacheRuleService);
+                globals.put("appliChecker", appliChecker);
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.MOVEMENTS), globals, extraValues);
             }
 
             log.info(String.format("It took %s to evaluate the message.", stopwatch));
