@@ -46,6 +46,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMovementReportReques
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmListCriteria;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmSearchKey;
@@ -76,6 +77,7 @@ import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalMod
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementModelException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
+import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.*;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
@@ -87,17 +89,27 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketUpdateEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.MovementReportDocumentFactMapper;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.types.*;
@@ -111,6 +123,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -124,6 +137,10 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import static eu.europa.ec.fisheries.uvms.movement.model.exception.ErrorCode.MOVEMENT_DUPLICATE_ERROR;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_MOVEMENT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 
 
 @Stateless
@@ -167,6 +184,20 @@ public class RulesMovementProcessorBean {
     @EJB
     private RulesAuditProducerBean auditProducer;
 
+    @EJB
+    private RulesEngineBean rulesEngine;
+
+    @EJB
+    private RulePostProcessBean rulePostProcessBean;
+
+    @EJB
+    private RulesExchangeServiceBean exchangeServiceBean;
+
+    @EJB
+    private RulesConfigurationCache ruleModuleCache;
+
+    private RulesFLUXMessageHelper fluxMessageHelper;
+
     @Inject
     @TicketUpdateEvent
     private Event<NotificationMessage> ticketUpdateEvent;
@@ -182,6 +213,11 @@ public class RulesMovementProcessorBean {
     @Inject
     @AlarmReportCountEvent
     private Event<NotificationMessage> alarmReportCountEvent;
+
+    @PostConstruct
+    public void init() {
+        fluxMessageHelper = new RulesFLUXMessageHelper(ruleModuleCache);
+    }
 
     public void setMovementReportReceived(SetFLUXMovementReportRequest request, String messageGuid) throws RulesServiceException {
         FLUXVesselPositionMessage fluxVesselPositionMessage;
@@ -199,9 +235,23 @@ public class RulesMovementProcessorBean {
                 sendBatchBackToExchange(request.getLogGuid(), movementReportsList, MovementRefTypeType.ALARM, userName);
                 return;
             }
+
+            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+            extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
+            extraValues.put(XML, request.getRequest());
+            extraValues.put(DATA_FLOW, request.getFluxDataFlow());
+            Collection<AbstractFact> factsResults = rulesEngine.evaluate(RECEIVING_MOVEMENT_MSG,fluxVesselPositionMessage,extraValues,null);
+
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), String.valueOf(fluxVesselPositionMessage.getFLUXReportDocument().getIDS()), RawMsgType.MOVEMENT);
+
+            if(validationResult.isError()){
+                exchangeServiceBean.updateExchangeMessage(request.getLogGuid(), fluxMessageHelper.calculateMessageValidationStatus(validationResult));
+                return;
+            }
             // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
-            EnrichedMovementWrapper enrichedWrapper = processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
-//            enrichAndSenMovementsAsBatch(enrichedWrapper, movementReportsList, userName, request.getLogGuid());
+//            MovementReportDocumentFact movementReportDocumentFact = MovementReportDocumentFactMapper.mapToMovementReportDocumentFact(fluxVesselPositionMessage);
+//            EnrichedMovementWrapper enrichedWrapper = processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
+            enrichAndSendMovementsAsBatch(validationResult, movementReportsList, userName, request.getLogGuid());
 //            enrichAndSenMovementsAsBatch(null, movementReportsList, userName, request.getLogGuid());
             // Send some response to Movement, if it originated from there (manual movement)
             if (MovementSourceType.MANUAL.equals(movementReportsList.get(0).getSource())) {// A person has created a position
@@ -209,7 +259,7 @@ public class RulesMovementProcessorBean {
                         messageGuid, "Movement successfully processed");
                 movOutQueueProducer.sendMessageWithSpecificIds(JAXBMarshaller.marshallJaxBObjectToString(response), movOutQueueProducer.getDestination(), null, messageGuid, messageGuid);
             }
-        } catch (JAXBException | RulesModelMarshallException | MessageException e) {
+        } catch (JAXBException | MessageException | RulesValidationException | RulesModelMarshallException e) {
             log.error("Error while processing received movement", e);
         }
     }
@@ -224,7 +274,7 @@ public class RulesMovementProcessorBean {
      * @param exchangeLogGuid
      * @throws RulesServiceException
      */
-    private void enrichAndSenMovementsAsBatch(EnrichedMovementWrapper enrichedWrapper1, List<RawMovementType> rawMovements, String username, String exchangeLogGuid) throws RulesServiceException {
+    private void enrichAndSendMovementsAsBatch(ValidationResult validationResult,List<RawMovementType> rawMovements, String username, String exchangeLogGuid) throws RulesServiceException {
         try {
             // Enrich with MobilTerminal and Assets data. Get Mobile Terminal if it exists.
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
@@ -232,7 +282,7 @@ public class RulesMovementProcessorBean {
             ExchangeLogStatusTypeType status;
             if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
                 // Here when ready needs to happen the validation with the list returned from movements! movementBatchResponse.getMovements();
-                status = ExchangeLogStatusTypeType.SUCCESSFUL;
+                status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
                 sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
             } else {
                 status = ExchangeLogStatusTypeType.FAILED;
@@ -244,18 +294,18 @@ public class RulesMovementProcessorBean {
         }
     }
 
-    private EnrichedMovementWrapper processReceivedMovementsAsBatch(List<RawMovementType> rawMovements, String pluginType, String username, String exchangeLogGuid) throws RulesServiceException {
+    private void processReceivedMovementsAsBatch(List<RawMovementType> rawMovements, String pluginType, String username, String exchangeLogGuid) throws RulesServiceException {
         try {
             // Enrich with MobilTerminal and Assets data. Get Mobile Terminal if it exists.
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
             List<RawMovementFact> rawMovementFactList = RawMovementFactMapper.mapRawMovementFacts(rawMovements, enrichedWrapper.getMobileTerminalList(),
                     enrichedWrapper.getAssetList(), pluginType);
-            movementValidator.evaluate(rawMovementFactList);
+            movementValidator.evaluateRawList(rawMovementFactList);
             if (allFactsAreOk(rawMovementFactList)) { // For now it is always OK
                 // The collectMovementData actually is the method that sends the movements list to Movements module to be saved!
                 List<MovementFact> movementFactList = collectBatchMovementData(enrichedWrapper.getMobileTerminalList(), enrichedWrapper.getAssetList(), rawMovements, username);
                 log.info(" Validating movement from Movement Module");
-                movementValidator.evaluate(movementFactList, true);
+                movementValidator.evaluate(movementFactList);
                 // Tell Exchange that a movement Batch was persisted in Movement
                 ExchangeLogStatusTypeType status;
                 if (CollectionUtils.isNotEmpty(movementFactList)) {
@@ -271,7 +321,6 @@ public class RulesMovementProcessorBean {
                 updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
                 sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.ALARM, username);
             }
-            return enrichedWrapper;
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException e) {
             throw new RulesServiceException(e.getMessage());
         }
@@ -332,14 +381,14 @@ public class RulesMovementProcessorBean {
     }
 
     private boolean allFactsAreOk(List<RawMovementFact> rawMovementFactList) {
-        boolean areAllOk = true;
+
         for (RawMovementFact movementFact : rawMovementFactList) {
             if (movementFact == null || !movementFact.isOk()) {
-                areAllOk = false;
-                break;
+               return false;
             }
         }
-        return areAllOk;
+
+        return true;
     }
 
     private List<MobileTerminalType> getMobileTerminalByRawMovementsBatch(List<RawMovementType> rawMovements) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
