@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 public class XPathConstants {
 
     public static final String FLUXFA_REPORT_MESSAGE = "FLUXFAReportMessage";
+    public static final String MOVEMENT_REPORT_DOCUMENT = "FLUXVesselPositionMessage";
     public static final String FLUXFA_QUERY_MESSAGE = "FLUXFAQueryMessage";
     public static final String FA_REPORT_DOCUMENT = "FAReportDocument";
     public static final String SPECIFIED_FISHING_ACTIVITY = "SpecifiedFishingActivity";
