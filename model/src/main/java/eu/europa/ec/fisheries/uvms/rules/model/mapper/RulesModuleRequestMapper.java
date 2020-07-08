@@ -98,6 +98,16 @@ public class RulesModuleRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String createSendFluxMovementReportMessageRequest(PluginType type, String forwardPositionMessageStr, String username, String logId, String fluxDataFlow,
+                                                         String senderOrReceiver) throws RulesModelMapperException {
+        SendFLUXMovementReportRequest request = new SendFLUXMovementReportRequest();
+        request.setMethod(RulesModuleMethod.SEND_FLUX_MOVEMENT_REPORT);
+        request.setRequest(forwardPositionMessageStr);
+        request.setType(type);
+        populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, null);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     @Deprecated // Use the populateCommonProperties() with 10 parameters!
     private static void populateCommonProperties(RulesBaseRequest request, String username, String logId, String fluxDataFlow, String senderOrReceiver, String onValue) {
         request.setFluxDataFlow(fluxDataFlow);

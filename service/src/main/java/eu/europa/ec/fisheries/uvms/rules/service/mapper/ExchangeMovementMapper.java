@@ -16,6 +16,7 @@ import java.util.List;
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponse;
 import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponseBatch;
+import eu.europa.ec.fisheries.schema.exchange.module.v1.SendFLUXMovementReportRequest;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetType;
@@ -31,6 +32,7 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 
 public class ExchangeMovementMapper {
 
@@ -128,6 +130,19 @@ public class ExchangeMovementMapper {
         }
         response.setUsername(username);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
+    }
+
+    public static String mapToFluxMovementReport(String fluxVesselPositionMessage, String username, String senderOrReceiver, String dataflow, String messageGuid) throws ExchangeModelMarshallException {
+        SendFLUXMovementReportRequest sendFLUXMovementReportRequest = new SendFLUXMovementReportRequest();
+        sendFLUXMovementReportRequest.setMethod(ExchangeModuleMethod.SEND_MOVEMENT_REPORT);
+        sendFLUXMovementReportRequest.setRequest(fluxVesselPositionMessage);
+        sendFLUXMovementReportRequest.setUsername(username);
+        sendFLUXMovementReportRequest.setPluginType(PluginType.FLUX);
+        sendFLUXMovementReportRequest.setSenderOrReceiver(senderOrReceiver);
+        sendFLUXMovementReportRequest.setFluxDataFlow(dataflow);
+        sendFLUXMovementReportRequest.setUsername(username);
+        sendFLUXMovementReportRequest.setMessageGuid(messageGuid);
+        return JAXBMarshaller.marshallJaxBObjectToString(sendFLUXMovementReportRequest);
     }
 
     public static MovementType mapToExchangeMovementType(eu.europa.ec.fisheries.schema.movement.v1.MovementType movementMovement) {
