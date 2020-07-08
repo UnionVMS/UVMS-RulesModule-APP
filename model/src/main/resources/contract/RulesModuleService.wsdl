@@ -50,6 +50,8 @@
                     <xsd:enumeration value="SEND_FLUX_FA_QUERY"/>
                     <xsd:enumeration value="SET_FLUX_RESPONSE"/>
                     <xsd:enumeration value="RCV_FLUX_RESPONSE"/>
+                    <xsd:enumeration value="SEND_FLUX_MOVEMENT_REPORT"/>
+
 
                     <!-- MDR Cache -->
                     <xsd:enumeration value="SET_FLUX_MDR_SYNC_REQUEST"/>
@@ -264,6 +266,19 @@
             </xsd:element>
 
             <xsd:element name="SetFLUXMovementReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="type" type="exchange:PluginType"/>
+                                <xsd:element name="request" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="SendFLUXMovementReportRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">

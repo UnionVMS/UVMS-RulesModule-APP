@@ -66,4 +66,6 @@ public interface EventService {
     void sendSalesResponseEvent(@Observes @SendSalesResponseEvent EventMessage message);
 
     void getValidationResultsByRawGuid(@Observes @GetValidationResultsByRawGuid EventMessage message);
+
+    void sendFluxMovementReportEvent(@Observes @SendFluxMovementReportEvent EventMessage message);
 }

@@ -312,6 +312,18 @@ public class RulesEventServiceBean implements EventService {
         }
     }
 
+    @Override
+    public void sendFluxMovementReportEvent(@Observes @SendFluxMovementReportEvent EventMessage message) {
+        log.info(" Received SendFluxMovementReportEvent..");
+        TextMessage jmsRequestMessage = message.getJmsMessage();
+        SendFLUXMovementReportRequest request = (SendFLUXMovementReportRequest) message.getRulesBaseRequest();
+        try {
+            rulesService.sendMovementReport(request, jmsRequestMessage.getJMSMessageID());
+        } catch (RulesServiceException | JMSException e) {
+            log.error(" Error when forwarding movement report {}", e.getMessage());
+        }
+    }
+
     @SuppressWarnings("unused")
 	private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
         try {

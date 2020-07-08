@@ -42,6 +42,7 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationTyp
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsResponse;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendFLUXMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
@@ -182,6 +183,16 @@ public class RulesMovementProcessorBean {
     @Inject
     @AlarmReportCountEvent
     private Event<NotificationMessage> alarmReportCountEvent;
+
+    public void sendMovementReport(SendFLUXMovementReportRequest request, String messageGuid) throws RulesServiceException {
+        log.info("Sending Movement Report to exchange");
+        try {
+            String exchangeMessageText = ExchangeMovementMapper.mapToFluxMovementReport(request.getRequest(), request.getUsername(), request.getSenderOrReceiver(), request.getFluxDataFlow(), request.getLogGuid());
+            exchangeProducer.sendModuleMessage(exchangeMessageText, consumer.getDestination());
+        } catch (ExchangeModelMapperException | MessageException e) {
+            log.error("Error while send movement report to exchnge", e);
+        }
+    }
 
     public void setMovementReportReceived(SetFLUXMovementReportRequest request, String messageGuid) throws RulesServiceException {
         FLUXVesselPositionMessage fluxVesselPositionMessage;
