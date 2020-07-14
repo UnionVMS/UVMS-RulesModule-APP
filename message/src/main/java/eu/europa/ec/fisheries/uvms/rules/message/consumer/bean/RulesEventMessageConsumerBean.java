@@ -24,6 +24,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageConstants;
 import eu.europa.ec.fisheries.uvms.commons.message.context.MappedDiagnosticContext;
+import eu.europa.ec.fisheries.uvms.commons.message.context.PropagateFluxEnvelopeData;
 import eu.europa.ec.fisheries.uvms.rules.message.event.*;
 import eu.europa.ec.fisheries.uvms.rules.message.event.carrier.EventMessage;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.FaultCode;
@@ -113,11 +114,12 @@ public class RulesEventMessageConsumerBean implements MessageListener {
     private Event<EventMessage> errorEvent;
 
     @Override
+    @PropagateFluxEnvelopeData
     public void onMessage(Message message) {
         String id = UUID.randomUUID().toString();
         MDC.put("clientName", id);
         MDC.remove("requestId");
-        LOG.debug("Message received in rules. Times redelivered: ", getTimesRedelivered(message));
+        LOG.debug("Message received in rules. Times redelivered: {}", getTimesRedelivered(message));
         TextMessage textMessage = (TextMessage) message;
         MappedDiagnosticContext.addMessagePropertiesToThreadMappedDiagnosticContext(textMessage);
         try {
