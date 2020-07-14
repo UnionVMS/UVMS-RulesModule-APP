@@ -68,4 +68,6 @@ public interface EventService {
     void getValidationResultsByRawGuid(@Observes @GetValidationResultsByRawGuid EventMessage message);
 
     void sendFluxMovementReportEvent(@Observes @SendFluxMovementReportEvent EventMessage message);
+
+    void createAlarmReceivedEvent(@Observes @CreateAlarmReceivedEvent EventMessage message);
 }

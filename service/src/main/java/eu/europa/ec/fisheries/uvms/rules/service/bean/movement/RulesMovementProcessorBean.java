@@ -1069,6 +1069,9 @@ public class RulesMovementProcessorBean {
                     continue;
                 }
 
+                if(alarm.getAlarmItem().stream().map(a -> a.getRuleGuid() == null).findAny().orElse(false)) {
+                    throw new RulesServiceException("Cannot reprocess an alarm that is not rule originated");
+                }
                 // Mark the alarm as REPROCESSED before reprocessing. That will create a new alarm (if still wrong) with the items remaining.
                 alarm.setStatus(AlarmStatusType.REPROCESSED);
                 alarm = updateAlarmStatus(alarm);
