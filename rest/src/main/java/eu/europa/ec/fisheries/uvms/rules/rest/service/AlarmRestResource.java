@@ -12,6 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.rules.rest.service;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -134,6 +135,11 @@ public class AlarmRestResource {
         } catch (RulesServiceException e) {
             LOG.error("[ Error when reprocessing. ] {} ", e.getMessage());
             return ErrorHandler.getFault(e);
+        }
+        catch (EJBException e) {
+            LOG.error("[ Error when reprocessing. ] {} ", e.getMessage());
+            Exception cause = e.getCausedByException();
+            return ErrorHandler.getFault(cause instanceof EJBException ? ((EJBException)cause).getCausedByException() : cause);
         }
     }
 

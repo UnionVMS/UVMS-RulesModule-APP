@@ -11,7 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.*;
 import java.io.InputStream;
 import java.util.List;
@@ -26,7 +25,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.CustomRuleParser;
-import lombok.extern.slf4j.Slf4j;
 import org.drools.template.parser.DefaultTemplateContainer;
 import org.drools.template.parser.TemplateContainer;
 import org.drools.template.parser.TemplateDataListener;
@@ -34,11 +32,15 @@ import org.kie.api.KieServices;
 import org.kie.api.builder.KieFileSystem;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
-@Slf4j
 public class MovementsRulesValidator {
+
+    private final static Logger log = LoggerFactory.getLogger(MovementsRulesValidator.class);
+
     //    private static final String SANITY_RESOURCE_DRL_FILE = "/rules/SanityRules.drl";
     private static final String CUSTOM_RULE_DRL_FILE = "src/main/resources/rules/CustomRules.drl";
     private static final String CUSTOM_RULE_TEMPLATE = "/templates/CustomRulesTemplate." +
