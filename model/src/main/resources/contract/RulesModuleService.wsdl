@@ -65,6 +65,7 @@
                     <xsd:enumeration value="SEND_SALES_RESPONSE"/>
                     <xsd:enumeration value="GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST"/>
                     <xsd:enumeration value="CREATE_ALARMS_REPORT_REQUEST"/>
+                    <xsd:enumeration value="CREATE_TICKETS_REQUEST"/>
                 </xsd:restriction>
             </xsd:simpleType>
 
@@ -400,7 +401,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">
                             <xsd:sequence>
-                                <xsd:element name="ticket" type="ticket:TicketType"/>
+                                <xsd:element name="tickets" type="ticket:TicketType" maxOccurs="unbounded"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>

@@ -18,6 +18,7 @@
             <xsd:element name="pluginName" type="xsd:string"/>
 
             <xsd:element name="guid" type="xsd:string"/> <!-- unionvms specific -->
+            <xsd:element name="guidGenerated" type="xsd:boolean"/>
             <xsd:element name="connectId" type="xsd:string"/> <!-- unionvms specific -->
             <xsd:element name="assetId" type="asset:AssetId"/>
             <xsd:element name="comChannelType" type="movement:MovementComChannelType"/>
