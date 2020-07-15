@@ -70,4 +70,6 @@ public interface EventService {
     void sendFluxMovementReportEvent(@Observes @SendFluxMovementReportEvent EventMessage message);
 
     void createAlarmReceivedEvent(@Observes @CreateAlarmReceivedEvent EventMessage message);
+
+    void createTicketsReceivedEvent(@Observes @CreateTicketsReceivedEvent EventMessage message);
 }

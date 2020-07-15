@@ -47,6 +47,7 @@ import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Stateless
 public class RulesDomainModelBean implements RulesDomainModel {
@@ -782,10 +783,7 @@ public class RulesDomainModelBean implements RulesDomainModel {
         LOG.info("[INFO] Counting open tickets");
         try {
             List<String> validRuleGuids = rulesDao.getCustomRulesForTicketsByUser(userName);
-            if (!validRuleGuids.isEmpty()) {
-                return rulesDao.getNumberOfOpenTickets(validRuleGuids);
-            }
-            return 0;
+            return rulesDao.getNumberOfOpenTickets(validRuleGuids);
         } catch (DaoException e) {
             LOG.error("[ERROR] Error when counting open tickets {}", e.getMessage());
             throw new RulesModelException(e.getMessage(), e);

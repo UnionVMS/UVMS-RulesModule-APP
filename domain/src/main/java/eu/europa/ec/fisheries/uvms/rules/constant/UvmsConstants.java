@@ -18,6 +18,7 @@ public final class UvmsConstants {
     public static final String FIND_ALARM_BY_GUID = "AlarmReport.findByGuid";
     public static final String COUNT_OPEN_ALARMS = "AlarmReport.countOpenAlarms";
     public static final String COUNT_OPEN_TICKETS = "AlarmReport.countOpenTickets";
+    public static final String COUNT_OPEN_TICKETS_NO_RULES = "AlarmReport.countOpenTicketsNoRules";
     public static final String FIND_ALARM_REPORT_BY_ASSET_GUID_AND_RULE_GUID = "AlarmReport.findByAssetGuidRuleGuid";
     public static final String GET_RUNNABLE_CUSTOM_RULES = "CustomRule.getValidCustomRule";
     public static final String LIST_CUSTOM_RULES_BY_USER = "CustomRule.listCustomRules";  // rule engine

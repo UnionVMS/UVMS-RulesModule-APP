@@ -13,9 +13,13 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.alarms;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
+import eu.europa.ec.fisheries.schema.movement.v1.MovementBaseType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmStatusType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateAlarmsReportRequest;
+import eu.europa.ec.fisheries.schema.rules.module.v1.CreateTicketRequest;
+import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
+import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -25,6 +29,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesAuditProduce
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
+import eu.europa.ec.fisheries.uvms.rules.movement.communication.MovementSender;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.AlarmReportEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
@@ -36,11 +41,19 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static eu.europa.ec.fisheries.uvms.rules.service.bean.alarms.RawMovementTypeMapper.enrichRawMovement;
 
 @Stateless
 @LocalBean
 @Slf4j
-public class AlarmReportsServiceBean {
+public class AlarmsServiceBean {
 
     @Inject
     @AlarmReportEvent
@@ -59,25 +72,38 @@ public class AlarmReportsServiceBean {
     @EJB
     private RulesDomainModel rulesDomainModel;
 
-    public void createAlarmReport(CreateAlarmsReportRequest request) throws RulesServiceException {
-        for (AlarmReportType alarmReport : request.getAlarm()) {
-            validate(alarmReport);
-            createAlarmReport(alarmReport);
+    @Inject
+    private MovementSender movementSender;
+
+    public void createTickets(CreateTicketRequest request) throws RulesServiceException {
+        List<TicketType> ticketTypes = request.getTickets();
+        for (TicketType ticketType : ticketTypes) {
+            try {
+                rulesDomainModel.createTicket(ticketType);
+            } catch (RulesModelException e) {
+                throw new RulesServiceException("Error creating ticket",e);
+            }
         }
     }
 
-    private void validate(AlarmReportType alarmReportType) throws RulesServiceException  {
-        if(alarmReportType == null) throw new InputArgumentException("AlarmReportType cannot be null");
-        if(alarmReportType.getAlarmItem().isEmpty()) throw new InputArgumentException("AlarmItem list was empty");
+    public List<AlarmReportType> createAlarmReport(CreateAlarmsReportRequest request) throws RulesServiceException {
+        validateAndEnrichAlarmReportsWithMovementInfo(request.getAlarm());
+        List<AlarmReportType> reportTypeList = new ArrayList<>();
+        for (AlarmReportType alarmReport : request.getAlarm()) {
+            reportTypeList.add(createAlarmReport(alarmReport));
+        }
+        return reportTypeList;
     }
 
-    private void createAlarmReport(AlarmReportType alarmReport) {
+    private AlarmReportType createAlarmReport(AlarmReportType alarmReport) {
+        AlarmReportType createdAlarmReport = null;
         try {
             alarmReport.setStatus(AlarmStatusType.OPEN);
-//            alarmReport.setUpdatedBy("UVMS");
-//            alarmReport.setPluginType(fact.getPluginType());
+            alarmReport.setUpdatedBy(alarmReport.getUpdatedBy());
+            alarmReport.setPluginType(alarmReport.getPluginType());
             alarmReport.setInactivatePosition(false);
-            AlarmReportType createdAlarmReport = rulesDomainModel.createAlarmReport(alarmReport);
+
+            createdAlarmReport = rulesDomainModel.createAlarmReport(alarmReport);
             // Notify long-polling clients of the new alarm report
             alarmReportEvent.fire(new NotificationMessage("guid", createdAlarmReport.getGuid()));
             // Notify long-polling clients of the change (no value since FE will need to fetch it)
@@ -86,6 +112,7 @@ public class AlarmReportsServiceBean {
         } catch (RulesModelException e) {
             log.error("[ Failed to create alarm! ] {}", e.getMessage());
         }
+        return createdAlarmReport;
     }
 
     private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {
@@ -96,5 +123,32 @@ public class AlarmReportsServiceBean {
         catch (AuditModelMarshallException | MessageException e) {
             log.error("[ Error when sending message to Audit. ] {}", e.getMessage());
         }
+    }
+
+    private void validateAndEnrichAlarmReportsWithMovementInfo(List<AlarmReportType> alarmReports){
+        Map<String,RawMovementType> existingGuidListMap = alarmReports.stream()
+                .map(this::validateAndGetRowMovement)
+                .filter(not(RawMovementType::isGuidGenerated))
+                .collect(Collectors.toMap(RawMovementType::getGuid, Function.identity()));
+        if(existingGuidListMap.isEmpty()) return;
+
+        List<MovementBaseType> movementBaseTypes = movementSender.findRawMovements(new ArrayList<>(existingGuidListMap.keySet()));
+        if(movementBaseTypes == null || movementBaseTypes.isEmpty()) return;
+
+        movementBaseTypes.forEach(mb -> enrichRawMovement(existingGuidListMap.get(mb.getGuid()),mb));
+    }
+
+    private RawMovementType validateAndGetRowMovement(AlarmReportType alarmReportType){
+        validate(alarmReportType);
+        return alarmReportType.getRawMovement();
+    }
+
+    private void validate(AlarmReportType alarmReportType) throws RulesServiceException  {
+        if(alarmReportType == null) throw new InputArgumentException("AlarmReportType cannot be null");
+        if(alarmReportType.getAlarmItem().isEmpty()) throw new InputArgumentException("AlarmItem list was empty");
+    }
+
+    private static <T> Predicate<T> not(Predicate<T> t) {
+        return t.negate();
     }
 }

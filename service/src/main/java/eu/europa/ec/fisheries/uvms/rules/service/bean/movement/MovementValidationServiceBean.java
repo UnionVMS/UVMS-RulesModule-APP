@@ -574,11 +574,10 @@ public class MovementValidationServiceBean implements ValidationService {
     @Override
     public long getNumberOfOpenTickets(String userName) throws RulesServiceException, RulesFaultException {
         try {
-            long numberOfOpenTickets = rulesDomainModel.getNumberOfOpenTickets(userName);
-            return numberOfOpenTickets;
+            return rulesDomainModel.getNumberOfOpenTickets(userName);
         } catch (RulesModelException e) {
             LOG.error("[ Error when getting number of open tickets ] {}", e.getMessage());
-            throw new RulesServiceException("[ Error when getting number of open alarms. ]");
+            throw new RulesServiceException("[ Error when getting number of open alarms. ]",e);
         }
     }
 
