@@ -550,7 +550,7 @@ public class RulesMovementProcessorBeanTest {
         rulesMovementProcessorBean.setMovementReportReceived(request, messageGuid);
 
         ArgumentCaptor<String> createMovementRequestCaptor = ArgumentCaptor.forClass(String.class);
-        verify(movementProducer).sendModuleMessage(createMovementRequestCaptor.capture(), any());
+        verify(movementProducer).sendModuleMessageInGroup(createMovementRequestCaptor.capture(), any(), anyString());
         CreateMovementBatchRequest createMovementBatchRequest = JAXBUtils.unMarshallMessage(createMovementRequestCaptor.getValue(), CreateMovementBatchRequest.class);
         assertNotNull(createMovementBatchRequest);
         assertNotNull(createMovementBatchRequest.getMovement());
@@ -593,7 +593,7 @@ public class RulesMovementProcessorBeanTest {
 
     private void setupMovementModuleConversation() throws MessageException, JMSException, JAXBException {
         String movementMessageId = UUID.randomUUID().toString();
-        when(movementProducer.sendModuleMessage(anyString(), any())).thenReturn(movementMessageId);
+        when(movementProducer.sendModuleMessageInGroup(anyString(), any(), anyString())).thenReturn(movementMessageId);
         TextMessage movJmsResponse = mock(TextMessage.class);
         String movJmsResponseCorrId = UUID.randomUUID().toString();
         when(movJmsResponse.getJMSCorrelationID()).thenReturn(movJmsResponseCorrId);
