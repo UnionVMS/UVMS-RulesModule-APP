@@ -110,6 +110,14 @@ public class RulesEventMessageConsumerBean implements MessageListener {
     private Event<EventMessage> getFluxMdrSynchMessageResponse;
 
     @Inject
+    @SendFluxMovementReportEvent
+    private Event<EventMessage> sendFluxMovementReportEvent;
+
+    @Inject
+    @CreateAlarmReceivedEvent
+    private Event<EventMessage> createAlarmReceivedEvent;
+
+    @Inject
     @ErrorEvent
     private Event<EventMessage> errorEvent;
 
@@ -166,6 +174,12 @@ public class RulesEventMessageConsumerBean implements MessageListener {
                     break;
                 case GET_FLUX_MDR_SYNC_RESPONSE :
                     getFluxMdrSynchMessageResponse.fire(eventMessage);
+                    break;
+                case SEND_FLUX_MOVEMENT_REPORT:
+                    sendFluxMovementReportEvent.fire(eventMessage);
+                    break;
+                case CREATE_ALARMS_REPORT_REQUEST :
+                    createAlarmReceivedEvent.fire(eventMessage);
                     break;
                 default:
                     LOG.error("[ Request method '{}' is not implemented ]", method.name());

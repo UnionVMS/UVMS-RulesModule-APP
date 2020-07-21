@@ -35,6 +35,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.EventService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaQueryServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.alarms.AlarmReportsServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MdrRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
@@ -85,6 +86,9 @@ public class RulesEventServiceBean implements EventService {
 
     @EJB
     private SalesRulesMessageServiceBean salesRulesMessageServiceBean;
+
+    @EJB
+    private AlarmReportsServiceBean alarmReportsServiceBean;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -311,6 +315,30 @@ public class RulesEventServiceBean implements EventService {
             log.error(" Error while trying to send Response to a GetValidationResultsByRawGuid to the Requestor Module..", e);
         }
     }
+
+    @Override
+    public void sendFluxMovementReportEvent(@Observes @SendFluxMovementReportEvent EventMessage message) {
+        log.info(" Received SendFluxMovementReportEvent..");
+        TextMessage jmsRequestMessage = message.getJmsMessage();
+        SendFLUXMovementReportRequest request = (SendFLUXMovementReportRequest) message.getRulesBaseRequest();
+        try {
+            rulesService.sendMovementReport(request, jmsRequestMessage.getJMSMessageID());
+        } catch (RulesServiceException | JMSException e) {
+            log.error(" Error when forwarding movement report {}", e.getMessage());
+        }
+    }
+
+    @Override
+    public void createAlarmReceivedEvent(@Observes @CreateAlarmReceivedEvent EventMessage message) {
+        log.info("Received event to create alarm..");
+        try {
+            CreateAlarmsReportRequest request = (CreateAlarmsReportRequest) message.getRulesBaseRequest();
+            alarmReportsServiceBean.createAlarmReport(request);
+        } catch (RulesServiceException e) {
+            log.error(" Error when creating creating alarm {}", e.getMessage());
+        }
+    }
+
 
     @SuppressWarnings("unused")
 	private void sendAuditMessage(AuditObjectTypeEnum type, AuditOperationEnum operation, String affectedObject, String comment, String username) {

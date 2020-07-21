@@ -10,7 +10,7 @@
  * copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 
- package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
+package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
@@ -43,6 +43,7 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationTyp
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsResponse;
+import eu.europa.ec.fisheries.schema.rules.module.v1.SendFLUXMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
@@ -126,6 +127,7 @@ import javax.xml.bind.JAXBException;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.fisheries.uvms.movement.model.exception.ErrorCode.MOVEMENT_DUPLICATE_ERROR;
 
@@ -190,6 +192,8 @@ public class RulesMovementProcessorBean {
     @AlarmReportCountEvent
     private Event<NotificationMessage> alarmReportCountEvent;
 
+    private Map<String, MovementTypeType> mapToMovementType;
+
     @Inject
     void setMdrCache(MDRCache mdrCache) {
         mapToMovementType = new HashMap<>();
@@ -217,8 +221,16 @@ public class RulesMovementProcessorBean {
                     }
                 }));
     }
-    private Map<String, MovementTypeType> mapToMovementType;
 
+    public void sendMovementReport(SendFLUXMovementReportRequest request, String messageGuid) throws RulesServiceException {
+        log.info("Sending Movement Report to exchange");
+        try {
+            String exchangeMessageText = ExchangeMovementMapper.mapToFluxMovementReport(request.getRequest(), request.getUsername(), request.getSenderOrReceiver(), request.getFluxDataFlow(), request.getLogGuid());
+            exchangeProducer.sendModuleMessage(exchangeMessageText, consumer.getDestination());
+        } catch (ExchangeModelMapperException | MessageException e) {
+            log.error("Error while send movement report to exchnge", e);
+        }
+    }
 
     public void setMovementReportReceived(SetFLUXMovementReportRequest request, String messageGuid) throws RulesServiceException {
         FLUXVesselPositionMessage fluxVesselPositionMessage;
@@ -673,7 +685,9 @@ public class RulesMovementProcessorBean {
             try {
                 String createMovementRequest = MovementModuleRequestMapper.mapToCreateMovementBatchRequest(movementBatch, username);
                 log.debug("Send CreateMovementRequest message to Movement");
-                String messageId = movementProducer.sendModuleMessage(createMovementRequest, consumer.getDestination());
+                warnOnMultipleConnectIds(connectIds);
+                String connectId = connectIds.get(0);
+                String messageId = movementProducer.sendModuleMessageInGroup(createMovementRequest, consumer.getDestination(), connectId);
                 TextMessage movJmsResponse = consumer.getMessage(messageId, TextMessage.class, 2400000L);
                 log.debug("Received response message");
                 movementSimpleResponse = MovementModuleResponseMapper.mapToCreateMovementBatchResponse(movJmsResponse);
@@ -690,6 +704,16 @@ public class RulesMovementProcessorBean {
             return movementSimpleResponse;
         } catch (RulesServiceException | NullPointerException e) {
             throw new RulesServiceException("Error likely caused by a duplicate movement.", e);
+        }
+    }
+
+    private void warnOnMultipleConnectIds(List<String> connectIds) {
+        if (connectIds.size() == 1) {
+            return;
+        }
+        Set<String> uniqueConnectIds = new HashSet<>(connectIds);
+        if (uniqueConnectIds.size() > 1) {
+            log.warn("*** connectIds with {} different elements, the JMSXGroupId will be wrong! The first two elements are: {} ***", uniqueConnectIds.size(), uniqueConnectIds.stream().limit(2).collect(Collectors.joining(",","[","]")));
         }
     }
 
@@ -1093,6 +1117,9 @@ public class RulesMovementProcessorBean {
                     continue;
                 }
 
+                if(alarm.getAlarmItem().stream().map(a -> a.getRuleGuid() == null).findAny().orElse(false)) {
+                    throw new RulesServiceException("Cannot reprocess an alarm that is not rule originated");
+                }
                 // Mark the alarm as REPROCESSED before reprocessing. That will create a new alarm (if still wrong) with the items remaining.
                 alarm.setStatus(AlarmStatusType.REPROCESSED);
                 alarm = updateAlarmStatus(alarm);

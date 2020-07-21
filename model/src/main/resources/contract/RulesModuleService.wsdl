@@ -50,6 +50,8 @@
                     <xsd:enumeration value="SEND_FLUX_FA_QUERY"/>
                     <xsd:enumeration value="SET_FLUX_RESPONSE"/>
                     <xsd:enumeration value="RCV_FLUX_RESPONSE"/>
+                    <xsd:enumeration value="SEND_FLUX_MOVEMENT_REPORT"/>
+
 
                     <!-- MDR Cache -->
                     <xsd:enumeration value="SET_FLUX_MDR_SYNC_REQUEST"/>
@@ -62,6 +64,7 @@
                     <xsd:enumeration value="SEND_SALES_REPORT"/>
                     <xsd:enumeration value="SEND_SALES_RESPONSE"/>
                     <xsd:enumeration value="GET_VALIDATION_RESULT_BY_RAW_GUID_REQUEST"/>
+                    <xsd:enumeration value="CREATE_ALARMS_REPORT_REQUEST"/>
                 </xsd:restriction>
             </xsd:simpleType>
 
@@ -83,7 +86,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="module:RulesBaseRequest">
                             <xsd:sequence>
-                                <xsd:element name="type" type="exchange:PluginType"/>
+                                <xsd:element name="pluginType" type="exchange:PluginType"/>
                                 <xsd:element name="request" type="xsd:string"/>
                                 <xsd:element name="isEmptyReport" type="xsd:boolean"/>
                             </xsd:sequence>
@@ -276,6 +279,19 @@
                 </xsd:complexType>
             </xsd:element>
 
+            <xsd:element name="SendFLUXMovementReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="type" type="exchange:PluginType"/>
+                                <xsd:element name="request" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
             <!-- Create custom rule request -->
             <xsd:element name="CreateCustomRuleRequest">
                 <xsd:complexType>
@@ -362,6 +378,19 @@
                     <xsd:sequence>
                         <xsd:element name="ack" type="xsd:string"/>
                     </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Create alarm report request -->
+            <xsd:element name="CreateAlarmsReportRequest">
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:RulesBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="alarm" type="alarm:AlarmReportType" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
 

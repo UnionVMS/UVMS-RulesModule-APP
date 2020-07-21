@@ -50,15 +50,16 @@ import static eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType.FA_QUERY_ID;
 import static eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType.FA_REPORT_REF_ID;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RESPONSE_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.SchemaInitializer.SCHEMA_MAP;
 import static java.util.Collections.singletonList;
 
 @Slf4j
 public class RulesFLUXMessageHelper {
 
     public static final String FLUX_LOCAL_NATION_CODE = "flux_local_nation_code";
-    private static final String FLUXFAREPORT_MESSAGE_3P1_XSD = "xsd/contract/fa/data/standard/FLUXFAReportMessage_3p1.xsd";
-    private static final String FLUXFAQUERY_MESSAGE_3P0_XSD = "xsd/contract/fa/data/standard/FLUXFAQueryMessage_3p0.xsd";
-    private static final String FLUXFARESPONSE_MESSAGE_6P0_XSD = "xsd/contract/fa/data/standard/FLUXResponseMessage_6p0.xsd";
+    public static final String FLUXFAREPORT_MESSAGE_3P1_XSD = "xsd/contract/slim/FLUXFAReportMessage_3p1.xsd";
+    public static final String FLUXFAQUERY_MESSAGE_3P0_XSD = "xsd/contract/slim/FLUXFAQueryMessage_3p0.xsd";
+    public static final String FLUXFARESPONSE_MESSAGE_6P0_XSD = "xsd/contract/slim/FLUXResponseMessage_6p0.xsd";
     private static final String DASH = "-";
 
     private FAReportQueryResponseIdsMapper faIdsMapper = new FAReportQueryResponseIdsMapperImpl();
@@ -203,7 +204,7 @@ public class RulesFLUXMessageHelper {
 
     public FLUXFAReportMessage unMarshallAndValidateSchema(String request) throws UnmarshalException {
         try {
-            return JAXBUtils.unMarshallMessage(request, FLUXFAReportMessage.class, loadXSDSchema(FLUXFAREPORT_MESSAGE_3P1_XSD));
+            return JAXBUtils.unMarshallMessage(request, FLUXFAReportMessage.class, SCHEMA_MAP.get(FLUXFAREPORT_MESSAGE_3P1_XSD));
         } catch (Exception e) {
             throw new UnmarshalException(e.getCause().getLocalizedMessage());
         }
@@ -211,7 +212,7 @@ public class RulesFLUXMessageHelper {
 
     public FLUXFAQueryMessage unMarshallFaQueryMessage(String request) throws UnmarshalException {
         try {
-            return JAXBUtils.unMarshallMessage(request, FLUXFAQueryMessage.class, loadXSDSchema(FLUXFAQUERY_MESSAGE_3P0_XSD));
+            return JAXBUtils.unMarshallMessage(request, FLUXFAQueryMessage.class,  SCHEMA_MAP.get(FLUXFAQUERY_MESSAGE_3P0_XSD));
         } catch (Exception e) {
             throw new UnmarshalException(e.getCause().getLocalizedMessage());
         }
@@ -219,23 +220,10 @@ public class RulesFLUXMessageHelper {
 
     public FLUXResponseMessage unMarshallFluxResponseMessage(String request) throws UnmarshalException {
         try {
-            return JAXBUtils.unMarshallMessage(request, FLUXResponseMessage.class, loadXSDSchema(FLUXFARESPONSE_MESSAGE_6P0_XSD));
+            return JAXBUtils.unMarshallMessage(request, FLUXResponseMessage.class, SCHEMA_MAP.get(FLUXFARESPONSE_MESSAGE_6P0_XSD));
         } catch (Exception e) {
             throw new UnmarshalException(e.getCause().getLocalizedMessage());
         }
-    }
-
-    public Schema loadXSDSchema(String xsdLocation) throws UnmarshalException {
-        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        URL resource = RulesFLUXMessageHelper.class.getClassLoader().getResource(xsdLocation);
-        if (resource != null) {
-            try {
-                return sf.newSchema(resource);
-            } catch (SAXException e) {
-                throw new UnmarshalException(e.getMessage(), e);
-            }
-        }
-        throw new UnmarshalException("ERROR WHILE TRYING TO LOOKUP XSD SCHEMA");
     }
 
     public String getIDs(FLUXResponseMessage fluxResponseMessageObj) {

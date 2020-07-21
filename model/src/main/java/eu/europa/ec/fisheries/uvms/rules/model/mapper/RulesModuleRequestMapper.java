@@ -54,7 +54,7 @@ public class RulesModuleRequestMapper {
         SetFLUXFAReportMessageRequest request = new SetFLUXFAReportMessageRequest();
         request.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
         request.setRequest(fluxFAReportMessage);
-        request.setType(type);
+        request.setPluginType(type);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
@@ -94,6 +94,16 @@ public class RulesModuleRequestMapper {
         SetFaQueryMessageRequest request = new SetFaQueryMessageRequest();
         request.setMethod(RulesModuleMethod.SEND_FLUX_FA_QUERY);
         request.setRequest(faQueryMessageStr);
+        populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, null);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String createSendFluxMovementReportMessageRequest(PluginType type, String forwardPositionMessageStr, String username, String logId, String fluxDataFlow,
+                                                         String senderOrReceiver) throws RulesModelMapperException {
+        SendFLUXMovementReportRequest request = new SendFLUXMovementReportRequest();
+        request.setMethod(RulesModuleMethod.SEND_FLUX_MOVEMENT_REPORT);
+        request.setRequest(forwardPositionMessageStr);
+        request.setType(type);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, null);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
