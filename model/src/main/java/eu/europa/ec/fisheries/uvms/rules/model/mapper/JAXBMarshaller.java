@@ -11,28 +11,23 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.rules.model.mapper;
 
+import eu.europa.ec.fisheries.uvms.commons.xml.AbstractJAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.commons.xml.JAXBRuntimeException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JAXBMarshaller {
+public class JAXBMarshaller extends AbstractJAXBMarshaller {
 
     private final static Logger LOG = LoggerFactory.getLogger(JAXBMarshaller.class);
-
-    private static Map<String, JAXBContext> contexts = new HashMap<>();
 
     /**
      * Marshalls a JAXB Object to a XML String representation
@@ -45,23 +40,10 @@ public class JAXBMarshaller {
      */
     public static <T> String marshallJaxBObjectToString(T data) throws RulesModelMarshallException {
         try {
-            JAXBContext jaxbContext = contexts.get(data.getClass().getName());
-            if (jaxbContext == null) {
-                long before = System.currentTimeMillis();
-                jaxbContext = JAXBContext.newInstance(data.getClass());
-                contexts.put(data.getClass().getName(), jaxbContext);
-                LOG.debug("Stored contexts: {}", contexts.size());
-                LOG.debug("JAXBContext creation time: {}", (System.currentTimeMillis() - before));
-            }
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            StringWriter sw = new StringWriter();
-            marshaller.marshal(data, sw);
-            long before = System.currentTimeMillis();
-            String marshalled = sw.toString();
-            LOG.debug("StringWriter time: {}", (System.currentTimeMillis() - before));
-            return marshalled;
-        } catch (JAXBException ex) {
+            Map<String,Object> properties = new HashMap<>();
+            properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            return marshallToString(data, properties);
+        } catch (JAXBException | JAXBRuntimeException ex) {
             LOG.error("[ Error when marshalling object to string ] {} ", ex.getMessage());
             throw new RulesModelMarshallException("[ Error when marshalling Object to String ]", ex);        }
     }
@@ -77,48 +59,23 @@ public class JAXBMarshaller {
      * @throws
      * eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException
      */
-    public static <R> R unmarshallTextMessage(TextMessage textMessage, Class clazz) throws RulesModelMarshallException {
+    public static <R> R unmarshallTextMessage(TextMessage textMessage, Class<R> clazz) throws RulesModelMarshallException {
         try {
-            JAXBContext jc = contexts.get(clazz.getName());
-            if (jc == null) {
-                long before = System.currentTimeMillis();
-                jc = JAXBContext.newInstance(clazz);
-                contexts.put(clazz.getName(), jc);
-                LOG.debug("Stored contexts: {}", contexts.size());
-                LOG.debug("JAXBContext creation time: {}", (System.currentTimeMillis() - before));
-            }
-            Unmarshaller unmarshaller = jc.createUnmarshaller();
-            StringReader sr = new StringReader(textMessage.getText());
-            StreamSource source = new StreamSource(sr);
-            long before = System.currentTimeMillis();
-            R object = (R) unmarshaller.unmarshal(source);
-            LOG.debug("Unmarshalling time: {}", (System.currentTimeMillis() - before));
-            return object;
-        } catch (JMSException | JAXBException ex) {
+            return unMarshallMessage(textMessage.getText(),clazz);
+        } catch (JMSException ex) {
             throw new RulesModelMarshallException("[Error when unmarshalling response in ResponseMapper. Expected class was " + clazz.getName() + " ]", ex);
         }
     }
 
-    public static <R> R unMarshallMessage(String textMessage, Class clazz, Schema schema) throws RulesModelMarshallException {
-        try {
-            JAXBContext jc = JAXBContext.newInstance(clazz);
-            Unmarshaller unmarshaller = jc.createUnmarshaller();
-            if (schema != null){
-                unmarshaller.setSchema(schema);
-            }
-            StringReader sr = new StringReader(textMessage);
-            StreamSource source = new StreamSource(sr);
-            long before = System.currentTimeMillis();
-            R object = (R) unmarshaller.unmarshal(source);
-            LOG.debug("Unmarshalling time: {}", (System.currentTimeMillis() - before));
-            return object;
-        } catch (JAXBException ex) {
+    public static <R> R unMarshallMessage(String textMessage, Class<R> clazz) throws RulesModelMarshallException {
+        return unMarshallMessage(textMessage, clazz,null);
+    }
+
+    public static <R> R unMarshallMessage(String textMessage, Class<R> clazz, Schema schema) throws RulesModelMarshallException {
+        try{
+            return unmarshallTo(textMessage, clazz, schema);
+        } catch (JAXBException | JAXBRuntimeException ex) {
             throw new RulesModelMarshallException("[Error when unmarshalling response in ResponseMapper. Expected class was " + clazz.getName() + " ]", ex);
         }
     }
-
-    public static <R> R unMarshallMessage(String textMessage, Class clazz) throws RulesModelMarshallException {
-        return unMarshallMessage(textMessage, clazz, null);
-    }
-
 }

@@ -63,6 +63,11 @@
             <artifactId>javaee-api</artifactId>
             <version>${javaee.version}</version>
         </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <artifactId>uvms-commons-xml</artifactId>
+            <version>${uvms.commons.version}</version>
+        </dependency>
     </dependencies>
 
     <repositories>
