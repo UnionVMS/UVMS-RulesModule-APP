@@ -27,7 +27,8 @@ import lombok.Data;
 @NamedQueries({
         @NamedQuery(name = UvmsConstants.FIND_TICKET_BY_GUID, query = "SELECT t FROM Ticket t WHERE t.guid = :guid"),
         @NamedQuery(name = UvmsConstants.FIND_TICKET_BY_ASSET_AND_RULE, query = "SELECT t FROM Ticket t WHERE t.assetGuid = :assetGuid and status <> 'CLOSED' and ruleGuid = :ruleGuid"),
-        @NamedQuery(name = UvmsConstants.COUNT_OPEN_TICKETS, query = "SELECT count(t) FROM Ticket t where t.status = 'OPEN' AND t.ruleGuid IN :validRuleGuids"),
+        @NamedQuery(name = UvmsConstants.COUNT_OPEN_TICKETS, query = "SELECT count(t) FROM Ticket t where t.status = 'OPEN' AND (t.ruleGuid IN :validRuleGuids OR t.ruleGuid IS NULL)"),
+        @NamedQuery(name = UvmsConstants.COUNT_OPEN_TICKETS_NO_RULES, query = "SELECT count(t) FROM Ticket t where t.status = 'OPEN' AND t.ruleGuid IS NULL"),
         @NamedQuery(name = UvmsConstants.FIND_TICKETS_BY_MOVEMENTS, query = "SELECT t FROM Ticket t where t.movementGuid IN :movements"),
         @NamedQuery(name = UvmsConstants.COUNT_TICKETS_BY_MOVEMENTS, query = "SELECT count(t) FROM Ticket t where t.movementGuid IN :movements"),
         @NamedQuery(name = UvmsConstants.COUNT_ASSETS_NOT_SENDING, query = "SELECT count(t) FROM Ticket t where t.ruleGuid = :ruleGuid")

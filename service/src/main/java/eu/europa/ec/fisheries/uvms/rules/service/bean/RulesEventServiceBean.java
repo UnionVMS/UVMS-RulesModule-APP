@@ -35,7 +35,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.EventService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaQueryServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.alarms.AlarmReportsServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.alarms.AlarmsServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MdrRulesMessageServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.RulesMovementProcessorBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.SalesRulesMessageServiceBean;
@@ -88,7 +88,7 @@ public class RulesEventServiceBean implements EventService {
     private SalesRulesMessageServiceBean salesRulesMessageServiceBean;
 
     @EJB
-    private AlarmReportsServiceBean alarmReportsServiceBean;
+    private AlarmsServiceBean alarmsServiceBean;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -333,7 +333,18 @@ public class RulesEventServiceBean implements EventService {
         log.info("Received event to create alarm..");
         try {
             CreateAlarmsReportRequest request = (CreateAlarmsReportRequest) message.getRulesBaseRequest();
-            alarmReportsServiceBean.createAlarmReport(request);
+            alarmsServiceBean.createAlarmReport(request);
+        } catch (RulesServiceException e) {
+            log.error(" Error when creating creating alarm {}", e.getMessage());
+        }
+    }
+
+    @Override
+    public void createTicketsReceivedEvent(@Observes @CreateTicketsReceivedEvent EventMessage message) {
+        log.info("Received event to create tickets..");
+        try {
+            CreateTicketRequest request = (CreateTicketRequest) message.getRulesBaseRequest();
+            alarmsServiceBean.createTickets(request);
         } catch (RulesServiceException e) {
             log.error(" Error when creating creating alarm {}", e.getMessage());
         }

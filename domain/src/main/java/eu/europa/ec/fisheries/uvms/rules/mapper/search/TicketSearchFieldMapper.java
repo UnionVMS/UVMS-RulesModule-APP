@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -40,42 +40,13 @@ public class TicketSearchFieldMapper {
      */
     public static String createSelectSearchSql(List<TicketSearchValue> searchFields, List<String> validRuleGuids, boolean isDynamic) throws SearchMapperException {
         StringBuilder selectBuffer = new StringBuilder();
-        selectBuffer.append("SELECT ")
-                .append(TicketSearchTables.TICKET.getTableAlias())
-                .append(" FROM ")
-                .append(TicketSearchTables.TICKET.getTableName())
-                .append(" ")
-                .append(TicketSearchTables.TICKET.getTableAlias())
-                .append(" ");
-        if (searchFields != null && !searchFields.isEmpty()) {
-            selectBuffer.append(createSearchSql(searchFields, isDynamic));
-
-            selectBuffer.append(" AND ");
-        } else {
-            selectBuffer.append(" WHERE ");
-        }
-        selectBuffer.append(TicketSearchTables.TICKET.getTableAlias())
-                .append(".")
-                .append(TicketSearchField.RULE_GUID.getFieldName());
-
-        selectBuffer.append(" IN ( ");
-        selectBuffer.append("'").append(UvmsConstants.ASSET_NOT_SENDING_RULE).append("'");
-        for (String validRuleGuid : validRuleGuids) {
-            selectBuffer.append(", ");
-            selectBuffer.append("'").append(validRuleGuid).append("'");
-        }
-        selectBuffer.append(" )");
-
-        selectBuffer
-                .append(" ORDER BY ")
-                .append(TicketSearchTables.TICKET.getTableAlias())
-                .append(".")
-                .append(TicketSearchField.FROM_DATE.getFieldName())
-                .append(" DESC");
-        LOG.info("[ SQL: ] {}", selectBuffer.toString());
-        return selectBuffer.toString();
+        selectBuffer.append("SELECT {ticket_alias} ");
+        queryBody(selectBuffer,searchFields,validRuleGuids,isDynamic);
+        selectBuffer.append("ORDER BY {ticket_alias}.{from_date} DESC");
+        String query = replaceTemplates(selectBuffer);
+        LOG.info("[ SQL: ] {}", query);
+        return query;
     }
-
     /**
      *
      * Creates a JPQL count query based on the search fields. This is used for
@@ -88,33 +59,34 @@ public class TicketSearchFieldMapper {
      */
     public static String createCountSearchSql(List<TicketSearchValue> searchFields, List<String> validRuleGuids, boolean isDynamic) throws SearchMapperException {
         StringBuilder countBuffer = new StringBuilder();
-        countBuffer.append("SELECT COUNT(")
-                .append(TicketSearchTables.TICKET.getTableAlias())
-                .append(") FROM ")
-                .append(TicketSearchTables.TICKET.getTableName())
-                .append(" ")
-                .append(TicketSearchTables.TICKET.getTableAlias())
-                .append(" ");
+        countBuffer.append("SELECT COUNT({ticket_alias}) ");
+        queryBody(countBuffer,searchFields,validRuleGuids,isDynamic);
+        String query = replaceTemplates(countBuffer);
+        LOG.debug("[ COUNT SQL: ]{}", query);
+        return query;
+    }
+
+    private static void queryBody(StringBuilder buffer,List<TicketSearchValue> searchFields, List<String> validRuleGuids, boolean isDynamic) throws SearchMapperException {
+        buffer.append("FROM {ticket_table} {ticket_alias} ");
         if (searchFields != null && !searchFields.isEmpty()) {
-            countBuffer.append(createSearchSql(searchFields, isDynamic));
-            countBuffer.append(" AND ");
+            buffer.append(createSearchSql(searchFields, isDynamic));
+            buffer.append(" AND ");
         } else {
-            countBuffer.append(" WHERE ");
+            buffer.append(" WHERE ");
         }
-        countBuffer.append(TicketSearchTables.TICKET.getTableAlias())
-                .append(".")
-                .append(TicketSearchField.RULE_GUID.getFieldName());
-
-        countBuffer.append(" IN ( ");
-        countBuffer.append("'").append(UvmsConstants.ASSET_NOT_SENDING_RULE).append("'");
+        buffer.append("({ticket_alias}.{rule_guid} IN ('").append(UvmsConstants.ASSET_NOT_SENDING_RULE).append("'");
         for (String validRuleGuid : validRuleGuids) {
-            countBuffer.append(", ");
-            countBuffer.append("'").append(validRuleGuid).append("'");
+            buffer.append(",'").append(validRuleGuid).append("'");
         }
-        countBuffer.append(" )");
+        buffer.append(" ) OR {ticket_alias}.{rule_guid} IS NULL) ");
+    }
 
-        LOG.debug("[ COUNT SQL: ]{}", countBuffer.toString());
-        return countBuffer.toString();
+    private static String replaceTemplates(StringBuilder buffer) {
+        return buffer.toString()
+                .replace("{ticket_table}",TicketSearchTables.TICKET.getTableName())
+                .replace("{ticket_alias}",TicketSearchTables.TICKET.getTableAlias())
+                .replace("{rule_guid}",TicketSearchField.RULE_GUID.getFieldName())
+                .replace("{from_date}",TicketSearchField.FROM_DATE.getFieldName());
     }
 
     /**
@@ -291,7 +263,7 @@ public class TicketSearchFieldMapper {
             if (values.containsKey(search.getField())) {
                 values.get(search.getField()).add(search);
             } else {
-                values.put(search.getField(), new ArrayList<TicketSearchValue>(Arrays.asList(search)));
+                values.put(search.getField(), new ArrayList<>(Collections.singletonList(search)));
             }
         }
         return values;

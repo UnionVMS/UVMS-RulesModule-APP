@@ -19,7 +19,6 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
@@ -131,10 +130,6 @@ public class RulesDaoBean implements RulesDao {
             TypedQuery<Ticket> query = em.createNamedQuery(UvmsConstants.FIND_TICKETS_BY_MOVEMENTS, Ticket.class);
             query.setParameter("movements", movements);
             return query.getResultList();
-        } catch (NoResultException e) {
-            // TODO: Return empty list???
-            log.error("[ No tickets found for movements ]");
-            throw new NoEntityFoundException("[ No tickets found for movements ]", e);
         } catch (Exception e) {
             log.error("[ERROR] when getting Ticket by movements. {}", e.getMessage());
             throw new DaoException("[ERROR] when getting Ticket by movements. ", e);
@@ -160,8 +155,6 @@ public class RulesDaoBean implements RulesDao {
             TypedQuery<String> query = em.createNamedQuery(UvmsConstants.FIND_CUSTOM_RULE_GUID_FOR_TICKETS, String.class);
             query.setParameter("owner", owner);
             return query.getResultList();
-        } catch (NoResultException e) {
-            return new ArrayList<>();
         } catch (Exception e) {
             log.error("[ERROR] when getting Tickets by userName. {}", e.getMessage());
             throw new DaoException("[ERROR] when getting Tickets by userName. ", e);
@@ -182,8 +175,13 @@ public class RulesDaoBean implements RulesDao {
     @Override
     public long getNumberOfOpenTickets(List<String> validRuleGuids) throws DaoException {
         try {
-            TypedQuery<Long> query = em.createNamedQuery(UvmsConstants.COUNT_OPEN_TICKETS, Long.class);
-            query.setParameter("validRuleGuids", validRuleGuids);
+            TypedQuery<Long> query;
+            if (validRuleGuids.isEmpty()) {
+                query = em.createNamedQuery(UvmsConstants.COUNT_OPEN_TICKETS_NO_RULES, Long.class);
+            } else {
+                query = em.createNamedQuery(UvmsConstants.COUNT_OPEN_TICKETS, Long.class);
+                query.setParameter("validRuleGuids", validRuleGuids);
+            }
             return query.getSingleResult();
         } catch (NoResultException e) {
             return 0;
