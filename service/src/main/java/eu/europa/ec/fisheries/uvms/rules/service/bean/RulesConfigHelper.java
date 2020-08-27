@@ -29,7 +29,7 @@ public class RulesConfigHelper implements ConfigHelper {
     @Inject
     private PropertiesBean propertiesBean;
 
-    @PersistenceContext(unitName = "rules")
+    @PersistenceContext(unitName = "rulesPostgresPU")
     protected EntityManager em;
 
     @Override
