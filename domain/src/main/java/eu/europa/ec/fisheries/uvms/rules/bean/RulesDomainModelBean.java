@@ -39,6 +39,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.CustomRuleListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TemplateRuleMapDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -809,12 +810,14 @@ public class RulesDomainModelBean implements RulesDomainModel {
             // TODO: This can be done more efficiently with some join stuff
             List<Ticket> tickets = rulesDao.getTicketsByMovements(movementGuids);
             for (Ticket ticket : tickets) {
-                CustomRule rule = rulesDao.getCustomRuleByGuid(ticket.getRuleGuid());
                 TicketType ticketType = TicketMapper.toTicketType(ticket);
-                CustomRuleType ruleType = CustomRuleMapper.toCustomRuleType(rule);
                 TicketAndRuleType ticketsAndRule = new TicketAndRuleType();
                 ticketsAndRule.setTicket(ticketType);
-                ticketsAndRule.setRule(ruleType);
+                if(StringUtils.isNotEmpty(ticket.getRuleGuid())) {
+                    CustomRule rule = rulesDao.getCustomRuleByGuid(ticket.getRuleGuid());
+                    CustomRuleType ruleType = CustomRuleMapper.toCustomRuleType(rule);
+                    ticketsAndRule.setRule(ruleType);
+                }
                 ticketsAndRules.add(ticketsAndRule);
             }
             return ticketsAndRules;
