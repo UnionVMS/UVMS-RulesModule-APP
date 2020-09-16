@@ -125,6 +125,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -288,7 +289,12 @@ public class RulesMovementProcessorBean {
             extraValues.put(DATA_FLOW, request.getFluxDataFlow());
             Collection<AbstractFact> factsResults = rulesEngine.evaluate(RECEIVING_MOVEMENT_MSG,fluxVesselPositionMessage,extraValues,null);
 
-            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), String.valueOf(fluxVesselPositionMessage.getFLUXReportDocument().getIDS()), RawMsgType.MOVEMENT);
+            final String reportId = fluxVesselPositionMessage.getFLUXReportDocument().getIDS().stream()
+                    .filter(id -> "UUID".equals(id.getSchemeID()))
+                    .map(IDType::getValue)
+                    .findFirst()
+                    .get();
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), reportId, RawMsgType.MOVEMENT);
 
             if(validationResult.isError()){
                 exchangeServiceBean.updateExchangeMessage(request.getLogGuid(), fluxMessageHelper.calculateMessageValidationStatus(validationResult));
@@ -331,8 +337,8 @@ public class RulesMovementProcessorBean {
                 sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
             } else {
                 status = ExchangeLogStatusTypeType.FAILED;
+                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
             }
-            sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
             updateRequestMessageStatusInExchange(exchangeLogGuid, status);
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException e) {
             throw new RulesServiceException(e.getMessage(), e);
