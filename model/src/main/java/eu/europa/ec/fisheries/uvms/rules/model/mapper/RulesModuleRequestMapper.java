@@ -59,12 +59,12 @@ public class RulesModuleRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
-    public static String createSendFLUXFAReportMessageRequest(String fluxFAReportMessage, String username, String logId, String fluxDataFlow,
-                                                              String senderOrReceiver, String onValue, boolean isEmpty) throws RulesModelMapperException {
+    public static String createSendFLUXFAReportMessageRequest(String fluxFAReportMessage, String username, String logId, String fluxDataFlow, String senderOrReceiver, String onValue, boolean isEmpty) throws RulesModelMapperException {
         SetFLUXFAReportMessageRequest request = new SetFLUXFAReportMessageRequest();
         request.setMethod(RulesModuleMethod.SEND_FLUX_FA_REPORT);
         request.setRequest(fluxFAReportMessage);
         request.setIsEmptyReport(isEmpty);
+        request.setAd(senderOrReceiver);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
@@ -90,20 +90,22 @@ public class RulesModuleRequestMapper {
     }
 
     public static String createSendFaQueryMessageRequest(String faQueryMessageStr, String username, String logId, String fluxDataFlow,
-                                                         String senderOrReceiver) throws RulesModelMapperException {
+                                                         String senderOrReceiver, String ad) throws RulesModelMapperException {
         SetFaQueryMessageRequest request = new SetFaQueryMessageRequest();
         request.setMethod(RulesModuleMethod.SEND_FLUX_FA_QUERY);
         request.setRequest(faQueryMessageStr);
+        request.setAd(ad);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, null);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
     public static String createSendFluxMovementReportMessageRequest(PluginType type, String forwardPositionMessageStr, String username, String logId, String fluxDataFlow,
-                                                         String senderOrReceiver) throws RulesModelMapperException {
+                                                         String senderOrReceiver,String ad) throws RulesModelMapperException {
         SendFLUXMovementReportRequest request = new SendFLUXMovementReportRequest();
         request.setMethod(RulesModuleMethod.SEND_FLUX_MOVEMENT_REPORT);
         request.setRequest(forwardPositionMessageStr);
         request.setType(type);
+        request.setAd(ad);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, null);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }

@@ -225,10 +225,10 @@ public class RulesMovementProcessorBean {
     public void sendMovementReport(SendFLUXMovementReportRequest request, String messageGuid) throws RulesServiceException {
         log.info("Sending Movement Report to exchange");
         try {
-            String exchangeMessageText = ExchangeMovementMapper.mapToFluxMovementReport(request.getRequest(), request.getUsername(), request.getSenderOrReceiver(), request.getFluxDataFlow(), request.getLogGuid());
+            String exchangeMessageText = ExchangeMovementMapper.mapToFluxMovementReport(request.getRequest(), request.getUsername(), request.getSenderOrReceiver(), request.getFluxDataFlow(), request.getLogGuid(),request.getAd());
             exchangeProducer.sendModuleMessage(exchangeMessageText, consumer.getDestination());
         } catch (ExchangeModelMapperException | MessageException e) {
-            log.error("Error while send movement report to exchnge", e);
+            log.error("Error while send movement report to exchange", e);
         }
     }
 
