@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4792-drop-FA-L03-00-0061-rule" author="nomikosi">
+
+        <delete tableName="context_expression">
+            <where>rule_id=:value</where>
+            <whereParams>
+                <param name="value" value="61" />
+            </whereParams>
+        </delete>
+       <delete tableName="rule">
+           <where>br_id=:value</where>
+           <whereParams>
+               <param name="value" value="FA-L03-00-0061" />
+           </whereParams>
+       </delete>
+
+        <rollback>
+            <insert tableName="rule">
+                <column name="rule_id" value="61" />
+                <column name="br_id" value="FA-L03-00-0061" />
+                <column name="note" value="If a register is available."/>
+                <column name="level" value="L01"/>
+                <column name="error_type" value="ERROR"/>
+                <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+                <column name="template_id" value="3"/>
+                <column name="property_names" value="registrationVesselCountryId"/>
+                <column name="disabled" value="false"/>
+            </insert>
+            <insert tableName="context_expression">
+                <column name="id" value="61"/>
+                <column name="rule_id" value="61"/>
+                <column name="context" value="EU"/>
+                <column name="expression"
+                        value="isEmpty(ids) &amp;&amp; registrationVesselCountryId != null &amp;&amp;
+                ((mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value, creationDateOfMessage) &amp;&amp; !containsAtLeastOneCorrectIdOfTheRequired(&quot;CFR&quot;))
+                || (!mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value, creationDateOfMessage)
+                &amp;&amp; (!containsAtLeastOneCorrectIdOfTheRequired(&quot;IRCS&quot;) || !containsAtLeastOneCorrectIdOfTheRequired(&quot;EXT_MARK&quot;))))"/>
+                <column name="failure_message" value="Invalid value for country of registration."/>
+            </insert>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4792-drop-FA-L03-00-0066-rule" author="nomikosi">
+
+        <delete tableName="context_expression">
+            <where>rule_id=:value</where>
+            <whereParams>
+                <param name="value" value="66" />
+            </whereParams>
+        </delete>
+        <delete tableName="rule">
+            <where>br_id=:value</where>
+            <whereParams>
+                <param name="value" value="FA-L03-00-0066" />
+            </whereParams>
+        </delete>
+
+        <rollback>
+            <insert tableName="rule">
+                <column name="rule_id" value="66" />
+                <column name="br_id" value="FA-L03-00-0066" />
+                <column name="note" value="If a register is available."/>
+                <column name="level" value="L03"/>
+                <column name="error_type" value="WARNING"/>
+                <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+                <column name="template_id" value="3"/>
+                <column name="property_names" value="ids"/>
+                <column name="disabled" value="false"/>
+            </insert>
+            <insert tableName="context_expression">
+                <column name="id" value="66"/>
+                <column name="rule_id" value="66"/>
+                <column name="context" value="EU"/>
+                <column name="expression"
+                        value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; transportMeans != null  &amp;&amp; transportMeans.asset == null"/>
+                <column name="failure_message" value="Vessel ID IRCS and external marking are provided, but the vessel is not registered on a list non-EU vessels."/>
+            </insert>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4792-drop-FA-L02-00-0339-rule" author="nomikosi">
+        <delete tableName="context_expression">
+            <where>rule_id=:value</where>
+            <whereParams>
+                <param name="value" value="339" />
+            </whereParams>
+        </delete>
+        <delete tableName="rule">
+            <where>br_id=:value</where>
+            <whereParams>
+                <param name="value" value="FA-L02-00-0339" />
+            </whereParams>
+        </delete>
+
+        <rollback>
+            <insert tableName="rule">
+                <column name="rule_id" value="339" />
+                <column name="br_id" value="FA-L02-00-0339" />
+                <column name="note" value="If transhipment or relocation notification (FA-L02-00-0330) and if provided"/>
+                <column name="level" value="L02"/>
+                <column name="error_type" value="WARNING"/>
+                <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+                <column name="template_id" value="28"/>
+                <column name="property_names" value="flapDocumentIdTypes"/>
+                <column name="disabled" value="false"/>
+            </insert>
+            <insert tableName="context_expression">
+                <column name="id" value="339"/>
+                <column name="rule_id" value="339"/>
+                <column name="context" value="EU"/>
+                <column name="expression"
+                        value="isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+                <column name="failure_message" value="Fishing License, Authorization or Permit ID is missing."/>
+            </insert>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="UNIONVMS-4792-drop-FA-L02-00-0340-rule" author="nomikosi">
+        <delete tableName="context_expression">
+            <where>rule_id=:value</where>
+            <whereParams>
+                <param name="value" value="340" />
+            </whereParams>
+        </delete>
+        <delete tableName="rule">
+            <where>br_id=:value</where>
+            <whereParams>
+                <param name="value" value="FA-L02-00-0340" />
+            </whereParams>
+        </delete>
+
+        <rollback>
+
+            <insert tableName="rule">
+                <column name="rule_id" value="340" />
+                <column name="br_id" value="FA-L02-00-0340" />
+                <column name="note" value="FLAPDocument ID Must have valid value from MDR list FLAP_ID_TYPE. "/>
+                <column name="level" value="L02"/>
+                <column name="error_type" value="ERROR"/>
+                <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+                <column name="template_id" value="28"/>
+                <column name="property_names" value="flapDocumentIdTypes"/>
+                <column name="disabled" value="false"/>
+            </insert>
+            <insert tableName="context_expression">
+                <column name="id" value="340"/>
+                <column name="rule_id" value="340"/>
+                <column name="context" value="EU"/>
+                <column name="expression"
+                        value="!isEmpty(flapDocumentIdTypes) &amp;&amp; !mdrService.isAllSchemeIdsPresentInMDRList(&quot;FLAP_ID_TYPE&quot; , flapDocumentIdTypes, creationDateOfMessage) "/>
+                <column name="failure_message" value="Fishing License, Authorization or Permit ID has an invalid schemeID. "/>
+            </insert>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
