@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	<changeSet id="UNIONVMS-4807" author="imitrolios">
+		<insert tableName="rule">
+			<column name="rule_id" value="651" />
+			<column name="br_id" value="FA-L02-00-0651" />
+			<column name="note" value="Check value of ID. Must be existing on the list specified in the schemeID." />
+			<column name="level" value="L02" />
+			<column name="error_type" value="ERROR" />
+			<column name="rule_created_on" valueDate="${now}" />
+			<column name="template_id" value="14" />
+			<column name="property_names" value="submittedFLUXPartyIds" />
+			<column name="disabled" value="false" />
+		</insert>
+
+		<insert tableName="rule">
+			<column name="rule_id" value="652" />
+			<column name="br_id" value="FA-L02-00-0652" />
+			<column name="note" value="Check attribute listID. Must be BOOLEAN_TYPE if TypeCode is CONSOLIDATED" />
+			<column name="level" value="L02" />
+			<column name="error_type" value="ERROR" />
+			<column name="rule_created_on" valueDate="${now}" />
+			<column name="template_id" value="15" />
+			<column name="property_names" value="valueCode" />
+			<column name="disabled" value="false" />
+		</insert>
+
+		<insert tableName="context_expression">
+			<column name="id" value="651" />
+			<column name="rule_id" value="651" />
+			<column name="context" value="EU" />
+			<column name="expression" value="submittedFLUXPartyIds != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(submittedFLUXPartyIds, creationDateOfMessage)" />
+			<column name="failure_message" value="RULE FA-L02-00-0651" />
+		</insert>
+
+		<insert tableName="context_expression">
+			<column name="id" value="652" />
+			<column name="rule_id" value="652" />
+			<column name="context" value="EU" />
+			<column name="expression" value = "typeCode != null &amp;&amp; codeTypeValueEquals(typeCode, &quot;CONSOLIDATED&quot;) &amp;&amp; valueCode != null &amp;&amp; &quot;BOOLEAN_TYPE&quot; != valueCode.listId"/>
+			<column name="failure_message" value="RULE FA-L02-00-0652" />
+		</insert>
+
+		<rollback>
+			<delete tableName="context_expression">
+				<where>rule_id=:value</where>
+				<whereParams>
+					<param name="value" value="651" />
+				</whereParams>
+			</delete>
+			<delete tableName="rule">
+				<where>br_id=:value</where>
+				<whereParams>
+					<param name="value" value="FA-L02-00-0651" />
+				</whereParams>
+			</delete>
+			<delete tableName="context_expression">
+				<where>rule_id=:value</where>
+				<whereParams>
+					<param name="value" value="652" />
+				</whereParams>
+			</delete>
+			<delete tableName="rule">
+				<where>br_id=:value</where>
+				<whereParams>
+					<param name="value" value="FA-L02-00-0652" />
+				</whereParams>
+			</delete>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
