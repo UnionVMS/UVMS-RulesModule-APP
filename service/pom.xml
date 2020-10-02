@@ -214,7 +214,7 @@
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
-            <artifactId>asset-ejb-client</artifactId>
+            <artifactId>asset-rest-client</artifactId>
         </dependency>
     </dependencies>
 

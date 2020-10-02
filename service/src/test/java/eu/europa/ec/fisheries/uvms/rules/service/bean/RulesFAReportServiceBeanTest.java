@@ -13,7 +13,6 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
-import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
@@ -22,8 +21,8 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProd
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.permission.PermissionData;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -38,7 +37,6 @@ import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessag
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 
-import javax.ejb.EJB;
 import javax.jms.Destination;
 import javax.xml.bind.UnmarshalException;
 
@@ -55,7 +53,7 @@ public class RulesFAReportServiceBeanTest {
     @Mock private RulesActivityServiceBean rulesActivityService;
     @Mock private RulesEngineBean rulesEngine;
     @Mock private RulesDao rulesDaoBean;
-    @Mock private IAssetClient assetServiceBean;
+    @Mock private AssetClientBean assetServiceBean;
     @Mock private RulePostProcessBean rulesService;
     @Mock private RulesFLUXMessageHelper fluxMessageHelper;
     @Mock private RulesResponseConsumer rulesConsumer;

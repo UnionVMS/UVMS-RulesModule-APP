@@ -7,7 +7,6 @@ import eu.europa.ec.fisheries.schema.sales.*;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingActivitySummary;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.FishingTripResponse;
 import eu.europa.ec.fisheries.uvms.rules.service.*;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.FactWithReferencedId;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.CodeType;
@@ -40,8 +39,8 @@ public class SalesRulesServiceBean implements SalesRulesService {
     @EJB
     private ActivityService activityService;
 
-    @EJB
-    private IAssetClient assetClientBean;
+    @Inject
+    private AssetClientBean assetClientBean;
 
     @Inject
     private MapperFacade mapper;

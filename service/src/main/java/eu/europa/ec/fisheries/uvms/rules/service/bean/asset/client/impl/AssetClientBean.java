@@ -1,8 +1,18 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl;
 
-import eu.europa.ec.fisheries.uvms.asset.ejb.client.IAssetFacade;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.AssetGateway;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.extern.slf4j.Slf4j;
@@ -16,23 +26,17 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.*;
-
 @Slf4j
-@Stateless
-public class AssetClientBean implements IAssetClient {
+@ApplicationScoped
+public class AssetClientBean {
 
-    // Remote asset EJB
-    @EJB(lookup = "java:global/asset-module/asset-service/AssetFacade!eu.europa.ec.fisheries.uvms.asset.ejb.client.IAssetFacade")
-    private IAssetFacade iAssetFacade;
+    @Inject
+    private AssetGateway assetGateway;
 
     public boolean isCFRInFleetUnderFlagStateOnLandingDate(String cfr, String flagState, DateTime landingDate) {
         try {
             log.info("Find history of asset by CFR: {} ", cfr);
-            List<Asset> assetHistories = iAssetFacade.findHistoryOfAssetByCfr(cfr);
+            List<Asset> assetHistories = assetGateway.findHistoryOfAssetByCfr(cfr);
             Optional<Asset> historyOnDate = findAssetHistoryByDate(landingDate.toDate(), assetHistories);
 
             if (!historyOnDate.isPresent()) {
@@ -67,25 +71,26 @@ public class AssetClientBean implements IAssetClient {
             String extMark = ids.get("EXT_MARK");
             String iccat = ids.get("ICCAT");
             String uvi = ids.get("UVI");
-            log.debug("Find history of asset by reportDate: {}, cfr: {}, regCountry: {}, ircs: {}, extMark: {}, uvi: {}", reportDate, cfr, regCountry, ircs, extMark, iccat,uvi);
-            List<Asset> assets = iAssetFacade.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat,uvi);
+            log.debug("Find history of asset by reportDate: {}, cfr: {}, regCountry: {}, ircs: {}, extMark: {}, iccat: {}, uvi: {}", reportDate, cfr, regCountry, ircs, extMark, iccat, uvi);
+//            List<Asset> assets = iAssetFacade.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat);
+            List<Asset> assets = assetGateway.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat, uvi);
             if (CollectionUtils.isNotEmpty(assets)) {
                 vesselTransportMeansDto.setAsset(assets.get(0));
             }
             if (StringUtils.isNotEmpty(cfr)) {
-                List<Asset> assetsByCfr = iAssetFacade.findHistoryOfAssetBy(reportDate, cfr, regCountry, null,null, null, null);
+                List<Asset> assetsByCfr = assetGateway.findHistoryOfAssetBy(reportDate, cfr, regCountry, null,null, null, null);
                 if (CollectionUtils.isNotEmpty(assetsByCfr)) {
                     vesselTransportMeansDto.setAssetsByCfr(assetsByCfr.get(0));
                 }
             }
             if (StringUtils.isNotEmpty(ircs) && StringUtils.isNotEmpty(extMark)){
-                List<Asset> assetsByIrcsAndExtMark = iAssetFacade.findHistoryOfAssetBy(reportDate, null, regCountry, ircs, extMark, null, null);
+                List<Asset> assetsByIrcsAndExtMark = assetGateway.findHistoryOfAssetBy(reportDate, null, regCountry, ircs, extMark, null, null);
                 if (CollectionUtils.isNotEmpty(assetsByIrcsAndExtMark)) {
                     vesselTransportMeansDto.setAssetsByIrcsAndExtMark(assetsByIrcsAndExtMark.get(0));
                 }
             }
             if (StringUtils.isNotEmpty(uvi)){
-                List<Asset> assetsByUvi = iAssetFacade.findHistoryOfAssetBy(reportDate, null, regCountry, null,null, null, uvi);
+                List<Asset> assetsByUvi = assetGateway.findHistoryOfAssetBy(reportDate, null, regCountry, null,null, null, uvi);
                 if (CollectionUtils.isNotEmpty(assetsByUvi)) {
                     vesselTransportMeansDto.setAssetsByUvi(assetsByUvi.get(0));
                 }
