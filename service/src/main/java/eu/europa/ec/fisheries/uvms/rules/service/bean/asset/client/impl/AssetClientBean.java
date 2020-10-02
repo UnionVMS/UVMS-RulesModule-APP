@@ -3,6 +3,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl;
 import eu.europa.ec.fisheries.uvms.asset.ejb.client.IAssetFacade;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.AssetGateway;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.*;
 
@@ -29,10 +31,14 @@ public class AssetClientBean implements IAssetClient {
     @EJB(lookup = "java:global/asset-module/asset-service/AssetFacade!eu.europa.ec.fisheries.uvms.asset.ejb.client.IAssetFacade")
     private IAssetFacade iAssetFacade;
 
+    @Inject
+    private AssetGateway assetGateway;
+
     public boolean isCFRInFleetUnderFlagStateOnLandingDate(String cfr, String flagState, DateTime landingDate) {
         try {
             log.info("Find history of asset by CFR: {} ", cfr);
-            List<Asset> assetHistories = iAssetFacade.findHistoryOfAssetByCfr(cfr);
+//            List<Asset> assetHistories = iAssetFacade.findHistoryOfAssetByCfr(cfr);
+            List<Asset> assetHistories = assetGateway.findHistoryOfAssetByCfr(cfr);
             Optional<Asset> historyOnDate = findAssetHistoryByDate(landingDate.toDate(), assetHistories);
 
             if (!historyOnDate.isPresent()) {
@@ -67,7 +73,8 @@ public class AssetClientBean implements IAssetClient {
             String extMark = ids.get("EXT_MARK");
             String iccat = ids.get("ICCAT");
             log.debug("Find history of asset by reportDate: {}, cfr: {}, regCountry: {}, ircs: {}, extMark: {}, iccat: {} ", reportDate, cfr, regCountry, ircs, extMark, iccat);
-            List<Asset> assets = iAssetFacade.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat);
+//            List<Asset> assets = iAssetFacade.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat);
+            List<Asset> assets = assetGateway.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat);
             if (CollectionUtils.isNotEmpty(assets)) {
                 vesselTransportMeansDto.setAsset(assets.get(0));
             }
