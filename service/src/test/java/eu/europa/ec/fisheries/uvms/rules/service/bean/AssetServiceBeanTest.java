@@ -15,10 +15,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import eu.europa.ec.fisheries.uvms.asset.ejb.client.IAssetFacade;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.AssetGateway;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.sales.helper.AssetServiceBeanHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
 import eu.europa.ec.fisheries.wsdl.asset.types.AssetHistoryId;
@@ -42,7 +42,7 @@ import static org.mockito.Matchers.anyString;
 public class AssetServiceBeanTest {
 
     @Mock private AssetServiceBeanHelper helper;
-    @Mock private IAssetFacade iAssetFacade;
+    @Mock private AssetGateway assetGateway;
     @InjectMocks private AssetClientBean assetService;
 
     @Before
@@ -64,7 +64,7 @@ public class AssetServiceBeanTest {
         asset.setEventHistory(assetHistoryId);
         asset.setCountryCode("BEL");
 
-        Mockito.when(iAssetFacade.findHistoryOfAssetByCfr(anyString())).thenReturn(Arrays.asList(asset));
+        Mockito.when(assetGateway.findHistoryOfAssetByCfr(anyString())).thenReturn(Arrays.asList(asset));
 
         assertTrue(assetService.isCFRInFleetUnderFlagStateOnLandingDate("", "BEL", new DateTime(2069, 1, 15, 0, 0, 0, 0)));
     }
