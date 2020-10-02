@@ -35,8 +35,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.permission.PermissionData;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -55,6 +55,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
 import javax.xml.bind.JAXBException;
+import javax.inject.Inject;
 import javax.xml.bind.UnmarshalException;
 import java.time.Instant;
 import java.util.*;
@@ -100,8 +101,8 @@ public class RulesFaReportServiceBean {
     @EJB
     private RulesExchangeServiceBean exchangeServiceBean;
 
-    @EJB
-    private IAssetClient assetClientBean;
+    @Inject
+    private AssetClientBean assetClientBean;
 
     @EJB
     private RulesDao rulesDaoBean;
@@ -305,5 +306,4 @@ public class RulesFaReportServiceBean {
         }
         return reportGUID;
     }
-
 }

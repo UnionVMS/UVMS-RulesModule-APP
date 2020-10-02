@@ -22,7 +22,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesKieContainerInitializer;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
@@ -40,6 +40,7 @@ import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessag
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -78,8 +79,8 @@ public class RulesResource {
 
     private RulesFLUXMessageHelper helper;
 
-    @EJB
-    private IAssetClient assetClientBean;
+    @Inject
+    private AssetClientBean assetClientBean;
 
     @EJB
     private RulesConfigurationCache cache;
