@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4796-specified-contact-person" author="nomikosi">
+        <insert tableName="rule">
+            <column name="rule_id" value="622" />
+            <column name="br_id" value="FA-L02-00-0622" />
+            <column name="note" value="Type code must be present for transhipment"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="specifiedFaCatch"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="622"/>
+            <column name="rule_id" value="622"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="(!valueContainsAny(typeCode, &quot;RELOCATION&quot;, &quot;TRANSHIPMENT&quot;)
+                    || (codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;)
+                    &amp;&amp;  !valueContainsAny(typeCode, &quot;DISCARD&quot;, &quot;LANDING&quot;))) &amp;&amp; isEmpty(specifiedFaCatch)"/>
+            <column name="failure_message" value="Type code must be present for transhipment"/>
+        </insert>
+
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="622" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="622" />
+                </whereParams>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
