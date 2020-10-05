@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4793" author="nomikosi">
+
+        <insert tableName="rule">
+            <column name="rule_id" value="630" />
+            <column name="br_id" value="FA-L03-00-0630" />
+            <column name="note" value="Reporting EU fishing vessels must provide CFR"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="3"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="630"/>
+            <column name="rule_id" value="630"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="specifiedVesselCountryId != null &amp;&amp; (mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,  specifiedVesselCountryId.value, creationDateOfMessage) &amp;&amp; !containsAtLeastOneCorrectIdOfTheSpecified(&quot;CFR&quot;))"/>
+            <column name="failure_message" value="Reporting EU fishing vessels must provide CFR"/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="631" />
+            <column name="br_id" value="FA-L03-00-0631" />
+            <column name="note" value="EU vessels involved in fishing activities, except in transhipments and relocations/transfers, must provide CFR"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="3"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="631"/>
+            <column name="rule_id" value="631"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="relatedVesselCountryId != null &amp;&amp; mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,relatedVesselCountryId.value, creationDateOfMessage)
+            &amp;&amp; !containsAtLeastOneCorrectIdOfTheRelated(&quot;CFR&quot;)
+            &amp;&amp;  !(codeTypeValueEquals(fishingActivityType, &quot;RELOCATION&quot;)
+            || codeTypeValueEquals(fishingActivityType, &quot;TRANSHIPMENT&quot;))"/>
+            <column name="failure_message" value="EU vessels involved in fishing activities, except in transhipments and relocations/transfers, must provide CFR"/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="632" />
+            <column name="br_id" value="FA-L03-00-0632" />
+            <column name="note" value="EU vessels involved in transhipments and relocations/transfers that do not have a CFR should provide IRCS and External Marking."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="3"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="632"/>
+            <column name="rule_id" value="632"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="relatedVesselCountryId != null &amp;&amp; mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,relatedVesselCountryId.value, creationDateOfMessage)
+            &amp;&amp; !containsAtLeastOneCorrectIdOfTheRelated(&quot;CFR&quot;)
+            &amp;&amp; (!hasValueForVesselTransports(relatedVesselTransportMeans,&quot;EXT_MARK&quot;)
+            ||  !hasValueForVesselTransports(relatedVesselTransportMeans,&quot;IRCS&quot;))"/>
+            <column name="failure_message" value="EU vessels involved in transhipments and relocations/transfers that do not have a CFR should provide IRCS and External Marking."/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="633" />
+            <column name="br_id" value="FA-L03-00-0633" />
+            <column name="note" value="Non-EU vessels involved in transhipments and relocations/transfers should have a UVI (IMO number)."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="3"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="633"/>
+            <column name="rule_id" value="633"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="relatedVesselCountryId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,relatedVesselCountryId.value, creationDateOfMessage)
+            &amp;&amp; !hasValueForVesselTransports(relatedVesselTransportMeans,&quot;UVI&quot;)
+            &amp;&amp; fishingActivityType.value == &quot;TRANSHIPMENT&quot;"/>
+            <column name="failure_message" value="Non-EU vessels involved in transhipments and relocations/transfers should have a UVI (IMO number)."/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="634" />
+            <column name="br_id" value="FA-L03-00-0634" />
+            <column name="note" value="Non-EU vessels involved in activities should include at least IRCS and EXT_MARK."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="3"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="634"/>
+            <column name="rule_id" value="634"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="specifiedVesselCountryId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,specifiedVesselCountryId.value, creationDateOfMessage)
+            &amp;&amp; (!hasValueForVesselTransports(specifiedVesselTransportMeans,&quot;EXT_MARK&quot;)
+            || !hasValueForVesselTransports(specifiedVesselTransportMeans,&quot;IRCS&quot;))"/>
+            <column name="failure_message" value="Non-EU vessels involved in activities should include at least IRCS and EXT_MARK."/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="635" />
+            <column name="br_id" value="FA-L03-00-0635" />
+            <column name="note" value="Non-EU vessels reporting activities should report at least IRCS and EXT_MARK."/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="3"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="635"/>
+            <column name="rule_id" value="635"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="relatedVesselCountryId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,relatedVesselCountryId.value, creationDateOfMessage)
+            &amp;&amp; !(hasValueForVesselTransports(relatedVesselTransportMeans,&quot;EXT_MARK&quot;)
+            &amp;&amp; hasValueForVesselTransports(relatedVesselTransportMeans,&quot;IRCS&quot;))"/>
+            <column name="failure_message" value="Non-EU vessels reporting activities should report at least IRCS and EXT_MARK."/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="637" />
+            <column name="br_id" value="FA-L03-00-0637" />
+            <column name="note" value="IRCS and External Marking  provided, vessel should exist in the vessel register at report creation date under the flag state"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="3"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="637"/>
+            <column name="rule_id" value="637"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;)
+             &amp;&amp; (transportMeans == null
+             || transportMeans.asset == null)"/>
+            <column name="failure_message" value="IRCS and External Marking  provided, vessel should exist in the vessel register at report creation date under the flag state"/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="638" />
+            <column name="br_id" value="FA-L03-00-0638" />
+            <column name="note" value="Reporting EU fishing vessels must provide CFR"/>
+            <column name="level" value="L03"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="3"/>
+            <column name="property_names" value="ids"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="638"/>
+            <column name="rule_id" value="638"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;UVI&quot;)
+            &amp;&amp; (transportMeans == null
+            || transportMeans.asset == null)"/>
+            <column name="failure_message" value="Reporting EU fishing vessels must provide CFR"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="630" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="630" />
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="631" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="631" />
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="632" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="632" />
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="633" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="633" />
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="634" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="634" />
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="635" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="635" />
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="637" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="637" />
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="638" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="638" />
+                </whereParams>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

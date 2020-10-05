@@ -512,7 +512,7 @@ public class ActivityFactMapper {
             xPathUtil.clear();
             return null;
         }
-        VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(vesselTransportMean, facts, null);
+        VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(vesselTransportMean, facts, null,true);
         vesselTransportMeansFact.setIsFromFaReport(isCommingFromFaReportDocument);
         return vesselTransportMeansFact;
     }
@@ -528,14 +528,15 @@ public class ActivityFactMapper {
         String strToAppend = xPathUtil.getValue();
         for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
             xPathUtil.appendWithoutWrapping(strToAppend).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index);
-            list.add(generateFactForVesselTransportMean(vesselTransportMean, facts, fishActType));
+            list.add(generateFactForVesselTransportMean(vesselTransportMean, facts, fishActType,false));
             index++;
         }
         return list;
     }
 
     public VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean, List<AbstractFact> facts,
-                                                                       un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType fishActType) {
+                                                                       un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType fishActType,
+                                                                       boolean isSpecifiedVesselTransportMeans) {
         if (vesselTransportMean == null) {
             xPathUtil.clear();
             return null;
@@ -584,6 +585,16 @@ public class ActivityFactMapper {
 
         xPathUtil.appendWithoutWrapping(toBeAppendedAlways);
         generateFactsForVesselPositionEvents(vesselTransportMean.getSpecifiedVesselPositionEvents(), facts);
+
+        if(isSpecifiedVesselTransportMeans){
+            vesselTransportMeansFact.setSpecifiedIds(vesselTransportMeansFact.getIds());
+            vesselTransportMeansFact.setSpecifiedVesselCountryId(vesselTransportMeansFact.getRegistrationVesselCountryId());
+            vesselTransportMeansFact.setSpecifiedVesselTransportMeans(vesselTransportMean);
+        } else {
+            vesselTransportMeansFact.setRelatedIds(vesselTransportMeansFact.getIds());
+            vesselTransportMeansFact.setRelatedVesselCountryId(vesselTransportMeansFact.getRegistrationVesselCountryId());
+            vesselTransportMeansFact.setRelatedVesselTransportMeans(vesselTransportMean);
+        }
 
         return vesselTransportMeansFact;
     }

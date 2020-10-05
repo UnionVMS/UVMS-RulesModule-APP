@@ -169,6 +169,11 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                                         matches.set(false);
                                     }
                                     break;
+                                case "UVI":
+                                    if(!StringUtils.equals(factIdValue, asset.getUvi())){
+                                        matches.set(false);
+                                    }
+                                    break;
                             }
                         });
                         if(matches.get()){
