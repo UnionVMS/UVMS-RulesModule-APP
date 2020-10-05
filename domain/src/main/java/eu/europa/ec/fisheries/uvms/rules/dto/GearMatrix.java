@@ -225,7 +225,43 @@ public class GearMatrix {
     private void fillGearMetrix() {
 
         // Trawl nets
+        matrix.put("TBB", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", false),
+                new Condition("GN", false))
+        );
         matrix.put("OTB", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", true),
+                new Condition("MT", true))
+        );
+        matrix.put("OT", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", true),
+                new Condition("MT", true))
+        );
+        matrix.put("OTT", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", true),
+                new Condition("GN", false),
+                new Condition("MT", true))
+        );
+        matrix.put("OTP", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", true),
+                new Condition("MT", true))
+        );
+        matrix.put("PTB", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", true),
+                new Condition("MT", true))
+        );
+        matrix.put("PT", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", true),
+                new Condition("MT", true))
+        );
+        matrix.put("TB", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", true),
                 new Condition("MT", true))
@@ -240,23 +276,12 @@ public class GearMatrix {
                 new Condition("GM", true),
                 new Condition("MT", true))
         );
-        matrix.put("TB", Arrays.asList(
-                new Condition("ME", false),
-                new Condition("GM", true),
-                new Condition("MT", true))
-        );
-        matrix.put("TBB", Arrays.asList(
+        matrix.put("PUK", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("GN", false))
         );
-        matrix.put("OTT", Arrays.asList(
-                new Condition("ME", false),
-                new Condition("GM", true),
-                new Condition("GN", false),
-                new Condition("MT", true))
-        );
-        matrix.put("PTB", Arrays.asList(
+        matrix.put("PUL", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", true),
                 new Condition("MT", true))
@@ -268,6 +293,21 @@ public class GearMatrix {
         matrix.put("PTM", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("MT", false))
+        );
+        matrix.put("TM", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("MT", false))
+        );
+        matrix.put("TMS", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("MT", false))
+        );
+        matrix.put("TSP", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("MT", false))
+        );
+        matrix.put("TX", Arrays.asList(
+                new Condition("ME", false))
         );
 
         // Seine nets
@@ -291,6 +331,10 @@ public class GearMatrix {
                 new Condition("ME", false),
                 new Condition("GM", false))
         );
+        matrix.put("SB", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", false))
+        );
 
         // Surrounding nets
         matrix.put("PS", Arrays.asList(
@@ -309,6 +353,11 @@ public class GearMatrix {
                 new Condition("HE", false))
         );
         matrix.put("LA", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", false),
+                new Condition("HE", false))
+        );
+        matrix.put("SUX", Arrays.asList(
                 new Condition("ME", false),
                 new Condition("GM", false),
                 new Condition("HE", false))
@@ -369,12 +418,27 @@ public class GearMatrix {
                 new Condition("NN", false),
                 new Condition("QG", true))
         );
+        matrix.put("GNF", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", false),
+                new Condition("HE", false),
+                new Condition("NL", false),
+                new Condition("NN", false),
+                new Condition("QG", true))
+        );
+        matrix.put("GEN", Arrays.asList(
+                new Condition("ME", false),
+                new Condition("GM", false),
+                new Condition("HE", false),
+                new Condition("NL", false),
+                new Condition("NN", false),
+                new Condition("QG", true))
+        );
 
         // Traps
         matrix.put("FPO",
                 Collections.singletonList(new Condition("GN", false))
         );
-        matrix.put("FIX", Collections.emptyList());
 
         // Hooks & Lines
         matrix.put("LHP", Arrays.asList(
@@ -397,20 +461,6 @@ public class GearMatrix {
                 new Condition("GN", false),
                 new Condition("NI", false))
         );
-        matrix.put("LTL", Collections.emptyList());
-        matrix.put("LX", Collections.emptyList());
-
-        // Harvesting machines
-        matrix.put("HMD", Collections.emptyList());
-
-        // Miscellaneous gear
-        matrix.put("MIS", Collections.emptyList());
-
-        // Recreational gear
-        matrix.put("RG", Collections.emptyList());
-
-        // Gear not known or not specified
-        matrix.put("NK", Collections.emptyList());
     }
 
     @Data
