@@ -7,41 +7,6 @@
         <param-value>Rules</param-value>
     </context-param>
     
-    <context-param>
-        <param-name>javamelody.datasources</param-name>
-        <param-value>java:/jdbc/uvms_rules</param-value>
-    </context-param>
-	<listener>
-		<listener-class>net.bull.javamelody.SessionListener</listener-class>
-	</listener>
-	<filter>
-		<filter-name>javamelody</filter-name>
-		<filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
-		<async-supported>true</async-supported>
-		<init-param>
-			<param-name>displayed-counters</param-name>
-			<param-value>http,sql,ejb,error,log</param-value>
-		</init-param>
-		<init-param>
-			<param-name>system-actions-enabled</param-name>
-			<param-value>true</param-value>
-		</init-param>
-		<init-param>
-			<param-name>storage-directory</param-name>
-			<param-value>javamelody-rules</param-value>
-		</init-param>
-		<init-param>
-			<param-name>datasources</param-name>
-			<param-value>java:/jdbc/uvms_rules</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>javamelody</filter-name>
-		<url-pattern>/*</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>ASYNC</dispatcher>
-	</filter-mapping>
-
 	<filter>
 		<filter-name>AuthenticationFilter</filter-name>
 		<filter-class>eu.europa.ec.fisheries.uvms.rest.security.AuthenticationFilter</filter-class>
