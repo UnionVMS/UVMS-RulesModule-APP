@@ -714,7 +714,7 @@ public class ActivityFactMapperTest {
         final FaLandingFact faLandingFact = activityMapper.generateFactsForLanding(null, null);
         final List<GearCharacteristicsFact> gearList = activityMapper.generateFactsForGearCharacteristics(null, new HashMap<>(), new HashMap<>());
         final List<FishingTripFact> fishingTripFacts = activityMapper.generateFactForFishingTrips(null, null);
-        final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null, new ArrayList<>(), null);
+        final VesselTransportMeansFact vesselTransportMeansFact = activityMapper.generateFactForVesselTransportMean(null, new ArrayList<>(), null,false);
         final List<GearCharacteristicsFact> gearCharacteristicsFacts = activityMapper.generateFactsForGearCharacteristics(null, new HashMap<>(), new HashMap<>());
         final FaResponseFact faResponseFact = new FaResponseFactMapper().generateFactsForFaResponse(null);
         final ValidationQualityAnalysisFact qualityAnalysisFact = activityMapper.generateFactsForValidationQualityAnalysis(null);
