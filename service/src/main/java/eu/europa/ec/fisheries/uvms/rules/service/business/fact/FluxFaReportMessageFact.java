@@ -32,11 +32,11 @@ public class FluxFaReportMessageFact extends AbstractFact {
     private String creationDateTimeString;
     private CodeType purposeCode;
     private List<IdType> ownerFluxPartyIds;
+    private List<IdType> relatedOwnerFluxPartyIds;
     private List<FAReportDocument> faReportDocuments;
     private List<IdType> nonUniqueIdsList;
 
     private List<IdType> relatedFaQueryIDs;
-
     public FluxFaReportMessageFact() {
         setFactType();
     }
