@@ -488,6 +488,12 @@ public class ActivityFactMapper {
         fluxFaReportMessageFact.setRelatedFaQueryIDs(faQueryIds);
         xPathUtil.appendWithoutWrapping(partialXpath).append(REFERENCED_ID).storeInRepo(fluxFaReportMessageFact, "relatedFaQueryIDs");
 
+        if(fluxfaReportMessage.getFLUXReportDocument() != null && fluxfaReportMessage.getFAReportDocuments() != null && !fluxfaReportMessage.getFAReportDocuments().isEmpty()
+        && fluxfaReportMessage.getFAReportDocuments().get(0).getRelatedFLUXReportDocument() != null && fluxfaReportMessage.getFAReportDocuments().get(0).getRelatedFLUXReportDocument().getOwnerFLUXParty() != null)  {
+            fluxFaReportMessageFact.setRelatedOwnerFluxPartyIds(mapToIdTypes(fluxfaReportMessage.getFAReportDocuments().get(0).getRelatedFLUXReportDocument().getOwnerFLUXParty().getIDS()));
+            xPathUtil.appendWithoutWrapping(partialXpath).append(FA_REPORT_DOCUMENT,RELATED_FLUX_REPORT_DOCUMENT, OWNER_FLUX_PARTY, ID).storeInRepo(fluxFaReportMessageFact, "relatedOwnerFluxPartyIds");
+        }
+
         return fluxFaReportMessageFact;
     }
 

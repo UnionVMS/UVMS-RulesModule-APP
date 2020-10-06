@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4797-owner-flux-party" author="nomikosi">
+
+        <insert tableName="rule">
+            <column name="rule_id" value="627" />
+            <column name="br_id" value="FA-L01-00-0627" />
+            <column name="note" value="ID value must be existing in the list specified in attribute schemeID"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="2"/>
+            <column name="property_names" value="ownerFluxPartyIds"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="627"/>
+            <column name="rule_id" value="627"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="ownerFluxPartyIds != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(ownerFluxPartyIds,creationDateOfMessage)"/>
+            <column name="failure_message" value="ID value must be existing in the list specified in attribute schemeID"/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="628" />
+            <column name="br_id" value="FA-L01-00-0628" />
+            <column name="note" value="ID value must be existing in the list specified in attribute schemeID"/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="2"/>
+            <column name="property_names" value="relatedOwnerFluxPartyIds"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="628"/>
+            <column name="rule_id" value="628"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="relatedOwnerFluxPartyIds != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(relatedOwnerFluxPartyIds,creationDateOfMessage)"/>
+            <column name="failure_message" value="ID value must be existing in the list specified in attribute schemeID"/>
+        </insert>
+
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="627" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="627" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="628" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="628" />
+                </whereParams>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
