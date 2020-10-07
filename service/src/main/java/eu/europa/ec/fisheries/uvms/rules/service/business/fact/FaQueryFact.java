@@ -36,6 +36,8 @@ public class FaQueryFact extends AbstractFact {
 
     private List<IdType> submittedFLUXPartyIds;
 
+    private List<IdType> nonUniqueIdsList;
+
     private DelimitedPeriod specifiedDelimitedPeriod;
 
     private String sdpStartDateTimeString;
@@ -124,4 +126,13 @@ public class FaQueryFact extends AbstractFact {
     public void setSimpleFAQueryParameterTypeCodes(List<CodeType> simpleFAQueryParameterTypeCodes) {
         this.simpleFAQueryParameterTypeCodes = simpleFAQueryParameterTypeCodes;
     }
+
+    public List<IdType> getNonUniqueIdsList() {
+        return nonUniqueIdsList;
+    }
+
+    public void setNonUniqueIdsList(List<IdType> nonUniqueIdsList) {
+        this.nonUniqueIdsList = nonUniqueIdsList;
+    }
+
 }
