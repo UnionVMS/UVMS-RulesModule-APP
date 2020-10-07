@@ -22,7 +22,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProd
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -52,7 +52,7 @@ public class RulesFAReportServiceBeanTest {
     @Mock private RulesActivityServiceBean rulesActivityService;
     @Mock private RulesEngineBean rulesEngine;
     @Mock private RulesDao rulesDaoBean;
-    @Mock private IAssetClient assetServiceBean;
+    @Mock private AssetClientBean assetServiceBean;
     @Mock private RulePostProcessBean rulesService;
     @Mock private RulesFLUXMessageHelper fluxMessageHelper;
     @Mock private RulesResponseConsumer rulesConsumer;

@@ -54,7 +54,7 @@ public class AssetRestClientImpl implements AssetClient {
 
     @PostConstruct
     public void initRestClient() {
-        String url = config.getAssetEndpointUrl() + config.getAssetBasePath();
+        String url = config.getAssetEndpoint() + config.getAssetGatewayPath();
         Client client = ClientBuilder.newClient();
         ContextResolver<ObjectMapper> objectMapperContextResolver = new ContextResolver<ObjectMapper>() {
             @Override

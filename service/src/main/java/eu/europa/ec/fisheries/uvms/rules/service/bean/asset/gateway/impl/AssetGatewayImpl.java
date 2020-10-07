@@ -17,8 +17,10 @@ import java.util.List;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.AssetGateway;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.client.AssetClient;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
+@Slf4j
 public class AssetGatewayImpl implements AssetGateway {
 
     @Inject
@@ -29,6 +31,7 @@ public class AssetGatewayImpl implements AssetGateway {
         try {
             return assetClient.findHistoryOfAssetByCfr(cfr);
         } catch (Exception e) { // previous implementation in case of any error returned empty list (from timeout(?) to sql error)
+            log.error("Error in communication with asset: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -38,6 +41,7 @@ public class AssetGatewayImpl implements AssetGateway {
         try {
             return assetClient.findHistoryOfAssetBy(reportDate, cfr, regCountry, ircs, extMark, iccat);
         } catch (Exception e) { // previous implementation in case of any error returned empty list (from timeout(?) to sql error)
+            log.error("Error in communication with asset: " + e.getMessage());
             return new ArrayList<>();
         }
     }

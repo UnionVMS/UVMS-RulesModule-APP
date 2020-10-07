@@ -6,19 +6,19 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class AssetRestClientConfigImpl implements AssetRestClientConfig {
 
-    private static final String ASSET_GATEWAY_PATH = "/unionvms/asset/gateway/asset-gateway";
+    private static final String ASSET_GATEWAY_PATH = "/internal/asset-gateway";
 
     @Resource(name = "java:global/asset_endpoint_internal")
-    private String assetEndpointUrl;
+    private String assetEndpoint;
 
 
     @Override
-    public String getAssetEndpointUrl() {
-        return assetEndpointUrl;
+    public String getAssetEndpoint() {
+        return assetEndpoint;
     }
 
     @Override
-    public String getAssetBasePath() {
+    public String getAssetGatewayPath() {
         return ASSET_GATEWAY_PATH;
     }
 }
