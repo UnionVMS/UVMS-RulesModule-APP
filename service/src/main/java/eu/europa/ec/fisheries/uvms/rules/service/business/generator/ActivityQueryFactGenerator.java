@@ -15,8 +15,13 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.ActivityFactMapper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
@@ -25,6 +30,7 @@ import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.FA_QUERY_AND_REPORT_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FA_QUERY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUXFA_QUERY_MESSAGE;
@@ -61,6 +67,7 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
         if (fluxfaQueryMessage != null) {
             FAQuery faQuery = fluxfaQueryMessage.getFAQuery();
             if (faQuery != null) {
+                activityFactMapper.getNonUniqueIdsList().addAll(extractNonUniqueIds());
 
                 xPathUtil.append(FLUXFA_QUERY_MESSAGE).append(FA_QUERY);
                 factList.add(activityFactMapper.generateFactsForFaQuery(faQuery));
@@ -73,6 +80,22 @@ public class ActivityQueryFactGenerator extends AbstractGenerator {
         String df = (String) extraValueMap.get(DATA_FLOW);
         factList.forEach(fact -> fact.setMessageDataFlow(df));
         return factList;
+    }
+
+    private List<IdType> extractNonUniqueIds() {
+        @SuppressWarnings("unchecked")
+        List<FADocumentID> faDocumentIDS = Optional.ofNullable((List<FADocumentID>) extraValueMap.get(FA_QUERY_AND_REPORT_IDS)).orElse(new ArrayList<>());
+        return (faDocumentIDS)
+                .stream()
+                .map(this::toIdType)
+                .collect(Collectors.toList());
+    }
+
+    private IdType toIdType(FADocumentID d) {
+        IdType idType = new IdType();
+        idType.setValue(d.getUuid());
+        Optional.ofNullable(d.getType()).ifPresent(fId -> idType.setSchemeId(fId.name()));
+        return idType;
     }
 
     private void populateCreationDateTime(List<AbstractFact> factList) {

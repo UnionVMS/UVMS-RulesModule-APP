@@ -116,12 +116,15 @@ public class RulesFaQueryServiceBean {
             log.info("Evaluate FAQuery with ID {}", faQueryGUID);
             boolean needToSendToExchange = true;
             Set<FADocumentID> idsFromIncomingMessage = fluxMessageHelper.mapQueryToFADocumentID(faQueryMessage);
+            rulesDaoBean.takeNoteOfDocumentIds(idsFromIncomingMessage);
+            rulesDaoBean.lockDocumentIds(idsFromIncomingMessage);
             List<FADocumentID> faQueryIdsFromDb = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncomingMessage);
 
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
             extraValues.put(XML, requestStr);
             extraValues.put(DATA_FLOW, dataFlow);
+            extraValues.put(FA_QUERY_AND_REPORT_IDS, faQueryIdsFromDb);
 
             Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues, String.valueOf(faQueryMessage.getFAQuery().getID()));
 

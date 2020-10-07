@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	<changeSet id="UNIONVMS-4806" author="cpapatheodorou">
+		<insert tableName="rule">
+			<column name="rule_id" value="650" />
+			<column name="br_id" value="FA-L03-00-0650" />
+			<column name="note" value="The identification must be unique and not already exist. If it exists already, the contents are considered identical and the message may be ignored by the receiving party. It is expected to return the same validation results." />
+			<column name="level" value="L03" />
+			<column name="error_type" value="ERROR" />
+			<column name="rule_created_on" valueDate="${now}" />
+			<column name="template_id" value="14" />
+			<column name="property_names" value="id" />
+			<column name="disabled" value="false" />
+		</insert>
+
+		<insert tableName="context_expression">
+			<column name="id" value="650" />
+			<column name="rule_id" value="650" />
+			<column name="context" value="EU" />
+			<column name="expression" value="!isEmpty(nonUniqueIdsList) &amp;&amp; containsObject(id, nonUniqueIdsList)" />
+			<column name="failure_message" value="RULE FA-L03-00-0650" />
+		</insert>
+
+		<rollback>
+			<delete tableName="context_expression">
+				<where>rule_id=:value</where>
+				<whereParams>
+					<param name="value" value="650" />
+				</whereParams>
+			</delete>
+			<delete tableName="rule">
+				<where>br_id=:value</where>
+				<whereParams>
+					<param name="value" value="FA-L03-00-0650" />
+				</whereParams>
+			</delete>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
