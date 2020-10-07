@@ -372,6 +372,17 @@ public abstract class AbstractFact {
     }
 
     /**
+     * Returns true if the object is found in the collection.
+     *
+     */
+    public boolean containsObject(Object obj, Collection col) {
+        if (CollectionUtils.isEmpty(col)){
+            col = new ArrayList();
+        }
+        return CollectionUtils.exists(col, o -> o.equals(obj));
+    }
+
+    /**
      * Returns true if at least one element is in both collections.
      *
      */
