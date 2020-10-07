@@ -54,6 +54,7 @@ public class ActivityFactMapper {
     private XPathStringWrapper xPathUtil;
     private List<IdType> faReportMessageIds = new ArrayList<>();
     private List<IdType> faRelatedReportIds = new ArrayList<>();
+    private List<IdType> nonUniqueIdsList = new ArrayList<>();
     private List<IdType> faQueryIds = new ArrayList<>();
     private List<IdType> faResponseIds = new ArrayList<>();
     private String senderReceiver = null;
@@ -2079,6 +2080,9 @@ public class ActivityFactMapper {
             faQueryFact.setSimpleFAQueryParameterTypeCodes(codeTypes);
         }
 
+        faQueryFact.setNonUniqueIdsList(nonUniqueIdsList);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(FLUXFA_QUERY_MESSAGE, ID).storeInRepo(faQueryFact, "nonUniqueIdsList");
+
         return faQueryFact;
     }
 
@@ -3113,6 +3117,14 @@ public class ActivityFactMapper {
 
     public void setFaRelatedReportIds(List<IdType> faRelatedReportIds) {
         this.faRelatedReportIds = faRelatedReportIds;
+    }
+
+    public List<IdType> getNonUniqueIdsList() {
+        return nonUniqueIdsList;
+    }
+
+    public void setNonUniqueIdsList(List<IdType> nonUniqueIdsList) {
+        this.nonUniqueIdsList = nonUniqueIdsList;
     }
 
 }
