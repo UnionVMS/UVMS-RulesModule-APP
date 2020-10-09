@@ -19,6 +19,7 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.FlapDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.VesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.FaReportDocumentType;
@@ -251,6 +252,9 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath).append(DESTINATION_VESSEL_STORAGE_CHARACTERISTIC);
                 facts.add(activityFactMapper.generateFactsForVesselStorageCharacteristic(fishingActivity.getDestinationVesselStorageCharacteristic()));
+
+                xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
+                facts.addAll(activityFactMapper.generateFactsForFlapDocuments(fishingActivity.getSpecifiedFLAPDocuments()));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 facts.addAll(addFacts(fishingActivity.getRelatedFishingActivities(), faReportDocument, true, fishingActivity.getTypeCode()));

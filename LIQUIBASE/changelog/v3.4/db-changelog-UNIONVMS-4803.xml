@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4803" author="imitrolios">
+        <insert tableName="template">
+            <column name="template_id" value="1032"/>
+            <column name="template_name" value="Fa FLAP Document template"/>
+            <column name="fact_template" value="FA_FLAP_DOCUMENT"/>
+        </insert>
+        <insert tableName="rule">
+            <column name="rule_id" value="646"/>
+            <column name="br_id" value="FA-L00-00-0646"/>
+            <column name="note" value="Check presence of id. Must be present"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="${now}"/>
+            <column name="template_id" value="1032"/>
+            <column name="property_names" value="id"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="646"/>
+            <column name="rule_id" value="646"/>
+            <column name="context" value="EU"/>
+            <column name="expression" value=" id == null || id.schemeId == null"/>
+            <column name="failure_message" value="RULE FA-L00-00-0646"/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="647"/>
+            <column name="br_id" value="FA-L01-00-0647"/>
+            <column name="note" value="Check attribute schemeID. Must be a valid value from code list FLAP_ID_TYPE "/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="${now}"/>
+            <column name="template_id" value="1032"/>
+            <column name="property_names" value="id"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="647"/>
+            <column name="rule_id" value="647"/>
+            <column name="context" value="EU"/>
+            <column name="expression" value=" id != null &amp;&amp; id.schemeId != null &amp;&amp;
+			 !mdrService.isAllSchemeIdsPresentInMDRList(&quot;FLAP_ID_TYPE&quot;, Arrays.asList(id), creationDateOfMessage)"/>
+            <column name="failure_message" value="RULE FA-L01-00-0647"/>
+        </insert>
+
+        <insert tableName="rule">
+            <column name="rule_id" value="648"/>
+            <column name="br_id" value="FA-L01-00-0648"/>
+            <column name="note"
+                    value="Check ID value. Must be according to the format defined for the schemeID as specified in list FLAP_ID_TYPE. "/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="${now}"/>
+            <column name="template_id" value="1032"/>
+            <column name="property_names" value="id"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="648"/>
+            <column name="rule_id" value="648"/>
+            <column name="context" value="EU"/>
+            <column name="expression" value=" id != null &amp;&amp; id.value != null &amp;&amp;
+			 	mdrService.validateFormat(id,creationDateOfMessage)"/>
+            <column name="failure_message" value="RULE FA-L01-00-0647"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="646"/>
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id=:value</where>
+                <whereParams>
+                    <param name="value" value="FA-L00-00-0646"/>
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="647"/>
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id=:value</where>
+                <whereParams>
+                    <param name="value" value="FA-L01-00-0647"/>
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="648"/>
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id=:value</where>
+                <whereParams>
+                    <param name="value" value="FA-L01-00-0648"/>
+                </whereParams>
+            </delete>
+            <delete tableName="template">
+                <where>template_id=:value</where>
+                <whereParams>
+                    <param name="value" value="1032"/>
+                </whereParams>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
