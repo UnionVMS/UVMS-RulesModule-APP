@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4798-main-area-reporting-rules" author="nomikosi">
+
+        <insert tableName="rule">
+            <column name="rule_id" value="656" />
+            <column name="br_id" value="FA-L02-00-0656" />
+            <column name="note" value="Only one FAO_AREA declaration is allowed per activity"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="fishingActivityRelatedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="656"/>
+            <column name="rule_id" value="656"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!subActivity &amp;&amp; !isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(fishingActivityRelatedFLUXLocations,&quot;FAO_AREA&quot;,1)"/>
+            <column name="failure_message" value="Only one FAO_AREA declaration is allowed per activity"/>
+        </insert>
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="657" />
+            <column name="br_id" value="FA-L02-00-0657" />
+            <column name="note" value="Only one GFCM_GSA area declaration is allowed per activity"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="fishingActivityRelatedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="657"/>
+            <column name="rule_id" value="657"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!subActivity &amp;&amp; !isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(fishingActivityRelatedFLUXLocations,&quot;GFCM_GSA&quot;,1)"/>
+            <column name="failure_message" value="Only one GFCM_GSA area declaration is allowed per activity"/>
+        </insert>
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="658" />
+            <column name="br_id" value="FA-L02-00-0658" />
+            <column name="note" value="Only one EFFORT_ZONE declaration is allowed per activity"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="fishingActivityRelatedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="658"/>
+            <column name="rule_id" value="658"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!subActivity &amp;&amp; !isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(fishingActivityRelatedFLUXLocations,&quot;EFFORT_ZONE&quot;,1)"/>
+            <column name="failure_message" value="Only one EFFORT_ZONE declaration is allowed per activity"/>
+        </insert>
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="659" />
+            <column name="br_id" value="FA-L02-00-0659" />
+            <column name="note" value="If more than one location of the same type is reported, a location characteristic has to be present."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="fishingActivityFluxCharacteristic"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="659"/>
+            <column name="rule_id" value="659"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; hasDuplicateLocationType(fishingActivityRelatedFLUXLocations) &amp;&amp; isEmpty(fishingActivityFluxCharacteristic)"/>
+            <column name="failure_message" value="If more than one location of the same type is reported, a location characteristic has to be present."/>
+        </insert>
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="660" />
+            <column name="br_id" value="FA-L02-00-0660" />
+            <column name="note" value="If more than one location of the same type is reported, the location characteristic provided must be MAIN_AREA"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="fishingActivityFluxCharacteristic"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="660"/>
+            <column name="rule_id" value="660"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; hasDuplicateLocationType(fishingActivityRelatedFLUXLocations) &amp;&amp; !fluxCharacteristicContainsType(fishingActivityFluxCharacteristic,&quot;MAIN_AREA&quot;)"/>
+            <column name="failure_message" value="If more than one location of the same type is reported, the location characteristic provided must be MAIN_AREA"/>
+        </insert>
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="662" />
+            <column name="br_id" value="FA-L02-00-0662" />
+            <column name="note" value="Only one FAO_AREA declaration is allowed per FACatch."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="faCatchSpecifiedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="662"/>
+            <column name="rule_id" value="662"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!subActivity &amp;&amp; !isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(faCatchSpecifiedFLUXLocations,&quot;FAO_AREA&quot;,1)"/>
+            <column name="failure_message" value="Only one FAO_AREA declaration is allowed per FACatch."/>
+        </insert>
+
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="663" />
+            <column name="br_id" value="FA-L02-00-0663" />
+            <column name="note" value="Only one GFCM_GSA area declaration is allowed per FACatch"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="faCatchSpecifiedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="663"/>
+            <column name="rule_id" value="663"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!subActivity &amp;&amp; !isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(faCatchSpecifiedFLUXLocations,&quot;GFCM_GSA&quot;,1)"/>
+            <column name="failure_message" value="Only one GFCM_GSA area declaration is allowed per FACatch"/>
+        </insert>
+
+
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="664" />
+            <column name="br_id" value="FA-L02-00-0664" />
+            <column name="note" value="Only one EFFORT_ZONE declaration is allowed per FACatch"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="faCatchSpecifiedFLUXLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="664"/>
+            <column name="rule_id" value="664"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!subActivity &amp;&amp; !isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(faCatchSpecifiedFLUXLocations,&quot;EFFORT_ZONE&quot;,1)"/>
+            <column name="failure_message" value="Only one EFFORT_ZONE declaration is allowed per FACatch"/>
+        </insert>
+
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="665" />
+            <column name="br_id" value="FA-L02-00-0665" />
+            <column name="note" value="If more than one location of the same type is reported, a location characteristic (marking) has to be present"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="faCatchFluxCharacteristic"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="665"/>
+            <column name="rule_id" value="665"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; hasDuplicateLocationType(faCatchSpecifiedFLUXLocations) &amp;&amp; isEmpty(faCatchFluxCharacteristic)"/>
+            <column name="failure_message" value="If more than one location of the same type is reported, a location characteristic (marking) has to be present"/>
+        </insert>
+
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="666" />
+            <column name="br_id" value="FA-L02-00-0666" />
+            <column name="note" value="If more than one location of the same type is reported, the location characteristic (marking) provided must be MAIN_AREA"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="faCatchFluxCharacteristic"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="666"/>
+            <column name="rule_id" value="666"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; hasDuplicateLocationType(faCatchSpecifiedFLUXLocations) &amp;&amp; !fluxCharacteristicContainsType(faCatchFluxCharacteristic,&quot;MAIN_AREA&quot;)"/>
+            <column name="failure_message" value="If more than one location of the same type is reported, the location characteristic (marking) provided must be MAIN_AREA"/>
+        </insert>
+
+
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="656" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="656" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="657" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="657" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="658" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="658" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="659" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="659" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="660" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="660" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="661" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="661" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="662" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="662" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="663" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="663" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="664" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="664" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="665" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="665" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="666" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="666" />
+                </whereParams>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
