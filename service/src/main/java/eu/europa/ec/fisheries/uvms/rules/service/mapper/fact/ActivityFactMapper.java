@@ -940,6 +940,16 @@ public class ActivityFactMapper {
                 faCatchFact.setSpecifiedFLUXLocations(faCatch.getSpecifiedFLUXLocations());
                 xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION).storeInRepo(faCatchFact, "specifiedFLUXLocations");
 
+                if(CollectionUtils.isNotEmpty(faCatch.getSpecifiedFLUXLocations())){
+                    faCatchFact.setFaCatchSpecifiedFLUXLocations(faCatch.getSpecifiedFLUXLocations());
+                    xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION).storeInRepo(faCatchFact, "faCatchSpecifiedFLUXLocations");
+                    List<FLUXCharacteristic> fluxCharacteristics = faCatch.getSpecifiedFLUXLocations().stream()
+                            .filter(t -> t.getApplicableFLUXCharacteristics() != null && !t.getApplicableFLUXCharacteristics().isEmpty())
+                            .map(r -> r.getApplicableFLUXCharacteristics()).flatMap(List::stream).collect(Collectors.toList());
+                    faCatchFact.setFaCatchFluxCharacteristic(fluxCharacteristics);
+                    xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION,APPLICABLE_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faCatchFact, "faCatchFluxCharacteristic");
+                }
+
                 if (faCatch.getSpecifiedFLUXLocations() != null) {
                     faCatchFact.setFaCatchFluxLocationId(mapFLUXLocationIDs(faCatch.getSpecifiedFLUXLocations()));
                 }
@@ -947,6 +957,13 @@ public class ActivityFactMapper {
 
                 if(CollectionUtils.isNotEmpty(fishActRelatedFluxLocations)){
                     faCatchFact.setFishActRelatedFluxLocationIds(mapFLUXLocationIDs(fishActRelatedFluxLocations));
+                    faCatchFact.setFishingActivityRelatedFLUXLocations(fishActRelatedFluxLocations);
+                    xPathUtil.appendWithoutWrapping(partialXPath1).append(RELATED_FLUX_LOCATION).storeInRepo(faCatchFact, "fishingActivityRelatedFLUXLocations");
+                    List<FLUXCharacteristic> fluxCharacteristics = fishActRelatedFluxLocations.stream()
+                            .filter(t -> t.getApplicableFLUXCharacteristics() != null && !t.getApplicableFLUXCharacteristics().isEmpty())
+                                    .map(r -> r.getApplicableFLUXCharacteristics()).flatMap(List::stream).collect(Collectors.toList());
+                    faCatchFact.setFishingActivityFluxCharacteristic(fluxCharacteristics);
+                    xPathUtil.appendWithoutWrapping(partialXPath1).append(RELATED_FLUX_LOCATION,APPLICABLE_FLUX_CHARACTERISTIC, TYPE_CODE).storeInRepo(faCatchFact, "fishingActivityFluxCharacteristic");
                 }
                 xPathUtil.appendWithoutWrapping(partialXPath1).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "fishActRelatedFluxLocationIds");
 
