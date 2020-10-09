@@ -10,6 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
@@ -945,5 +946,27 @@ public class ActivityFactMapperTest {
         FaAppliedAAPProcessFact fact = aapFacts.get(0);
         assertEquals(BigDecimal.TEN, fact.getConversionFactorNumeric().getValue());
         assertEquals(FORMAT, fact.getConversionFactorNumeric().getFormat());
+    }
+
+    @Test
+    public void testFaFlapDocumentFacts() {
+
+        final FLAPDocument flapDocument = new FLAPDocument();
+        IDType idType = new IDType();
+        idType.setValue("SVN-2018/AUT/123");
+        idType.setSchemeID("ICCAT_AUTHORIZATION");
+        flapDocument.setID(idType);
+
+        FishingActivity faActivity = new FishingActivity();
+        faActivity.setSpecifiedFLAPDocuments(Lists.newArrayList(flapDocument));
+        faActivity.setRelatedFLUXLocations(specifiedFluxLocation);
+
+        List<AbstractFact> facts = activityMapper.generateFactsForFlapDocuments(Lists.newArrayList(flapDocument));
+
+        List<FlapDocumentFact> flapDocumentFacts = facts.stream().filter(FlapDocumentFact.class::isInstance).map(FlapDocumentFact.class::cast).collect(Collectors.toList());
+        assertEquals(1, flapDocumentFacts.size());
+        FlapDocumentFact fact = flapDocumentFacts.get(0);
+        assertEquals("SVN-2018/AUT/123", fact.getId().getValue());
+        assertEquals("ICCAT_AUTHORIZATION", fact.getId().getSchemeId());
     }
 }

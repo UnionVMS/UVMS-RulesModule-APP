@@ -47,6 +47,7 @@
             <xsd:enumeration value="SIMPLE_ID_TYPE_FACT"/>
             <xsd:enumeration value="FA_VESSEL_POSITION_EVENT"/>
             <xsd:enumeration value="FA_AAP_STOCK"/>
+            <xsd:enumeration value="FA_FLAP_DOCUMENT"/>
 
             <!-- Sales -->
             <xsd:enumeration value="SALES_FLUX_SALES_REPORT_MESSAGE"/>
