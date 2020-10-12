@@ -11,6 +11,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.client.impl
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
@@ -26,6 +27,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.europa.ec.fisheries.uvms.config.event.ConfigSettingEvent;
+import eu.europa.ec.fisheries.uvms.config.event.ConfigSettingUpdatedEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.client.AssetClient;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.client.config.AssetRestClientConfig;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.client.dto.AssetErrorResponseDto;
@@ -54,18 +57,7 @@ public class AssetRestClientImpl implements AssetClient {
 
     @PostConstruct
     public void initRestClient() {
-        String url = config.getAssetEndpoint() + config.getAssetGatewayPath();
-        Client client = ClientBuilder.newClient();
-        ContextResolver<ObjectMapper> objectMapperContextResolver = new ContextResolver<ObjectMapper>() {
-            @Override
-            public ObjectMapper getContext(Class<?> type) {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                return mapper;
-            }
-        };
-        client.register(objectMapperContextResolver);
-        webTarget = client.target(url);
+        configureNewClient();
     }
 
     @Override
@@ -80,14 +72,14 @@ public class AssetRestClientImpl implements AssetClient {
 
             return handleResponse(response);
         } catch (ResponseProcessingException e) {
-            log.error("Error processing response from server ", e);
-            throw new RulesServiceException("Error response processing from server");
+            log.error("Error processing response from server");
+            throw new RulesServiceException("Error response processing from server", e);
         } catch (ProcessingException e) {
-            log.error("I/O error processing response ", e);
-            throw new RulesServiceException("I/O error processing response ");
+            log.error("I/O error processing response");
+            throw new RulesServiceException("I/O error processing response ", e);
         } catch (WebApplicationException e) {
-            log.error("Error response from server ", e);
-            throw new RulesServiceException("Error response from server");
+            log.error("Error response from server");
+            throw new RulesServiceException("Error response from server", e);
         }
     }
 
@@ -108,14 +100,14 @@ public class AssetRestClientImpl implements AssetClient {
 
             return handleResponse(response);
         } catch (ResponseProcessingException e) {
-            log.error("Error processing response from server ", e);
-            throw new RulesServiceException("Error response processing from server");
+            log.error("Error processing response from server");
+            throw new RulesServiceException("Error response processing from server", e);
         } catch (ProcessingException e) {
-            log.error("I/O error processing response ", e);
-            throw new RulesServiceException("I/O error processing response ");
+            log.error("I/O error processing response");
+            throw new RulesServiceException("I/O error processing response ", e);
         } catch (WebApplicationException e) {
-            log.error("Error response from server ", e);
-            throw new RulesServiceException("Error response from server");
+            log.error("Error response from server");
+            throw new RulesServiceException("Error response from server", e);
         }
     }
 
@@ -130,5 +122,27 @@ public class AssetRestClientImpl implements AssetClient {
         });
         response.close();
         return assetHistory;
+    }
+
+    public void setConfig(@Observes @ConfigSettingUpdatedEvent ConfigSettingEvent settingEvent) {
+        if (config.endpointHasChanged(settingEvent.getKey())) {
+            configureNewClient();
+        }
+    }
+
+    private void configureNewClient() {
+        webTarget = null;
+        String url = config.getAssetGatewayEndpoint();
+        Client client = ClientBuilder.newClient();
+        ContextResolver<ObjectMapper> objectMapperContextResolver = new ContextResolver<ObjectMapper>() {
+            @Override
+            public ObjectMapper getContext(Class<?> type) {
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                return mapper;
+            }
+        };
+        client.register(objectMapperContextResolver);
+        webTarget = client.target(url);
     }
 }
