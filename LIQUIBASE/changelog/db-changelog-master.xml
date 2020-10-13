@@ -67,5 +67,6 @@
     <include file="changelog/v3.4/db-changelog-UNIONVMS-4798.xml" />
     <include file="changelog/v3.4/db-changelog-UNIONVMS-4799.xml" />
     <include file="changelog/v3.4/db-changelog-UNIONVMS-4800.xml" />
+    <include file="changelog/v3.4/db-changelog-UNIONVMS-4801.xml" />
 </databaseChangeLog>
 
