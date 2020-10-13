@@ -44,7 +44,7 @@
         <activity.model.version>${uvms.activity.model.version}</activity.model.version>
         <mdr.model.version>${uvms.mdr.model.version}</mdr.model.version>
         <asset.model.version>${uvms.asset.module.version}</asset.model.version>
-        <asset.ejb.client.version>${uvms.asset.module.version}</asset.ejb.client.version>
+        <asset.rest.client.version>${uvms.asset.module.version}</asset.rest.client.version>
         <audit.model.version>${uvms.audit.module.version}</audit.model.version>
         <rules.model.version>${project.version}</rules.model.version>
         <sales.model.version>${uvms.sales.model.version}</sales.model.version>
@@ -223,8 +223,8 @@
             </dependency>
             <dependency>
                 <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
-                <artifactId>asset-ejb-client</artifactId>
-                <version>${asset.ejb.client.version}</version>
+                <artifactId>asset-rest-client</artifactId>
+                <version>${asset.rest.client.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

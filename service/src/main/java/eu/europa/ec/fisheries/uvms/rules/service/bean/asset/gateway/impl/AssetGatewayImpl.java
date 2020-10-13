@@ -14,8 +14,8 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.europa.ec.fisheries.uvms.asset.rest.client.AssetClient;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.AssetGateway;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.client.AssetClient;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 import lombok.extern.slf4j.Slf4j;
 
