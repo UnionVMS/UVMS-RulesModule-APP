@@ -10,6 +10,7 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.business;
 
+import com.google.common.collect.Lists;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
@@ -721,6 +722,7 @@ public class ActivityFactMapperTest {
 
         final FluxFaReportMessageFact fluxFaReportMessageFact = activityMapper.generateFactForFluxFaReportMessage(null);
         final List<VesselTransportMeansFact> vesselTransportMeansFacts = activityMapper.generateFactForVesselTransportMeans(null, new ArrayList<>(), null);
+        final List<VesselTransportMeansFact> vesselTransportMeansFactsFromParentFA = activityMapper.generateFactForVesselTransportMeansForParentFA(null, Lists.newArrayList(), null);
         final List<StructuredAddressFact> structuredAddressFacts = activityMapper.generateFactsForStructureAddresses(null, null);
         final FishingGearFact fishingGearFact = activityMapper.generateFactsForFishingGear(null, null);
         final List<FishingGearFact> fishingGearFacts = activityMapper.generateFactsForFishingGears(null, null , new HashMap<>(), new HashMap<>());
@@ -744,6 +746,7 @@ public class ActivityFactMapperTest {
         assertTrue(isEmpty(fishingTripFacts));
         assertTrue(isEmpty(gearCharacteristicsFacts));
         assertTrue(isEmpty(vesselTransportMeansFacts));
+        assertTrue(isEmpty(vesselTransportMeansFactsFromParentFA));
         assertTrue(isEmpty(structuredAddressFacts));
         assertTrue(isEmpty(fishingGearFacts));
         assertTrue(isEmpty(faReportDocumentFacts));
