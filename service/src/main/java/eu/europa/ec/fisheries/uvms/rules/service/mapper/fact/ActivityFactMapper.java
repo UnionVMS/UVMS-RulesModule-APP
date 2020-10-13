@@ -517,6 +517,25 @@ public class ActivityFactMapper {
         return vesselTransportMeansFact;
     }
 
+    public List<VesselTransportMeansFact> generateFactForVesselTransportMeansForParentFA(List<VesselTransportMeans> vesselTransportMeans, List<AbstractFact> facts,
+                                                                                         un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType fishActType) {
+        if (CollectionUtils.isEmpty(vesselTransportMeans)) {
+            xPathUtil.clear();
+            return emptyList();
+        }
+        List<VesselTransportMeansFact> list = new ArrayList<>();
+        int index = 1;
+        String strToAppend = xPathUtil.getValue();
+        for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
+            VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(vesselTransportMean, facts, fishActType);
+            vesselTransportMeansFact.setIsFromParentFishingActivity(true);
+            xPathUtil.appendWithoutWrapping(strToAppend).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index).storeInRepo(vesselTransportMeansFact, "RoleCode");
+            list.add(vesselTransportMeansFact);
+            index++;
+        }
+        return list;
+    }
+
     public List<VesselTransportMeansFact> generateFactForVesselTransportMeans(List<VesselTransportMeans> vesselTransportMeans, List<AbstractFact> facts,
                                                                               un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType fishActType) {
         if (CollectionUtils.isEmpty(vesselTransportMeans)) {
