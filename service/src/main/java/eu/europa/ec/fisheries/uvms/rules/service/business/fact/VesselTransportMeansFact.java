@@ -33,6 +33,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 public class VesselTransportMeansFact extends AbstractFact {
 
     private boolean isFromFaReport;
+    private boolean isFromParentFishingActivity;
     private CodeType fishingActivityType;
     private List<IdType> ids;
     private IdType registrationVesselCountryId;
@@ -118,5 +119,12 @@ public class VesselTransportMeansFact extends AbstractFact {
     }
     public void setIsFromFaReport(boolean fromFaReport) {
         isFromFaReport = fromFaReport;
+    }
+
+    public boolean getIsFromParentFishingActivity() {
+        return isFromParentFishingActivity;
+    }
+    public void setIsFromParentFishingActivity(boolean isFromParentFishingActivity) {
+        this.isFromParentFishingActivity = isFromParentFishingActivity;
     }
 }
