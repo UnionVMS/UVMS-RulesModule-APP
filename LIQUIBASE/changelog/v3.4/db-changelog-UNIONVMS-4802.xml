@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4802" author="imitrolios">
+
+        <insert tableName="rule">
+            <column name="rule_id" value="649"/>
+            <column name="br_id" value="FA-L02-00-0649"/>
+            <column name="note"
+                    value="In case RelatedActivity is present with TypeCode=GEAR_SHOT or GEAR_RETRIEVAL, it must contain a RelatedFLUXLocation."/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="${now}"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="relatedFluxLocations"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <update tableName="rule">
+            <column name="property_names" value = "fishingActivityWithCorrectIndex"/>
+            <column name="template_id" value = "13"/>
+            <where>br_id=:value</where>
+            <whereParams>
+                <param name="value" value="FA-L02-00-0548" />
+            </whereParams>
+        </update>
+
+        <update tableName="rule">
+            <column name="property_names" value = "fishingActivityWithCorrectIndex"/>
+            <column name="template_id" value = "13"/>
+            <where>br_id=:value</where>
+            <whereParams>
+                <param name="value" value="FA-L02-00-0549" />
+            </whereParams>
+        </update>
+
+        <insert tableName="context_expression">
+            <column name="id" value="649"/>
+            <column name="rule_id" value="649"/>
+            <column name="context" value="EU"/>
+            <column name="expression" value="subActivity &amp;&amp; typeCode != null &amp;&amp; !valueContainsAny(typeCode,&quot;GEAR_SHOT&quot;,&quot;GEAR_RETRIEVAL&quot;) &amp;&amp; isEmpty(relatedFLUXLocations)"/>
+            <column name="failure_message" value="RULE FA-L02-00-0649"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="548"/>
+            <column name="rule_id" value="20000548"/>
+            <column name="context" value="EU"/>
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !hasPositionLocationForFaTypeCode(&quot;GEAR_SHOT&quot;)"/>
+            <column name="failure_message" value="RULE FA-L02-00-0548"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="549"/>
+            <column name="rule_id" value="20000549"/>
+            <column name="context" value="EU"/>
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !hasPositionLocationForFaTypeCode(&quot;GEAR_RETRIEVAL&quot;)"/>
+            <column name="failure_message" value="RULE FA-L02-00-0549"/>
+        </insert>
+
+        <update tableName="context_expression">
+            <column name="expression" value = "codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !hasPositionLocationForFaTypeCode(&quot;GEAR_SHOT&quot;)"/>
+            <where>id=:value</where>
+            <whereParams>
+                <param name="value" value="20000548" />
+            </whereParams>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value = "codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !hasPositionLocationForFaTypeCode(&quot;GEAR_RETRIEVAL&quot;)"/>
+            <where>id=:value</where>
+            <whereParams>
+                <param name="value" value="20000549" />
+            </whereParams>
+        </update>
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="649"/>
+                </whereParams>
+            </delete>
+            <update tableName="rule">
+                <column name="property_names" value = "relatedFishingActivities"/>
+                <column name="template_id" value = "19"/>
+                <where>br_id=:value</where>
+                <whereParams>
+                    <param name="value" value="FA-L02-00-0548" />
+                </whereParams>
+            </update>
+            <update tableName="rule">
+                <column name="property_names" value = "relatedFishingActivities"/>
+                <column name="template_id" value = "19"/>
+                <where>br_id=:value</where>
+                <whereParams>
+                    <param name="value" value="FA-L02-00-0549" />
+                </whereParams>
+            </update>
+            <delete tableName="rule">
+                <where>br_id=:value</where>
+                <whereParams>
+                    <param name="value" value="FA-L02-00-0649"/>
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="548"/>
+                </whereParams>
+            </delete>
+            <delete tableName="context_expression">
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="549"/>
+                </whereParams>
+            </delete>
+            <update tableName="context_expression">
+                <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; !checkRelatedFishingActivitiesRelatedFluxLocationsTypeCodes(&quot;GEAR_SHOT&quot;)" />
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="20000548" />
+                </whereParams>
+            </update>
+            <update tableName="context_expression">
+                <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; !checkRelatedFishingActivitiesRelatedFluxLocationsTypeCodes(&quot;GEAR_RETRIEVAL&quot;)" />
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="20000549" />
+                </whereParams>
+            </update>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
