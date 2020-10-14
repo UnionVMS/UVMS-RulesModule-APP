@@ -324,6 +324,7 @@ public class ActivityFactMapper {
         if (CollectionUtils.isNotEmpty(fishingActivity.getSpecifiedDelimitedPeriods())) {
             fishingActivityFact.setDelimitedPeriod(fishingActivity.getSpecifiedDelimitedPeriods().get(0));
         }
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD).storeInRepo(fishingActivityFact, "delimitedPeriod");
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD, START_DATE).storeInRepo(fishingActivityFact, "delimitedPeriodStartTime");
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_DELIMITED_PERIOD, END_DATE).storeInRepo(fishingActivityFact, "delimitedPeriodEndTime");
 
