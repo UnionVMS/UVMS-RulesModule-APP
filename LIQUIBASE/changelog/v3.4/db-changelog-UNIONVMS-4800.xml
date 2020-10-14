@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4800-check-presence-of-delimitedperiod" author="nomikosi">
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="645" />
+            <column name="br_id" value="FA-L02-00-0645" />
+            <column name="note" value="The entity delimited period is mandatory for landing and transhipment"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="delimitedPeriod"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="645"/>
+            <column name="rule_id" value="645"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="faReportDocumentTypeCode != null &amp;&amp; &quot;DECLARATION&quot;.equals(faReportDocumentTypeCode.value) &amp;&amp; typeCode != null &amp;&amp; (&quot;LANDING&quot;.equals(typeCode.value) || &quot;TRANSHIPMENT&quot;.equals(typeCode.value)) &amp;&amp; delimitedPeriod == null"/>
+            <column name="failure_message" value="The entity delimited period is mandatory for landing and transhipment"/>
+        </insert>
+
+
+
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="645" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="645" />
+                </whereParams>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
