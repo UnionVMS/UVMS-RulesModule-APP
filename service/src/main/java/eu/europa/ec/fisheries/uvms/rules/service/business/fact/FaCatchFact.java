@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProcess;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -56,6 +57,7 @@ public class FaCatchFact extends AbstractFact {
     private List<FLUXLocation> destinationFLUXLocations;
     private List<IdType> faCatchFluxLocationId;
     private List<IdType> fishActRelatedFluxLocationIds;
+    private List<FishingGear> usedFishingGears;
     private boolean isSubActivity = false;
 
 

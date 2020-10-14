@@ -15,8 +15,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -53,6 +53,7 @@ public class FishingActivityFact extends AbstractFact {
     private CodeType faReportDocumentTypeCode;
     private List<CodeType> relatedFluxLocationRFMOCodeList;
     private List<FACatch> specifiedFaCatch;
+    private List<FishingGear> specifiedFishingGears;
 
     private List<CodeType> relatedVesselTransportMeansRoleCodes;
     private List<CodeType> relFishActRelatedVesselTransportMeansRoleCodes;
@@ -88,6 +89,15 @@ public class FishingActivityFact extends AbstractFact {
             }
         }
         return isMatch;
+    }
+
+    public boolean hasUniqueFluxCharacteristics(List<CodeType> fluxCharacteristicsTypeCode){
+        if(fluxCharacteristicsTypeCode == null || fluxCharacteristicsTypeCode.isEmpty()){
+            return true;
+        }
+
+        HashSet listToSet = new HashSet(fluxCharacteristicsTypeCode);
+        return listToSet.size() == fluxCharacteristicsTypeCode.size();
     }
 
     public boolean rfmoProvided(List<FLUXLocation> relatedFLUXLocations) {

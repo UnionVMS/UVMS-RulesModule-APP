@@ -329,8 +329,8 @@ public class ActivityFactMapper {
 
         if(mainActivityType != null){
             fishingActivityFact.setMainActivityType(mainActivityType.getValue());
-            fishingActivityFact.setSpecifiedFaCatch(fishingActivity.getSpecifiedFACatches());
         }
+        fishingActivityFact.setSpecifiedFaCatch(fishingActivity.getSpecifiedFACatches());
         fishingActivityFact.setRelFishActRelatedVesselTransportMeansRoleCodes(mapToRelatedVTMCodes(fishingActivity.getRelatedFishingActivities()));
         fishingActivityFact.setRelatedVesselTransportMeansRoleCodes(extractRoleCodes(fishingActivity.getRelatedVesselTransportMeans()));
         fishingActivityFact.setFaRepDockSpecifiedVesselTransportMeansRoleCodes(extractRoleCodes(Collections.singletonList(faReportDocument.getSpecifiedVesselTransportMeans())));
@@ -388,6 +388,8 @@ public class ActivityFactMapper {
         fishingActivityFact.setRelatedFluxLocationRFMOCodeList(getFLUXLocationRFMOCodes(fishingActivity.getRelatedFLUXLocations()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION, REGIONAL_FISHERIES_MANAGEMENT_ORGANIZATION_CODE).storeInRepo(fishingActivityFact, RELATED_FLUX_LOCATION_RFMO_CODE_LIST_PROP);
 
+        fishingActivityFact.setSpecifiedFishingGears(fishingActivity.getSpecifiedFishingGears());
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_GEAR).storeInRepo(fishingActivityFact, "specifiedFishingGears");
         return fishingActivityFact;
     }
 
@@ -939,6 +941,9 @@ public class ActivityFactMapper {
 
                 faCatchFact.setSpecifiedFLUXLocations(faCatch.getSpecifiedFLUXLocations());
                 xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION).storeInRepo(faCatchFact, "specifiedFLUXLocations");
+
+                faCatchFact.setUsedFishingGears(faCatch.getUsedFishingGears());
+                xPathUtil.appendWithoutWrapping(partialXPath).append(USED_FISHING_GEAR).storeInRepo(faCatchFact, "usedFishingGears");
 
                 if (faCatch.getSpecifiedFLUXLocations() != null) {
                     faCatchFact.setFaCatchFluxLocationId(mapFLUXLocationIDs(faCatch.getSpecifiedFLUXLocations()));
