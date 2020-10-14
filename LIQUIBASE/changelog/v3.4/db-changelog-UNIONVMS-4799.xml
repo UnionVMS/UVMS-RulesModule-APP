@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4799-specified-contact-person" author="nomikosi">
+        <insert tableName="rule">
+            <column name="rule_id" value="640" />
+            <column name="br_id" value="FA-L00-00-0640" />
+            <column name="note" value="FLUXCharacteristic TypeCode must be unique"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="fluxCharacteristicsTypeCode"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="640"/>
+            <column name="rule_id" value="640"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!hasUniqueFluxCharacteristics(fluxCharacteristicsTypeCode)"/>
+            <column name="failure_message" value="FLUXCharacteristic TypeCode must be unique"/>
+        </insert>
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="644" />
+            <column name="br_id" value="FA-L00-00-0644" />
+            <column name="note" value="The gear must be specified if catches are declared in the activity"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="specifiedFishingGears"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="644"/>
+            <column name="rule_id" value="644"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="!isEmpty(specifiedFaCatch) &amp;&amp; (&quot;FISHING_OPERATION&quot;.equals(typeCode.value) || &quot;JOINT_FISHING_OPERATION&quot;.equals(typeCode.value) || &quot;GEAR_RETRIEVAL&quot;.equals(typeCode.value) || &quot;GEAR_SHOT&quot;.equals(typeCode.value) || &quot;START_ACTIVITY&quot;.equals(typeCode.value) ) &amp;&amp; isEmpty(specifiedFishingGears)"/>
+            <column name="failure_message" value="The gear must be specified if catches are declared in the activity"/>
+        </insert>
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="642" />
+            <column name="br_id" value="FA-L02-00-0642" />
+            <column name="note" value="Declare at most 1 SpecifiedFishingGear for a FishingActivity"/>
+            <column name="level" value="L02"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="specifiedFishingGears"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="642"/>
+            <column name="rule_id" value="642"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="(&quot;FISHING_OPERATION&quot;.equals(typeCode.value) || &quot;JOINT_FISHING_OPERATION&quot;.equals(typeCode.value) || &quot;GEAR_RETRIEVAL&quot;.equals(typeCode.value) || &quot;GEAR_SHOT&quot;.equals(typeCode.value) || &quot;START_ACTIVITY&quot;.equals(typeCode.value) ) &amp;&amp; specifiedFishingGears.size > 1"/>
+            <column name="failure_message" value="Declare at most 1 SpecifiedFishingGear for a FishingActivity"/>
+        </insert>
+
+
+        <insert tableName="rule">
+            <column name="rule_id" value="641" />
+            <column name="br_id" value="FA-L00-00-0641" />
+            <column name="note" value="Declare at most 1 UsedFishingGear for a FaCatch"/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
+            <column name="template_id" value="8"/>
+            <column name="property_names" value="usedFishingGears"/>
+            <column name="disabled" value="false"/>
+        </insert>
+
+        <insert tableName="context_expression">
+            <column name="id" value="641"/>
+            <column name="rule_id" value="641"/>
+            <column name="context" value="EU"/>
+            <column name="expression"
+                    value="usedFishingGears.size > 1"/>
+            <column name="failure_message" value="Declare at most 1 UsedFishingGear for a FaCatch"/>
+        </insert>
+
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="640" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="640" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="641" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="641" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="642" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="642" />
+                </whereParams>
+            </delete>
+
+            <delete tableName="context_expression">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="644" />
+                </whereParams>
+            </delete>
+            <delete tableName="rule">
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="644" />
+                </whereParams>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

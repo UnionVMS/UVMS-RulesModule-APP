@@ -28,6 +28,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.AAPProduct;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -63,10 +64,8 @@ public class FaCatchFact extends AbstractFact {
     private List<IdType> fishActRelatedFluxLocationIds;
     private List<FLUXCharacteristic>  fishingActivityFluxCharacteristic;
     private List<FLUXCharacteristic>  faCatchFluxCharacteristic;
+    private List<FishingGear> usedFishingGears;
     private boolean isSubActivity = false;
-
-
-
 
     public boolean containsAtMostXTypesOfLocation(List<FLUXLocation> locations,String type,int times){
 
@@ -171,5 +170,4 @@ public class FaCatchFact extends AbstractFact {
     public boolean isSubActivity() {
         return isSubActivity;
     }
-
 }
