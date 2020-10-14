@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="FA-L00-00-0395-validator-isnot-empty" author="nomikosi">
+        <update tableName="context_expression">
+            <column name="expression"
+                    value="!isEmpty(relatedValidationResultDocuments) &amp;&amp; !isValidatorIdPresent(relatedValidationResultDocuments)"/>
+            <where>rule_id = '395'</where>
+        </update>
+
+
+        <rollback>
+            <update tableName="context_expression">
+                <column name="expression"
+                        value="!isValidatorIdPresent(relatedValidationResultDocuments)"/>
+                <where>rule_id = '395'</where>
+            </update>
+        </rollback>
+    </changeSet>
+
+
+</databaseChangeLog>
