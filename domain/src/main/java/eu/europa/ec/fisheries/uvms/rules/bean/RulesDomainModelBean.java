@@ -31,6 +31,8 @@ import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.entity.*;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoException;
 import eu.europa.ec.fisheries.uvms.rules.exception.DaoMappingException;
+import eu.europa.ec.fisheries.uvms.rules.exception.DaoMappingRuntimeException;
+import eu.europa.ec.fisheries.uvms.rules.exception.DaoRuntimeException;
 import eu.europa.ec.fisheries.uvms.rules.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.mapper.*;
 import eu.europa.ec.fisheries.uvms.rules.mapper.search.*;
@@ -47,7 +49,7 @@ import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 @Stateless
 public class RulesDomainModelBean implements RulesDomainModel {
@@ -809,18 +811,38 @@ public class RulesDomainModelBean implements RulesDomainModel {
             // TODO: This can be done more efficiently with some join stuff
             List<Ticket> tickets = rulesDao.getTicketsByMovements(movementGuids);
             for (Ticket ticket : tickets) {
-                CustomRule rule = rulesDao.getCustomRuleByGuid(ticket.getRuleGuid());
                 TicketType ticketType = TicketMapper.toTicketType(ticket);
-                CustomRuleType ruleType = CustomRuleMapper.toCustomRuleType(rule);
                 TicketAndRuleType ticketsAndRule = new TicketAndRuleType();
                 ticketsAndRule.setTicket(ticketType);
-                ticketsAndRule.setRule(ruleType);
+                Optional.ofNullable(ticket.getRuleGuid())
+                        .map(this::getCustomRuleByGuid)
+                        .map(this::toCustomRuleType)
+                        .ifPresent(ticketsAndRule::setRule);
                 ticketsAndRules.add(ticketsAndRule);
             }
             return ticketsAndRules;
         } catch (DaoException | DaoMappingException e) {
-            LOG.error("[ERROR] Error when getting list {}", e.getMessage());
             throw new RulesModelException("[ERROR] Error when getting list.", e);
+        } catch (DaoRuntimeException dre) {
+            throw new RulesModelException("[ERROR] Error when getting list.", dre.unwrap());
+        } catch (DaoMappingRuntimeException dmre) {
+            throw new RulesModelException("[ERROR] Error when getting list.", dmre.unwrap());
+        }
+    }
+
+    private CustomRule getCustomRuleByGuid(String id) {
+        try {
+            return rulesDao.getCustomRuleByGuid(id);
+        } catch (DaoException e) {
+            throw new DaoRuntimeException("", e);
+        }
+    }
+
+    private CustomRuleType toCustomRuleType(CustomRule customRuleEntity) {
+        try {
+            return CustomRuleMapper.toCustomRuleType(customRuleEntity);
+        } catch (DaoMappingException e) {
+            throw new DaoMappingRuntimeException("", e);
         }
     }
 }
