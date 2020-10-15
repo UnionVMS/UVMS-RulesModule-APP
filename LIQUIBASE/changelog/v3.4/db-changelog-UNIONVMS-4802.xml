@@ -17,6 +17,24 @@
             <column name="disabled" value="false"/>
         </insert>
 
+        <update tableName="rule">
+            <column name="property_names" value = "fishingActivityWithCorrectIndex"/>
+            <column name="template_id" value = "13"/>
+            <where>br_id=:value</where>
+            <whereParams>
+                <param name="value" value="FA-L02-00-0548" />
+            </whereParams>
+        </update>
+
+        <update tableName="rule">
+            <column name="property_names" value = "fishingActivityWithCorrectIndex"/>
+            <column name="template_id" value = "13"/>
+            <where>br_id=:value</where>
+            <whereParams>
+                <param name="value" value="FA-L02-00-0549" />
+            </whereParams>
+        </update>
+
         <insert tableName="context_expression">
             <column name="id" value="649"/>
             <column name="rule_id" value="649"/>
@@ -25,45 +43,19 @@
             <column name="failure_message" value="RULE FA-L02-00-0649"/>
         </insert>
 
-        <insert tableName="rule">
-            <column name="rule_id" value="548"/>
-            <column name="br_id" value="FA-L02-00-0548"/>
-            <column name="note"
-                    value="Start Position"/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on" valueDate="${now}"/>
-            <column name="template_id" value="19"/>
-            <column name="property_names" value="relatedFishingActivities"/>
-            <column name="disabled" value="false"/>
-        </insert>
-
         <insert tableName="context_expression">
             <column name="id" value="548"/>
-            <column name="rule_id" value="548"/>
+            <column name="rule_id" value="20000548"/>
             <column name="context" value="EU"/>
-            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; !checkRelatedFishingActivitiesRelatedFluxLocationsTypeCodes(&quot;GEAR_SHOT&quot;)"/>
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !hasPositionLocationForFaTypeCode(&quot;GEAR_SHOT&quot;)"/>
             <column name="failure_message" value="RULE FA-L02-00-0548"/>
-        </insert>
-
-        <insert tableName="rule">
-            <column name="rule_id" value="549"/>
-            <column name="br_id" value="FA-L02-00-0549"/>
-            <column name="note"
-                    value="End Position"/>
-            <column name="level" value="L02"/>
-            <column name="error_type" value="ERROR"/>
-            <column name="rule_created_on" valueDate="${now}"/>
-            <column name="template_id" value="19"/>
-            <column name="property_names" value="relatedFishingActivities"/>
-            <column name="disabled" value="false"/>
         </insert>
 
         <insert tableName="context_expression">
             <column name="id" value="549"/>
-            <column name="rule_id" value="549"/>
+            <column name="rule_id" value="20000549"/>
             <column name="context" value="EU"/>
-            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !isEmpty(relatedFishingActivities) &amp;&amp; !checkRelatedFishingActivitiesRelatedFluxLocationsTypeCodes(&quot;GEAR_RETRIEVAL&quot;)"/>
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !hasPositionLocationForFaTypeCode(&quot;GEAR_RETRIEVAL&quot;)"/>
             <column name="failure_message" value="RULE FA-L02-00-0549"/>
         </insert>
 
@@ -74,6 +66,22 @@
                     <param name="value" value="649"/>
                 </whereParams>
             </delete>
+            <update tableName="rule">
+                <column name="property_names" value = "relatedFishingActivities"/>
+                <column name="template_id" value = "19"/>
+                <where>br_id=:value</where>
+                <whereParams>
+                    <param name="value" value="FA-L02-00-0548" />
+                </whereParams>
+            </update>
+            <update tableName="rule">
+                <column name="property_names" value = "relatedFishingActivities"/>
+                <column name="template_id" value = "19"/>
+                <where>br_id=:value</where>
+                <whereParams>
+                    <param name="value" value="FA-L02-00-0549" />
+                </whereParams>
+            </update>
             <delete tableName="rule">
                 <where>br_id=:value</where>
                 <whereParams>
@@ -83,25 +91,13 @@
             <delete tableName="context_expression">
                 <where>rule_id=:value</where>
                 <whereParams>
-                    <param name="value" value="548"/>
-                </whereParams>
-            </delete>
-            <delete tableName="rule">
-                <where>rule_id=:value</where>
-                <whereParams>
-                    <param name="id_value" value="548"/>
+                    <param name="value" value="20000548"/>
                 </whereParams>
             </delete>
             <delete tableName="context_expression">
                 <where>rule_id=:value</where>
                 <whereParams>
-                    <param name="value" value="549"/>
-                </whereParams>
-            </delete>
-            <delete tableName="rule">
-                <where>rule_id=:value</where>
-                <whereParams>
-                    <param name="id_value" value="549"/>
+                    <param name="value" value="20000549"/>
                 </whereParams>
             </delete>
         </rollback>
