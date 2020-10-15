@@ -17,6 +17,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -58,6 +60,8 @@ public class FishingActivityFact extends AbstractFact {
     private List<CodeType> relatedVesselTransportMeansRoleCodes;
     private List<CodeType> relFishActRelatedVesselTransportMeansRoleCodes;
     private List<CodeType> faRepDockSpecifiedVesselTransportMeansRoleCodes;
+
+    private FishingActivity thisFishingActivity;
 
     public FishingActivityFact() {
         setFactType();
@@ -168,4 +172,23 @@ public class FishingActivityFact extends AbstractFact {
         return true;
     }
 
+
+    public boolean hasPositionLocationForFaTypeCode(String fishingActivityTypeCode) {
+        if(!isSubActivity() || org.apache.commons.lang3.StringUtils.isEmpty(fishingActivityTypeCode)){
+            return true;
+        }
+        if(thisFishingActivity != null && thisFishingActivity.getTypeCode() != null && fishingActivityTypeCode.equals(thisFishingActivity.getTypeCode().getValue())){
+            List<FLUXLocation> relatedFluxLocations = collectRelatedFluxLocations(thisFishingActivity);
+            return anyFluxLocationTypeCodeContainsValue(relatedFluxLocations, "POSITION");
+        }
+        return true;
+    }
+
+    private List<FLUXLocation> collectRelatedFluxLocations(FishingActivity relatedFishingActivity) {
+        List<FLUXLocation> nonNullFlucLocations = new ArrayList<>();
+        if(relatedFishingActivity != null && CollectionUtils.isNotEmpty(relatedFishingActivity.getRelatedFLUXLocations())){
+            nonNullFlucLocations = relatedFishingActivity.getRelatedFLUXLocations().stream().filter(Objects::nonNull).collect(Collectors.toList());
+        }
+        return nonNullFlucLocations;
+    }
 }
