@@ -76,7 +76,7 @@ public class FaCatchFact extends AbstractFact {
         int i =0;
 
         for(FLUXLocation location:locations){
-            if(type.equals(location.getTypeCode().getValue())){
+            if(type.equals(location.getID().getSchemeID())){
                 i ++;
             }
 
