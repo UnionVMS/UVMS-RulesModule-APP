@@ -76,7 +76,12 @@ public class FaCatchFact extends AbstractFact {
         int i =0;
 
         for(FLUXLocation location:locations){
-            if(type.equals(location.getTypeCode().getValue())){
+
+            if(location.getID() == null){
+                continue;
+            }
+
+            if(type.equals(location.getID().getSchemeID())){
                 i ++;
             }
 
@@ -98,6 +103,10 @@ public class FaCatchFact extends AbstractFact {
 
         for(FLUXLocation location:locations){
 
+            if(location.getTypeCode() == null){
+                continue;
+            }
+
             if(map.get(location.getTypeCode().getValue()) == null){
                 map.put(location.getTypeCode().getValue(),1);
             } else {
@@ -116,6 +125,10 @@ public class FaCatchFact extends AbstractFact {
         }
 
         for(FLUXCharacteristic fluxCharacteristic:fluxCharacteristics){
+
+            if(fluxCharacteristic.getTypeCode() == null) {
+                continue;
+            }
 
             if(value.equals(fluxCharacteristic.getTypeCode().getValue())){
                 return true;
