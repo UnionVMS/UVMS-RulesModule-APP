@@ -316,6 +316,7 @@ public class ActivityFactMapper {
     public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, boolean isSubActivity, FAReportDocument faReportDocument,
                                                            un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType mainActivityType) {
         FishingActivityFact fishingActivityFact = new FishingActivityFact();
+        fishingActivityFact.setThisFishingActivity(fishingActivity);
         fishingActivityFact.setSubActivity(isSubActivity);
         fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument != null ? faReportDocument.getTypeCode() : null));
 
@@ -339,6 +340,7 @@ public class ActivityFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(fishingActivityFact, "specifiedFaCatch");
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_VESSEL_TRANSPORT_MEANS, ROLE_CODE).storeInRepo(fishingActivityFact, "relatedVesselTransportMeansRoleCodes");
         xPathUtil.appendWithoutWrapping(partialXpath).storeInRepo(fishingActivityFact, "relFishActRelatedVesselTransportMeansRoleCodes");
+        xPathUtil.appendWithoutWrapping(partialXpath).storeInRepo(fishingActivityFact, "fishingActivityWithCorrectIndex");
 
         fishingActivityFact.setRelatedFishingTrip(mapRelatedFishingTrips(fishingActivity.getRelatedFishingActivities()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY, SPECIFIED_FISHING_TRIP).storeInRepo(fishingActivityFact, "relatedFishingTrip");
@@ -1470,6 +1472,8 @@ public class ActivityFactMapper {
                     faFishingOperationFact.setFishingGearRoleCodes(fishingGearRoleCodes);
                     xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FISHING_ACTIVITY).appendWithIndex(VESSEL_RELATED_ACTIVITY_CODE, activityIndex)
                             .storeInRepo(faFishingOperationFact, FISHING_GEAR_ROLE_CODES_PROP);
+
+                    activityIndex++;
                 }
 
                 faFishingOperationFact.setRelatedFishingActivitiesRelatedFLUXLocations(getRelatedFluxLocations(fishingActivity.getRelatedFishingActivities()));
