@@ -31,7 +31,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="3"/>
-            <column name="property_names" value="ids"/>
+            <column name="property_names" value="relatedIds"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -55,7 +55,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="3"/>
-            <column name="property_names" value="ids"/>
+            <column name="property_names" value="relatedIds"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -79,7 +79,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="3"/>
-            <column name="property_names" value="ids"/>
+            <column name="property_names" value="relatedIds"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -125,7 +125,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="3"/>
-            <column name="property_names" value="ids"/>
+            <column name="property_names" value="relatedIds"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -148,7 +148,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="3"/>
-            <column name="property_names" value="ids"/>
+            <column name="property_names" value="registrationVesselCountryId"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -171,7 +171,7 @@
             <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="3"/>
-            <column name="property_names" value="ids"/>
+            <column name="property_names" value="registrationVesselCountryId"/>
             <column name="disabled" value="false"/>
         </insert>
 
