@@ -8,8 +8,8 @@
             <column name="level" value="L02"/>
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
-            <column name="template_id" value="27"/>
-            <column name="property_names" value="specifiedFACatches"/>
+            <column name="template_id" value="13"/>
+            <column name="property_names" value="specifiedFaCatch"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -18,9 +18,9 @@
             <column name="rule_id" value="622"/>
             <column name="context" value="EU"/>
             <column name="expression"
-                    value="(!valueContainsAny(fishingActivityTypeCode, &quot;RELOCATION&quot;, &quot;TRANSHIPMENT&quot;)
+                    value="(!valueContainsAny(typeCode, &quot;RELOCATION&quot;, &quot;TRANSHIPMENT&quot;)
                     || (codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;)
-                    &amp;&amp;  !valueContainsAny(fishingActivityTypeCode, &quot;DISCARD&quot;, &quot;LANDING&quot;))) &amp;&amp; isEmpty(specifiedFACatches)"/>
+                    &amp;&amp;  !valueContainsAny(typeCode, &quot;DISCARD&quot;, &quot;LANDING&quot;))) &amp;&amp; isEmpty(specifiedFaCatch)"/>
             <column name="failure_message" value="Type code must be present for transhipment"/>
         </insert>
 

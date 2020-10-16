@@ -120,7 +120,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="8"/>
-            <column name="property_names" value="specifiedFLUXLocations"/>
+            <column name="property_names" value="faCatchSpecifiedFLUXLocations"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -129,7 +129,7 @@
             <column name="rule_id" value="662"/>
             <column name="context" value="EU"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !isEmpty(specifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(specifiedFLUXLocations,&quot;FAO_AREA&quot;,1)"/>
+                    value="!subActivity &amp;&amp; !isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(faCatchSpecifiedFLUXLocations,&quot;FAO_AREA&quot;,1)"/>
             <column name="failure_message" value="Only one FAO_AREA declaration is allowed per FACatch."/>
         </insert>
 
@@ -143,7 +143,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="8"/>
-            <column name="property_names" value="specifiedFLUXLocations"/>
+            <column name="property_names" value="faCatchSpecifiedFLUXLocations"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -152,7 +152,7 @@
             <column name="rule_id" value="663"/>
             <column name="context" value="EU"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !isEmpty(specifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(specifiedFLUXLocations,&quot;GFCM_GSA&quot;,1)"/>
+                    value="!subActivity &amp;&amp; !isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(faCatchSpecifiedFLUXLocations,&quot;GFCM_GSA&quot;,1)"/>
             <column name="failure_message" value="Only one GFCM_GSA area declaration is allowed per FACatch"/>
         </insert>
 
@@ -167,7 +167,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="8"/>
-            <column name="property_names" value="specifiedFLUXLocations"/>
+            <column name="property_names" value="faCatchSpecifiedFLUXLocations"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -176,7 +176,7 @@
             <column name="rule_id" value="664"/>
             <column name="context" value="EU"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !isEmpty(specifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(specifiedFLUXLocations,&quot;EFFORT_ZONE&quot;,1)"/>
+                    value="!subActivity &amp;&amp; !isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(faCatchSpecifiedFLUXLocations,&quot;EFFORT_ZONE&quot;,1)"/>
             <column name="failure_message" value="Only one EFFORT_ZONE declaration is allowed per FACatch"/>
         </insert>
 
