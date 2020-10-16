@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
-    <changeSet id="UNIONVMS-4798-main-area-reporting" author="nomikosi">
+    <changeSet id="UNIONVMS-4798-main-area-reporting-rules" author="nomikosi">
 
         <insert tableName="rule">
             <column name="rule_id" value="656" />
@@ -152,7 +152,7 @@
             <column name="rule_id" value="663"/>
             <column name="context" value="EU"/>
             <column name="expression"
-                    value="!subActivity &amp;&amp; !isEmpty(specifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(specifiedFLUXLocations,&quot;GFCM&quot;,1)"/>
+                    value="!subActivity &amp;&amp; !isEmpty(specifiedFLUXLocations) &amp;&amp; !containsAtMostXTypesOfLocation(specifiedFLUXLocations,&quot;GFCM_GSA&quot;,1)"/>
             <column name="failure_message" value="Only one GFCM_GSA area declaration is allowed per FACatch"/>
         </insert>
 

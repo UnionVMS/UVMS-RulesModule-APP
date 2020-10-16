@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
-    <changeSet id="UNIONVMS-4793" author="nomikosi">
+    <changeSet id="UNIONVMS-4793-rules-for-EU-flagged-vessels" author="nomikosi">
 
         <insert tableName="rule">
             <column name="rule_id" value="630" />
@@ -145,7 +145,7 @@
             <column name="br_id" value="FA-L03-00-0637" />
             <column name="note" value="IRCS and External Marking  provided, vessel should exist in the vessel register at report creation date under the flag state"/>
             <column name="level" value="L03"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
@@ -168,7 +168,7 @@
             <column name="br_id" value="FA-L03-00-0638" />
             <column name="note" value="Reporting EU fishing vessels must provide CFR"/>
             <column name="level" value="L03"/>
-            <column name="error_type" value="ERROR"/>
+            <column name="error_type" value="WARNING"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="3"/>
             <column name="property_names" value="registrationVesselCountryId"/>
