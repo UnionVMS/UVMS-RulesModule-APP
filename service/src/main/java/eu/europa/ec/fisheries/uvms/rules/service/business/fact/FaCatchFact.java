@@ -103,12 +103,12 @@ public class FaCatchFact extends AbstractFact {
 
         for(FLUXLocation location:locations){
 
-            if(location.getTypeCode() == null){
+            if(location.getID() == null){
                 continue;
             }
 
-            if(map.get(location.getTypeCode().getValue()) == null){
-                map.put(location.getTypeCode().getValue(),1);
+            if(map.get(location.getID().getSchemeID()) == null){
+                map.put(location.getID().getSchemeID(),1);
             } else {
                 return true;
             }
