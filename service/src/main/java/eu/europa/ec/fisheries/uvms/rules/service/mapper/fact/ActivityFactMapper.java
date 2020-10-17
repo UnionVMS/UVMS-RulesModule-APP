@@ -989,7 +989,7 @@ public class ActivityFactMapper {
 
                 if(CollectionUtils.isNotEmpty(faCatch.getSpecifiedFLUXLocations())){
                     faCatchFact.setFaCatchSpecifiedFLUXLocations(faCatch.getSpecifiedFLUXLocations());
-                    xPathUtil.appendWithoutWrapping(partialXPath).appendWithIndex(SPECIFIED_FLUX_LOCATION,index).append(ID).storeInRepo(faCatchFact, "faCatchSpecifiedFLUXLocations");
+                    xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION,ID).storeInRepo(faCatchFact, "faCatchSpecifiedFLUXLocations");
                     List<FLUXCharacteristic> fluxCharacteristics = getFluxCharacteristics(faCatch.getSpecifiedFLUXLocations());
                     faCatchFact.setFaCatchFluxCharacteristic(fluxCharacteristics);
                     Integer typeIndex = getIndexForFluxCharacteristicsWithTypeCode(faCatch.getSpecifiedFLUXLocations());
@@ -1004,10 +1004,11 @@ public class ActivityFactMapper {
                 }
                 xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "faCatchFluxLocationId");
 
-                if (CollectionUtils.isNotEmpty(fishActRelatedFluxLocations)) {
+                //there is only one matching activity to examine for a list of catches. We only have to run the validation rules once.
+                if (CollectionUtils.isNotEmpty(fishActRelatedFluxLocations) && index == 1) {
                     faCatchFact.setFishActRelatedFluxLocationIds(mapFLUXLocationIDs(fishActRelatedFluxLocations));
                     faCatchFact.setFishingActivityRelatedFLUXLocations(fishActRelatedFluxLocations);
-                    xPathUtil.appendWithoutWrapping(partialXPath1).appendWithIndex(RELATED_FLUX_LOCATION,index).append(ID).storeInRepo(faCatchFact, "fishingActivityRelatedFLUXLocations");
+                    xPathUtil.appendWithoutWrapping(partialXPath1).append(RELATED_FLUX_LOCATION,ID).storeInRepo(faCatchFact, "fishingActivityRelatedFLUXLocations");
                     List<FLUXCharacteristic> fluxCharacteristics = getFluxCharacteristics(fishActRelatedFluxLocations);
                     faCatchFact.setFishingActivityFluxCharacteristic(fluxCharacteristics);
                     Integer typeIndex = getIndexForFluxCharacteristicsWithTypeCode(fishActRelatedFluxLocations);
