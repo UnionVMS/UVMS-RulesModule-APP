@@ -992,8 +992,10 @@ public class ActivityFactMapper {
                     xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION,ID).storeInRepo(faCatchFact, "faCatchSpecifiedFLUXLocations");
                     List<FLUXCharacteristic> fluxCharacteristics = getFluxCharacteristics(faCatch.getSpecifiedFLUXLocations());
                     faCatchFact.setFaCatchFluxCharacteristic(fluxCharacteristics);
-                    Integer typeIndex = getIndexForFluxCharacteristicsWithTypeCode(faCatch.getSpecifiedFLUXLocations());
-                    xPathUtil.appendWithoutWrapping(partialXPath).appendWithIndex(SPECIFIED_FLUX_LOCATION,typeIndex).append(APPLICABLE_FLUX_CHARACTERISTIC,TYPE_CODE).storeInRepo(faCatchFact, "faCatchFluxCharacteristic");
+                    Integer catchCharacteristicsIndex = getIndexForFluxCharacteristics(faCatch.getSpecifiedFLUXLocations());
+                    xPathUtil.appendWithoutWrapping(partialXPath).appendWithIndex(SPECIFIED_FLUX_LOCATION,catchCharacteristicsIndex).append(APPLICABLE_FLUX_CHARACTERISTIC).storeInRepo(faCatchFact, "faCatchFluxCharacteristic");
+                    Integer catchCharacteristicsTypeIndex = getIndexForFluxCharacteristicsWithTypeCode(faCatch.getSpecifiedFLUXLocations());
+                    xPathUtil.appendWithoutWrapping(partialXPath).appendWithIndex(SPECIFIED_FLUX_LOCATION,catchCharacteristicsTypeIndex).append(APPLICABLE_FLUX_CHARACTERISTIC,TYPE_CODE).storeInRepo(faCatchFact, "faCatchFluxCharacteristicTypeCode");
                 }
 
                 faCatchFact.setUsedFishingGears(faCatch.getUsedFishingGears());
@@ -1011,8 +1013,10 @@ public class ActivityFactMapper {
                     xPathUtil.appendWithoutWrapping(partialXPath1).append(RELATED_FLUX_LOCATION,ID).storeInRepo(faCatchFact, "fishingActivityRelatedFLUXLocations");
                     List<FLUXCharacteristic> fluxCharacteristics = getFluxCharacteristics(fishActRelatedFluxLocations);
                     faCatchFact.setFishingActivityFluxCharacteristic(fluxCharacteristics);
-                    Integer typeIndex = getIndexForFluxCharacteristicsWithTypeCode(fishActRelatedFluxLocations);
-                    xPathUtil.appendWithoutWrapping(partialXPath1).appendWithIndex(RELATED_FLUX_LOCATION,typeIndex).append(APPLICABLE_FLUX_CHARACTERISTIC,TYPE_CODE).storeInRepo(faCatchFact, "fishingActivityFluxCharacteristic");
+                    Integer actCharacteristicsIndex = getIndexForFluxCharacteristics(fishActRelatedFluxLocations);
+                    xPathUtil.appendWithoutWrapping(partialXPath1).appendWithIndex(RELATED_FLUX_LOCATION,actCharacteristicsIndex).append(APPLICABLE_FLUX_CHARACTERISTIC).storeInRepo(faCatchFact, "fishingActivityFluxCharacteristic");
+                    Integer actCharacteristicsTypeIndex = getIndexForFluxCharacteristicsWithTypeCode(fishActRelatedFluxLocations);
+                    xPathUtil.appendWithoutWrapping(partialXPath1).appendWithIndex(RELATED_FLUX_LOCATION,actCharacteristicsTypeIndex).append(APPLICABLE_FLUX_CHARACTERISTIC,TYPE_CODE).storeInRepo(faCatchFact, "fishingActivityFluxCharacteristicTypeCode");
                 }
                 xPathUtil.appendWithoutWrapping(partialXPath1).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "fishActRelatedFluxLocationIds");
 
@@ -1046,6 +1050,23 @@ public class ActivityFactMapper {
        return  fishActRelatedFluxLocations.stream()
                 .filter(t -> t.getApplicableFLUXCharacteristics() != null && !t.getApplicableFLUXCharacteristics().isEmpty())
                 .map(r -> r.getApplicableFLUXCharacteristics()).flatMap(List::stream).collect(Collectors.toList());
+    }
+
+    private Integer getIndexForFluxCharacteristics(List<FLUXLocation> fishActRelatedFluxLocations){
+
+        Integer index = 1;
+        for(FLUXLocation location:fishActRelatedFluxLocations){
+            if(location.getApplicableFLUXCharacteristics() != null && !location.getApplicableFLUXCharacteristics().isEmpty()){
+
+                index++;
+            }
+
+        }
+        if(index >= fishActRelatedFluxLocations.size()){
+            return 1;
+        }
+
+        return index;
     }
 
     private Integer getIndexForFluxCharacteristicsWithTypeCode(List<FLUXLocation> fishActRelatedFluxLocations){
