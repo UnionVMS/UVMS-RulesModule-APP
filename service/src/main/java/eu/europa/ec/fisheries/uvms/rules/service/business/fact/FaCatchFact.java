@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -118,24 +119,54 @@ public class FaCatchFact extends AbstractFact {
         return false;
     }
 
-    public boolean fluxCharacteristicContainsType(List<FLUXCharacteristic> fluxCharacteristics,String value){
+    public boolean fluxCharacteristicContainsType(List<FLUXLocation> locations,String type){
+        Map<String,Integer> map = new HashMap<>();
 
-        if(CollectionUtils.isEmpty(fluxCharacteristics)){
+        if(CollectionUtils.isEmpty(locations)){
             return true;
         }
 
-        for(FLUXCharacteristic fluxCharacteristic:fluxCharacteristics){
+        if(!fluxLocationContainsApplicableFLUXCharacteristic(locations)){
+            return true;
+        }
 
-            if(fluxCharacteristic.getTypeCode() == null) {
+        mapLocationsBySchemeID(locations, map);
+
+        // each location should have an ApplicableFLUXCharacteristic with specific type
+        // as long as its schemeID is used two or more times
+        return locations.stream().filter(t -> t.getID() != null)
+                .filter(t -> map.get(t.getID().getSchemeID()) > 1)
+                .allMatch( t-> t.getApplicableFLUXCharacteristics() != null && !t.getApplicableFLUXCharacteristics().isEmpty()
+                && t.getApplicableFLUXCharacteristics().get(0)!= null && t.getApplicableFLUXCharacteristics().get(0).getTypeCode() != null
+                && t.getApplicableFLUXCharacteristics().get(0).getTypeCode().getValue().equals(type));
+    }
+
+    private void mapLocationsBySchemeID(List<FLUXLocation> locations, Map<String, Integer> map) {
+        for(FLUXLocation location:locations){
+            if(location.getID() == null){
                 continue;
             }
 
-            if(value.equals(fluxCharacteristic.getTypeCode().getValue())){
-                return true;
+            if(map.get(location.getID().getSchemeID()) == null){
+                map.put(location.getID().getSchemeID(),1);
+            } else {
+                map.put(location.getID().getSchemeID(),map.get(location.getID().getSchemeID()) + 1);
             }
         }
+    }
 
-        return false;
+    public boolean fluxLocationContainsApplicableFLUXCharacteristic(List<FLUXLocation> locations){
+        Map<String,Integer> map = new HashMap<>();
+
+        if(CollectionUtils.isEmpty(locations)){
+            return true;
+        }
+
+        mapLocationsBySchemeID(locations, map);
+        //each location shouold have an ApplicableFLUXCharacteristic as long as its schemeID is used two or more times
+       return locations.stream().filter(t -> t.getID() != null)
+                .filter(t -> map.get(t.getID().getSchemeID()) > 1)
+                .allMatch( t-> t.getApplicableFLUXCharacteristics() != null && !t.getApplicableFLUXCharacteristics().isEmpty());
     }
 
     public boolean containsAtLeastOneGfcmGsaWithValidValue(List<IdType> ids){

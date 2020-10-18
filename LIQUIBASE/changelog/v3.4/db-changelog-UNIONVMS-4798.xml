@@ -85,7 +85,7 @@
             <column name="rule_id" value="659"/>
             <column name="context" value="EU"/>
             <column name="expression"
-                    value="!isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; hasDuplicateLocationType(fishingActivityRelatedFLUXLocations) &amp;&amp; isEmpty(fishingActivityFluxCharacteristic)"/>
+                    value="!isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; hasDuplicateLocationType(fishingActivityRelatedFLUXLocations) &amp;&amp; !fluxLocationContainsApplicableFLUXCharacteristic(fishingActivityRelatedFLUXLocations)"/>
             <column name="failure_message" value="If more than one location of the same type is reported, a location characteristic has to be present."/>
         </insert>
 
@@ -98,7 +98,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="8"/>
-            <column name="property_names" value="fishingActivityFluxCharacteristic"/>
+            <column name="property_names" value="fishingActivityFluxCharacteristicTypeCode"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -107,7 +107,7 @@
             <column name="rule_id" value="660"/>
             <column name="context" value="EU"/>
             <column name="expression"
-                    value="!isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; hasDuplicateLocationType(fishingActivityRelatedFLUXLocations) &amp;&amp; !fluxCharacteristicContainsType(fishingActivityFluxCharacteristic,&quot;MAIN_AREA&quot;)"/>
+                    value="!isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; hasDuplicateLocationType(fishingActivityRelatedFLUXLocations) &amp;&amp; !fluxCharacteristicContainsType(fishingActivityRelatedFLUXLocations,&quot;MAIN_AREA&quot;)"/>
             <column name="failure_message" value="If more than one location of the same type is reported, the location characteristic provided must be MAIN_AREA"/>
         </insert>
 
@@ -199,7 +199,7 @@
             <column name="rule_id" value="665"/>
             <column name="context" value="EU"/>
             <column name="expression"
-                    value="!isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; hasDuplicateLocationType(faCatchSpecifiedFLUXLocations) &amp;&amp; isEmpty(faCatchFluxCharacteristic)"/>
+                    value="!isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; hasDuplicateLocationType(faCatchSpecifiedFLUXLocations) &amp;&amp; !fluxLocationContainsApplicableFLUXCharacteristic(faCatchSpecifiedFLUXLocations)"/>
             <column name="failure_message" value="If more than one location of the same type is reported, a location characteristic (marking) has to be present"/>
         </insert>
 
@@ -213,7 +213,7 @@
             <column name="error_type" value="ERROR"/>
             <column name="rule_created_on" valueDate="2017-12-07 00:00:00.0"/>
             <column name="template_id" value="8"/>
-            <column name="property_names" value="faCatchFluxCharacteristic"/>
+            <column name="property_names" value="faCatchFluxCharacteristicTypeCode"/>
             <column name="disabled" value="false"/>
         </insert>
 
@@ -222,7 +222,7 @@
             <column name="rule_id" value="666"/>
             <column name="context" value="EU"/>
             <column name="expression"
-                    value="!isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; hasDuplicateLocationType(faCatchSpecifiedFLUXLocations) &amp;&amp; !fluxCharacteristicContainsType(faCatchFluxCharacteristic,&quot;MAIN_AREA&quot;)"/>
+                    value="!isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; hasDuplicateLocationType(faCatchSpecifiedFLUXLocations) &amp;&amp; !fluxCharacteristicContainsType(faCatchSpecifiedFLUXLocations,&quot;MAIN_AREA&quot;)"/>
             <column name="failure_message" value="If more than one location of the same type is reported, the location characteristic (marking) provided must be MAIN_AREA"/>
         </insert>
 
