@@ -17,6 +17,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -30,6 +33,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -119,26 +123,20 @@ public class FaCatchFact extends AbstractFact {
         return false;
     }
 
-    public boolean fluxCharacteristicContainsType(List<FLUXLocation> locations,String type){
-        Map<String,Integer> map = new HashMap<>();
+    public boolean fluxLocationsWithSameSchemeIdDontContainCharacteristicWithType(List<FLUXLocation> locations, String type) {
+        return locations.stream().collect(Collectors.groupingBy(
+                loc -> Optional.ofNullable(loc.getID()).map(IDType::getSchemeID).orElse(null)
+        )).values().stream()
+                .filter(locationsWithSameSchemeId -> locationsWithSameSchemeId.size() > 1)
+                .anyMatch(locationsWithSameSchemeId -> locationsWithSameSchemeId.stream().allMatch(noCharacteristicWithType(type)));
+    }
 
-        if(CollectionUtils.isEmpty(locations)){
-            return true;
-        }
-
-        if(!fluxLocationContainsApplicableFLUXCharacteristic(locations)){
-            return true;
-        }
-
-        mapLocationsBySchemeID(locations, map);
-
-        // each location should have an ApplicableFLUXCharacteristic with specific type
-        // as long as its schemeID is used two or more times
-        return locations.stream().filter(t -> t.getID() != null)
-                .filter(t -> map.get(t.getID().getSchemeID()) > 1)
-                .allMatch( t-> t.getApplicableFLUXCharacteristics() != null && !t.getApplicableFLUXCharacteristics().isEmpty()
-                && t.getApplicableFLUXCharacteristics().get(0)!= null && t.getApplicableFLUXCharacteristics().get(0).getTypeCode() != null
-                && t.getApplicableFLUXCharacteristics().get(0).getTypeCode().getValue().equals(type));
+    private Predicate<FLUXLocation> noCharacteristicWithType(String type) {
+        return loc -> loc.getApplicableFLUXCharacteristics() == null || loc.getApplicableFLUXCharacteristics().stream()
+                .map(FLUXCharacteristic::getTypeCode)
+                .filter(Objects::nonNull)
+                .map(typeCode -> typeCode.getValue())
+                .noneMatch(type::equals);
     }
 
     private void mapLocationsBySchemeID(List<FLUXLocation> locations, Map<String, Integer> map) {
