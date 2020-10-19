@@ -80,6 +80,106 @@ public abstract class AbstractFact {
         setFactType();
     }
 
+    public boolean containsAtMostXTypesOfLocation(List<FLUXLocation> locations,String type,int times){
+
+        if(CollectionUtils.isEmpty(locations)){
+            return true;
+        }
+
+        int i =0;
+
+        for(FLUXLocation location:locations){
+
+            if(location.getID() == null){
+                continue;
+            }
+
+            if(type.equals(location.getID().getSchemeID())){
+                i ++;
+            }
+
+            if (i > times){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    public boolean hasDuplicateLocationType(List<FLUXLocation> locations){
+        Map<String,Integer> map = new HashMap<>();
+
+        if(CollectionUtils.isEmpty(locations)){
+            return false;
+        }
+
+        for(FLUXLocation location:locations){
+
+            if(location.getID() == null){
+                continue;
+            }
+
+            if(map.get(location.getID().getSchemeID()) == null){
+                map.put(location.getID().getSchemeID(),1);
+            } else {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    public boolean fluxLocationsWithSameSchemeIdDontContainCharacteristicWithType(List<FLUXLocation> locations, String type,String locationType) {
+        Map<String,Integer> map = new HashMap<>();
+
+        List<FLUXLocation> locationsWhichMatchType = locations.stream().filter(r -> r.getTypeCode() != null && locationType.equals(r.getTypeCode().getValue())).collect(Collectors.toList());
+        mapLocationsBySchemeID(locationsWhichMatchType, map);
+
+        // each location should have an ApplicableFLUXCharacteristic with specific type
+        // as long as its schemeID is used two or more times
+        List<FLUXLocation> filteredLocations = locationsWhichMatchType.stream().filter(t -> t.getID() != null)
+                .filter(t -> map.get(t.getID().getSchemeID()) > 1)
+                .filter(t -> t.getApplicableFLUXCharacteristics() != null && !t.getApplicableFLUXCharacteristics().isEmpty())
+                .collect(Collectors.toList());
+
+        if(filteredLocations.isEmpty()){
+            return false;
+        } else {
+            return !filteredLocations.stream().allMatch(t ->
+                    t.getApplicableFLUXCharacteristics().get(0) != null && t.getApplicableFLUXCharacteristics().get(0).getTypeCode() != null
+                    && t.getApplicableFLUXCharacteristics().get(0).getTypeCode().getValue().equals(type));
+        }
+    }
+    private void mapLocationsBySchemeID(List<FLUXLocation> locations, Map<String, Integer> map) {
+        for(FLUXLocation location:locations){
+            if(location.getID() == null){
+                continue;
+            }
+
+            if(map.get(location.getID().getSchemeID()) == null){
+                map.put(location.getID().getSchemeID(),1);
+            } else {
+                map.put(location.getID().getSchemeID(),map.get(location.getID().getSchemeID()) + 1);
+            }
+        }
+    }
+
+    public boolean fluxLocationContainsApplicableFLUXCharacteristic(List<FLUXLocation> locations){
+        Map<String,Integer> map = new HashMap<>();
+
+        if(CollectionUtils.isEmpty(locations)){
+            return true;
+        }
+
+        mapLocationsBySchemeID(locations, map);
+        //each location should have an ApplicableFLUXCharacteristic as long as its schemeID is used two or more times
+        return locations.stream().filter(t -> t.getID() != null)
+                .filter(t -> map.get(t.getID().getSchemeID()) > 1)
+                .allMatch( t-> t.getApplicableFLUXCharacteristics() != null && !t.getApplicableFLUXCharacteristics().isEmpty());
+    }
+
     public static int getNumOfInstances() {
         return counter;
     }

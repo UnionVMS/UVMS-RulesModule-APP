@@ -396,6 +396,19 @@ public class ActivityFactMapper {
 
         fishingActivityFact.setSpecifiedFishingGears(fishingActivity.getSpecifiedFishingGears());
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_GEAR).storeInRepo(fishingActivityFact, "specifiedFishingGears");
+
+        //there is only one matching activity to examine for a list of catches. We only have to run the validation rules once.
+        if (CollectionUtils.isNotEmpty(fishingActivityFact.getRelatedFLUXLocations()) && !isSubActivity) {
+            fishingActivityFact.setFishingActivityRelatedFLUXLocations(fishingActivityFact.getRelatedFLUXLocations());
+            xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION,ID).storeInRepo(fishingActivityFact, "fishingActivityRelatedFLUXLocations");
+            List<FLUXCharacteristic> fluxCharacteristics = getFluxCharacteristics(fishingActivityFact.getRelatedFLUXLocations());
+            fishingActivityFact.setFishingActivityFluxCharacteristic(fluxCharacteristics);
+            Integer actCharacteristicsIndex = getIndexForFluxCharacteristics(fishingActivityFact.getRelatedFLUXLocations());
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FLUX_LOCATION,actCharacteristicsIndex).append(APPLICABLE_FLUX_CHARACTERISTIC).storeInRepo(fishingActivityFact, "fishingActivityFluxCharacteristic");
+            Integer actCharacteristicsTypeIndex = getIndexForFluxCharacteristicsWithTypeCode(fishingActivityFact.getRelatedFLUXLocations());
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FLUX_LOCATION,actCharacteristicsTypeIndex).append(APPLICABLE_FLUX_CHARACTERISTIC,TYPE_CODE).storeInRepo(fishingActivityFact, "fishingActivityFluxCharacteristicTypeCode");
+        }
+
         return fishingActivityFact;
     }
 
@@ -1006,17 +1019,8 @@ public class ActivityFactMapper {
                 }
                 xPathUtil.appendWithoutWrapping(partialXPath).append(SPECIFIED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "faCatchFluxLocationId");
 
-                //there is only one matching activity to examine for a list of catches. We only have to run the validation rules once.
-                if (CollectionUtils.isNotEmpty(fishActRelatedFluxLocations) && index == 1) {
+                if (CollectionUtils.isNotEmpty(fishActRelatedFluxLocations)) {
                     faCatchFact.setFishActRelatedFluxLocationIds(mapFLUXLocationIDs(fishActRelatedFluxLocations));
-                    faCatchFact.setFishingActivityRelatedFLUXLocations(fishActRelatedFluxLocations);
-                    xPathUtil.appendWithoutWrapping(partialXPath1).append(RELATED_FLUX_LOCATION,ID).storeInRepo(faCatchFact, "fishingActivityRelatedFLUXLocations");
-                    List<FLUXCharacteristic> fluxCharacteristics = getFluxCharacteristics(fishActRelatedFluxLocations);
-                    faCatchFact.setFishingActivityFluxCharacteristic(fluxCharacteristics);
-                    Integer actCharacteristicsIndex = getIndexForFluxCharacteristics(fishActRelatedFluxLocations);
-                    xPathUtil.appendWithoutWrapping(partialXPath1).appendWithIndex(RELATED_FLUX_LOCATION,actCharacteristicsIndex).append(APPLICABLE_FLUX_CHARACTERISTIC).storeInRepo(faCatchFact, "fishingActivityFluxCharacteristic");
-                    Integer actCharacteristicsTypeIndex = getIndexForFluxCharacteristicsWithTypeCode(fishActRelatedFluxLocations);
-                    xPathUtil.appendWithoutWrapping(partialXPath1).appendWithIndex(RELATED_FLUX_LOCATION,actCharacteristicsTypeIndex).append(APPLICABLE_FLUX_CHARACTERISTIC,TYPE_CODE).storeInRepo(faCatchFact, "fishingActivityFluxCharacteristicTypeCode");
                 }
                 xPathUtil.appendWithoutWrapping(partialXPath1).append(RELATED_FLUX_LOCATION, ID).storeInRepo(faCatchFact, "fishActRelatedFluxLocationIds");
 

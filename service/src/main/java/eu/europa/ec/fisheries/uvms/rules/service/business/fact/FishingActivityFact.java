@@ -60,6 +60,8 @@ public class FishingActivityFact extends AbstractFact {
     private List<CodeType> relatedVesselTransportMeansRoleCodes;
     private List<CodeType> relFishActRelatedVesselTransportMeansRoleCodes;
     private List<CodeType> faRepDockSpecifiedVesselTransportMeansRoleCodes;
+    private List<FLUXCharacteristic>  fishingActivityFluxCharacteristic;
+    private List<FLUXLocation> fishingActivityRelatedFLUXLocations;
 
     private FishingActivity thisFishingActivity;
 

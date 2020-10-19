@@ -17,9 +17,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
@@ -33,7 +30,6 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXCharacteristic;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXLocation;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingGear;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -60,112 +56,16 @@ public class FaCatchFact extends AbstractFact {
     private CodeType categoryCode;
     private List<NumericType> appliedAAPProcessConversionFactorNumber;
     private List<FLUXLocation> specifiedFLUXLocations;
-    private List<FLUXLocation> fishingActivityRelatedFLUXLocations;
     private List<FLUXLocation> faCatchSpecifiedFLUXLocations;
     private List<CodeType> specifiedFluxLocationRFMOCodeList;
     private List<AAPProcess> appliedAAPProcess;
     private List<FLUXLocation> destinationFLUXLocations;
     private List<IdType> faCatchFluxLocationId;
     private List<IdType> fishActRelatedFluxLocationIds;
-    private List<FLUXCharacteristic>  fishingActivityFluxCharacteristic;
     private List<FLUXCharacteristic>  faCatchFluxCharacteristic;
     private List<FishingGear> usedFishingGears;
     private boolean isSubActivity = false;
 
-    public boolean containsAtMostXTypesOfLocation(List<FLUXLocation> locations,String type,int times){
-
-        if(CollectionUtils.isEmpty(locations)){
-            return true;
-        }
-
-        int i =0;
-
-        for(FLUXLocation location:locations){
-
-            if(location.getID() == null){
-                continue;
-            }
-
-            if(type.equals(location.getID().getSchemeID())){
-                i ++;
-            }
-
-            if (i > times){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-
-    public boolean hasDuplicateLocationType(List<FLUXLocation> locations){
-        Map<String,Integer> map = new HashMap<>();
-
-        if(CollectionUtils.isEmpty(locations)){
-            return false;
-        }
-
-        for(FLUXLocation location:locations){
-
-            if(location.getID() == null){
-                continue;
-            }
-
-            if(map.get(location.getID().getSchemeID()) == null){
-                map.put(location.getID().getSchemeID(),1);
-            } else {
-                return true;
-            }
-
-        }
-
-        return false;
-    }
-
-    public boolean fluxLocationsWithSameSchemeIdDontContainCharacteristicWithType(List<FLUXLocation> locations, String type) {
-        return locations.stream().collect(Collectors.groupingBy(
-                loc -> Optional.ofNullable(loc.getID()).map(IDType::getSchemeID).orElse(null)
-        )).values().stream()
-                .filter(locationsWithSameSchemeId -> locationsWithSameSchemeId.size() > 1)
-                .anyMatch(locationsWithSameSchemeId -> locationsWithSameSchemeId.stream().allMatch(noCharacteristicWithType(type)));
-    }
-
-    private Predicate<FLUXLocation> noCharacteristicWithType(String type) {
-        return loc -> loc.getApplicableFLUXCharacteristics() == null || loc.getApplicableFLUXCharacteristics().stream()
-                .map(FLUXCharacteristic::getTypeCode)
-                .filter(Objects::nonNull)
-                .map(typeCode -> typeCode.getValue())
-                .noneMatch(type::equals);
-    }
-
-    private void mapLocationsBySchemeID(List<FLUXLocation> locations, Map<String, Integer> map) {
-        for(FLUXLocation location:locations){
-            if(location.getID() == null){
-                continue;
-            }
-
-            if(map.get(location.getID().getSchemeID()) == null){
-                map.put(location.getID().getSchemeID(),1);
-            } else {
-                map.put(location.getID().getSchemeID(),map.get(location.getID().getSchemeID()) + 1);
-            }
-        }
-    }
-
-    public boolean fluxLocationContainsApplicableFLUXCharacteristic(List<FLUXLocation> locations){
-        Map<String,Integer> map = new HashMap<>();
-
-        if(CollectionUtils.isEmpty(locations)){
-            return true;
-        }
-
-        mapLocationsBySchemeID(locations, map);
-        //each location shouold have an ApplicableFLUXCharacteristic as long as its schemeID is used two or more times
-       return locations.stream().filter(t -> t.getID() != null)
-                .filter(t -> map.get(t.getID().getSchemeID()) > 1)
-                .allMatch( t-> t.getApplicableFLUXCharacteristics() != null && !t.getApplicableFLUXCharacteristics().isEmpty());
-    }
 
     public boolean containsAtLeastOneGfcmGsaWithValidValue(List<IdType> ids){
         if(CollectionUtils.isEmpty(ids)){
