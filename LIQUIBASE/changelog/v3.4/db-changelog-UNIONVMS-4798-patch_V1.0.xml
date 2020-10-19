@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4798-template-fix-and-rule-update" author="nomikosi">
+
+
+        <update tableName="rule">
+            <column name="template_id" value="13"/>
+            <where>br_id = 'FA-L02-00-0656'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="template_id" value="13"/>
+            <where>br_id = 'FA-L02-00-0657'</where>
+        </update>
+
+
+        <update tableName="rule">
+            <column name="template_id" value="13"/>
+            <where>br_id = 'FA-L02-00-0658'</where>
+        </update>
+
+
+        <update tableName="rule">
+            <column name="template_id" value="13"/>
+            <where>br_id = 'FA-L02-00-0659'</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="template_id" value="13"/>
+            <where>br_id = 'FA-L02-00-0660'</where>
+        </update>
+
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; hasDuplicateLocationType(fishingActivityRelatedFLUXLocations) &amp;&amp; fluxLocationsWithSameSchemeIdDontContainCharacteristicWithType(fishingActivityRelatedFLUXLocations,&quot;MAIN_AREA&quot;,&quot;AREA&quot;)"/>
+            <where>id = '660'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; hasDuplicateLocationType(faCatchSpecifiedFLUXLocations) &amp;&amp; fluxLocationsWithSameSchemeIdDontContainCharacteristicWithType(faCatchSpecifiedFLUXLocations,&quot;MAIN_AREA&quot;,&quot;AREA&quot;)"/>
+            <where>id = '666'</where>
+        </update>
+
+
+
+        <rollback>
+
+            <update tableName="rule">
+                <column name="template_id" value="8"/>
+                <where>br_id = 'FA-L02-00-0656'</where>
+            </update>
+
+            <update tableName="rule">
+                <column name="template_id" value="8"/>
+                <where>br_id = 'FA-L02-00-0657'</where>
+            </update>
+
+
+            <update tableName="rule">
+                <column name="template_id" value="8"/>
+                <where>br_id = 'FA-L02-00-0658'</where>
+            </update>
+
+
+            <update tableName="rule">
+                <column name="template_id" value="8"/>
+                <where>br_id = 'FA-L02-00-0659'</where>
+            </update>
+
+            <update tableName="rule">
+                <column name="template_id" value="8"/>
+                <where>br_id = 'FA-L02-00-0660'</where>
+            </update>
+
+
+            <update tableName="context_expression">
+                <column name="expression" value="!isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; hasDuplicateLocationType(fishingActivityRelatedFLUXLocations) &amp;&amp; fluxLocationsWithSameSchemeIdDontContainCharacteristicWithType(fishingActivityRelatedFLUXLocations,&quot;MAIN_AREA&quot;)"/>
+                <where>id = '660'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="!isEmpty(faCatchSpecifiedFLUXLocations) &amp;&amp; hasDuplicateLocationType(faCatchSpecifiedFLUXLocations) &amp;&amp; fluxLocationsWithSameSchemeIdDontContainCharacteristicWithType(faCatchSpecifiedFLUXLocations,&quot;MAIN_AREA&quot;)"/>
+                <where>id = '666'</where>
+            </update>
+
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>
