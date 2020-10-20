@@ -61,8 +61,6 @@ import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMapperException;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
-import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.asset.model.mapper.AssetModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
@@ -91,6 +89,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
@@ -105,6 +104,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
+import eu.europa.ec.fisheries.wsdl.asset.module.GetAssetModuleRequest;
 import eu.europa.ec.fisheries.wsdl.asset.types.*;
 import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
 import eu.europa.ec.fisheries.wsdl.user.module.GetUserContextResponse;
@@ -167,9 +167,6 @@ public class RulesMovementProcessorBean {
     private RulesExchangeProducerBean exchangeProducer;
 
     @EJB
-    private RulesAssetProducerBean assetProducer;
-
-    @EJB
     private RulesConfigProducerBean configProducer;
 
     @EJB
@@ -180,6 +177,9 @@ public class RulesMovementProcessorBean {
 
     @EJB
     private RulePostProcessBean rulePostProcessBean;
+
+    @Inject
+    private AssetClientBean assetClientBean;
 
     @Inject
     @TicketUpdateEvent
@@ -535,12 +535,9 @@ public class RulesMovementProcessorBean {
             query.setPagination(pagination);
             assetListBatch.add(query);
         }
-        String getAssetRequest = AssetModuleRequestMapper.createBatchAssetListModuleRequest(assetListBatch);
         log.debug("Send AssetListModuleRequest message to Asset");
-        String getAssetMessageId = assetProducer.sendModuleMessage(getAssetRequest, consumer.getDestination());
-        TextMessage getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
+        List<BatchAssetListResponseElement> resultList = assetClientBean.getAssetListBatch(assetListBatch);
         log.debug("Received response message");
-        List<BatchAssetListResponseElement> resultList = AssetModuleResponseMapper.mapToBatchAssetListFromResponse(getAssetResponse, getAssetMessageId);
         List<Asset> assetRespList = new ArrayList<>();
         for (BatchAssetListResponseElement batchAssetListResponseElement : resultList) {
             List<Asset> asset = batchAssetListResponseElement.getAsset();
@@ -608,13 +605,25 @@ public class RulesMovementProcessorBean {
     }
 
     private Asset getAsset(AssetIdType type, String value) throws AssetModelMapperException, MessageException {
-        String getAssetListRequest = AssetModuleRequestMapper.createGetAssetModuleRequest(value, type);
-        log.debug("Send GetAssetModuleRequest message to Asset");
-        String getAssetMessageId = assetProducer.sendModuleMessage(getAssetListRequest, consumer.getDestination());
-        TextMessage getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
-        log.debug("Received response message");
+        log.debug("Send GetAssetModuleRequest request to Asset");
+        GetAssetModuleRequest getAssetModuleRequest = createGetAssetModuleRequest(type, value);
+        return assetClientBean.getAsset(getAssetModuleRequest);
+    }
 
-        return AssetModuleResponseMapper.mapToAssetFromResponse(getAssetResponse, getAssetMessageId);
+    private GetAssetModuleRequest createGetAssetModuleRequest(AssetIdType type, String value) throws AssetModelValidationException {
+        GetAssetModuleRequest getAssetModuleRequest = new GetAssetModuleRequest();
+        if(value == null) {
+            throw new AssetModelValidationException("No id value set");
+        }
+        if(type == null) {
+            throw new AssetModelValidationException("No id type set");
+        }
+        eu.europa.ec.fisheries.wsdl.asset.types.AssetId vesseId = new eu.europa.ec.fisheries.wsdl.asset.types.AssetId();
+        vesseId.setType(type);
+        vesseId.setValue(value);
+        getAssetModuleRequest.setId(vesseId);
+
+        return getAssetModuleRequest;
     }
 
     private boolean isPluginTypeWithoutMobileTerminal(String pluginType) {
@@ -1049,17 +1058,12 @@ public class RulesMovementProcessorBean {
 
     private List<AssetGroup> getAssetGroup(String assetGuid) {
         log.info("Fetch asset groups from Asset");
-        TextMessage getAssetResponse;
-        String getAssetMessageId;
         List<AssetGroup> assetGroups = null;
         try {
-            String getAssetRequest = AssetModuleRequestMapper.createAssetGroupListByAssetGuidRequest(assetGuid);
             log.debug("Send GetAssetGroupListByAssetGuidRequest message to Asset");
-            getAssetMessageId = assetProducer.sendModuleMessage(getAssetRequest, consumer.getDestination());
-            getAssetResponse = consumer.getMessage(getAssetMessageId, TextMessage.class);
-            log.debug("Received response message");
-            assetGroups = AssetModuleResponseMapper.mapToAssetGroupListFromResponse(getAssetResponse, getAssetMessageId);
-        } catch (AssetModelMapperException | MessageException e) {
+
+            return assetClientBean.getAssetGroupListByAssetGuid(assetGuid);
+        } catch (Exception e) {
             log.warn("[ Failed while fetching asset groups ]", e.getMessage());
         }
         return assetGroups;
