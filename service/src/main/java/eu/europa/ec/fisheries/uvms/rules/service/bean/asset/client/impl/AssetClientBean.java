@@ -14,7 +14,11 @@ import java.util.Optional;
 import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.AssetGateway;
 import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDto;
+import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
+import eu.europa.ec.fisheries.wsdl.asset.module.GetAssetModuleRequest;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetListQuery;
+import eu.europa.ec.fisheries.wsdl.asset.types.BatchAssetListResponseElement;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -159,5 +163,17 @@ public class AssetClientBean {
                 return (o1.getEventHistory().getEventDate().compareTo(o2.getEventHistory().getEventDate()) > 0 ? -1 : 1);
             }
         };
+    }
+
+    public List<BatchAssetListResponseElement> getAssetListBatch(List<AssetListQuery> assetBatchRequest) {
+        return assetGateway.getAssetListBatch(assetBatchRequest);
+    }
+
+    public Asset getAsset(GetAssetModuleRequest getAssetModuleRequest) {
+        return assetGateway.getAsset(getAssetModuleRequest);
+    }
+
+    public List<AssetGroup> getAssetGroupListByAssetGuid(String assetGuid) {
+        return assetGateway.getAssetGroupListByAssetGuid(assetGuid);
     }
 }

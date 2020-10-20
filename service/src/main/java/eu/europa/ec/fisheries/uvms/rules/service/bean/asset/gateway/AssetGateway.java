@@ -11,10 +11,20 @@ package eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway;
 
 import java.util.List;
 
+import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
+import eu.europa.ec.fisheries.wsdl.asset.module.GetAssetModuleRequest;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetListQuery;
+import eu.europa.ec.fisheries.wsdl.asset.types.BatchAssetListResponseElement;
 
 public interface AssetGateway {
     List<Asset> findHistoryOfAssetByCfr(String cfr);
 
     List<Asset> findHistoryOfAssetBy(String reportDate, String cfr, String regCountry, String ircs, String extMark, String iccat);
+
+    List<BatchAssetListResponseElement> getAssetListBatch(List<AssetListQuery> assetBatchRequest);
+
+    Asset getAsset(GetAssetModuleRequest getAssetModuleRequest);
+
+    List<AssetGroup> getAssetGroupListByAssetGuid(String assetGuid);
 }
