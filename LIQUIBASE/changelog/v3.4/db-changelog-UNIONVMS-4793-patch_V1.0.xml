@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4793-rule-updates-for-632-to-635-and-637" author="nomikosi">
+
+        <update tableName="context_expression">
+            <column name="expression" value="relatedVesselCountryId != null &amp;&amp; mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,relatedVesselCountryId.value, creationDateOfMessage)
+                        &amp;&amp; !containsAtLeastOneCorrectIdOfTheRelated(&quot;CFR&quot;)
+                        &amp;&amp; !hasValueForVesselTransports(relatedVesselTransportMeans,&quot;EXT_MARK&quot;,&quot;IRCS&quot;)"/>
+            <where>id = '632'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="specifiedVesselCountryId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,specifiedVesselCountryId.value, creationDateOfMessage)
+                        &amp;&amp; !hasValueForVesselTransports(specifiedVesselTransportMeans,&quot;EXT_MARK&quot;,&quot;IRCS&quot;)"/>
+            <where>id = '634'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="relatedVesselCountryId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,relatedVesselCountryId.value, creationDateOfMessage)
+                        &amp;&amp; !hasValueForVesselTransports(relatedVesselTransportMeans,&quot;EXT_MARK&quot;,&quot;IRCS&quot;)"/>
+            <where>id = '635'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;)
+                        &amp;&amp; (transportMeans == null
+                        || transportMeans.asset == null)"/>
+            <where>id = '637'</where>
+        </update>
+
+        <rollback>
+
+            <update tableName="context_expression">
+                <column name="expression" value="relatedVesselCountryId != null &amp;&amp; mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,relatedVesselCountryId.value, creationDateOfMessage)
+                        &amp;&amp; !containsAtLeastOneCorrectIdOfTheRelated(&quot;CFR&quot;)
+                        &amp;&amp; (!hasValueForVesselTransports(relatedVesselTransportMeans,&quot;EXT_MARKING&quot;)
+                            || !hasValueForVesselTransports(relatedVesselTransportMeans,&quot;IRCS&quot;))"/>
+                <where>id = '632'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="specifiedVesselCountryId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,specifiedVesselCountryId.value, creationDateOfMessage)
+                        &amp;&amp; (!hasValueForVesselTransports(specifiedVesselTransportMeans,&quot;EXT_MARKING&quot;)
+                            || !hasValueForVesselTransports(specifiedVesselTransportMeans,&quot;IRCS&quot;))"/>
+                <where>id = '634'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="relatedVesselCountryId != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;,relatedVesselCountryId.value, creationDateOfMessage)
+                        &amp;&amp; !(hasValueForVesselTransports(relatedVesselTransportMeans,&quot;EXT_MARKING&quot;)
+                        &amp;&amp; hasValueForVesselTransports(relatedVesselTransportMeans,&quot;IRCS&quot;))"/>
+                <where>id = '635'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARKING&quot;)
+                        &amp;&amp; (transportMeans == null
+                        || transportMeans.asset == null)"/>
+                <where>id = '637'</where>
+            </update>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

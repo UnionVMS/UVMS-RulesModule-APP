@@ -397,7 +397,6 @@ public class ActivityFactMapper {
         fishingActivityFact.setSpecifiedFishingGears(fishingActivity.getSpecifiedFishingGears());
         xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FISHING_GEAR).storeInRepo(fishingActivityFact, "specifiedFishingGears");
 
-        //there is only one matching activity to examine for a list of catches. We only have to run the validation rules once.
         if (CollectionUtils.isNotEmpty(fishingActivityFact.getRelatedFLUXLocations()) && !isSubActivity) {
             fishingActivityFact.setFishingActivityRelatedFLUXLocations(fishingActivityFact.getRelatedFLUXLocations());
             xPathUtil.appendWithoutWrapping(partialXpath).append(RELATED_FLUX_LOCATION,ID).storeInRepo(fishingActivityFact, "fishingActivityRelatedFLUXLocations");

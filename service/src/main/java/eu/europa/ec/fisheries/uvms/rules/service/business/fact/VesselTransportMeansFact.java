@@ -90,6 +90,31 @@ public class VesselTransportMeansFact extends AbstractFact {
         return containsValidSchemeId;
     }
 
+
+    public boolean hasValueForVesselTransports(VesselTransportMeans relatedVesselTransportMeans,String value1,String value2){
+        if(relatedVesselTransportMeans == null ){
+            return true;
+        }
+        boolean containsValue1 = false,containsValue2 = false;
+
+        for(IDType id :relatedVesselTransportMeans.getIDS()){
+            if(id == null || id.getSchemeID() == null){
+                continue;
+            }
+
+            if(value1.equals(id.getSchemeID())){
+                containsValue1 = true;
+            }
+
+            if(value2.equals(id.getSchemeID())){
+                containsValue2 = true;
+            }
+
+        }
+
+        return containsValue1 && containsValue2;
+    }
+
     public boolean hasValueForVesselTransports(VesselTransportMeans relatedVesselTransportMeans,String value){
         if(relatedVesselTransportMeans == null ){
             return true;
