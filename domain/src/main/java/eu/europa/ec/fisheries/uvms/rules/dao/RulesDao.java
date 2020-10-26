@@ -158,6 +158,8 @@ public interface RulesDao {
 
     void saveValidationMessages(List<RawMessage> rawMessages) throws DaoException;
 
+    void updateValidationMessagesWith(String rawMessageGuid, String type, ValidationMessage validationMessage) throws DaoException;
+
     List<ValidationMessage> getValidationMessagesById(List<String> ids) throws DaoException;
 
     List<ValidationMessage> getValidationMessagesByRawMsgGuid(String rawMsgGuid, String type) throws DaoException;
