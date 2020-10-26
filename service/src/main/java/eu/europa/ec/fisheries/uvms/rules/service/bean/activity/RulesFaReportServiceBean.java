@@ -201,7 +201,7 @@ public class RulesFaReportServiceBean {
         } else {
             log.debug(" Request doesn't have permissions!");
 
-            createValidationResult(permissionData);
+            updateValidationResultWithPermission(permissionData);
             FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(permissionData.getFaReportValidationResult(), permissionData.getFluxfaReportMessage());
             XPathRepository.INSTANCE.clearFactsWithSequences(permissionData.getFaReportFactsSequence());
             exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, permissionData.getRequest(), permissionData.getRequest().getPluginType(), fluxMessageHelper.isCorrectUUID(permissionData.getMessageGUID()),permissionData.getMdcContextMap());
@@ -212,7 +212,7 @@ public class RulesFaReportServiceBean {
         }
     }
 
-    private void createValidationResult(PermissionData permissionData) {
+    private void updateValidationResultWithPermission(PermissionData permissionData) {
         ValidationResult faReportValidationResult = permissionData.getFaReportValidationResult();
         faReportValidationResult.setOk(false);
         faReportValidationResult.setError(true);
