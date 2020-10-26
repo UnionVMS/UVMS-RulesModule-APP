@@ -10,13 +10,17 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.activity;
 
+import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ErrorType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.SyncAsyncRequestType;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
@@ -25,7 +29,6 @@ import eu.europa.ec.fisheries.uvms.rules.dto.GearMatrix;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
@@ -33,6 +36,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.permission.PermissionData;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -50,7 +54,9 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -137,39 +143,92 @@ public class RulesFaReportServiceBean {
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult));
 
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
-                log.debug(" The Validation of Report is successful, forwarding message to Activity.");
-                boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_REPORT_MESSAGE);
-                if (hasPermissions) {
-                    rulesDaoBean.saveFaIdsPerTripList(faIdsPerTripsFromMessage);
-                    log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
-                    sendRequestToActivity(requestStr, request.getPluginType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid);
-
-                    Set<FADocumentID> result = idsFromIncomingMessage.stream().filter(faDocumentID -> !FAUUIDType.FA_REPORT_REF_ID.equals(faDocumentID.getType()))
-                            .collect(Collectors.toSet());
-
-                    rulesDaoBean.createFaDocumentIdEntity(result);// remove ref ids
-                } else {
-                    log.debug(" Request doesn't have permissions!");
-                }
+                PermissionData permissionData = createPermissionData(request, exchangeLogGuid, fluxfaReportMessage, messageGUID, idsFromIncomingMessage, faIdsPerTripsFromMessage, faReportFacts, faReportValidationResult);
+                sendRequestToActivity(requestStr, request.getPluginType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid, permissionData);
             } else {
                 log.debug("Validation resulted in errors.");
+                FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
+                XPathRepository.INSTANCE.clear(faReportFacts);
+
+                exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, request.getPluginType(), fluxMessageHelper.isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
             }
-
-            FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
-            XPathRepository.INSTANCE.clear(faReportFacts);
-
-            exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, request.getPluginType(), fluxMessageHelper.isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
-
         } catch (UnmarshalException e) {
             log.error(" Error while trying to parse FLUXFAReportMessage received message! It is malformed! Reason : {{}}", e.getMessage());
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
             exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, null);
-        } catch (RulesValidationException | ServiceException e) {
+        } catch (RulesValidationException e) {
             log.error(" Error during validation of the received FLUXFAReportMessage!", e);
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
             exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), requestStr, request, fluxfaReportMessage);
         }
         log.debug("Finished eval of FLUXFAReportMessage " + exchangeLogGuid);
+    }
+
+    private PermissionData createPermissionData(SetFLUXFAReportMessageRequest request, String exchangeLogGuid, FLUXFAReportMessage fluxfaReportMessage, List<IDType> messageGUID, Set<FADocumentID> idsFromIncomingMessage, List<String> faIdsPerTripsFromMessage, Collection<AbstractFact> faReportFacts, ValidationResult faReportValidationResult) {
+        PermissionData permissionData = new PermissionData();
+        permissionData.setFluxfaReportMessage(fluxfaReportMessage);
+        permissionData.setRawMsgGuid(exchangeLogGuid);
+        permissionData.setRawMsgType(RawMsgType.FA_REPORT);
+        permissionData.setRequest(request);
+        permissionData.setFaReportFactsSequence(faReportFacts.stream().map(AbstractFact::getSequence).collect(Collectors.toList()));
+        permissionData.setMessageGUID(messageGUID);
+        permissionData.setIdsFromIncomingMessage(idsFromIncomingMessage);
+        permissionData.setFaIdsPerTripsFromMessage(faIdsPerTripsFromMessage);
+        permissionData.setFaReportValidationResult(faReportValidationResult);
+        permissionData.setMdcContextMap(MDC.getCopyOfContextMap());
+        return permissionData;
+    }
+
+    public void completeIncomingFLUXFAReportEvaluation(PermissionData permissionData) {
+        if (permissionData.isRequestPermitted()) {
+            log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
+            rulesDaoBean.saveFaIdsPerTripList(permissionData.getFaIdsPerTripsFromMessage());
+            Set<FADocumentID> result = permissionData.getIdsFromIncomingMessage().stream().filter(faDocumentID -> !FAUUIDType.FA_REPORT_REF_ID.equals(faDocumentID.getType())).collect(Collectors.toSet());
+
+            try {
+                rulesDaoBean.createFaDocumentIdEntity(result); // remove ref ids
+                FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(permissionData.getFaReportValidationResult(), permissionData.getFluxfaReportMessage());
+                XPathRepository.INSTANCE.clearFactsWithSequences(permissionData.getFaReportFactsSequence());
+
+                exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, permissionData.getRequest(), permissionData.getRequest().getPluginType(), fluxMessageHelper.isCorrectUUID(permissionData.getMessageGUID()), permissionData.getMdcContextMap());
+
+            } catch (ServiceException e) {
+                log.error(" Error during validation of the received FLUXFAReportMessage!", e);
+                exchangeServiceBean.updateExchangeMessage(permissionData.getRawMsgGuid(), fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
+                exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), permissionData.getRequest().getRequest(), permissionData.getRequest(), permissionData.getFluxfaReportMessage());
+            }
+
+        } else {
+            log.debug(" Request doesn't have permissions!");
+
+            createValidationResult(permissionData);
+            FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(permissionData.getFaReportValidationResult(), permissionData.getFluxfaReportMessage());
+            XPathRepository.INSTANCE.clearFactsWithSequences(permissionData.getFaReportFactsSequence());
+            exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, permissionData.getRequest(), permissionData.getRequest().getPluginType(), fluxMessageHelper.isCorrectUUID(permissionData.getMessageGUID()),permissionData.getMdcContextMap());
+
+            exchangeServiceBean.updateExchangeMessage(permissionData.getRawMsgGuid(), ExchangeLogStatusTypeType.FAILED);
+            rulePostProcessBean.saveOrUpdateValidationResultForPermission(permissionData.getRawMsgGuid(), permissionData.getRawMsgType(), permissionData.getRequest().getRequest(), permissionData.getFaReportValidationResult());
+
+        }
+    }
+
+    private void createValidationResult(PermissionData permissionData) {
+        ValidationResult faReportValidationResult = permissionData.getFaReportValidationResult();
+        faReportValidationResult.setOk(false);
+        faReportValidationResult.setError(true);
+        faReportValidationResult.setWarning(false);
+        faReportValidationResult.getValidationMessages().add(createPermissionValidationMessage());
+    }
+
+    private ValidationMessageType createPermissionValidationMessage() {
+        ValidationMessageType permissionValidationMessage = new ValidationMessageType();
+        permissionValidationMessage.setLevel("L00");
+        permissionValidationMessage.setMessage("Permission Denied");
+        permissionValidationMessage.setBrId("FA-L00-00-9999");
+        permissionValidationMessage.getXpaths().add("((//*[local-name()='FLUXFAReportMessage']//*[local-name()='FAReportDocument'])[1]//*[local-name()='RelatedFLUXReportDocument'])[1]//*[local-name()='ID']");
+        permissionValidationMessage.setErrorType(ErrorType.ERROR);
+        permissionValidationMessage.setFactDate(Date.from(Instant.now()));
+        return permissionValidationMessage;
     }
 
     public void evaluateOutgoingFaReport(SetFLUXFAReportMessageRequest request) {
@@ -233,11 +292,17 @@ public class RulesFaReportServiceBean {
         return extraValues;
     }
 
-    private void sendRequestToActivity(String activityMsgStr, eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType, MessageType messageType, String exchangeLogGuid) {
+    private void sendRequestToActivity(String activityMsgStr,
+                                       eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType,
+                                       MessageType messageType,
+                                       String exchangeLogGuid,
+                                       PermissionData permissionData) {
         try {
             String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, exchangeLogGuid);
-            activityProducer.sendModuleMessage(activityRequest, rulesConsumer.getDestination());
-        } catch (ActivityModelMarshallException | MessageException e) {
+            Map<String, String> props = new HashMap<>();
+            props.put("context", JAXBUtils.marshallJaxBObjectToString(permissionData));
+            activityProducer.sendModuleMessageWithProps(activityRequest, rulesConsumer.getDestination(), props);
+        } catch (ActivityModelMarshallException | MessageException | JAXBException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }

@@ -117,6 +117,15 @@ public class RulesDomainModelBean implements RulesDomainModel {
     }
 
     @Override
+    public void updateValidationMessagesWithPermission(ValidationMessageType validationMessage, String rawMsgGuid, String type) throws RulesModelException {
+        try {
+            rulesDao.updateValidationMessagesWith(rawMsgGuid, type, RawMessageMapper.INSTANCE.mapToValidationMessageEntity(validationMessage));
+        } catch (DaoException e) {
+            throw new RulesModelException(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public CustomRuleType createCustomRule(CustomRuleType customRule) throws RulesModelException {
         LOG.debug("Create in Rules");
         try {

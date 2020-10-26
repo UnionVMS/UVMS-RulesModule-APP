@@ -84,6 +84,23 @@ public class RulePostProcessBean {
         }
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void saveOrUpdateValidationResultForPermission(String rawMsgGuid, RawMsgType type, String rawMessage, ValidationResult validationResult) {
+        try {
+            if (validationResult.getValidationMessages().size() == 1) { // only the permission validation message is present
+                saveValidationResult(validationResult.getValidationMessages(), rawMessage, rawMsgGuid, type);
+            } else {
+                Optional<ValidationMessageType> permissionValidationMessage = validationResult.getValidationMessages().stream().filter(m -> m.getBrId().contains("9999")).findFirst();
+                if ( permissionValidationMessage.isPresent()){
+                    updateValidationResult(rawMsgGuid, type.value(), permissionValidationMessage.get());
+                }
+            }
+        } catch (RulesModelException e) {
+            log.error(e.getMessage(), e);
+            throw new RulesServiceException(e.getMessage(), e);
+        }
+    }
+
     private void saveValidationResult(List<ValidationMessageType> validationMessageTypes, String rawMessage, String rawMsgGuid, RawMsgType type) throws RulesModelException {
         if (!CollectionUtils.isEmpty(validationMessageTypes)) {
             RawMessageType message = new RawMessageType();
@@ -93,6 +110,11 @@ public class RulePostProcessBean {
             message.setMsgType(type);
             rulesDomainModel.saveValidationMessages(message);
         }
+    }
+
+    private void updateValidationResult(String rawMsgGuid, String type, ValidationMessageType validationMessage) throws RulesModelException {
+        rulesDomainModel.updateValidationMessagesWithPermission(validationMessage, rawMsgGuid, type);
+
     }
 
     private ValidationResult createValidationResultDtoFromParams(boolean isError, boolean isWarning, boolean isOk, List<ValidationMessageType> validationMessages) {

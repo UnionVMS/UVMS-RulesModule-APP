@@ -557,6 +557,16 @@ public class RulesDaoBean implements RulesDao {
     }
 
     @Override
+    public void updateValidationMessagesWith(String rawMessageGuid, String type, ValidationMessage validationMessage) throws DaoException {
+        try {
+            List<RawMessage> rawMessageByGuid = rawMessageDao.getRawMessageByGuid(rawMessageGuid, type);
+            rawMessageByGuid.stream().forEach(r-> r.getValidationMessages().add(validationMessage));
+        } catch (ServiceException e) {
+            throw new DaoException(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public List<ValidationMessage> getValidationMessagesById(List<String> ids) throws DaoException {
         try {
             return validationMessageDao.getValidationMessagesById(ids);
