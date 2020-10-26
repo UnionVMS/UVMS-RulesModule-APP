@@ -23,6 +23,7 @@ import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProd
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesActivityServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFaReportServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.IAssetClient;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.permission.PermissionData;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -44,6 +45,8 @@ import javax.xml.bind.UnmarshalException;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
+
+import java.util.HashSet;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RulesFAReportServiceBeanTest {
@@ -88,6 +91,13 @@ public class RulesFAReportServiceBeanTest {
 
         rulesFaReportServiceBean.evaluateIncomingFLUXFAReport(fluxfaReportMessageRequest);
 
+        PermissionData permissionData = new PermissionData();
+        permissionData.setRequestPermitted(true);
+        permissionData.setFaReportValidationResult(validationResult);
+        permissionData.setRequest(new SetFLUXFAReportMessageRequest());
+        permissionData.setIdsFromIncomingMessage(new HashSet<>());
+        rulesFaReportServiceBean.completeIncomingFLUXFAReportEvaluation(permissionData);
+
         InOrder inOrder = inOrder(rulesDaoBean, assetServiceBean, rulesEngine, rulesService, exchangeServiceBean, rulesActivityService);
 
         inOrder.verify(rulesDaoBean, times(1)).loadFADocumentIDByIdsByIds(anySet());
@@ -95,7 +105,6 @@ public class RulesFAReportServiceBeanTest {
         inOrder.verify(assetServiceBean, times(1)).findHistoryOfAssetBy(anyList());
         inOrder.verify(rulesEngine, times(1)).evaluate(any(BusinessObjectType.class), Matchers.anyObject(), anyMap(), Matchers.anyString());
         inOrder.verify(rulesService, times(1)).checkAndUpdateValidationResult(anyCollection(), anyString(), anyString(), any(RawMsgType.class));
-        inOrder.verify(rulesActivityService, times(1)).checkSubscriptionPermissions(anyString(), any(MessageType.class));
         inOrder.verify(rulesDaoBean, times(1)).saveFaIdsPerTripList(anyList());
 
     }
