@@ -54,6 +54,15 @@ public class XPathRepository {
         sequence = 10000;
     }
 
+    public void clearFactsWithSequences(Collection<Integer> factSequenceList){
+        if(CollectionUtils.isNotEmpty(factSequenceList)){
+            for(Integer factSequence : factSequenceList){
+                xpathsMap.remove(factSequence);
+            }
+        }
+        sequence = 10000;
+    }
+
     public String getMapForSequence(Integer sequence, String propName) {
         String xpath = null;
         Map<String, String> propsMap = INSTANCE.getXpathsMap().get(sequence);

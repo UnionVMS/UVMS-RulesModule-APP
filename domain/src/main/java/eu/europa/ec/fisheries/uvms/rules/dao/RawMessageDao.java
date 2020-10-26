@@ -13,16 +13,20 @@
 
 package eu.europa.ec.fisheries.uvms.rules.dao;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.commons.service.dao.AbstractDAO;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 /**
  * Created by padhyad on 5/5/2017.
  */
+@Slf4j
 public class RawMessageDao extends AbstractDAO<RawMessage> {
 
     private EntityManager em;
@@ -40,5 +44,19 @@ public class RawMessageDao extends AbstractDAO<RawMessage> {
         for (RawMessage rawMessage : rawMessages) {
             createEntity(rawMessage);
         }
+    }
+
+
+    public List<RawMessage> getRawMessageByGuid(String rawMsgGuid, String type) throws ServiceException {
+        TypedQuery query = this.getEntityManager().createNamedQuery(RawMessage.BY_GUID, RawMessage.class);
+        query.setParameter("rawMsgGuid", rawMsgGuid);
+        RawMsgType typeType = null;
+        try{
+            typeType = RawMsgType.fromValue(type);
+        } catch(IllegalArgumentException ex){
+            log.error("[ERROR] Type "+type+" is not present in RawMsgType class..");
+        }
+        query.setParameter("msgType", typeType);
+        return  (List<RawMessage>) query.getResultList();
     }
 }

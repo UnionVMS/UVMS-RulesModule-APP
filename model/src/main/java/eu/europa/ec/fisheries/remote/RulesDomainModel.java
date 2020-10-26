@@ -114,4 +114,5 @@ public interface RulesDomainModel {
 
     List<ValidationMessageType> getValidationMessagesByRawMsgGuid(String rawMsgGuid, String type) throws RulesModelException;
 
+    void updateValidationMessagesWithPermission(ValidationMessageType validationMessage, String rawMsgGuid, String type) throws RulesModelException;
 }
