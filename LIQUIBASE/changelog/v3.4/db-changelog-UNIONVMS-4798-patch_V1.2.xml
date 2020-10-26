@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4798-template-fix-and-rule-update-for-660" author="nomikosi">
+        <update tableName="rule">
+            <column name="property_names" value="relatedFLUXLocations"/>
+            <where>br_id = 'FA-L02-00-0660'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(relatedFLUXLocations) &amp;&amp; hasDuplicateLocationType(relatedFLUXLocations) &amp;&amp; fluxLocationsWithSameSchemeIdDontContainCharacteristicWithType(relatedFLUXLocations,&quot;MAIN_AREA&quot;,&quot;AREA&quot;)"/>
+            <where>id = '660'</where>
+        </update>
+
+        <rollback>
+            <update tableName="rule">
+                <column name="property_names" value="fishingActivityRelatedFLUXLocations"/>
+                <where>br_id = 'FA-L02-00-0660'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="!isEmpty(fishingActivityRelatedFLUXLocations) &amp;&amp; hasDuplicateLocationType(fishingActivityRelatedFLUXLocations) &amp;&amp; fluxLocationsWithSameSchemeIdDontContainCharacteristicWithType(fishingActivityRelatedFLUXLocations,&quot;MAIN_AREA&quot;,&quot;AREA&quot;)"/>
+                <where>id = '660'</where>
+            </update>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
