@@ -89,7 +89,7 @@ public class RulesActivityServiceBeanTest {
 
     @Test
     public void testSendRequestToActivity() throws MessageException {
-        rulesActivityService.sendRequestToActivity("", PluginType.FLUX, MessageType.FLUX_FA_QUERY_MESSAGE, "");
+        rulesActivityService.sendRequestToActivity("", PluginType.FLUX, MessageType.FLUX_FA_QUERY_MESSAGE, "", "");
         Mockito.verify(rulesActivityProducer, times(1)).sendModuleMessage(anyString(), any(Destination.class));
     }
 }

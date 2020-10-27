@@ -182,7 +182,7 @@ public class RulesFaQueryServiceBean {
     private SetFLUXFAReportMessageRequest sendSyncQueryRequestToActivity(String activityQueryMsgStr, String username, PluginType pluginType, String exchangeLogGuid) {
         try {
 
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, exchangeLogGuid);
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityQueryMsgStr, pluginType.toString(), MessageType.FLUX_FA_QUERY_MESSAGE, SyncAsyncRequestType.SYNC, exchangeLogGuid, "");
             final String corrId = activityProducer.sendModuleMessage(activityRequest, rulesConsumer.getDestination());
             final TextMessage message = activityConsumer.getMessage(corrId, TextMessage.class);
             return JAXBUtils.unMarshallMessage(message.getText(), SetFLUXFAReportMessageRequest.class);

@@ -53,7 +53,6 @@ public class RulesPermissionsEventMessageConsumerBean implements MessageListener
     @Override
     @PropagateFluxEnvelopeData
     public void onMessage(Message message) {
-        String id = UUID.randomUUID().toString();
         LOG.debug("Message received in rules. Times redelivered: {}", getTimesRedelivered(message));
         TextMessage textMessage = (TextMessage) message;
         try {
