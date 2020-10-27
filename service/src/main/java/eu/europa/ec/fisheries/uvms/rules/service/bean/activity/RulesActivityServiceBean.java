@@ -71,9 +71,9 @@ public class RulesActivityServiceBean {
         return false;
     }
 
-    public void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, String exchangeLogGuid) {
+    public void sendRequestToActivity(String activityMsgStr, PluginType pluginType, MessageType messageType, String exchangeLogGuid, String permissionData) {
         try {
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, exchangeLogGuid);
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, exchangeLogGuid, permissionData);
             activityProducer.sendModuleMessage(activityRequest, rulesConsumer.getDestination());
         } catch (ActivityModelMarshallException | MessageException e) {
             throw new RulesServiceException(e.getMessage(), e);

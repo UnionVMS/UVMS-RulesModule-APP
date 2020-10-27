@@ -289,10 +289,8 @@ public class RulesFaReportServiceBean {
                                        String exchangeLogGuid,
                                        PermissionData permissionData) {
         try {
-            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, exchangeLogGuid);
-            Map<String, String> props = new HashMap<>();
-            props.put("context", JAXBUtils.marshallJaxBObjectToString(permissionData));
-            activityProducer.sendModuleMessageWithProps(activityRequest, rulesConsumer.getDestination(), props);
+            String activityRequest = ActivityModuleRequestMapper.mapToSetFLUXFAReportOrQueryMessageRequest(activityMsgStr, pluginType.toString(), messageType, SyncAsyncRequestType.ASYNC, exchangeLogGuid, JAXBUtils.marshallJaxBObjectToString(permissionData));
+            activityProducer.sendModuleMessage(activityRequest, rulesConsumer.getDestination());
         } catch (ActivityModelMarshallException | MessageException | JAXBException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
