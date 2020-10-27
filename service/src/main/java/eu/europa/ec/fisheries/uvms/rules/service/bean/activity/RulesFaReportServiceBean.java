@@ -141,15 +141,14 @@ public class RulesFaReportServiceBean {
 
             ValidationResult faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, exchangeLogGuid, RawMsgType.FA_REPORT);
             exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult));
+            XPathRepository.INSTANCE.clear(faReportFacts);
 
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
-                PermissionData permissionData = createPermissionData(request, exchangeLogGuid, fluxfaReportMessage, messageGUID, idsFromIncomingMessage, faIdsPerTripsFromMessage, faReportFacts, faReportValidationResult);
+                PermissionData permissionData = createPermissionData(request, exchangeLogGuid, fluxfaReportMessage, messageGUID, idsFromIncomingMessage, faIdsPerTripsFromMessage, faReportValidationResult);
                 sendRequestToActivity(requestStr, request.getPluginType(), MessageType.FLUX_FA_REPORT_MESSAGE, exchangeLogGuid, permissionData);
             } else {
                 log.debug("Validation resulted in errors.");
                 FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
-                XPathRepository.INSTANCE.clear(faReportFacts);
-
                 exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, request.getPluginType(), fluxMessageHelper.isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
             }
         } catch (UnmarshalException e) {
@@ -164,51 +163,28 @@ public class RulesFaReportServiceBean {
         log.debug("Finished eval of FLUXFAReportMessage " + exchangeLogGuid);
     }
 
-    private PermissionData createPermissionData(SetFLUXFAReportMessageRequest request, String exchangeLogGuid, FLUXFAReportMessage fluxfaReportMessage, List<IDType> messageGUID, Set<FADocumentID> idsFromIncomingMessage, List<String> faIdsPerTripsFromMessage, Collection<AbstractFact> faReportFacts, ValidationResult faReportValidationResult) {
-        PermissionData permissionData = new PermissionData();
-        permissionData.setFluxfaReportMessage(fluxfaReportMessage);
-        permissionData.setRawMsgGuid(exchangeLogGuid);
-        permissionData.setRawMsgType(RawMsgType.FA_REPORT);
-        permissionData.setRequest(request);
-        permissionData.setFaReportFactsSequence(faReportFacts.stream().map(AbstractFact::getSequence).collect(Collectors.toList()));
-        permissionData.setMessageGUID(messageGUID);
-        permissionData.setIdsFromIncomingMessage(idsFromIncomingMessage);
-        permissionData.setFaIdsPerTripsFromMessage(faIdsPerTripsFromMessage);
-        permissionData.setFaReportValidationResult(faReportValidationResult);
-        permissionData.setMdcContextMap(MDC.getCopyOfContextMap());
-        return permissionData;
-    }
-
     public void completeIncomingFLUXFAReportEvaluation(PermissionData permissionData) {
         if (permissionData.isRequestPermitted()) {
             log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
             rulesDaoBean.saveFaIdsPerTripList(permissionData.getFaIdsPerTripsFromMessage());
             Set<FADocumentID> result = permissionData.getIdsFromIncomingMessage().stream().filter(faDocumentID -> !FAUUIDType.FA_REPORT_REF_ID.equals(faDocumentID.getType())).collect(Collectors.toSet());
-
             try {
-                rulesDaoBean.createFaDocumentIdEntity(result); // remove ref ids
+                rulesDaoBean.createFaDocumentIdEntity(result);
                 FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(permissionData.getFaReportValidationResult(), permissionData.getFluxfaReportMessage());
-                XPathRepository.INSTANCE.clearFactsWithSequences(permissionData.getFaReportFactsSequence());
-
                 exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, permissionData.getRequest(), permissionData.getRequest().getPluginType(), fluxMessageHelper.isCorrectUUID(permissionData.getMessageGUID()), permissionData.getMdcContextMap());
-
             } catch (ServiceException e) {
                 log.error(" Error during validation of the received FLUXFAReportMessage!", e);
                 exchangeServiceBean.updateExchangeMessage(permissionData.getRawMsgGuid(), fluxMessageHelper.calculateMessageValidationStatus(FAILURE));
                 exchangeServiceBean.sendFLUXResponseMessageOnException(e.getMessage(), permissionData.getRequest().getRequest(), permissionData.getRequest(), permissionData.getFluxfaReportMessage());
             }
-
         } else {
             log.debug(" Request doesn't have permissions!");
-
             updateValidationResultWithPermission(permissionData);
             FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(permissionData.getFaReportValidationResult(), permissionData.getFluxfaReportMessage());
-            XPathRepository.INSTANCE.clearFactsWithSequences(permissionData.getFaReportFactsSequence());
             exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, permissionData.getRequest(), permissionData.getRequest().getPluginType(), fluxMessageHelper.isCorrectUUID(permissionData.getMessageGUID()),permissionData.getMdcContextMap());
 
             exchangeServiceBean.updateExchangeMessage(permissionData.getRawMsgGuid(), ExchangeLogStatusTypeType.FAILED);
             rulePostProcessBean.saveOrUpdateValidationResultForPermission(permissionData.getRawMsgGuid(), permissionData.getRawMsgType(), permissionData.getRequest().getRequest(), permissionData.getFaReportValidationResult());
-
         }
     }
 
@@ -229,6 +205,21 @@ public class RulesFaReportServiceBean {
         permissionValidationMessage.setErrorType(ErrorType.ERROR);
         permissionValidationMessage.setFactDate(Date.from(Instant.now()));
         return permissionValidationMessage;
+    }
+
+    private PermissionData createPermissionData(SetFLUXFAReportMessageRequest request, String exchangeLogGuid, FLUXFAReportMessage fluxfaReportMessage, List<IDType> messageGUID,
+                                                Set<FADocumentID> idsFromIncomingMessage, List<String> faIdsPerTripsFromMessage, ValidationResult faReportValidationResult) {
+        PermissionData permissionData = new PermissionData();
+        permissionData.setFluxfaReportMessage(fluxfaReportMessage);
+        permissionData.setRawMsgGuid(exchangeLogGuid);
+        permissionData.setRawMsgType(RawMsgType.FA_REPORT);
+        permissionData.setRequest(request);
+        permissionData.setMessageGUID(messageGUID);
+        permissionData.setIdsFromIncomingMessage(idsFromIncomingMessage);
+        permissionData.setFaIdsPerTripsFromMessage(faIdsPerTripsFromMessage);
+        permissionData.setFaReportValidationResult(faReportValidationResult);
+        permissionData.setMdcContextMap(MDC.getCopyOfContextMap());
+        return permissionData;
     }
 
     public void evaluateOutgoingFaReport(SetFLUXFAReportMessageRequest request) {

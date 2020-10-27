@@ -91,7 +91,7 @@ public class RulePostProcessBean {
                 saveValidationResult(validationResult.getValidationMessages(), rawMessage, rawMsgGuid, type);
             } else {
                 Optional<ValidationMessageType> permissionValidationMessage = validationResult.getValidationMessages().stream().filter(m -> m.getBrId().contains("9999")).findFirst();
-                if ( permissionValidationMessage.isPresent()){
+                if (permissionValidationMessage.isPresent()){
                     updateValidationResult(rawMsgGuid, type.value(), permissionValidationMessage.get());
                 }
             }

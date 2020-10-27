@@ -1,7 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.permission;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,7 +9,6 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
@@ -23,7 +21,6 @@ public class PermissionData extends RulesBaseRequest {
     private RawMsgType rawMsgType;
     private ValidationResult faReportValidationResult;
     private FLUXFAReportMessage fluxfaReportMessage;
-    private Collection<Integer> faReportFactsSequence;
     private List<IDType> messageGUID;
     private SetFLUXFAReportMessageRequest request;
     private List<String> faIdsPerTripsFromMessage;
@@ -63,14 +60,6 @@ public class PermissionData extends RulesBaseRequest {
 
     public void setFluxfaReportMessage(FLUXFAReportMessage fluxfaReportMessage) {
         this.fluxfaReportMessage = fluxfaReportMessage;
-    }
-
-    public Collection<Integer> getFaReportFactsSequence() {
-        return faReportFactsSequence;
-    }
-
-    public void setFaReportFactsSequence(Collection<Integer> faReportFactsSequence) {
-        this.faReportFactsSequence = faReportFactsSequence;
     }
 
     public List<IDType> getMessageGUID() {
