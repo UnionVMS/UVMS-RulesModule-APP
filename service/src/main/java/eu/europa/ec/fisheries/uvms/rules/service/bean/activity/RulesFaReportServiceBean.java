@@ -140,7 +140,7 @@ public class RulesFaReportServiceBean {
             faIdsPerTripsFromMessage.removeAll(faIdsPerTripsListFromDb);
 
             ValidationResult faReportValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(faReportFacts, requestStr, exchangeLogGuid, RawMsgType.FA_REPORT);
-            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult));
+//            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult));
             XPathRepository.INSTANCE.clear(faReportFacts);
 
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
