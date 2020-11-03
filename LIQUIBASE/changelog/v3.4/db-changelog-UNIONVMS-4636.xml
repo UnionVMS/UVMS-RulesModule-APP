@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4636-AppliedAAPProcess" author="nomikosi">
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; (isEmpty(appliedAAPProcessTypeCodes)
+                              || (listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;)
+                              || listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;))
+                              &amp;&amp; (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;))
+                              &amp;&amp; (typeCode != null &amp;&amp; !valueContainsAny(typeCode,&quot;LOADED&quot;,&quot;UNLOADED&quot;)))"/>
+            <where>id = '171'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; isEmpty(resultAAPProduct) &amp;&amp; ((codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) || codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;))
+                        &amp;&amp; (codeTypeValueEquals(typeCode, &quot;UNLOADED&quot;) || codeTypeValueEquals(typeCode, &quot;LOADED&quot;)) ||
+                        ((unitQuantity == null || unitQuantity.value == null) &amp;&amp; (weightMeasure == null || weightMeasure.value == null)))"/>
+            <where>id = '219'</where>
+        </update>
+
+
+        <rollback>
+
+            <update tableName="context_expression">
+                <column name="expression" value="!isEmpty(appliedAAPProcess) &amp;&amp; isEmpty(appliedAAPProcessTypeCodes)
+                              || (listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESENTATION&quot;)
+                              || listIdNotContains(appliedAAPProcessTypeCodes,&quot;FISH_PRESERVATION&quot;))
+                              &amp;&amp; (fishingActivityTypeCode != null &amp;&amp; !valueContainsAny(fishingActivityTypeCode,&quot;LANDING&quot;,&quot;TRANSHIPMENT&quot;))
+                              &amp;&amp; (typeCode != null &amp;&amp; !valueContainsAny(typeCode,&quot;LOADED&quot;,&quot;UNLOADED&quot;))"/>
+                <where>id = '171'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="isEmpty(resultAAPProduct) &amp;&amp; ((codeTypeValueEquals(fishingActivityTypeCode, &quot;LANDING&quot;) || codeTypeValueEquals(fishingActivityTypeCode, &quot;TRANSHIPMENT&quot;))
+                        &amp;&amp; (codeTypeValueEquals(typeCode, &quot;UNLOADED&quot;) || codeTypeValueEquals(typeCode, &quot;LOADED&quot;)) ||
+                        ((unitQuantity == null || unitQuantity.value == null) &amp;&amp; (weightMeasure == null || weightMeasure.value == null)))"/>
+                <where>id = '219'</where>
+            </update>
+
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>
