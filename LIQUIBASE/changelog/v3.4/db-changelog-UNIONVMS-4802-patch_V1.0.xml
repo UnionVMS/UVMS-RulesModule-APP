@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4802-template-fix-649" author="nomikosi">
+
+
+        <update tableName="context_expression">
+            <column name="expression" value="subActivity &amp;&amp; typeCode != null &amp;&amp; !valueContainsAny(typeCode,&quot;GEAR_SHOT&quot;,&quot;GEAR_RETRIEVAL&quot;) &amp;&amp; isEmpty(relatedFLUXLocations) &amp;&amp; mainActivityType == &quot;FISHING_OPERATION&quot; &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;)"/>
+            <where>id=:value</where>
+            <whereParams>
+                <param name="value" value="649" />
+            </whereParams>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !hasPositionLocationForFaTypeCode(&quot;GEAR_SHOT&quot;) &amp;&amp; mainActivityType == &quot;FISHING_OPERATION&quot; "/>
+            <where>id=:value</where>
+            <whereParams>
+                <param name="value" value="548" />
+            </whereParams>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !hasPositionLocationForFaTypeCode(&quot;GEAR_RETRIEVAL&quot;) &amp;&amp; mainActivityType == &quot;FISHING_OPERATION&quot; "/>
+            <where>id=:value</where>
+            <whereParams>
+                <param name="value" value="549" />
+            </whereParams>
+        </update>
+
+        <rollback>
+            <update tableName="context_expression">
+                <column name="expression" value="subActivity &amp;&amp; typeCode != null &amp;&amp; !valueContainsAny(typeCode,&quot;GEAR_SHOT&quot;,&quot;GEAR_RETRIEVAL&quot;) &amp;&amp; isEmpty(relatedFLUXLocations)"/>
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="649" />
+                </whereParams>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value = "codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !hasPositionLocationForFaTypeCode(&quot;GEAR_SHOT&quot;)"/>
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="548" />
+                </whereParams>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value = "codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !hasPositionLocationForFaTypeCode(&quot;GEAR_RETRIEVAL&quot;)"/>
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="549" />
+                </whereParams>
+            </update>
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>
