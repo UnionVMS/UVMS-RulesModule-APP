@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4799-specified-contact-person" author="imitrolios">
+
+        <update tableName="context_expression">
+            <column name="expression" value="typeCode != null &amp;&amp; typeCode.value != null &amp;&amp; (&quot;FISHING_OPERATION&quot;.equals(typeCode.value) || &quot;JOINT_FISHING_OPERATION&quot;.equals(typeCode.value) || &quot;GEAR_RETRIEVAL&quot;.equals(typeCode.value) || &quot;GEAR_SHOT&quot;.equals(typeCode.value) || &quot;START_ACTIVITY&quot;.equals(typeCode.value) ) &amp;&amp; specifiedFishingGears.size > 1"/>
+            <where>id = '642'</where>
+        </update>
+        <rollback>
+            <update tableName="context_expression">
+                <column name="expression" value="(&quot;FISHING_OPERATION&quot;.equals(typeCode.value) || &quot;JOINT_FISHING_OPERATION&quot;.equals(typeCode.value) || &quot;GEAR_RETRIEVAL&quot;.equals(typeCode.value) || &quot;GEAR_SHOT&quot;.equals(typeCode.value) || &quot;START_ACTIVITY&quot;.equals(typeCode.value) ) &amp;&amp; specifiedFishingGears.size > 1"/>
+                <where>id = '642'</where>
+            </update>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
