@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4792-correction" author="nikospara">
+        <update tableName="context_expression">
+            <column name="expression"
+                    value="!isEmpty(ids) &amp;&amp; registrationVesselCountryId != null &amp;&amp;
+                ((mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value, creationDateOfMessage) &amp;&amp; !containsAtLeastOneCorrectIdOfTheRequired(&quot;CFR&quot;))
+                || (!mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value, creationDateOfMessage)
+                &amp;&amp; (!containsAtLeastOneCorrectIdOfTheRequired(&quot;IRCS&quot;) || !containsAtLeastOneCorrectIdOfTheRequired(&quot;EXT_MARK&quot;))))"/>
+            <column name="failure_message" value="Invalid value for country of registration."/>
+            <where>rule_id=61</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;IRCS&quot;, &quot;EXT_MARK&quot;) &amp;&amp; schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; (transportMeans == null  || transportMeans.asset == null)"/>
+            <where>rule_id=66</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="template_id" value="32"/>
+            <where>rule_id=339</where>
+        </update>
+        <update tableName="context_expression">
+            <column name="expression"
+                    value="!subActivity &amp;&amp; (specifiedFLAPDocuments != null  &amp;&amp; specifiedFLAPDocuments.size != 0 ) &amp;&amp; isEmpty(flapDocumentIdTypes) &amp;&amp; !valueContainsAny(faCatchSpeciesCodes, &quot;BFT&quot;)"/>
+            <where>rule_id=339</where>
+        </update>
+
+        <update tableName="rule">
+            <column name="template_id" value="32"/>
+            <where>rule_id=340</where>
+        </update>
+        <update tableName="context_expression">
+            <column name="expression"
+                    value="!subActivity &amp;&amp; !isEmpty(flapDocumentIdTypes) &amp;&amp; !mdrService.isAllSchemeIdsPresentInMDRList(&quot;FLAP_ID_TYPE&quot; , flapDocumentIdTypes, creationDateOfMessage) "/>
+            <where>rule_id=340</where>
+        </update>
+
+        <rollback>
+            <!--
+                The corrections above were necessary because the content of the file that reverts the deletion of rules of UNIONVMS-4792,
+                changeset db-changelog-UNIONVMS-4792-revert.xml was copied from the <rollback> block of changeset db-changelog-UNIONVMS-4792.xml.
+                The <rollback> block contained wrong values.
+            -->
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
