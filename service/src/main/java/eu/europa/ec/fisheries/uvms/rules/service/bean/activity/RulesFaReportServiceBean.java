@@ -170,6 +170,7 @@ public class RulesFaReportServiceBean {
             Set<FADocumentID> result = permissionData.getIdsFromIncomingMessage().stream().filter(faDocumentID -> !FAUUIDType.FA_REPORT_REF_ID.equals(faDocumentID.getType())).collect(Collectors.toSet());
             try {
                 rulesDaoBean.createFaDocumentIdEntity(result);
+                exchangeServiceBean.updateExchangeMessage(permissionData.getRawMsgGuid(), fluxMessageHelper.calculateMessageValidationStatus(permissionData.getFaReportValidationResult()));
                 FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(permissionData.getFaReportValidationResult(), permissionData.getFluxfaReportMessage());
                 exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, permissionData.getRequest(), permissionData.getRequest().getPluginType(), fluxMessageHelper.isCorrectUUID(permissionData.getMessageGUID()), permissionData.getMdcContextMap());
             } catch (ServiceException e) {
