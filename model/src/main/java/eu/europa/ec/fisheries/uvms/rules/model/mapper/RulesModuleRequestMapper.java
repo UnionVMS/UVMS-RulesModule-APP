@@ -129,6 +129,8 @@ public class RulesModuleRequestMapper {
         request.setOnValue(onValue);
         request.setRegisteredClassName(registeredClassName);
         request.setAd(ad);
+        request.setTo(to);
+        request.setTodt(todt);
     }
 
     public static String createReceiveSalesReportRequest(String salesReport, String messageGuid, String pluginType, String logGuid, String sender, String on) throws RulesModelMarshallException {
