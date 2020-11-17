@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4685-triggered-for-invalid-mdr-document" author="nomikosi">
+
+        <update tableName="context_expression">
+            <column name="expression" value="valueCode != null &amp;&amp; !isEmpty(valueCode.listId) &amp;&amp; mdrService.codeListExistsInMdr(valueCode.listId) &amp;&amp; !mdrService.isPresentInMDRList(valueCode.listId, valueCode.value, creationDateOfMessage)"/>
+            <where>id = '146'</where>
+        </update>
+
+        <rollback>
+            <update tableName="context_expression">
+                <column name="expression" value="valueCode != null &amp;&amp; !isEmpty(valueCode.listId) &amp;&amp; !mdrService.isPresentInMDRList(valueCode.listId, valueCode.value, creationDateOfMessage)"/>
+                <where>id = '146'</where>
+            </update>
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>
