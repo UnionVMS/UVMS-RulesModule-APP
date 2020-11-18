@@ -48,7 +48,7 @@
         <audit.model.version>${uvms.audit.module.version}</audit.model.version>
         <rules.model.version>${project.version}</rules.model.version>
         <sales.model.version>${uvms.sales.model.version}</sales.model.version>
-
+        <mdr.rest.client.version>${uvms.mdr.module.version}</mdr.rest.client.version>
         <!-- UVMS Libraries -->
         <usm4uvms.version>${uvms.uvms4usm.version}</usm4uvms.version>
         <uvms.config.model.version>${uvms.config.module.version}</uvms.config.model.version>
@@ -78,6 +78,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>eu.europa.ec.fisheries.uvms.mdr</groupId>
+                <artifactId>mdr-rest-client</artifactId>
+                <version>${mdr.rest.client.version}</version>
+            </dependency>
         	<dependency>
 				<groupId>fish.focus.uvms.maven</groupId>
 				<artifactId>uvms-pom-gis-deps</artifactId>
