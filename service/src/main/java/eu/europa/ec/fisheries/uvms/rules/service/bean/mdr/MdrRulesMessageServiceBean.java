@@ -11,19 +11,23 @@
 package eu.europa.ec.fisheries.uvms.rules.service.bean.mdr;
 
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
-import eu.europa.ec.fisheries.uvms.mdr.model.exception.MdrModelMarshallException;
 import eu.europa.ec.fisheries.uvms.mdr.model.mapper.MdrModuleMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMdrProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.gateway.RulesMdrGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import un.unece.uncefact.data.standard.mdr.communication.SetFLUXMDRSyncMessageResponse;
+import un.unece.uncefact.data.standard.mdr.response.FLUXMDRReturnMessage;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
 
 @Slf4j
 @Stateless
@@ -36,8 +40,8 @@ public class MdrRulesMessageServiceBean {
     @EJB
     private RulesExchangeProducerBean exchangeProducer;
 
-    @EJB
-    private RulesMdrProducerBean mdrProducer;
+    @Inject
+    private RulesMdrGateway rulesMdrGateway;
 
     /*
      * Maps a Request String to a eu.europa.ec.fisheries.schema.exchange.module.v1.SetFLUXMDRSyncMessageRequest
@@ -60,18 +64,13 @@ public class MdrRulesMessageServiceBean {
     }
 
     public void mapAndSendFLUXMdrResponseToMdrModule(String request) {
-        String mdrSyncResponseReq;
+
+        SetFLUXMDRSyncMessageResponse fluxMdrSyncEntityRequest = MdrModuleMapper.createFluxMdrSyncEntityRequest(request);
         try {
-            mdrSyncResponseReq = MdrModuleMapper.createFluxMdrSyncEntityRequest(request, StringUtils.EMPTY);
-            if (StringUtils.isNotEmpty(mdrSyncResponseReq)) {
-                mdrProducer.sendModuleMessage(mdrSyncResponseReq, rulesConsumer.getDestination());
-            } else {
-                log.error("REQUEST TO BE SENT TO MDR MODULE RESULTS NULL. NOT SENDING IT!");
-            }
-        } catch (MdrModelMarshallException e) {
-            log.error("Unable to marshall SetFLUXMDRSyncMessageResponse in RulesServiceBean.mapAndSendFLUXMdrResponseToMdrModule(String) : " + e.getMessage());
-        } catch (MessageException e) {
-            log.error("Unable to send SetFLUXMDRSyncMessageResponse to MDR Module : " + e.getMessage());
+            FLUXMDRReturnMessage returnMessage = JAXBUtils.unMarshallMessage(fluxMdrSyncEntityRequest.getRequest(), FLUXMDRReturnMessage.class);
+            rulesMdrGateway.syncMdrEntityMessage(returnMessage);
+        } catch (JAXBException e) {
+            log.error("[ERROR] Error while attempting to Unmarshall Flux Response Object (XML MDR Entity)! Maybe not a FLUXMDRReturnMessage!!");
         }
     }
 }
