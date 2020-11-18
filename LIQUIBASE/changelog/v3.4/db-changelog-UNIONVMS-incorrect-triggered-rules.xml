@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="UNIONVMS-4800-rules-incorrectly-triggered-rules" author="nomikosi">
+
+        <update tableName="context_expression">
+            <column name="expression" value="!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; delimitedPeriod != null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, true, false)"/>
+            <where>id=:value</where>
+            <whereParams>
+                <param name="value" value="107" />
+            </whereParams>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !subActivity &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; delimitedPeriod != null &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true)"/>
+            <where>id=:value</where>
+            <whereParams>
+                <param name="value" value="108" />
+            </whereParams>
+        </update>
+
+        <rollback>
+            <update tableName="context_expression">
+                <column name="expression" value = "!subActivity &amp;&amp; codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !validDelimitedPeriod(delimitedPeriod, true, false)"/>
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="107" />
+                </whereParams>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value = "codeTypeValueEquals(faReportDocumentTypeCode, &quot;DECLARATION&quot;) &amp;&amp; !subActivity &amp;&amp; !valueContainsAny(typeCode, &quot;LANDING&quot;, &quot;TRANSHIPMENT&quot;) &amp;&amp; !validDelimitedPeriod(delimitedPeriod, false, true)"/>
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="108" />
+                </whereParams>
+            </update>
+        </rollback>
+    </changeSet>
+
+     <changeSet id="UNIONVMS-4796-rules-incorrectly-triggered-rules" author="nomikosi">
+
+            <update tableName="context_expression">
+                <column name="expression" value="!isEmpty(specifiedFACatchTypeCode) &amp;&amp; valueCodeTypeContainsAny(specifiedFACatchTypeCode, &quot;DISCARDED&quot;, &quot;DEMINIMIS&quot;)"/>
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="283" />
+                </whereParams>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="!isEmpty(specifiedFACatchTypeCodes) &amp;&amp; !subActivity &amp;&amp; valueContainsAny(specifiedFACatchTypeCodes, &quot;LOADED&quot;, &quot;UNLOADED&quot;)"/>
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="443" />
+                </whereParams>
+            </update>
+
+           <update tableName="context_expression">
+                <column name="expression" value="!isEmpty(faCatchTypeCode) &amp;&amp; valueContainsAny(faCatchTypeCode, &quot;LOADED&quot;) &amp;&amp; valueContainsAny(faCatchTypeCode, &quot;UNLOADED&quot;)"/>
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="444" />
+                </whereParams>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="!isEmpty(faCatchTypeCodes) &amp;&amp; valueContainsAny(faCatchTypeCodes, &quot;LOADED&quot;, &quot;UNLOADED&quot;)"/>
+                <where>id=:value</where>
+                <whereParams>
+                    <param name="value" value="445" />
+                </whereParams>
+            </update>
+
+            <rollback>
+                <update tableName="context_expression">
+                    <column name="expression" value = "isEmpty(specifiedFACatchTypeCode) || valueCodeTypeContainsAny(specifiedFACatchTypeCode, &quot;DISCARDED&quot;, &quot;DEMINIMIS&quot;)"/>
+                    <where>id=:value</where>
+                    <whereParams>
+                        <param name="value" value="283" />
+                    </whereParams>
+                </update>
+
+                <update tableName="context_expression">
+                    <column name="expression" value = "!subActivity &amp;&amp; valueContainsAny(specifiedFACatchTypeCodes, &quot;LOADED&quot;, &quot;UNLOADED&quot;)"/>
+                    <where>id=:value</where>
+                    <whereParams>
+                        <param name="value" value="443" />
+                    </whereParams>
+                </update>
+
+
+                <update tableName="context_expression">
+                    <column name="expression" value = "valueContainsAny(faCatchTypeCode, &quot;LOADED&quot;) &amp;&amp; valueContainsAny(faCatchTypeCode, &quot;UNLOADED&quot;)"/>
+                    <where>id=:value</where>
+                    <whereParams>
+                        <param name="value" value="444" />
+                    </whereParams>
+                </update>
+
+
+                <update tableName="context_expression">
+                    <column name="expression" value = "isEmpty(faCatchTypeCodes) || valueContainsAny(faCatchTypeCodes, &quot;LOADED&quot;, &quot;UNLOADED&quot;)"/>
+                    <where>id=:value</where>
+                    <whereParams>
+                        <param name="value" value="445" />
+                    </whereParams>
+                </update>
+            </rollback>
+        </changeSet>
+</databaseChangeLog>
