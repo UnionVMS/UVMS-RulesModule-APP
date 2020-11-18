@@ -87,4 +87,5 @@
     <include file="changelog/v3.4/db-changelog-UNIONVMS-4792-revert.xml" />
     <include file="changelog/v3.4/db-changelog-UNIONVMS-4802-patch_V1.1.xml" />
     <include file="changelog/v3.4/db-changelog-UNIONVMS-4792-correction.xml" />
+    <include file="changelog/v3.4/db-changelog-UNIONVMS-incorrect-triggered-rules.xml" />
 </databaseChangeLog>
