@@ -90,6 +90,8 @@
                                 <xsd:element name="pluginType" type="exchange:PluginType"/>
                                 <xsd:element name="request" type="xsd:string"/>
                                 <xsd:element name="isEmptyReport" type="xsd:boolean"/>
+                                <xsd:element name="isPermitted" type="xsd:boolean"/>
+                                <xsd:element name="requestType" type="xsd:string"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>
@@ -103,6 +105,8 @@
                             <xsd:sequence>
                                 <xsd:element name="pluginType" type="exchange:PluginType"/>
                                 <xsd:element name="request" type="xsd:string"/>
+                                <xsd:element name="isEmptyReport" type="xsd:boolean"/>
+                                <xsd:element name="isPermitted" type="xsd:boolean"/>
                             </xsd:sequence>
                         </xsd:extension>
                     </xsd:complexContent>

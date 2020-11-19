@@ -131,21 +131,21 @@ public class RulesFaQueryServiceBean {
             idsFromIncomingMessage.removeAll(faQueryIdsFromDb);
 
             ValidationResult faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, exchangeLogGuid, RawMsgType.FA_QUERY);
-            exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faQueryValidationReport));
+            // exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faQueryValidationReport));
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
             SetFLUXFAReportMessageRequest setFLUXFAReportMessageRequest = null;
             if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
                 log.debug("The Validation of FaQueryMessage is successful, going to check permissions (Subscriptions)..");
-                boolean hasPermissions = activityServiceBean.checkSubscriptionPermissions(requestStr, MessageType.FLUX_FA_QUERY_MESSAGE);
-                if (hasPermissions) { // Send query to activity.
+                setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getPluginType(), exchangeLogGuid);
+                if (setFLUXFAReportMessageRequest.isIsPermitted()) { // Send query to activity.
                     log.debug("Request has permissions. Going to send FaQuery to Activity Module...");
-                    setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getPluginType(), exchangeLogGuid);
                     if (setFLUXFAReportMessageRequest.isIsEmptyReport()) {
                         log.info("[WARN] The report generated from Activity doesn't contain data (Empty report)!");
                         updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS);
                         faResponseServiceBean.sendFLUXResponseMessageOnEmptyResultOrPermissionDenied(requestStr, request, faQueryMessage, Rule9998Or9999ErrorType.EMPTY_REPORT, onValue, faQueryValidationReport);
                         needToSendToExchange = false;
                     }
+                    exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faQueryValidationReport));
                 } else { // Request doesn't have permissions
                     log.debug("Request doesn't have permission! It won't be transmitted to Activity Module!");
                     exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
@@ -154,6 +154,7 @@ public class RulesFaQueryServiceBean {
                 }
             } else {
                 log.debug(VALIDATION_RESULTED_IN_ERRORS);
+                exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faQueryValidationReport));
             }
             FLUXResponseMessage fluxResponseMessageType = fluxMessageHelper.generateFluxResponseMessageForFaQuery(faQueryValidationReport, faQueryMessage, onValue);
             XPathRepository.INSTANCE.clear(faQueryFacts);

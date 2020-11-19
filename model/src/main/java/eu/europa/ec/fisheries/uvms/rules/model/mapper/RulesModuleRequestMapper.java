@@ -99,6 +99,31 @@ public class RulesModuleRequestMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
+    public static String createSetFLUXFAQueryMessageRequest(String faQueryMessageStr, String username, String logId,
+                                                            String dataFlow, String localNodeName, String onValue,
+                                                            Boolean isEmptyReport, Boolean isPermitted) throws RulesModelMapperException {
+        SetFLUXFAReportMessageRequest request = new SetFLUXFAReportMessageRequest();
+        request.setMethod(RulesModuleMethod.SEND_FLUX_FA_QUERY);
+        request.setRequest(faQueryMessageStr);
+        request.setIsPermitted(isPermitted);
+        request.setIsEmptyReport(isEmptyReport);
+        populateCommonProperties(request, username, logId, dataFlow, localNodeName, onValue);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String createSetFLUXFAQueryMessageRequest(String faQueryMessageStr, String username, String logId,
+                                                            String dataFlow, String localNodeName, String onValue,
+                                                            Boolean isEmptyReport, Boolean isPermitted, String senderOrReceiver) throws RulesModelMapperException {
+        SetFLUXFAReportMessageRequest request = new SetFLUXFAReportMessageRequest();
+        request.setMethod(RulesModuleMethod.SEND_FLUX_FA_QUERY);
+        request.setRequest(faQueryMessageStr);
+        request.setIsPermitted(isPermitted);
+        request.setIsEmptyReport(isEmptyReport);
+        request.setAd(senderOrReceiver);
+        populateCommonProperties(request, username, logId, dataFlow, localNodeName, onValue);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
     public static String createSendFluxMovementReportMessageRequest(PluginType type, String forwardPositionMessageStr, String username, String logId, String fluxDataFlow,
                                                          String senderOrReceiver,String ad) throws RulesModelMapperException {
         SendFLUXMovementReportRequest request = new SendFLUXMovementReportRequest();
