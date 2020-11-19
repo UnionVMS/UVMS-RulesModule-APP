@@ -1885,7 +1885,10 @@ public class ActivityFactMapper {
                 }
                 faNotificationOfArrivalFact.setSpecifiedFACatchTypeCodes(codeTypeList);
                 xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_FA_CATCH, TYPE_CODE).storeInRepo(faNotificationOfArrivalFact, "specifiedFACatchTypeCodes");
+            } else {
+                xPathUtil.appendWithoutWrapping(partialXpath).storeInRepo(faNotificationOfArrivalFact, SPECIFIED_FA_CATCHES);
             }
+
             faNotificationOfArrivalFact.setReasonCode(mapToCodeType(fishingActivity.getReasonCode()));
             xPathUtil.appendWithoutWrapping(partialXpath).append(REASON_CODE).storeInRepo(faNotificationOfArrivalFact, REASON_CODE_PROP);
 
