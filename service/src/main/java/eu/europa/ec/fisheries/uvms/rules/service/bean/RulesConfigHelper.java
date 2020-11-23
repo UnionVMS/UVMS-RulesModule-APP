@@ -15,6 +15,7 @@ import eu.europa.ec.fisheries.uvms.config.constants.ConfigHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ParameterKey;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -22,6 +23,11 @@ import java.util.List;
 
 @Stateless
 public class RulesConfigHelper implements ConfigHelper {
+
+    public static final String MODULE_VERSION_PROPERTIES_KEY = "uvms.module.version";
+
+    @Inject
+    private PropertiesBean propertiesBean;
 
     @PersistenceContext(unitName = "rules")
     protected EntityManager em;
@@ -39,8 +45,13 @@ public class RulesConfigHelper implements ConfigHelper {
     public String getModuleName() {
         return "rules";
     }
-    
-	@Override
+
+    @Override
+    public String getModuleVersion() {
+        return propertiesBean.getProperty(MODULE_VERSION_PROPERTIES_KEY);
+    }
+
+    @Override
 	public EntityManager getEntityManager() {
 		return em;
 	}

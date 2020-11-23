@@ -34,6 +34,11 @@ public class PropertiesBean {
             InputStream propsStream = PropertiesBean.class.getResourceAsStream("/logging.properties");
             props = new Properties();
             props.load(propsStream);
+            propsStream.close();
+
+            InputStream propsStream2 = PropertiesBean.class.getResourceAsStream("/app-version.properties");
+            props.load(propsStream2);
+            propsStream2.close();
         } catch (IOException e) {
             throw new EJBException("PropertiesBean initialization error", e);
         }
