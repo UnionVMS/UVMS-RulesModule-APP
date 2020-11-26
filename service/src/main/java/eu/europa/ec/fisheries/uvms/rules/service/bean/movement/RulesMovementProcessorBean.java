@@ -277,9 +277,13 @@ public class RulesMovementProcessorBean {
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
             CreateMovementBatchResponse movementBatchResponse = sendBatchToMovement(enrichedWrapper.getAssetList(), rawMovements, username);
             ExchangeLogStatusTypeType status;
-            if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
-                // Here when ready needs to happen the validation with the list returned from movements! movementBatchResponse.getMovements();
-                status = ExchangeLogStatusTypeType.SUCCESSFUL;
+            if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getPermitted())) {
+                if (SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
+                    // Here when ready needs to happen the validation with the list returned from movements! movementBatchResponse.getMovements();
+                    status = ExchangeLogStatusTypeType.SUCCESSFUL;
+                } else {
+                    status = ExchangeLogStatusTypeType.FAILED;
+                }
             } else {
                 status = ExchangeLogStatusTypeType.FAILED;
             }
