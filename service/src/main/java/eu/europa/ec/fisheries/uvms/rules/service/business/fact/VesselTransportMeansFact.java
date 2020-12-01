@@ -159,7 +159,7 @@ public class VesselTransportMeansFact extends AbstractFact {
     }
 
     public Asset resolveTransportMeanAssetForUviId() {
-        return transportMeans != null ? (transportMeans.getAsset() != null ? transportMeans.getAsset() : transportMeans.getAssetsByIrcsAndExtMark()) : null;
+        return transportMeans != null ? (transportMeans.getAsset() != null ? transportMeans.getAsset() : transportMeans.getAssetsByUvi()) : null;
     }
 
     public Asset resolveTransportMeanAssetForIrcsAndExtMarkIds() {
