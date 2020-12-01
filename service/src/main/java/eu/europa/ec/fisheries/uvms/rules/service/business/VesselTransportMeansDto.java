@@ -25,4 +25,7 @@ public class VesselTransportMeansDto {
     private Map<String, String> ids = new HashMap<>();
     private Asset asset;
     private String registrationVesselCountry;
+    private Asset assetsByCfr;
+    private Asset assetsByIrcsAndExtMark;
+    private Asset assetsByUvi;
 }

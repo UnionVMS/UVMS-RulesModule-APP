@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	<changeSet id="UNIONVMS-4807" author="imitrolios">
+		<update tableName="context_expression">
+			<column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; (resolveTransportMeanAssetForCfrId() == null &amp;&amp;
+			 ( registrationVesselCountryId != null &amp;&amp; mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value, creationDateOfMessage)))"/>
+			<where>id = '64'</where>
+		</update>
+		<update tableName="context_expression">
+			<column name="expression" value="registrationVesselCountryId != null  &amp;&amp; resolveTransportMeanAssetForCfrId() != null &amp;&amp; !isEmpty(resolveTransportMeanAssetForCfrId().getCountryCode()) &amp;&amp; resolveTransportMeanAssetForCfrId().getCountryCode() != registrationVesselCountryId.value"/>
+			<where>id = '62'</where>
+		</update>
+
+		<rollback>
+			<update tableName="context_expression">
+				<column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; (transportMeans == null || transportMeans.asset == null))"/>
+				<where>id = '64'</where>
+			</update>
+			<update tableName="context_expression">
+				<column name="expression" value="registrationVesselCountryId != null &amp;&amp; (transportMeans == null || (transportMeans.asset == null  || (transportMeans.asset != null &amp;&amp; isEmpty(transportMeans.asset.countryCode)) || transportMeans.asset.countryCode != registrationVesselCountryId.value))"/>
+				<where>id = '62'</where>
+			</update>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>

@@ -27,6 +27,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselPositionEvent;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -151,5 +152,17 @@ public class VesselTransportMeansFact extends AbstractFact {
     }
     public void setIsFromParentFishingActivity(boolean isFromParentFishingActivity) {
         this.isFromParentFishingActivity = isFromParentFishingActivity;
+    }
+
+    public Asset resolveTransportMeanAssetForCfrId() {
+        return transportMeans != null ? (transportMeans.getAsset() != null ? transportMeans.getAsset() : transportMeans.getAssetsByCfr()) : null;
+    }
+
+    public Asset resolveTransportMeanAssetForUviId() {
+        return transportMeans != null ? (transportMeans.getAsset() != null ? transportMeans.getAsset() : transportMeans.getAssetsByIrcsAndExtMark()) : null;
+    }
+
+    public Asset resolveTransportMeanAssetForIrcsAndExtMarkIds() {
+        return transportMeans != null ? (transportMeans.getAsset() != null ? transportMeans.getAsset() : transportMeans.getAssetsByIrcsAndExtMark()) : null;
     }
 }
