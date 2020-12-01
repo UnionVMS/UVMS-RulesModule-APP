@@ -72,6 +72,24 @@ public class AssetClientBean implements IAssetClient {
             if (CollectionUtils.isNotEmpty(assets)) {
                 vesselTransportMeansDto.setAsset(assets.get(0));
             }
+            if (StringUtils.isNotEmpty(cfr)) {
+                List<Asset> assetsByCfr = iAssetFacade.findHistoryOfAssetBy(reportDate, cfr, regCountry, null,null, null, null);
+                if (CollectionUtils.isNotEmpty(assetsByCfr)) {
+                    vesselTransportMeansDto.setAssetsByCfr(assetsByCfr.get(0));
+                }
+            }
+            if (StringUtils.isNotEmpty(ircs) && StringUtils.isNotEmpty(extMark)){
+                List<Asset> assetsByIrcsAndExtMark = iAssetFacade.findHistoryOfAssetBy(reportDate, null, regCountry, ircs, extMark, null, null);
+                if (CollectionUtils.isNotEmpty(assetsByIrcsAndExtMark)) {
+                    vesselTransportMeansDto.setAssetsByIrcsAndExtMark(assetsByIrcsAndExtMark.get(0));
+                }
+            }
+            if (StringUtils.isNotEmpty(uvi)){
+                List<Asset> assetsByUvi = iAssetFacade.findHistoryOfAssetBy(reportDate, null, regCountry, null,null, null, uvi);
+                if (CollectionUtils.isNotEmpty(assetsByUvi)) {
+                    vesselTransportMeansDto.setAssetsByUvi(assetsByUvi.get(0));
+                }
+            }
         }
         return vesselTransportMeansFactCollectedList;
     }
