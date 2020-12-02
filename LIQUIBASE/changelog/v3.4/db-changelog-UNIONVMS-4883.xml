@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4883" author="nomikosi">
+        <update tableName="context_expression">
+            <column name="expression" value = "!isEmpty(ids) &amp;&amp; (mdrService.validateSchemeIdFormat(ids, &quot;EU_TRIP_ID&quot;, creationDateOfMessage) || mdrService.validateSchemeIdFormat(ids, &quot;NEAFC_TN&quot;, creationDateOfMessage) )"/>
+            <where>rule_id=:value</where>
+            <whereParams>
+                <param name="value" value="192" />
+            </whereParams>
+        </update>
+
+        <rollback>
+            <update tableName="context_expression">
+                <column name="expression" value = "!isEmpty(ids) &amp;&amp; mdrService.validateSchemeIdFormat(ids, &quot;EU_TRIP_ID&quot;, creationDateOfMessage)"/>
+                <where>rule_id=:value</where>
+                <whereParams>
+                    <param name="value" value="192" />
+                </whereParams>
+            </update>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
