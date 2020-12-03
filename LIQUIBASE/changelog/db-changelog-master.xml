@@ -91,4 +91,5 @@
     <include file="changelog/v3.4/db-changelog-UNIONVMS-4911.xml" />
     <include file="changelog/v3.4/db-changelog-UNIONVMS-4793-patch_V1.1.xml"/>
     <include file="changelog/v3.4/db-changelog-UNIONVMS-4883.xml" />
+    <include file="changelog/v3.4/db-changelog-UNIONVMS-4928.xml" />
 </databaseChangeLog>

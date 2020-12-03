@@ -35,6 +35,7 @@ public class FishingActivityFact extends AbstractFact {
 
     private boolean subActivity = false;
     private CodeType typeCode;
+    private CodeType purposeCode;
     private DateTimeType occurrenceDateTime;
     private FishingTrip specifiedFishingTrip;
     private List<FishingTrip> relatedFishingTrip;
@@ -44,6 +45,8 @@ public class FishingActivityFact extends AbstractFact {
     private CodeType fisheryTypeCode;
     private CodeType speciesTargetCode;
     private BigDecimal operationQuantity;
+    private List<FAReportDocument> faReportDocuments;
+    private FAReportDocument faReportDocument;
     // This field will be set only when this is a subactivity;
     private String mainActivityType;
     private List<MeasureType> durationMeasure;
@@ -79,6 +82,32 @@ public class FishingActivityFact extends AbstractFact {
             return true;
         }
         return validDelimitedPeriod(relatedFishingActivities);
+    }
+
+    public boolean containsActivityTypeForSchema(List<FAReportDocument> faReportDocuments, String activityType, FAReportDocument faReportDocument){
+
+        if(faReportDocuments == null || faReportDocuments.isEmpty() || faReportDocument.getSpecifiedFishingActivities() == null
+                || faReportDocument.getSpecifiedFishingActivities().get(0) == null
+                || faReportDocument.getSpecifiedFishingActivities().get(0).getTypeCode() == null){
+            return true;
+        }
+        List<FAReportDocument> filteredReports = faReportDocuments.stream().filter(f -> activityType.equals(f.getSpecifiedFishingActivities().get(0).getTypeCode().getValue())).collect(Collectors.toList());
+
+        //if there is only one activity type we are ok
+        if(filteredReports.size() == 1 ){
+            return true;
+        }
+        //if there is none, we want the rule to fail in first element of the list only
+        if(filteredReports.size() == 0 && faReportDocuments.get(0).equals(faReportDocument)){
+            return false;
+        }
+
+        //just ignore activities which are not of type activityType
+        if(!activityType.equals(faReportDocument.getSpecifiedFishingActivities().get(0).getTypeCode().getValue())){
+            return true;
+        }
+        //if there are more than one results, we want the rule to fail for the activity which has different schema id
+        return filteredReports.get(0).getRelatedFLUXReportDocument().getIDS().get(0).equals(faReportDocument.getRelatedFLUXReportDocument().getIDS().get(0));
     }
 
     public boolean validDelimitedPeriod(List<FishingActivity> relatedFishingActivities) {

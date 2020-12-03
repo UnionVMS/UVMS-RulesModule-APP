@@ -317,11 +317,14 @@ public class ActivityFactMapper {
     }
 
     public FishingActivityFact generateFishingActivityFact(FishingActivity fishingActivity, boolean isSubActivity, FAReportDocument faReportDocument,
-                                                           un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType mainActivityType) {
+                                                           un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType mainActivityType,FLUXFAReportMessage fluxfaReportMessage) {
         FishingActivityFact fishingActivityFact = new FishingActivityFact();
         fishingActivityFact.setThisFishingActivity(fishingActivity);
         fishingActivityFact.setSubActivity(isSubActivity);
         fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument != null ? faReportDocument.getTypeCode() : null));
+        fishingActivityFact.setFaReportDocuments(fluxfaReportMessage.getFAReportDocuments());
+        fishingActivityFact.setFaReportDocument(faReportDocument);
+        fishingActivityFact.setPurposeCode(mapToCodeType(fluxfaReportMessageFLUXReportDocumentPurposeCode(fluxfaReportMessage)));
 
         String partialXpath = xPathUtil.getValue();
 

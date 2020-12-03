@@ -243,7 +243,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 String partialSpecFishActXpath = isSubActivity ? xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(RELATED_FISHING_ACTIVITY, index).getValue() : xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_FISHING_ACTIVITY, index).getValue();
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
-                facts.add(activityFactMapper.generateFishingActivityFact(fishingActivity, isSubActivity, faReportDocument, mainActivityType));
+                facts.add(activityFactMapper.generateFishingActivityFact(fishingActivity, isSubActivity, faReportDocument, mainActivityType,fluxfaReportMessage));
 
                 xPathUtil.appendWithoutWrapping(partialSpecFishActXpath);
                 if(isSubActivity) {
