@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
-	<changeSet id="UNIONVMS-4807" author="imitrolios">
+	<changeSet id="UNIONVMS-4911" author="imitrolios">
 		<update tableName="context_expression">
 			<column name="expression" value="!isEmpty(ids) &amp;&amp; !schemeIdContainsAll(ids, &quot;CFR&quot;) &amp;&amp; (resolveTransportMeanAssetForCfrId() == null &amp;&amp;
 			 ( registrationVesselCountryId != null &amp;&amp; mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountryId.value, creationDateOfMessage)))"/>

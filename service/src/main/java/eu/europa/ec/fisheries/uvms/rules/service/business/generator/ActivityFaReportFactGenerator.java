@@ -183,43 +183,35 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                     }
                 });
 
-                enrichAssetsByDistinctIdentifiers(transportMeansFromAssets,vessTrpMeansFacts);
+                enrichAssetsByDistinctIdentifiers(transportMeansFromAssets, vessFact);
 
             });
         }
     }
 
-    private void enrichAssetsByDistinctIdentifiers(List<VesselTransportMeansDto> transportMeansFromAssets, List<AbstractFact> vessTrpMeansFacts) {
+    private void enrichAssetsByDistinctIdentifiers(List<VesselTransportMeansDto> transportMeansFromAssets, VesselTransportMeansFact vesselFact) {
         transportMeansFromAssets.stream().
                 filter(Objects::nonNull).
                 forEach(transportMean -> {
-                    vessTrpMeansFacts.stream().
-                            filter(VesselTransportMeansFact.class::isInstance)
-                            .map(VesselTransportMeansFact.class::cast)
-                            .filter(transportMeansFact -> transportMeansFact.getTransportMeans() == null)
-                            .forEach(transportMeansFact -> {
-                                        if (transportMean.getAssetsByCfr() != null &&
-                                                transportMeansFact.getIds().stream().anyMatch(id -> id.getSchemeId().contains("CFR")
-                                                && id.getValue().equals(transportMean.getAssetsByCfr().getCfr()))) {
-                                            transportMeansFact.setTransportMeans(transportMean);
-                                        }
-                                        if (transportMean.getAssetsByIrcsAndExtMark() != null &&
-                                                transportMeansFact.getIds().stream().anyMatch(id -> id.getSchemeId().contains("IRCS")
-                                                && id.getValue().equals(transportMean.getAssetsByIrcsAndExtMark().getIrcs())) &&
-                                                transportMeansFact.getIds().stream().anyMatch(id -> id.getSchemeId().contains("EXTERNAL_MARKING")
-                                                        && id.getValue().equals(transportMean.getAssetsByIrcsAndExtMark().getExternalMarking()))) {
-                                            transportMeansFact.setTransportMeans(transportMean);
-                                        }
-
-                                        if (transportMean.getAssetsByUvi() != null &&
-                                                transportMeansFact.getIds().stream().anyMatch(id -> id.getSchemeId().contains("UVI")
-                                                && id.getValue().equals(transportMean.getAssetsByUvi().getUvi()))) {
-                                            transportMeansFact.setTransportMeans(transportMean);
-                                        }
-                                    }
-
-                            );
-                });
+                            if (transportMean.getAssetsByCfr() != null &&
+                                    vesselFact.getIds().stream().anyMatch(id -> id.getSchemeId().contains("CFR")
+                                            && id.getValue().equals(transportMean.getAssetsByCfr().getCfr()))) {
+                                vesselFact.setTransportMeans(transportMean);
+                            }
+                            if (transportMean.getAssetsByIrcsAndExtMark() != null &&
+                                    vesselFact.getIds().stream().anyMatch(id -> id.getSchemeId().contains("IRCS")
+                                            && id.getValue().equals(transportMean.getAssetsByIrcsAndExtMark().getIrcs())) &&
+                                    vesselFact.getIds().stream().anyMatch(id -> id.getSchemeId().contains("EXT_MARK")
+                                            && id.getValue().equals(transportMean.getAssetsByIrcsAndExtMark().getExternalMarking()))) {
+                                vesselFact.setTransportMeans(transportMean);
+                            }
+                            if (transportMean.getAssetsByUvi() != null &&
+                                    vesselFact.getIds().stream().anyMatch(id -> id.getSchemeId().contains("UVI")
+                                            && id.getValue().equals(transportMean.getAssetsByUvi().getUvi()))) {
+                                vesselFact.setTransportMeans(transportMean);
+                            }
+                        }
+                );
     }
 
     private List<IdType> getFaMessageOwnerParty(FLUXFAReportMessage faReportMessage) {

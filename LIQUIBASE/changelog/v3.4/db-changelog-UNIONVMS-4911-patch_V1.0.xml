@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4911" author="nomikosi">
+        <update tableName="context_expression">
+            <column name="expression" value="registrationVesselCountryId != null &amp;&amp; (transportMeans == null || (transportMeans.asset == null  || (transportMeans.asset != null &amp;&amp; isEmpty(transportMeans.asset.countryCode)) || transportMeans.asset.countryCode != registrationVesselCountryId.value))"/>
+            <where>id = '62'</where>
+        </update>
+
+        <rollback>
+            <update tableName="context_expression">
+                <column name="expression" value="registrationVesselCountryId != null  &amp;&amp; resolveTransportMeanAssetForCfrId() != null &amp;&amp; !isEmpty(resolveTransportMeanAssetForCfrId().getCountryCode()) &amp;&amp; resolveTransportMeanAssetForCfrId().getCountryCode() != registrationVesselCountryId.value"/>
+                <where>id = '62'</where>
+            </update>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
