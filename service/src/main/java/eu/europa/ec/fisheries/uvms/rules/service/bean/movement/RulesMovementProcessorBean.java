@@ -306,12 +306,12 @@ public class RulesMovementProcessorBean {
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
             List<RawMovementFact> rawMovementFactList = RawMovementFactMapper.mapRawMovementFacts(rawMovements, enrichedWrapper.getMobileTerminalList(),
                     enrichedWrapper.getAssetList(), pluginType);
-            movementValidator.evaluate(rawMovementFactList);
+            movementValidator.evaluateRawList(rawMovementFactList);
             if (allFactsAreOk(rawMovementFactList)) { // For now it is always OK
                 // The collectMovementData actually is the method that sends the movements list to Movements module to be saved!
                 List<MovementFact> movementFactList = collectBatchMovementData(enrichedWrapper.getMobileTerminalList(), enrichedWrapper.getAssetList(), rawMovements, username);
                 log.info(" Validating movement from Movement Module");
-                movementValidator.evaluate(movementFactList, true);
+                movementValidator.evaluate(movementFactList);
                 // Tell Exchange that a movement Batch was persisted in Movement
                 ExchangeLogStatusTypeType status;
                 if (CollectionUtils.isNotEmpty(movementFactList)) {
