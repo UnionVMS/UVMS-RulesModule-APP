@@ -12,6 +12,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
+import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.MOVEMENT;
+import static eu.europa.ec.fisheries.uvms.movement.model.exception.ErrorCode.MOVEMENT_DUPLICATE_ERROR;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_MOVEMENT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
+
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
@@ -49,6 +56,7 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMovementReportReques
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmListCriteria;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmSearchKey;
@@ -89,9 +97,13 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
@@ -101,6 +113,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.TicketCountEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.event.TicketUpdateEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
+import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
@@ -116,7 +129,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -129,9 +144,6 @@ import java.nio.file.AccessDeniedException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
-
-import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.MOVEMENT;
-import static eu.europa.ec.fisheries.uvms.movement.model.exception.ErrorCode.MOVEMENT_DUPLICATE_ERROR;
 
 
 @Stateless
@@ -176,7 +188,16 @@ public class RulesMovementProcessorBean {
     private RulesAuditProducerBean auditProducer;
 
     @EJB
+    private RulesEngineBean rulesEngine;
+
+    @EJB
     private RulePostProcessBean rulePostProcessBean;
+
+    @EJB
+    private RulesExchangeServiceBean exchangeServiceBean;
+
+    @EJB
+    private RulesConfigurationCache ruleModuleCache;
 
     @Inject
     private AssetClientBean assetClientBean;
@@ -198,6 +219,8 @@ public class RulesMovementProcessorBean {
     private Event<NotificationMessage> alarmReportCountEvent;
 
     private Map<String, MovementTypeType> mapToMovementType;
+
+    private RulesFLUXMessageHelper fluxMessageHelper;
 
     @Inject
     void setMdrCache(MDRCache mdrCache) {
@@ -227,6 +250,11 @@ public class RulesMovementProcessorBean {
                 }));
     }
 
+    @PostConstruct
+    public void init() {
+        fluxMessageHelper = new RulesFLUXMessageHelper(ruleModuleCache);
+    }
+
     public void sendMovementReport(SendFLUXMovementReportRequest request, String messageGuid) throws RulesServiceException {
         log.info("Sending Movement Report to exchange");
         try {
@@ -252,16 +280,34 @@ public class RulesMovementProcessorBean {
                 sendBatchBackToExchange(request.getLogGuid(), movementReportsList, MovementRefTypeType.ALARM, userName);
                 return;
             }
+
+            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+            extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
+            extraValues.put(XML, request.getRequest());
+            extraValues.put(DATA_FLOW, request.getFluxDataFlow());
+            Collection<AbstractFact> factsResults = rulesEngine.evaluate(RECEIVING_MOVEMENT_MSG,fluxVesselPositionMessage,extraValues,null);
+
+            final String reportId = fluxVesselPositionMessage.getFLUXReportDocument().getIDS().stream()
+                    .filter(id -> "UUID".equals(id.getSchemeID()))
+                    .map(IDType::getValue)
+                    .findFirst()
+                    .get();
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), reportId, RawMsgType.MOVEMENT);
+
+            if(validationResult.isError()){
+                exchangeServiceBean.updateExchangeMessage(request.getLogGuid(), fluxMessageHelper.calculateMessageValidationStatus(validationResult));
+                return;
+            }
             // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
             // processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
-            enrichAndSenMovementsAsBatch(movementReportsList, userName, request.getLogGuid(), request);
+            enrichAndSenMovementsAsBatch(validationResult, movementReportsList, userName, request.getLogGuid(), request);
             // Send some response to Movement, if it originated from there (manual movement)
             if (MovementSourceType.MANUAL.equals(movementReportsList.get(0).getSource())) {// A person has created a position
                 ProcessedMovementAck response = MovementModuleResponseMapper.mapProcessedMovementAck(eu.europa.ec.fisheries.schema.movement.common.v1.AcknowledgeTypeType.OK,
                         messageGuid, "Movement successfully processed");
                 movOutQueueProducer.sendMessageWithSpecificIds(JAXBMarshaller.marshallJaxBObjectToString(response), movOutQueueProducer.getDestination(), null, messageGuid, messageGuid);
             }
-        } catch (JAXBException | RulesModelMarshallException | MessageException e) {
+        } catch (JAXBException | RulesModelMarshallException | MessageException | RulesValidationException e) {
             log.error("Error while processing received movement", e);
         }
     }
@@ -276,7 +322,7 @@ public class RulesMovementProcessorBean {
      * @param exchangeLogGuid
      * @throws RulesServiceException
      */
-    private void enrichAndSenMovementsAsBatch(List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request) throws RulesServiceException {
+    private void enrichAndSenMovementsAsBatch(ValidationResult validationResult, List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request) throws RulesServiceException {
         try {
             // Enrich with MobilTerminal and Assets data. Get Mobile Terminal if it exists.
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
@@ -284,8 +330,7 @@ public class RulesMovementProcessorBean {
             ExchangeLogStatusTypeType status;
             if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getPermitted())) {
                 if (SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
-                    // Here when ready needs to happen the validation with the list returned from movements! movementBatchResponse.getMovements();
-                    status = ExchangeLogStatusTypeType.SUCCESSFUL;
+                    status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
                 } else {
                     status = ExchangeLogStatusTypeType.FAILED;
                 }
@@ -387,14 +432,7 @@ public class RulesMovementProcessorBean {
     }
 
     private boolean allFactsAreOk(List<RawMovementFact> rawMovementFactList) {
-        boolean areAllOk = true;
-        for (RawMovementFact movementFact : rawMovementFactList) {
-            if (movementFact == null || !movementFact.isOk()) {
-                areAllOk = false;
-                break;
-            }
-        }
-        return areAllOk;
+        return rawMovementFactList.stream().allMatch(movementFact -> movementFact != null && movementFact.isOk());
     }
 
     private List<MobileTerminalType> getMobileTerminalByRawMovementsBatch(List<RawMovementType> rawMovements) throws MessageException, MobileTerminalModelMapperException, MobileTerminalUnmarshallException, JMSException {
