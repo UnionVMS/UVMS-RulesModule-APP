@@ -149,6 +149,7 @@ public class RulesFaReportServiceBean {
             } else {
                 log.debug("Validation resulted in errors.");
                 FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForFaReport(faReportValidationResult, fluxfaReportMessage);
+                exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult));
                 exchangeServiceBean.evaluateAndSendToExchange(fluxResponseMessage, request, request.getPluginType(), fluxMessageHelper.isCorrectUUID(messageGUID), MDC.getCopyOfContextMap());
             }
         } catch (UnmarshalException e) {
