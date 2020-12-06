@@ -300,7 +300,7 @@ public class RulesMovementProcessorBean {
             }
             // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
             // processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
-            enrichAndSenMovementsAsBatch(validationResult, movementReportsList, userName, request.getLogGuid(), request);
+            enrichAndSenMovementsAsBatch(validationResult, movementReportsList, userName, request.getLogGuid(), request, reportId);
             // Send some response to Movement, if it originated from there (manual movement)
             if (MovementSourceType.MANUAL.equals(movementReportsList.get(0).getSource())) {// A person has created a position
                 ProcessedMovementAck response = MovementModuleResponseMapper.mapProcessedMovementAck(eu.europa.ec.fisheries.schema.movement.common.v1.AcknowledgeTypeType.OK,
@@ -322,7 +322,7 @@ public class RulesMovementProcessorBean {
      * @param exchangeLogGuid
      * @throws RulesServiceException
      */
-    private void enrichAndSenMovementsAsBatch(ValidationResult validationResult, List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request) throws RulesServiceException {
+    private void enrichAndSenMovementsAsBatch(ValidationResult validationResult, List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request, String reportId) throws RulesServiceException {
         try {
             // Enrich with MobilTerminal and Assets data. Get Mobile Terminal if it exists.
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
@@ -336,11 +336,11 @@ public class RulesMovementProcessorBean {
                 }
             } else {
                 status = ExchangeLogStatusTypeType.FAILED;
-                updateValidationResultOnPermissionDenied(JAXBUtils.marshallJaxBObjectToString(movementBatchResponse), request, Rule9998Or9999ErrorType.PERMISSION_DENIED);
+                updateValidationResultOnPermissionDenied(reportId, request, Rule9998Or9999ErrorType.PERMISSION_DENIED);
             }
             sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
             updateRequestMessageStatusInExchange(exchangeLogGuid, status);
-        } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | JAXBException e) {
+        } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
@@ -1652,20 +1652,18 @@ public class RulesMovementProcessorBean {
         }
     }
 
-    private void updateValidationResultOnPermissionDenied(String rawMessage, RulesBaseRequest request,  Rule9998Or9999ErrorType type) {
+    private void updateValidationResultOnPermissionDenied(String reportId, RulesBaseRequest request,  Rule9998Or9999ErrorType type) throws RulesModelException {
         if (request == null || type == null) {
             log.error("Could not send FLUXResponseMessage. Request is null or Rule9998Or9999ErrorType not provided.");
             return;
         }
-        RuleError ruleWarning;
+        RuleError ruleError;
         if (Rule9998Or9999ErrorType.EMPTY_REPORT.equals(type)) {
-            ruleWarning = new RuleError(ServiceConstants.EMPTY_REPORT_RULE, ServiceConstants.EMPTY_REPORT_RULE_MESSAGE, "L03", Collections.<String>singletonList(null));
+            ruleError = new RuleError(ServiceConstants.EMPTY_REPORT_RULE, ServiceConstants.EMPTY_REPORT_RULE_MESSAGE, "L03", Collections.singletonList(null));
         } else {
-            ruleWarning = new RuleError(ServiceConstants.PERMISSION_DENIED_RULE, ServiceConstants.PERMISSION_DENIED_RULE_MESSAGE, "L00", Collections.<String>singletonList(null));
+            ruleError = new RuleError(ServiceConstants.PERMISSION_DENIED_RULE, ServiceConstants.PERMISSION_DENIED_RULE_MESSAGE, "L00", Collections.singletonList(null));
         }
 
-        ValidationResult validationResultDto = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage, request.getLogGuid(), MOVEMENT, request.getDate());
-        validationResultDto.setError(true);
-        validationResultDto.setOk(false);
+        rulePostProcessBean.updateValidationResult(reportId, MOVEMENT, ruleError);
     }
 }
