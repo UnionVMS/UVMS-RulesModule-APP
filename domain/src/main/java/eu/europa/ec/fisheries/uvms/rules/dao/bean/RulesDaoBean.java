@@ -22,10 +22,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TransactionRequiredException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 import eu.europa.ec.fisheries.uvms.rules.dao.FADocumentIDDAO;
@@ -559,11 +561,34 @@ public class RulesDaoBean implements RulesDao {
     @Override
     public void updateValidationMessagesWith(String rawMessageGuid, String type, ValidationMessage validationMessage) throws DaoException {
         try {
-            List<RawMessage> rawMessageByGuid = rawMessageDao.getRawMessageByGuid(rawMessageGuid, type);    
+            List<RawMessage> rawMessageByGuid = rawMessageDao.getRawMessageByGuid(rawMessageGuid, type);
             rawMessageByGuid.forEach(r -> {
                 r.getValidationMessages().add(validationMessage);
                 validationMessage.setRawMessage(r);
             });
+        } catch (ServiceException e) {
+            throw new DaoException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void createOrUpdateValidationMessagesWithPermission(String rawMessageGuid, String rawMessageContent, RawMsgType type, ValidationMessage validationMessage) throws DaoException {
+        try {
+            List<RawMessage> rawMessageByGuid = rawMessageDao.getRawMessageByGuid(rawMessageGuid, type.value());
+            if (rawMessageByGuid.isEmpty()) {
+                RawMessage rawMessage = new RawMessage();
+                rawMessage.setGuid(rawMessageGuid);
+                rawMessage.setRawMessage(rawMessageContent);
+                rawMessage.setRawMsgType(type);
+                validationMessage.setRawMessage(rawMessage);
+                rawMessage.setValidationMessages(Collections.singleton(validationMessage));
+                rawMessageDao.saveRawMessages(Collections.singletonList(rawMessage));
+            } else {
+                rawMessageByGuid.forEach(r -> {
+                    r.getValidationMessages().add(validationMessage);
+                    validationMessage.setRawMessage(r);
+                });
+            }
         } catch (ServiceException e) {
             throw new DaoException(e.getMessage(), e);
         }

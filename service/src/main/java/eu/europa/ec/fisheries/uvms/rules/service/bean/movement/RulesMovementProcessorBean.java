@@ -1652,7 +1652,7 @@ public class RulesMovementProcessorBean {
         }
     }
 
-    private void updateValidationResultOnPermissionDenied(String reportId, RulesBaseRequest request,  Rule9998Or9999ErrorType type) throws RulesModelException {
+    private void updateValidationResultOnPermissionDenied(String reportId, SetFLUXMovementReportRequest request,  Rule9998Or9999ErrorType type) throws RulesModelException {
         if (request == null || type == null) {
             log.error("Could not send FLUXResponseMessage. Request is null or Rule9998Or9999ErrorType not provided.");
             return;
@@ -1663,7 +1663,8 @@ public class RulesMovementProcessorBean {
         } else {
             ruleError = new RuleError(ServiceConstants.PERMISSION_DENIED_RULE, ServiceConstants.PERMISSION_DENIED_RULE_MESSAGE, "L00", Collections.singletonList(null));
         }
+            ruleError.setXpaths(Collections.singletonList("(//*[local-name()='FLUXVesselPositionMessage']//*[local-name()='FLUXReportDocument'])[1]//*[local-name()='ID']"));
 
-        rulePostProcessBean.updateValidationResult(reportId, MOVEMENT, ruleError);
+        rulePostProcessBean.createOrUpdateValidationResult(reportId, request.getRequest(), MOVEMENT, ruleError);
     }
 }
