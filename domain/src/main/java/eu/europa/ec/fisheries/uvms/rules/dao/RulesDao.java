@@ -15,6 +15,7 @@ import javax.ejb.Local;
 import java.util.List;
 import java.util.Set;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.entity.AlarmReport;
 import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
@@ -159,6 +160,8 @@ public interface RulesDao {
     void saveValidationMessages(List<RawMessage> rawMessages) throws DaoException;
 
     void updateValidationMessagesWith(String rawMessageGuid, String type, ValidationMessage validationMessage) throws DaoException;
+
+    void createOrUpdateValidationMessagesWithPermission(String rawMessageGuid, String rawMessage, RawMsgType type, ValidationMessage validationMessage) throws DaoException;
 
     List<ValidationMessage> getValidationMessagesById(List<String> ids) throws DaoException;
 
