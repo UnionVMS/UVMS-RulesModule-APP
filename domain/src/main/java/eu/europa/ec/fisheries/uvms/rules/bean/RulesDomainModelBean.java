@@ -16,6 +16,7 @@ import eu.europa.ec.fisheries.schema.rules.alarm.v1.AlarmReportType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.*;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RuleType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
@@ -120,6 +121,15 @@ public class RulesDomainModelBean implements RulesDomainModel {
     public void updateValidationMessagesWithPermission(ValidationMessageType validationMessage, String rawMsgGuid, String type) throws RulesModelException {
         try {
             rulesDao.updateValidationMessagesWith(rawMsgGuid, type, RawMessageMapper.INSTANCE.mapToValidationMessageEntity(validationMessage));
+        } catch (DaoException e) {
+            throw new RulesModelException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void createOrUpdateValidationMessagesWithPermission(ValidationMessageType validationMessage, String rawMsgGuid, String rawMessage, RawMsgType type) throws RulesModelException {
+        try {
+            rulesDao.createOrUpdateValidationMessagesWithPermission(rawMsgGuid, rawMessage, type, RawMessageMapper.INSTANCE.mapToValidationMessageEntity(validationMessage));
         } catch (DaoException e) {
             throw new RulesModelException(e.getMessage(), e);
         }
