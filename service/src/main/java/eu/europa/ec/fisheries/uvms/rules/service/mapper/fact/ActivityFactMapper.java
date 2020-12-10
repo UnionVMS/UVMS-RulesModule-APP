@@ -536,12 +536,22 @@ public class ActivityFactMapper {
         return ids;
     }
 
-    public VesselTransportMeansFact generateFactForVesselTransportMean(VesselTransportMeans vesselTransportMean, boolean isCommingFromFaReportDocument, List<AbstractFact> facts) {
-        if (vesselTransportMean == null) {
+    public VesselTransportMeansFact generateFactForVesselTransportMean(FAReportDocument faReportDocument, boolean isCommingFromFaReportDocument, List<AbstractFact> facts) {
+        if (faReportDocument.getSpecifiedVesselTransportMeans() == null) {
             xPathUtil.clear();
             return null;
         }
-        VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(vesselTransportMean, facts, null,true);
+
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType faType = null;
+
+        if(faReportDocument.getSpecifiedFishingActivities() != null && !faReportDocument.getSpecifiedFishingActivities().isEmpty()){
+            if(faReportDocument.getSpecifiedFishingActivities().get(0).getTypeCode() != null){
+                faType = faReportDocument.getSpecifiedFishingActivities().get(0).getTypeCode();
+            }
+        }
+
+
+        VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(faReportDocument.getSpecifiedVesselTransportMeans(), facts, faType,true);
         vesselTransportMeansFact.setIsFromFaReport(isCommingFromFaReportDocument);
         return vesselTransportMeansFact;
     }
