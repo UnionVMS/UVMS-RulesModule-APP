@@ -120,7 +120,7 @@ public class RulesModuleRequestMapper {
         request.setIsPermitted(isPermitted);
         request.setIsEmptyReport(isEmptyReport);
         request.setAd(senderOrReceiver);
-        populateCommonProperties(request, username, logId, dataFlow, localNodeName, onValue);
+        populateCommonProperties(request, username, logId, dataFlow, senderOrReceiver, onValue);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
 
