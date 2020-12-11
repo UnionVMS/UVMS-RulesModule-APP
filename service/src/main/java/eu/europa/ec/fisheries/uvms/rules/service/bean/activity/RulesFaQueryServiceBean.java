@@ -166,7 +166,7 @@ public class RulesFaQueryServiceBean {
             }
 
             // We have received a SetFLUXFAReportMessageRequest (from activity) and it contains reports so needs to be processed (validated/sent through the normal flow).
-            if (setFLUXFAReportMessageRequest != null && !setFLUXFAReportMessageRequest.isIsEmptyReport()) {
+            if (setFLUXFAReportMessageRequest != null && setFLUXFAReportMessageRequest.isIsPermitted() && !setFLUXFAReportMessageRequest.isIsEmptyReport()) {
                 faReportRulesMessageBean.evaluateOutgoingFaReport(setFLUXFAReportMessageRequest);
             }
         } catch (UnmarshalException e) {
