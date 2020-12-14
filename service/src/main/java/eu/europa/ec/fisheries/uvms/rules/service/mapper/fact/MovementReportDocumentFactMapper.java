@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import java.util.Date;
+
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_REPORT_DOCUMENT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.MOVEMENT_REPORT_DOCUMENT;
@@ -33,8 +35,8 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 public class MovementReportDocumentFactMapper {
 
     private XPathStringWrapper xPathUtil;
-
     public static final String ID = "id";
+
 
     public MovementReportDocumentFactMapper() {
         xPathUtil = new XPathStringWrapper();
