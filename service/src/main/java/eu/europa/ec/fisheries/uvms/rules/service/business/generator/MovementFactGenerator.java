@@ -54,10 +54,12 @@ public class MovementFactGenerator extends AbstractGenerator {
 
         if (fluxReportDocument != null) {
             facts.add(movementReportDocumentFactMapper.generateFactForMovementReportDocument(vesselPositionMessage));
+            facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocumentId(vesselPositionMessage));
         }
 
         String df = (String) extraValueMap.get(DATA_FLOW);
         facts.forEach(fact -> fact.setMessageDataFlow(df));
+        xPathUtil.clear();
         return facts;
     }
 

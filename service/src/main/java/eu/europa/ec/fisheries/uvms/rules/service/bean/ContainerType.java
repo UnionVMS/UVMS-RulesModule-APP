@@ -47,8 +47,7 @@ public enum ContainerType {
             FactType.SALES_VALIDATION_RESULT_DOCUMENT, FactType.SALES_VALIDATION_QUALITY_ANALYSIS,FactType.SALES_REPORT_WRAPPER,
             FactType.SALES_AUCTION_SALE, FactType.SALES_FLUX_SALES_QUERY_MESSAGE, FactType.SALES_QUERY_PARAMETER, FactType.SALES_FLUX_SALES_RESPONSE_MESSAGE),
 
-    MOVEMENTS("movement","ec.europa.eu.movement", FactType.MOVEMENT_REPORT_DOCUMENT
-    );
+    MOVEMENTS("movement","ec.europa.eu.movement", FactType.MOVEMENT_REPORT_DOCUMENT, FactType.MOVEMENT_REPORT_DOCUMENT_ID);
 
     private final String packageName;
     private final String containerName;

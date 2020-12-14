@@ -1,32 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
     <changeSet id="UNIONVMS-4660-template-for-MovementRules" author="nomikosi">
         <insert tableName="template">
             <column name="template_id" value="2000" />
             <column name="template_name" value="Movement report document" />
             <column name="fact_template" value="MOVEMENT_REPORT_DOCUMENT" />
         </insert>
+        <insert tableName="template">
+            <column name="template_id" value="2001" />
+            <column name="template_name" value="Movement report document id" />
+            <column name="fact_template" value="MOVEMENT_REPORT_DOCUMENT_ID" />
+        </insert>
 
         <rollback>
             <delete tableName="template">
                 <where>template_id = 2000</where>
             </delete>
+            <delete tableName="template">
+                <where>template_id = 2001</where>
+            </delete>
         </rollback>
     </changeSet>
 
-    <changeSet id="UNIONVMS-4660-update-MO-R01-00-0001" author="nomikosi">
+    <changeSet id="UNIONVMS-4660-update-VP-L00-00-0001" author="nomikosi">
         <insert tableName="rule">
             <column name="template_id" value="2000" />
-            <column name="property_names" value="creationDateTime" />
+            <column name="property_names" value="id" />
             <column name="note" value="Check presence. Must be present." />
             <column name="level" value="L00" />
             <column name="error_type" value="ERROR" />
             <column name="disabled" value="false" />
-            <column name="br_id" value="MO-R01-00-0001" />
+            <column name="br_id" value="VP-L00-00-0001" />
             <column name="rule_id" value="20001"/>
         </insert>
         <insert tableName="context_expression">
-            <column name="expression" value="creationDateTime == null "/>
+            <column name="expression" value="ids == null || ids.isEmpty()"/>
             <column name="failure_message" value="Message creation date/time missing."/>
             <column name="context" value="EU"/>
             <column name="rule_id" value="20001"/>
@@ -38,24 +47,24 @@
                 <where>rule_id = 20001</where>
             </delete>
             <delete tableName="rule">
-                <where>br_id = 'MO-R01-00-0001'</where>
+                <where>br_id = 'VP-L01-00-0001'</where>
             </delete>
         </rollback>
     </changeSet>
 
-    <changeSet id="UNIONVMS-4660-update-MO-R01-00-0002" author="nomikosi">
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0002" author="nomikosi">
         <insert tableName="rule">
             <column name="template_id" value="2000" />
-            <column name="property_names" value="creationDateTime" />
+            <column name="property_names" value="id" />
             <column name="note" value="Format must be date in UTC according to ISO8601" />
             <column name="level" value="L01" />
             <column name="error_type" value="ERROR" />
             <column name="disabled" value="false" />
-            <column name="br_id" value="MO-R01-00-0002" />
+            <column name="br_id" value="VP-L01-00-0002" />
             <column name="rule_id" value="20002"/>
         </insert>
         <insert tableName="context_expression">
-            <column name="expression" value="!isEmpty(creationDateTimeString) &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+            <column name="expression" value="ids != null &amp;&amp; !ids.isEmpty() &amp;&amp; !containsTypesOfIdXTimes(ids,&quot;UUID&quot;,1)"/>
             <column name="failure_message" value="Invalid message creation date/time."/>
             <column name="context" value="EU"/>
             <column name="rule_id" value="20002"/>
@@ -67,24 +76,24 @@
                 <where>rule_id = 20002</where>
             </delete>
             <delete tableName="rule">
-                <where>br_id = 'MO-R01-00-0002'</where>
+                <where>br_id = 'VP-L01-00-0002'</where>
             </delete>
         </rollback>
     </changeSet>
 
-    <changeSet id="UNIONVMS-4660-update-MO-R01-00-0003" author="nomikosi">
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0003" author="nomikosi">
         <insert  tableName="rule">
-            <column name="template_id" value="2000" />
-            <column name="property_names" value="creationDateTime" />
+            <column name="template_id" value="2001" />
+            <column name="property_names" value="id" />
             <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
-            <column name="level" value="L03" />
+            <column name="level" value="L01" />
             <column name="error_type" value="WARNING" />
             <column name="disabled" value="false" />
-            <column name="br_id" value="MO-R01-00-0003" />
+            <column name="br_id" value="VP-L01-00-0003" />
             <column name="rule_id" value="20003"/>
         </insert >
         <insert  tableName="context_expression">
-            <column name="expression" value="creationDateTime != null &amp;&amp; dateNotInPast(creationDateTime, 10)"/>
+            <column name="expression" value="id != null &amp;&amp; !uuidValidateRegex(id)"/>
             <column name="failure_message" value="Message creation date/time not in the past."/>
             <column name="context" value="EU"/>
             <column name="rule_id" value="20003"/>
@@ -96,7 +105,7 @@
                 <where>rule_id = 20003</where>
             </delete>
             <delete tableName="rule">
-                <where>br_id = 'MO-R01-00-0003'</where>
+                <where>br_id = 'VP-L01-00-0003'</where>
             </delete>
         </rollback>
     </changeSet>

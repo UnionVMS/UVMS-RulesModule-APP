@@ -14,8 +14,10 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
+import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class MovementReportDocumentFact extends AbstractFact {
@@ -23,6 +25,21 @@ public class MovementReportDocumentFact extends AbstractFact {
     private boolean ok = true;
     private Date creationDateTime;
     private String creationDateTimeString;
+    private List<IDType> ids;
+
+
+    public boolean containsTypesOfIdXTimes(List<IDType> ids,String schemaType,int count){
+
+        int counter = 0;
+        for(IDType idType:ids){
+
+            if(schemaType.equals(idType.getSchemeID())){
+                counter ++;
+            }
+        }
+
+        return counter == count;
+    }
 
     @Override
     public void setFactType() {

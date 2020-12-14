@@ -88,6 +88,7 @@
 
             <!-- Movements -->
             <xsd:enumeration value="MOVEMENT_REPORT_DOCUMENT"/>
+            <xsd:enumeration value="MOVEMENT_REPORT_DOCUMENT_ID"/>
         </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>
