@@ -22,6 +22,7 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.CustomRuleType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.TicketQuery;
 import eu.europa.ec.fisheries.schema.rules.source.v1.GetAlarmListByQueryResponse;
@@ -42,8 +43,11 @@ import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.TicketListResponseDto;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.RulesDataSourceResponseMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.ServiceConstants;
 import org.junit.Before;
@@ -60,9 +64,11 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.FLUXReportDocumentType;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselPositionEventType;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselTransportMeansType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 
 import javax.enterprise.event.Event;
 import javax.jms.JMSException;
@@ -89,6 +95,7 @@ import static org.powermock.api.mockito.PowerMockito.*;
 public class RulesMovementProcessorBeanTest {
 
     private static final String USERNAME = "USERNAME";
+    private static final String FLUX_REPORT_DOC_UUID = UUID.randomUUID().toString();
 
     @Mock
     RulesMessageProducer mockProducer;
@@ -112,6 +119,10 @@ public class RulesMovementProcessorBeanTest {
     MDRCache mdrCache;
     @Mock
     RulesExchangeProducerBean exchangeProducer;
+    @Mock
+    RulesEngineBean rulesEngine;
+    @Mock
+    RulePostProcessBean rulePostProcessBean;
 
     @InjectMocks
     RulesMovementProcessorBean rulesMovementProcessorBean;
@@ -546,6 +557,9 @@ public class RulesMovementProcessorBeanTest {
         setupMobileTerminalConversation();
         setupMovementModuleConversation();
         String messageGuid = UUID.randomUUID().toString();
+        ValidationResult validationResult = new ValidationResult();
+        validationResult.setError(false);
+        when(rulePostProcessBean.checkAndUpdateValidationResult(any(), anyString(), anyString(), eq(RawMsgType.MOVEMENT))).thenReturn(validationResult);
 
         rulesMovementProcessorBean.setMovementReportReceived(request, messageGuid);
 
@@ -577,6 +591,12 @@ public class RulesMovementProcessorBeanTest {
         vesselPositionEvent.setTypeCode(new CodeType());
         vesselPositionEvent.getTypeCode().setValue("MANUAL");
         vesselTransportMeans.getSpecifiedVesselPositionEvents().add(vesselPositionEvent);
+        FLUXReportDocumentType fluxReportDoc = new FLUXReportDocumentType();
+        final IDType id = new IDType();
+        id.setSchemeID("UUID");
+        id.setValue(FLUX_REPORT_DOC_UUID);
+        fluxReportDoc.getIDS().add(id);
+        fluxVesselPositionMessage.setFLUXReportDocument(fluxReportDoc);
         request.setRequest(JAXBUtils.marshallJaxBObjectToString(fluxVesselPositionMessage, "UTF-8", true));
     }
 
