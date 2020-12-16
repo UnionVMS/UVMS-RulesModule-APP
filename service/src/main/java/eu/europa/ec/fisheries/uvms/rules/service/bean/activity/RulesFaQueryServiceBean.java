@@ -21,12 +21,15 @@ import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
@@ -34,6 +37,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationExcept
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -43,6 +47,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.xml.bind.JAXBException;
@@ -97,6 +102,12 @@ public class RulesFaQueryServiceBean {
     @EJB
     private RulesFaReportServiceBean faReportRulesMessageBean;
 
+    @Inject
+    private MDRCacheRuleService mdrCacheRuleService;
+
+    @Inject
+    private RuleApplicabilityChecker appliChecker;
+
     private RulesFLUXMessageHelper fluxMessageHelper;
 
     @PostConstruct
@@ -130,6 +141,10 @@ public class RulesFaQueryServiceBean {
 
             idsFromIncomingMessage.removeAll(faQueryIdsFromDb);
 
+            List<RuleFromMDR> authRules = mdrCacheRuleService.getFaBrsForBrId("FA-L00-00-9999");
+            RuleFromMDR authRule = authRules.get(0);
+            boolean rule9999IsActivated = appliChecker.isApplicable("FA-L00-00-9999", authRule.getContext(), request.getFluxDataFlow(), new DateTime(request.getDate()), mdrCacheRuleService);
+            
             ValidationResult faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, exchangeLogGuid, RawMsgType.FA_QUERY);
             // exchangeServiceBean.updateExchangeMessage(exchangeLogGuid, fluxMessageHelper.calculateMessageValidationStatus(faQueryValidationReport));
             rulesDaoBean.createFaDocumentIdEntity(idsFromIncomingMessage);
@@ -137,7 +152,7 @@ public class RulesFaQueryServiceBean {
             if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
                 log.debug("The Validation of FaQueryMessage is successful, going to check permissions (Subscriptions)..");
                 setFLUXFAReportMessageRequest = sendSyncQueryRequestToActivity(requestStr, request.getUsername(), request.getPluginType(), exchangeLogGuid);
-                if (setFLUXFAReportMessageRequest.isIsPermitted()) { // Send query to activity.
+                if (setFLUXFAReportMessageRequest.isIsPermitted() || !rule9999IsActivated) { // Send query to activity.
                     log.debug("Request has permissions. Going to send FaQuery to Activity Module...");
                     if (setFLUXFAReportMessageRequest.isIsEmptyReport()) {
                         log.info("[WARN] The report generated from Activity doesn't contain data (Empty report)!");

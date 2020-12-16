@@ -31,6 +31,7 @@ import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesActivityProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -38,7 +39,9 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.permission.PermissionData;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -47,6 +50,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
 import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
@@ -107,6 +111,12 @@ public class RulesFaReportServiceBean {
     @EJB
     private RulesDao rulesDaoBean;
 
+    @Inject
+    private MDRCacheRuleService mdrCacheRuleService;
+
+    @Inject
+    private RuleApplicabilityChecker appliChecker;
+
     private RulesFLUXMessageHelper fluxMessageHelper;
 
     @PostConstruct
@@ -166,7 +176,12 @@ public class RulesFaReportServiceBean {
     }
 
     public void completeIncomingFLUXFAReportEvaluation(PermissionData permissionData) {
-        if (permissionData.isRequestPermitted()) {
+        SetFLUXFAReportMessageRequest request = permissionData.getRequest();
+        List<RuleFromMDR> authRules = mdrCacheRuleService.getFaBrsForBrId("FA-L00-00-9999");
+        RuleFromMDR authRule = authRules.get(0);
+        boolean rule9999IsActivated = appliChecker.isApplicable("FA-L00-00-9999", authRule.getContext(), request.getFluxDataFlow(), new DateTime(request.getDate()), mdrCacheRuleService);
+        
+        if (permissionData.isRequestPermitted() || !rule9999IsActivated) {
             log.debug(" Request has permissions. Going to send FaReportMessage to Activity Module...");
             rulesDaoBean.saveFaIdsPerTripList(permissionData.getFaIdsPerTripsFromMessage());
             Set<FADocumentID> result = permissionData.getIdsFromIncomingMessage().stream().filter(faDocumentID -> !FAUUIDType.FA_REPORT_REF_ID.equals(faDocumentID.getType())).collect(Collectors.toSet());

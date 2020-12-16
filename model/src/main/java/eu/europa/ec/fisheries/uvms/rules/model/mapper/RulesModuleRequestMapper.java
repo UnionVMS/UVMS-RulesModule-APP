@@ -33,11 +33,12 @@ public class RulesModuleRequestMapper {
 
     public static String createSetFLUXMovementReportRequest(PluginType type, String fluxFAReportMessage, String username,
                                                              String logId, String fluxDataFlow, String senderOrReceiver, String onValue,
-                                                            String registeredClassName, String ad, String to, String todt) throws RulesModelMapperException {
+                                                            String registeredClassName, String ad, String to, String todt, Date date) throws RulesModelMapperException {
         SetFLUXMovementReportRequest request = new SetFLUXMovementReportRequest();
         request.setMethod(RulesModuleMethod.RECEIVE_MOVEMENT_BATCH);
         request.setRequest(fluxFAReportMessage);
         request.setType(type);
+        request.setDate(date);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue, registeredClassName, ad, to, todt);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
@@ -50,11 +51,12 @@ public class RulesModuleRequestMapper {
     }
 
     public static String createSetFLUXFAReportMessageRequest(PluginType type, String fluxFAReportMessage, String username,
-                                                             String logId, String fluxDataFlow, String senderOrReceiver, String onValue) throws RulesModelMapperException {
+                                                             String logId, String fluxDataFlow, String senderOrReceiver, String onValue, Date date) throws RulesModelMapperException {
         SetFLUXFAReportMessageRequest request = new SetFLUXFAReportMessageRequest();
         request.setMethod(RulesModuleMethod.SET_FLUX_FA_REPORT);
         request.setRequest(fluxFAReportMessage);
         request.setPluginType(type);
+        request.setDate(date);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
@@ -70,11 +72,12 @@ public class RulesModuleRequestMapper {
     }
 
     public static String createSetFaQueryMessageRequest(PluginType type, String faQueryMessageStr, String username,
-                                                             String logId, String fluxDataFlow, String senderOrReceiver, String onValue) throws RulesModelMapperException {
+                                                             String logId, String fluxDataFlow, String senderOrReceiver, String onValue, Date date) throws RulesModelMapperException {
         SetFaQueryMessageRequest request = new SetFaQueryMessageRequest();
         request.setMethod(RulesModuleMethod.SET_FLUX_FA_QUERY);
         request.setRequest(faQueryMessageStr);
         request.setPluginType(type);
+        request.setDate(date);
         populateCommonProperties(request, username, logId, fluxDataFlow, senderOrReceiver, onValue);
         return JAXBMarshaller.marshallJaxBObjectToString(request);
     }
