@@ -19,6 +19,34 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DA
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import javax.xml.bind.JAXBException;
+import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.stream.Collectors;
+
 import eu.europa.ec.fisheries.remote.RulesDomainModel;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingsListResponse;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
@@ -29,7 +57,14 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.mobileterminal.module.v1.MobileTerminalBatchListElement;
-import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelAttribute;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ComChannelType;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListCriteria;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.ListPagination;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalListQuery;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalSearchCriteria;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.MobileTerminalType;
+import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.SearchKey;
 import eu.europa.ec.fisheries.schema.movement.common.v1.SimpleResponse;
 import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementBatchResponse;
 import eu.europa.ec.fisheries.schema.movement.module.v1.CreateMovementResponse;
@@ -50,7 +85,6 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.SubscritionOperationTyp
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.module.v1.GetTicketsAndRulesByMovementsResponse;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SendFLUXMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXMovementReportRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
@@ -86,7 +120,13 @@ import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementModelExcepti
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
-import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.*;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.MovementOutQueueProducer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesAuditProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesConfigProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMobilTerminalProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesMovementProducerBean;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesUserProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.dto.AlarmListResponseDto;
@@ -96,13 +136,22 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
-import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.MovementFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.PreviousReportFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RawMovementFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
+import eu.europa.ec.fisheries.uvms.rules.service.business.RulesUtil;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
+import eu.europa.ec.fisheries.uvms.rules.service.business.helper.RuleApplicabilityChecker;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
@@ -114,11 +163,24 @@ import eu.europa.ec.fisheries.uvms.rules.service.event.TicketUpdateEvent;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
-import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.AssetAssetIdMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.ExchangeMovementMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.MobileTerminalMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementBaseTypeMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.MovementFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RawMovementFactMapper;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.RulesFLUXMessageHelper;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.module.GetAssetModuleRequest;
-import eu.europa.ec.fisheries.wsdl.asset.types.*;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetIdType;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteria;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteriaPair;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetListPagination;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetListQuery;
+import eu.europa.ec.fisheries.wsdl.asset.types.BatchAssetListResponseElement;
+import eu.europa.ec.fisheries.wsdl.asset.types.ConfigSearchField;
 import eu.europa.ec.fisheries.wsdl.user.module.GetContactDetailResponse;
 import eu.europa.ec.fisheries.wsdl.user.module.GetUserContextResponse;
 import eu.europa.ec.fisheries.wsdl.user.types.Feature;
@@ -127,23 +189,10 @@ import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.xml.bind.JAXBException;
-import java.nio.file.AccessDeniedException;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 
 @Stateless
@@ -217,6 +266,12 @@ public class RulesMovementProcessorBean {
     @Inject
     @AlarmReportCountEvent
     private Event<NotificationMessage> alarmReportCountEvent;
+    
+    @Inject
+    private MDRCacheRuleService mdrCacheRuleService;
+
+    @Inject
+    private RuleApplicabilityChecker appliChecker;
 
     private Map<String, MovementTypeType> mapToMovementType;
 
@@ -328,8 +383,12 @@ public class RulesMovementProcessorBean {
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
             CreateMovementBatchResponse movementBatchResponse = sendBatchToMovement(enrichedWrapper.getAssetList(), rawMovements, username);
             ExchangeLogStatusTypeType status;
-            if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getPermitted())) {
-                if (SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
+
+            List<RuleFromMDR> authRules = mdrCacheRuleService.getFaBrsForBrId("FA-L00-00-9999");
+            RuleFromMDR authRule = authRules.get(0);
+            boolean rule9999IsActivated = appliChecker.isApplicable("FA-L00-00-9999", authRule.getContext(), request.getFluxDataFlow(), new DateTime(request.getDate()), mdrCacheRuleService);
+            if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getPermitted()) || !rule9999IsActivated) {
+                if (SimpleResponse.OK.equals(movementBatchResponse.getResponse()) || !rule9999IsActivated) {
                     status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
                 } else {
                     status = ExchangeLogStatusTypeType.FAILED;
