@@ -20,11 +20,14 @@ import eu.europa.ec.fisheries.schema.rules.module.v1.CreateAlarmsReportRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.CreateTicketRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
+import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
+import eu.europa.ec.fisheries.uvms.asset.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.notifications.NotificationMessage;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
+import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.ReportingProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesAuditProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditOperationEnum;
@@ -42,6 +45,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -67,6 +71,9 @@ public class AlarmsServiceBean {
     private RulesAuditProducerBean auditProducer;
 
     @EJB
+    private ReportingProducerBean reportingProducer;
+
+    @EJB
     private RulesResponseConsumer consumer;
 
     @EJB
@@ -79,7 +86,8 @@ public class AlarmsServiceBean {
         List<TicketType> ticketTypes = request.getTickets();
         for (TicketType ticketType : ticketTypes) {
             try {
-                rulesDomainModel.createTicket(ticketType);
+                TicketType ticket = rulesDomainModel.createTicket(ticketType);
+                sendAlarmTicketUpdateToReporting(ticket);
             } catch (RulesModelException e) {
                 throw new RulesServiceException("Error creating ticket",e);
             }
@@ -150,5 +158,18 @@ public class AlarmsServiceBean {
 
     private static <T> Predicate<T> not(Predicate<T> t) {
         return t.negate();
+    }
+
+    private void sendAlarmTicketUpdateToReporting(TicketType ticket) {
+        try {
+            Map<String, String> params = new HashMap<>();
+            params.put("mainTopic", "reporting");
+            params.put("subTopic", "alarm");
+            AlarmTicket alarm = new AlarmTicket();
+            alarm.setTicketType(ticket);
+            reportingProducer.sendMessageToSpecificQueueSameTx(JAXBMarshaller.marshallJaxBObjectToString(alarm), reportingProducer.getDestination(), null, params);
+        } catch (MessageException | AssetModelMarshallException e) {
+            log.error("Could not send asset update to reporting", e);
+        }
     }
 }
