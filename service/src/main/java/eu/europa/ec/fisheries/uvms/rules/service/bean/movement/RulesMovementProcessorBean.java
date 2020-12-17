@@ -60,6 +60,7 @@ import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketStatusType;
 import eu.europa.ec.fisheries.schema.rules.ticket.v1.TicketType;
 import eu.europa.ec.fisheries.schema.rules.ticketrule.v1.TicketAndRuleType;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMapperException;
+import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMarshallException;
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
@@ -89,6 +90,10 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.alarms.AlarmTicket;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
@@ -166,6 +171,9 @@ public class RulesMovementProcessorBean {
 
     @EJB
     private RulesExchangeProducerBean exchangeProducer;
+
+    @EJB
+    private ReportingProducerBean reportingProducer;
 
     @EJB
     private RulesConfigProducerBean configProducer;
@@ -1444,6 +1452,7 @@ public class RulesMovementProcessorBean {
             ticketUpdateEvent.fire(new NotificationMessage("guid", updatedTicket.getGuid()));
             // Notify long-polling clients of the change (no value since FE will need to fetch it)
             ticketCountEvent.fire(new NotificationMessage("ticketCount", null));
+            sendAlarmTicketUpdateToReporting(updatedTicket);
             sendAuditMessage(AuditObjectTypeEnum.TICKET, AuditOperationEnum.UPDATE, updatedTicket.getGuid(), ticket.getComment(), ticket.getUpdatedBy());
             return updatedTicket;
 
@@ -1663,4 +1672,17 @@ public class RulesMovementProcessorBean {
         return true;
     }
 
+
+    private void sendAlarmTicketUpdateToReporting(TicketType ticket) {
+        try {
+            Map<String, String> params = new HashMap<>();
+            params.put("mainTopic", "reporting");
+            params.put("subTopic", "alarm");
+            AlarmTicket alarm = new AlarmTicket();
+            alarm.setTicketType(ticket);
+            reportingProducer.sendMessageToSpecificQueueSameTx(eu.europa.ec.fisheries.uvms.asset.model.mapper.JAXBMarshaller.marshallJaxBObjectToString(alarm), reportingProducer.getDestination(), null, params);
+        } catch (MessageException | AssetModelMarshallException e) {
+            log.error("Could not send asset update to reporting", e);
+        }
+    }
 }
