@@ -5,6 +5,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.RuleFromMDR;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTime;
 
 import javax.ejb.LocalBean;
@@ -126,8 +127,10 @@ public class RuleApplicabilityChecker {
         if (jodaTestDate == null || startDate == null || endDate == null) {
             return true;
         }
+        Date endDateHours = DateUtils.setHours(endDate, 23);
+        Date finalEndDate = DateUtils.setMinutes(endDateHours,59);
+        finalEndDate = DateUtils.setSeconds(finalEndDate,59);
         Date testDate = jodaTestDate.toDate();
-        return testDate.after(startDate) && testDate.before(endDate);
+        return (testDate.after(startDate) || testDate.equals(startDate)) && (testDate.before(finalEndDate) || testDate.equals(finalEndDate));
     }
-
 }
