@@ -25,6 +25,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.mdr.communication.ColumnDataType;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -847,7 +848,10 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         if (testDate == null || startDate == null || endDate == null) {
             return true;
         }
-        return testDate.after(startDate) && testDate.before(endDate);
+        Date endDateHours = DateUtils.setHours(endDate, 23);
+        Date finalEndDate = DateUtils.setMinutes(endDateHours,59);
+        finalEndDate = DateUtils.setSeconds(finalEndDate,59);
+        return (testDate.after(startDate) || testDate.equals(startDate)) && (testDate.before(finalEndDate) || testDate.equals(finalEndDate));
     }
 
 }
