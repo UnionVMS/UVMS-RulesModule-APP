@@ -86,6 +86,12 @@
 			</dependency>
             <dependency>
                 <groupId>fish.focus.uvms.maven</groupId>
+                <artifactId>uvms-pom-logging-deps</artifactId>
+                <version>1.21</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>fish.focus.uvms.maven</groupId>
                 <artifactId>uvms-pom-gis-deps</artifactId>
                 <version>1.21</version>
                 <type>pom</type>
