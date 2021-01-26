@@ -21,9 +21,6 @@
         <joda-time.version>2.9.9</joda-time.version>
         <javaee.version>8.0</javaee.version>
         <swagger.version>1.3.1</swagger.version>
-        <sl4j.version>1.7.25</sl4j.version>
-        <logback.version>1.2.3</logback.version>
-        <logback.core.version>1.2.3</logback.core.version>
         <drools.version>7.1.0.Final</drools.version>
         <maven.plugins.version>3.5</maven.plugins.version>
         <orika.version>1.5.1</orika.version>
@@ -84,6 +81,12 @@
 				<version>1.21</version>
 				<type>pom</type>
 			</dependency>
+            <dependency>
+                <groupId>fish.focus.uvms.maven</groupId>
+                <artifactId>uvms-pom-logging-deps</artifactId>
+                <version>1.21</version>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>fish.focus.uvms.maven</groupId>
                 <artifactId>uvms-pom-gis-deps</artifactId>
@@ -234,21 +237,6 @@
             <groupId>ma.glasnost.orika</groupId>
             <artifactId>orika-core</artifactId>
             <version>${orika.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${sl4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>${logback.core.version}</version>
         </dependency>
 
 
