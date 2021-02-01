@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
 
 @Data
@@ -35,6 +36,7 @@ public class FluxFaReportMessageFact extends AbstractFact {
     private List<IdType> relatedOwnerFluxPartyIds;
     private List<FAReportDocument> faReportDocuments;
     private List<IdType> nonUniqueIdsList;
+    private DateTime referenceDate;
 
     private List<IdType> relatedFaQueryIDs;
     public FluxFaReportMessageFact() {
