@@ -11,14 +11,18 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @Data
 public class MovementReportDocumentFact extends AbstractFact {
@@ -40,6 +44,23 @@ public class MovementReportDocumentFact extends AbstractFact {
         }
 
         return counter == count;
+    }
+    
+    public boolean hasValidCreationDateTime(String creationDateTimeString) {
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .parseStrict()
+                .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+                .optionalStart()
+                .appendFraction(ChronoField.MICRO_OF_SECOND, 1, 6, true)
+                .optionalEnd()
+                .appendLiteral('Z')//timezone must always be utc, thus the literal Z
+                .parseStrict().toFormatter();
+        try {
+            formatter.parse(creationDateTimeString);
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+        return true;
     }
 
     public boolean isDateInThePast(Date creationDateTime){
