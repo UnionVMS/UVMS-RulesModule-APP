@@ -878,15 +878,19 @@ public class RulesMovementProcessorBean {
     }
 
     // Todo ; When possible remove loop!
-    private List<MovementFact> collectBatchMovementData(List<MobileTerminalType> mobileTerminal, List<Asset> asset, List<RawMovementType> rawMovement, String username) {
+    private List<MovementFact> collectBatchMovementData(List<MobileTerminalType> mobileTerminal, List<Asset> asset, List<RawMovementType> rawMovement, String username) throws MessageException {
         List<MovementFact> movFactList = new ArrayList<>();
         int index = 0;
         for (RawMovementType rawMovementType : rawMovement) {
             try {
                 movFactList.add(collectMovementData(mobileTerminal.get(index), asset.get(index), rawMovementType, username));
-            } catch (ExecutionException | InterruptedException | RulesServiceException e) {
-                movFactList.add(null);
+            }
+            catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                throw new MessageException("Thread interrupted...",e);
+            }
+            catch (ExecutionException | RulesServiceException e) {
+                movFactList.add(null);
             }
         }
         return movFactList;

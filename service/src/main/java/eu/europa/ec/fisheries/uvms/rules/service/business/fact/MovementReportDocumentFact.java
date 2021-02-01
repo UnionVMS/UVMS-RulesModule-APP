@@ -16,6 +16,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +40,16 @@ public class MovementReportDocumentFact extends AbstractFact {
         }
 
         return counter == count;
+    }
+
+    public boolean isDateInThePast(Date creationDateTime){
+
+        Calendar serverDate = Calendar.getInstance();
+        long t= serverDate.getTimeInMillis();
+        Date startDate = new Date(t - 10 * 60000);
+        new Date();
+
+        return creationDateTime.after(startDate) && creationDateTime.before(serverDate.getTime());
     }
 
     @Override

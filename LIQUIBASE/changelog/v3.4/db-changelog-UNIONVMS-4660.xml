@@ -85,16 +85,16 @@
         <insert  tableName="rule">
             <column name="template_id" value="2001" />
             <column name="property_names" value="id" />
-            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="note" value="Check Format of the value. Must be according to the specified schemeID." />
             <column name="level" value="L01" />
-            <column name="error_type" value="WARNING" />
+            <column name="error_type" value="ERROR" />
             <column name="disabled" value="false" />
             <column name="br_id" value="VP-L01-00-0003" />
             <column name="rule_id" value="20003"/>
         </insert >
         <insert  tableName="context_expression">
             <column name="expression" value="id != null &amp;&amp; !uuidValidateRegex(id)"/>
-            <column name="failure_message" value="Message creation date/time not in the past."/>
+            <column name="failure_message" value="Check Format of the value. Must be according to the specified schemeID."/>
             <column name="context" value="EU"/>
             <column name="rule_id" value="20003"/>
             <column name="id" value="20003"/>
@@ -106,6 +106,36 @@
             </delete>
             <delete tableName="rule">
                 <where>br_id = 'VP-L01-00-0003'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0007" author="nomikosi">
+        <insert  tableName="rule">
+            <column name="template_id" value="2000" />
+            <column name="property_names" value="CreationDateTime" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0007" />
+            <column name="rule_id" value="20007"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="creationDateTime != null &amp;&amp; !isDateInThePast(creationDateTime)"/>
+            <column name="failure_message" value="Message creation date/time not in the past."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20007"/>
+            <column name="id" value="20007"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20007</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0007'</where>
             </delete>
         </rollback>
     </changeSet>
