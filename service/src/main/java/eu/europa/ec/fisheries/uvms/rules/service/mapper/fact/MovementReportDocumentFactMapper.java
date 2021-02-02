@@ -11,25 +11,24 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_REPORT_DOCUMENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.MOVEMENT_REPORT_DOCUMENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PURPOSE_CODE;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
+import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import java.util.Date;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_REPORT_DOCUMENT;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.MOVEMENT_REPORT_DOCUMENT;
 
 @Slf4j
 public class MovementReportDocumentFactMapper {
@@ -61,6 +60,9 @@ public class MovementReportDocumentFactMapper {
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, XPathConstants.CREATION_DATE_TIME).storeInRepo(fact, CREATION_DATE_TIME);
         fact.setIds(vesselPositionMessage.getFLUXReportDocument().getIDS());
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, XPathConstants.ID).storeInRepo(fact, "id");
+        CodeType purposeCode = vesselPositionMessage.getFLUXReportDocument().getPurposeCode();
+        fact.setPurposeCode(purposeCode);
+        xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, PURPOSE_CODE).storeInRepo(fact, PURPOSE_CODE);
 
         return fact;
     }
