@@ -80,6 +80,10 @@ public class MovementReportDocumentFact extends AbstractFact {
         return MDRAcronymType.FLUX_GP_PURPOSE.name().equals(purposeCode.getListID());
     }
     
+    public boolean hasValidPurposeCodeValue(CodeType purposeCode) {
+        return "9".equals(purposeCode.getValue());
+    }
+    
     @Override
     public void setFactType() {
         this.factType = FactType.MOVEMENT_REPORT_DOCUMENT;
