@@ -284,4 +284,49 @@
             </delete>
         </rollback>
     </changeSet>
+
+
+    <changeSet id="UNIONVMS-4660-update-template-2002" author="gmanifavas">
+        <insert tableName="template">
+            <column name="template_id" value="2002" />
+            <column name="template_name" value="Movement Report Document Owner Flux Party Id" />
+            <column name="fact_template" value="MOVEMENT_REPORT_DOC_OWNER_FLUX_PARTY_ID" />
+        </insert>
+        
+        <rollback>
+            <delete tableName="template">
+                <where>template_id = 2002</where>
+            </delete>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0021" author="gmanifavas">
+        
+        <insert  tableName="rule">
+            <column name="template_id" value="2002" />
+            <column name="property_names" value="ownerFluxPartyId" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0021" />
+            <column name="rule_id" value="20021"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="id != null &amp;&amp; !hasValidSchemeID(id, &quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="failure_message" value="Message Owner ID has an invalid schemeID."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20021"/>
+            <column name="id" value="20021"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20021</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0021'</where>
+            </delete>
+        </rollback>
+    </changeSet>
 </databaseChangeLog>

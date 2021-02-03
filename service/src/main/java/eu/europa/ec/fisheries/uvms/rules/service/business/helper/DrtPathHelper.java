@@ -36,6 +36,7 @@ public enum DrtPathHelper {
     FA_QUERY_PARAMETER("/templates/FaQueryParameter.drt"),
     MOVEMENT_REPORT_DOCUMENT("/templates/MovementReportDocument.drt"),
     MOVEMENT_REPORT_DOCUMENT_ID("/templates/MovementReportDocumentId.drt"),
+    MOVEMENT_REPORT_DOC_OWNER_FLUX_PARTY_ID("/templates/MovementReportDocOwnerFluxPartyId.drt"),
     FA_RELOCATION("/templates/FaRelocation.drt"),
     FA_RESPONSE("/templates/FaResponse.drt"),
     FA_TRANSHIPMENT("/templates/FaTranshipment.drt"),

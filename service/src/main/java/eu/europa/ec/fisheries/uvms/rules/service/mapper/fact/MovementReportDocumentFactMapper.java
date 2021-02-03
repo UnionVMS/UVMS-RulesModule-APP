@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocOwnerFluxPartyIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
@@ -87,6 +88,26 @@ public class MovementReportDocumentFactMapper {
             MovementReportDocumentIdFact fact = new MovementReportDocumentIdFact();
             fact.setId(idType);
             xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT).appendWithIndex(XPathConstants.ID,index).storeInRepo(fact, "id");
+            factList.add(fact);
+            index ++;
+        }
+        return factList;
+    }
+    
+    public List<MovementReportDocOwnerFluxPartyIdFact> generateFactForMovementReportDocOwnerFluxPartyId(FLUXVesselPositionMessage vesselPositionMessage) {
+        List<MovementReportDocOwnerFluxPartyIdFact> factList = new ArrayList<>();
+        
+        if(vesselPositionMessage == null || vesselPositionMessage.getFLUXReportDocument() == null || vesselPositionMessage.getFLUXReportDocument().getOwnerFLUXParty() == null || vesselPositionMessage.getFLUXReportDocument().getOwnerFLUXParty().getIDS().isEmpty()){
+            xPathUtil.clear();
+            return factList;
+        }
+        String partialXpath = xPathUtil.append(MOVEMENT_REPORT_DOCUMENT).append(FLUX_REPORT_DOCUMENT).append(OWNER_FLUX_PARTY).getValue();
+        List<IDType> ids = vesselPositionMessage.getFLUXReportDocument().getOwnerFLUXParty().getIDS();
+        int index = 1;
+        for(IDType idType: ids){
+            MovementReportDocOwnerFluxPartyIdFact fact = new MovementReportDocOwnerFluxPartyIdFact();
+            fact.setId(idType);
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(XPathConstants.ID,index).storeInRepo(fact, "ownerFluxPartyId");
             factList.add(fact);
             index ++;
         }
