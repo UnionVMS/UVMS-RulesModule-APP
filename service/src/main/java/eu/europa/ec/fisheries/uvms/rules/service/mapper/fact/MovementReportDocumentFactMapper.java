@@ -27,6 +27,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDoc
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.DateTimeType;
@@ -101,12 +102,15 @@ public class MovementReportDocumentFactMapper {
             xPathUtil.clear();
             return factList;
         }
+        
         String partialXpath = xPathUtil.append(MOVEMENT_REPORT_DOCUMENT).append(FLUX_REPORT_DOCUMENT).append(OWNER_FLUX_PARTY).getValue();
         List<IDType> ids = vesselPositionMessage.getFLUXReportDocument().getOwnerFLUXParty().getIDS();
+        Date creationDate = getDate(vesselPositionMessage.getFLUXReportDocument().getCreationDateTime());
         int index = 1;
         for(IDType idType: ids){
             MovementReportDocOwnerFluxPartyIdFact fact = new MovementReportDocOwnerFluxPartyIdFact();
             fact.setId(idType);
+            fact.setCreationDateTime(new DateTime(creationDate));
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(XPathConstants.ID,index).storeInRepo(fact, "ownerFluxPartyId");
             factList.add(fact);
             index ++;

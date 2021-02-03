@@ -328,5 +328,35 @@
                 <where>br_id = 'VP-L01-00-0021'</where>
             </delete>
         </rollback>
+    </changeSet>  
+    
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0022" author="gmanifavas">
+        
+        <insert  tableName="rule">
+            <column name="template_id" value="2002" />
+            <column name="property_names" value="ownerFluxPartyId" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0022" />
+            <column name="rule_id" value="20022"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="id != null &amp;&amp; !mdrService.isPresentInMDRList(id.getSchemeID(), id.getValue(), creationDateTime)"/>
+            <column name="failure_message" value="Message Owner ID does not exist."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20022"/>
+            <column name="id" value="20022"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20022</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0022'</where>
+            </delete>
+        </rollback>
     </changeSet>
 </databaseChangeLog>
