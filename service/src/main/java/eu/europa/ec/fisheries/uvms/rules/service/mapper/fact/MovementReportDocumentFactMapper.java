@@ -14,6 +14,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_REPORT_DOCUMENT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.MOVEMENT_REPORT_DOCUMENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.OWNER_FLUX_PARTY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PURPOSE_CODE;
 
 import java.util.ArrayList;
@@ -63,7 +64,9 @@ public class MovementReportDocumentFactMapper {
         CodeType purposeCode = vesselPositionMessage.getFLUXReportDocument().getPurposeCode();
         fact.setPurposeCode(purposeCode);
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, PURPOSE_CODE).storeInRepo(fact, PURPOSE_CODE);
-
+        fact.setOwnerFLUXParty(vesselPositionMessage.getFLUXReportDocument().getOwnerFLUXParty());
+        xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, OWNER_FLUX_PARTY).storeInRepo(fact, OWNER_FLUX_PARTY);
+        
         return fact;
     }
 

@@ -21,8 +21,8 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import lombok.Data;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.FLUXPartyType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 
@@ -34,6 +34,7 @@ public class MovementReportDocumentFact extends AbstractFact {
     private String creationDateTimeString;
     private List<IDType> ids;
     private CodeType purposeCode;
+    private FLUXPartyType ownerFLUXParty;
 
 
     public boolean containsTypesOfIdXTimes(List<IDType> ids,String schemaType,int count){
@@ -76,12 +77,12 @@ public class MovementReportDocumentFact extends AbstractFact {
         return creationDateTime.after(startDate) && creationDateTime.before(serverDate.getTime());
     }
 
-    public boolean hasValidPurposeCodeListId(CodeType purposeCode) {
-        return MDRAcronymType.FLUX_GP_PURPOSE.name().equals(purposeCode.getListID());
+    public boolean hasValidPurposeCodeListId(CodeType purposeCode, String defaultValue) {
+        return defaultValue.equals(purposeCode.getListID());
     }
     
-    public boolean hasValidPurposeCodeValue(CodeType purposeCode) {
-        return "9".equals(purposeCode.getValue());
+    public boolean hasValidPurposeCodeValue(CodeType purposeCode, String defaultValue) {
+        return defaultValue.equals(purposeCode.getValue());
     }
     
     @Override

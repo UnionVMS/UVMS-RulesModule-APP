@@ -210,7 +210,7 @@
             <column name="rule_id" value="20009"/>
         </insert >
         <insert  tableName="context_expression">
-            <column name="expression" value="purposeCode != null &amp;&amp; !hasValidPurposeCodeListId(purposeCode)"/>
+            <column name="expression" value="purposeCode != null &amp;&amp; !hasValidPurposeCodeListId(purposeCode, &quot;FLUX_GP_PURPOSE&quot;)"/>
             <column name="failure_message" value="PurposeCode has an invalid listID."/>
             <column name="context" value="EU"/>
             <column name="rule_id" value="20009"/>
@@ -239,7 +239,7 @@
             <column name="rule_id" value="20010"/>
         </insert >
         <insert  tableName="context_expression">
-            <column name="expression" value="purposeCode != null &amp;&amp; purposeCode.getValue() != null &amp;&amp; !purposeCode.getValue().trim().isEmpty() &amp;&amp; !hasValidPurposeCodeValue(purposeCode)"/>
+            <column name="expression" value="purposeCode != null &amp;&amp; purposeCode.getValue() != null &amp;&amp; !purposeCode.getValue().trim().isEmpty() &amp;&amp; !hasValidPurposeCodeValue(purposeCode, &quot;9&quot;)"/>
             <column name="failure_message" value="PurposeCode has an invalid value."/>
             <column name="context" value="EU"/>
             <column name="rule_id" value="20010"/>
@@ -252,6 +252,35 @@
             </delete>
             <delete tableName="rule">
                 <where>br_id = 'VP-L01-00-0010'</where>
+            </delete>
+        </rollback>
+    </changeSet> 
+    
+    <changeSet id="UNIONVMS-4660-update-VP-L00-00-0020" author="gmanifavas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2000" />
+            <column name="property_names" value="OwnerFLUXParty" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L00" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L00-00-0020" />
+            <column name="rule_id" value="30020"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="ownerFLUXParty == null || (ownerFLUXParty.getIDS() != null &amp;&amp; ownerFLUXParty.getIDS().isEmpty())"/>
+            <column name="failure_message" value="Message Owner ID missing."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30020"/>
+            <column name="id" value="30020"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30020</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L00-00-0020'</where>
             </delete>
         </rollback>
     </changeSet>
