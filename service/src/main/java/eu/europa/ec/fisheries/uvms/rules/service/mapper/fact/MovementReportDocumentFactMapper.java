@@ -16,6 +16,8 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.MOVEMENT_REPORT_DOCUMENT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.OWNER_FLUX_PARTY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PURPOSE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VESSEL_TRANSPORT_MEANS;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VESSEL_TRANSPORT_MEANS_ID;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +26,7 @@ import java.util.List;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocOwnerFluxPartyIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentIdFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementVesselTransportMeansIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -112,6 +115,29 @@ public class MovementReportDocumentFactMapper {
             fact.setId(idType);
             fact.setCreationDateTime(new DateTime(creationDate));
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(XPathConstants.ID,index).storeInRepo(fact, "ownerFluxPartyId");
+            factList.add(fact);
+            index ++;
+        }
+        return factList;
+    }
+    
+    public List<MovementVesselTransportMeansIdFact> generateFactForMovementVesselTransportMeansId(FLUXVesselPositionMessage vesselPositionMessage) {
+        List<MovementVesselTransportMeansIdFact> factList = new ArrayList<>();
+        
+        if(vesselPositionMessage == null || vesselPositionMessage.getVesselTransportMeans() == null || vesselPositionMessage.getVesselTransportMeans().getIDS().isEmpty()){
+            xPathUtil.clear();
+            return null;
+        }
+        
+        String partialXpath = xPathUtil.append(MOVEMENT_REPORT_DOCUMENT).append(VESSEL_TRANSPORT_MEANS).getValue();
+        List<IDType> ids = vesselPositionMessage.getVesselTransportMeans().getIDS();
+        Date creationDate = getDate(vesselPositionMessage.getFLUXReportDocument().getCreationDateTime());
+        int index = 1;
+        for(IDType idType: ids){
+            MovementVesselTransportMeansIdFact fact = new MovementVesselTransportMeansIdFact();
+            fact.setId(idType);
+            fact.setCreationDateTime(new DateTime(creationDate));
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(XPathConstants.ID,index).storeInRepo(fact, VESSEL_TRANSPORT_MEANS_ID);
             factList.add(fact);
             index ++;
         }

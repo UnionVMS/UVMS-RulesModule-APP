@@ -359,4 +359,49 @@
             </delete>
         </rollback>
     </changeSet>
+    
+    <changeSet id="UNIONVMS-4660-update-template-2003" author="gmanifavas">
+        <insert tableName="template">
+            <column name="template_id" value="2003" />
+            <column name="template_name" value="Movement Vessel Transport Means Id" />
+            <column name="fact_template" value="MOVEMENT_VESSEL_TRANSPORT_MEANS_ID" />
+        </insert>
+
+        <rollback>
+            <delete tableName="template">
+                <where>template_id = 2003</where>
+            </delete>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0101" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="2003" />
+            <column name="property_names" value="VesselTransportMeansId" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0101" />
+            <column name="rule_id" value="20101"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="id.getSchemeID() != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, id.getSchemeID(), creationDateTime)"/>
+            <column name="failure_message" value="Vessel ID has an invalid schemeID."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20101"/>
+            <column name="id" value="20101"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20101</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0101'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>

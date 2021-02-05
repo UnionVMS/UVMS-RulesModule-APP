@@ -39,6 +39,8 @@ public class XPathConstants {
     public static final String RELATED_FLUX_REPORT_DOCUMENT = "RelatedFLUXReportDocument";
     public static final String TYPE_CODE = "TypeCode";
     public static final String RELATED_REPORT_ID = "RelatedReportID";
+    public static final String VESSEL_TRANSPORT_MEANS = "VesselTransportMeans";
+    public static final String VESSEL_TRANSPORT_MEANS_ID = "VesselTransportMeansId";
     public static final String SPECIFIED_VESSEL_TRANSPORT_MEANS = "SpecifiedVesselTransportMeans";
     public static final String RELATED_FISHING_ACTIVITY = "RelatedFishingActivity";
     public static final String SPECIFIED_DELIMITED_PERIOD = "SpecifiedDelimitedPeriod";
