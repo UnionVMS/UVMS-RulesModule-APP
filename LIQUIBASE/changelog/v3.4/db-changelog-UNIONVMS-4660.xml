@@ -360,16 +360,16 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="UNIONVMS-4660-update-template-2003" author="tpotopapas">
+    <changeSet id="UNIONVMS-4660-update-template-2004" author="tpotopapas">
         <insert tableName="template">
-            <column name="template_id" value="2003" />
+            <column name="template_id" value="2004" />
             <column name="template_name" value="Movement Vessel Position Event" />
             <column name="fact_template" value="MOVEMENT_SPECIFIED_VESSEL_POSITION_EVENT" />
         </insert>
 
         <rollback>
             <delete tableName="template">
-                <where>template_id = 2003</where>
+                <where>template_id = 2004</where>
             </delete>
         </rollback>
     </changeSet>
@@ -377,7 +377,7 @@
     <changeSet id="UNIONVMS-4660-update-VP-L01-00-0031" author="tprotopapas">
 
         <insert  tableName="rule">
-            <column name="template_id" value="2003" />
+            <column name="template_id" value="2004" />
             <column name="property_names" value="typeCode" />
             <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
             <column name="level" value="L01" />
@@ -407,7 +407,7 @@
     <changeSet id="UNIONVMS-4660-update-VP-L01-00-0032" author="tprotopapas">
 
         <insert  tableName="rule">
-            <column name="template_id" value="2003" />
+            <column name="template_id" value="2004" />
             <column name="property_names" value="typeCode, creationDateTime" />
             <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
             <column name="level" value="L01" />
@@ -437,7 +437,7 @@
     <changeSet id="UNIONVMS-4660-update-VP-L01-00-0321" author="tprotopapas">
 
         <insert  tableName="rule">
-            <column name="template_id" value="2003" />
+            <column name="template_id" value="2004" />
             <column name="property_names" value="speedValue" />
             <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
             <column name="level" value="L01" />
@@ -467,7 +467,7 @@
     <changeSet id="UNIONVMS-4660-update-VP-L01-00-0331" author="tprotopapas">
 
         <insert  tableName="rule">
-            <column name="template_id" value="2003" />
+            <column name="template_id" value="2004" />
             <column name="property_names" value="courseValue" />
             <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
             <column name="level" value="L01" />
@@ -496,7 +496,7 @@
 
     <changeSet id="UNIONVMS-4660-update-VP-L01-00-0311" author="tprotopapas">
         <insert  tableName="rule">
-            <column name="template_id" value="2003" />
+            <column name="template_id" value="2004" />
             <column name="property_names" value="creationDateTimeString" />
             <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
             <column name="level" value="L01" />
@@ -525,7 +525,7 @@
 
     <changeSet id="UNIONVMS-4660-update-VP-L01-00-0401" author="tprotopapas">
         <insert  tableName="rule">
-            <column name="template_id" value="2003" />
+            <column name="template_id" value="2004" />
             <column name="property_names" value="latitudeMeasure" />
             <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
             <column name="level" value="L01" />
@@ -554,7 +554,7 @@
 
     <changeSet id="UNIONVMS-4660-update-VP-L01-00-0411" author="tprotopapas">
         <insert  tableName="rule">
-            <column name="template_id" value="2003" />
+            <column name="template_id" value="2004" />
             <column name="property_names" value="longitudeMeasure" />
             <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
             <column name="level" value="L01" />

@@ -22,7 +22,9 @@ import java.util.List;
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.FLUXPartyType;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselCountryType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 
@@ -35,6 +37,9 @@ public class MovementReportDocumentFact extends AbstractFact {
     private List<IDType> ids;
     private CodeType purposeCode;
     private FLUXPartyType ownerFLUXParty;
+    private VesselCountryType registrationVesselCountry;
+    private IDType registrationVesselCountryIdType;
+    private DateTime dateTime;
 
 
     public boolean containsTypesOfIdXTimes(List<IDType> ids,String schemaType,int count){
@@ -84,7 +89,15 @@ public class MovementReportDocumentFact extends AbstractFact {
     public boolean hasValidPurposeCodeValue(CodeType purposeCode, String defaultValue) {
         return defaultValue.equals(purposeCode.getValue());
     }
-    
+
+    public boolean hasValidSchemeId(String schemeId, String expectedValue) {
+        return schemeId != null && !schemeId.isEmpty() && expectedValue.equals(schemeId);
+    }
+
+    public boolean hasValidIdType(IDType idType) {
+        return idType != null && idType.getValue() != null && !idType.getValue().isEmpty();
+    }
+
     @Override
     public void setFactType() {
         this.factType = FactType.MOVEMENT_REPORT_DOCUMENT;
