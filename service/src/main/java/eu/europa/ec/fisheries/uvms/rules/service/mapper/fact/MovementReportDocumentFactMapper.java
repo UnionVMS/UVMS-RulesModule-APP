@@ -11,6 +11,7 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
+
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_REPORT_DOCUMENT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.MOVEMENT_REPORT_DOCUMENT;
@@ -28,13 +29,17 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.LATITUDE_MEASURE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.LONGITUDE_MEASURE;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocOwnerFluxPartyIdFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentIdFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementSpecifiedVesselPositionEventFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementVesselTransportMeansIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
