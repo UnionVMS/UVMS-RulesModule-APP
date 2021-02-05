@@ -184,7 +184,7 @@ public class FaReportDocumentFact extends AbstractFact {
         }
         if (CollectionUtils.isNotEmpty(declaredDepartureInFaReportList)){
             for (TripIdAndReportIndex s : declaredDepartureInFaReportList) {
-                if (declaredDepartureInMessageList.stream().anyMatch(t -> t.getReportIndex() < this.indexInMessage && t.getTripId().equals(s.getTripId()))) {
+                if (FishingActivityType.ARRIVAL.equals(type) && declaredDepartureInMessageList.stream().anyMatch(t -> t.getReportIndex() < this.indexInMessage && t.getTripId().equals(s.getTripId()))) {
                     return true;
                 }
             }
