@@ -850,4 +850,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return testDate.after(startDate) && testDate.before(endDate);
     }
 
+    @Override
+    public boolean validateIdFormatForMovementMessage(un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType id, DateTime dateTime) {
+        FormatExpression formatExpression = cache.getFormatsByIdentifier().get(id.getSchemeID());
+        return formatExpression != null &&
+                !StringUtils.isEmpty(formatExpression.getExpression()) &&
+                id.getValue().matches(formatExpression.getExpression()) &&
+                isValidDate(dateTime, formatExpression.getStartDate(), formatExpression.getEndDate());
+    }
 }

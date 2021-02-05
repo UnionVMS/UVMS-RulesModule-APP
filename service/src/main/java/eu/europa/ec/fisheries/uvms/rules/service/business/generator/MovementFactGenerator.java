@@ -11,6 +11,11 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -18,14 +23,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.MovementReportDocum
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.FLUXReportDocumentType;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselTransportMeansType;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.MOVEMENT_REPORT_DOCUMENT;
 
 public class MovementFactGenerator extends AbstractGenerator {
 
@@ -59,6 +56,7 @@ public class MovementFactGenerator extends AbstractGenerator {
             facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocumentId(vesselPositionMessage));
             facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocOwnerFluxPartyId(vesselPositionMessage));
             facts.addAll(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeansId(vesselPositionMessage));
+            facts.add(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeans(vesselPositionMessage));
         }
 
         String df = (String) extraValueMap.get(DATA_FLOW);

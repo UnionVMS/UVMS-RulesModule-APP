@@ -17,6 +17,7 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.OWNER_FLUX_PARTY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.PURPOSE_CODE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REGISTRATION_VESSEL_COUNTRY;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSELPOSITION_EVENT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VESSEL_TRANSPORT_MEANS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VESSEL_TRANSPORT_MEANS_ID;
 
@@ -28,6 +29,7 @@ import java.util.Optional;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocOwnerFluxPartyIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentIdFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementVesselTransportMeansFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementVesselTransportMeansIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
@@ -133,15 +135,15 @@ public class MovementReportDocumentFactMapper {
         }
         return factList;
     }
-
+    
     public List<MovementVesselTransportMeansIdFact> generateFactForMovementVesselTransportMeansId(FLUXVesselPositionMessage vesselPositionMessage) {
         List<MovementVesselTransportMeansIdFact> factList = new ArrayList<>();
-
+        
         if(vesselPositionMessage == null || vesselPositionMessage.getVesselTransportMeans() == null || vesselPositionMessage.getVesselTransportMeans().getIDS().isEmpty()){
             xPathUtil.clear();
             return null;
         }
-
+        
         String partialXpath = xPathUtil.append(MOVEMENT_REPORT_DOCUMENT).append(VESSEL_TRANSPORT_MEANS).getValue();
         List<IDType> ids = vesselPositionMessage.getVesselTransportMeans().getIDS();
         Date creationDate = getDate(vesselPositionMessage.getFLUXReportDocument().getCreationDateTime());
@@ -155,6 +157,22 @@ public class MovementReportDocumentFactMapper {
             index ++;
         }
         return factList;
+    }
+    
+    public MovementVesselTransportMeansFact generateFactForMovementVesselTransportMeans(FLUXVesselPositionMessage vesselPositionMessage) {
+        if(vesselPositionMessage == null || vesselPositionMessage.getVesselTransportMeans() == null || vesselPositionMessage.getVesselTransportMeans().getIDS() == null){
+            xPathUtil.clear();
+            return null;
+        }
+        MovementVesselTransportMeansFact fact = new MovementVesselTransportMeansFact();
+        String partialXpath = xPathUtil.append(MOVEMENT_REPORT_DOCUMENT).append(VESSEL_TRANSPORT_MEANS).getValue();
+        fact.setIds(vesselPositionMessage.getVesselTransportMeans().getIDS());
+        xPathUtil.appendWithoutWrapping(partialXpath).storeInRepo(fact, VESSEL_TRANSPORT_MEANS);
+        fact.setRegistrationVesselCountry(vesselPositionMessage.getVesselTransportMeans().getRegistrationVesselCountry());
+        xPathUtil.appendWithoutWrapping(partialXpath).append(REGISTRATION_VESSEL_COUNTRY).storeInRepo(fact, REGISTRATION_VESSEL_COUNTRY);  
+        fact.setSpecifiedVesselPositionEvents(vesselPositionMessage.getVesselTransportMeans().getSpecifiedVesselPositionEvents());
+        xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_VESSELPOSITION_EVENT).storeInRepo(fact, SPECIFIED_VESSELPOSITION_EVENT);
+        return fact;
     }
 
     public static MovementReportDocumentFact mapToMovementReportDocumentFact(FLUXVesselPositionMessage vesselPositionMessage){
