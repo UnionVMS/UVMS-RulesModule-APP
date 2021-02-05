@@ -359,7 +359,7 @@
             </delete>
         </rollback>
     </changeSet>
-    
+
     <changeSet id="UNIONVMS-4660-update-template-2003" author="gmanifavas">
         <insert tableName="template">
             <column name="template_id" value="2003" />
@@ -373,7 +373,7 @@
             </delete>
         </rollback>
     </changeSet>
-    
+
     <changeSet id="UNIONVMS-4660-update-VP-L01-00-0101" author="gmanifavas">
 
         <insert  tableName="rule">
@@ -400,6 +400,100 @@
             </delete>
             <delete tableName="rule">
                 <where>br_id = 'VP-L01-00-0101'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="UNIONVMS-4660-update-VP-L00-00-0200" author="cpapatheodorou">
+        <insert tableName="rule">
+            <column name="template_id" value="2000"/>
+            <column name="property_names" value="RegistrationVesselCountry"/>
+            <column name="note"
+                    value="Registration vessel country ID missing."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="disabled" value="false"/>
+            <column name="br_id" value="VP-L00-00-0200"/>
+            <column name="rule_id" value="30200"/>
+        </insert>
+        <insert tableName="context_expression">
+            <column name="expression"
+                    value="registrationVesselCountry == null || registrationVesselCountry.getID() == null || registrationVesselCountry.getID().getValue() == null || registrationVesselCountry.getID().getValue().isEmpty()"/>
+            <column name="failure_message" value="Registration vessel country ID missing."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30200"/>
+            <column name="id" value="30200"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30200</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L00-00-0200'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0201" author="cpapatheodorou">
+        <insert tableName="rule">
+            <column name="template_id" value="2000"/>
+            <column name="property_names" value="registrationVesselCountryId"/>
+            <column name="note"
+                    value="Invalid schemeId for RegistrationVesselCountry/ID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="disabled" value="false"/>
+            <column name="br_id" value="VP-L01-00-0201"/>
+            <column name="rule_id" value="30201"/>
+        </insert>
+        <insert tableName="context_expression">
+            <column name="expression"
+                    value="hasValidIdType(registrationVesselCountryIdType) &amp;&amp; !hasValidSchemeId(registrationVesselCountryIdType.getSchemeID(), &quot;TERRITORY&quot;)"/>
+            <column name="failure_message" value="Invalid schemeId for RegistrationVesselCountry/ID"/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30201"/>
+            <column name="id" value="30201"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30201</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0201'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0202" author="cpapatheodorou">
+        <insert tableName="rule">
+            <column name="template_id" value="2000"/>
+            <column name="property_names" value="registrationVesselCountryId"/>
+            <column name="note"
+                    value="Invalid code for RegistrationVesselCountry/ID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="disabled" value="false"/>
+            <column name="br_id" value="VP-L01-00-0202"/>
+            <column name="rule_id" value="30202"/>
+        </insert>
+        <insert tableName="context_expression">
+            <column name="expression"
+                    value="hasValidIdType(registrationVesselCountryIdType) &amp;&amp; !mdrService.isPresentInMDRList(registrationVesselCountryIdType.getSchemeID(),registrationVesselCountryIdType.getValue(), dateTime)"/>
+            <column name="failure_message" value="Invalid code for RegistrationVesselCountry/ID"/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30202"/>
+            <column name="id" value="30202"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30202</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0202'</where>
             </delete>
         </rollback>
     </changeSet>
