@@ -287,12 +287,14 @@ public class RulesMovementProcessorBean {
             extraValues.put(DATA_FLOW, request.getFluxDataFlow());
             Collection<AbstractFact> factsResults = rulesEngine.evaluate(RECEIVING_MOVEMENT_MSG,fluxVesselPositionMessage,extraValues,null);
 
-            final String reportId = fluxVesselPositionMessage.getFLUXReportDocument().getIDS().stream()
+            final Optional<String> reportId = fluxVesselPositionMessage.getFLUXReportDocument().getIDS().stream()
                     .filter(id -> "UUID".equals(id.getSchemeID()))
                     .map(IDType::getValue)
-                    .findFirst()
-                    .get();
-            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), reportId, RawMsgType.MOVEMENT);
+                    .findFirst();
+
+            String id = reportId.isPresent() ? reportId.get() : null;
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), id, RawMsgType.MOVEMENT);
+
 
             if(validationResult.isError()){
                 exchangeServiceBean.updateExchangeMessage(request.getLogGuid(), fluxMessageHelper.calculateMessageValidationStatus(validationResult));
@@ -300,7 +302,7 @@ public class RulesMovementProcessorBean {
             }
             // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
             // processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
-            enrichAndSenMovementsAsBatch(validationResult, movementReportsList, userName, request.getLogGuid(), request, reportId);
+            enrichAndSenMovementsAsBatch(validationResult, movementReportsList, userName, request.getLogGuid(), request, id);
             // Send some response to Movement, if it originated from there (manual movement)
             if (MovementSourceType.MANUAL.equals(movementReportsList.get(0).getSource())) {// A person has created a position
                 ProcessedMovementAck response = MovementModuleResponseMapper.mapProcessedMovementAck(eu.europa.ec.fisheries.schema.movement.common.v1.AcknowledgeTypeType.OK,
