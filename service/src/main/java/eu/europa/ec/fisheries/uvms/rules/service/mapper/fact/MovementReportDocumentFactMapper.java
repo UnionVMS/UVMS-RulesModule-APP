@@ -11,6 +11,7 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
+
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.FLUX_REPORT_DOCUMENT;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.MOVEMENT_REPORT_DOCUMENT;
@@ -19,7 +20,14 @@ import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.REGISTRATION_VESSEL_COUNTRY;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VESSEL_TRANSPORT_MEANS;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.VESSEL_TRANSPORT_MEANS_ID;
-
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.TYPE_CODE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPEED_VALUE_MEASURE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSELPOSITION_EVENT;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.COURSE_VALUE_MEASURE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.OBTAINED_OCCURRENCE_DATE_TIME;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.SPECIFIED_VESSEL_GEOGRAPHICAL_COORDINATE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.LATITUDE_MEASURE;
+import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.LONGITUDE_MEASURE;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,12 +36,14 @@ import java.util.Optional;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocOwnerFluxPartyIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentIdFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementSpecifiedVesselPositionEventFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementVesselTransportMeansIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselPositionEventType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
@@ -154,6 +164,43 @@ public class MovementReportDocumentFactMapper {
             factList.add(fact);
             index ++;
         }
+        return factList;
+    }
+
+    public List<MovementSpecifiedVesselPositionEventFact> generateFactForSpecifiedVesselPositionEvent(FLUXVesselPositionMessage vesselPositionMessage) {
+
+        String partialXpath = xPathUtil.append(MOVEMENT_REPORT_DOCUMENT).append(VESSEL_TRANSPORT_MEANS).append(SPECIFIED_VESSELPOSITION_EVENT).getValue();
+        List<MovementSpecifiedVesselPositionEventFact> factList = new ArrayList<>();
+
+        if(vesselPositionMessage == null || vesselPositionMessage.getVesselTransportMeans() == null || vesselPositionMessage.getVesselTransportMeans().getSpecifiedVesselPositionEvents().isEmpty()){
+            xPathUtil.clear();
+            return factList;
+        }
+
+        List<VesselPositionEventType> specifiedVesselPositionEvents= vesselPositionMessage.getVesselTransportMeans().getSpecifiedVesselPositionEvents();
+        Date creationDate = getDate(vesselPositionMessage.getFLUXReportDocument().getCreationDateTime());
+        int index = 1;
+        for(VesselPositionEventType vesselPositionEventType: specifiedVesselPositionEvents) {
+            MovementSpecifiedVesselPositionEventFact fact = new MovementSpecifiedVesselPositionEventFact();
+            fact.setTypeCode(vesselPositionEventType.getTypeCode());
+            fact.setCreationDateTime(new DateTime(creationDate));
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(TYPE_CODE,index).storeInRepo(fact, "typeCode");
+            fact.setSpeedValue(vesselPositionEventType.getSpeedValueMeasure().getValue());
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPEED_VALUE_MEASURE,index).storeInRepo(fact, "speedValue");
+            fact.setCourseValue(vesselPositionEventType.getCourseValueMeasure().getValue());
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(COURSE_VALUE_MEASURE,index).storeInRepo(fact, "courseValue");
+            fact.setCreationDateTimeString(dateTimeAsString(vesselPositionEventType.getObtainedOccurrenceDateTime()));
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(OBTAINED_OCCURRENCE_DATE_TIME,index).storeInRepo(fact, "creationDateTimeString");
+            factList.add(fact);
+            if (vesselPositionEventType.getSpecifiedVesselGeographicalCoordinate() != null) {
+                fact.setLatitudeMeasure(vesselPositionEventType.getSpecifiedVesselGeographicalCoordinate().getLatitudeMeasure().getValue());
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_VESSEL_GEOGRAPHICAL_COORDINATE).appendWithIndex(LATITUDE_MEASURE,index).storeInRepo(fact, "latitudeMeasure");
+                fact.setLongitudeMeasure(vesselPositionEventType.getSpecifiedVesselGeographicalCoordinate().getLongitudeMeasure().getValue());
+                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_VESSEL_GEOGRAPHICAL_COORDINATE).appendWithIndex(LONGITUDE_MEASURE,index).storeInRepo(fact, "longitudeMeasure");
+            }
+            index ++;
+        }
+
         return factList;
     }
 
