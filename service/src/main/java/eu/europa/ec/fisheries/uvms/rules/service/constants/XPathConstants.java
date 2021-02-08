@@ -116,5 +116,11 @@ public class XPathConstants {
     public static final String RESPONSE_CODE = "ResponseCode";
     public static final String RESPONDENT_FLUX_PARTY = "RespondentFLUXParty";
     public static final String SPECIFIED_VESSELPOSITION_EVENT = "SpecifiedVesselPositionEvent";
-
+    public static final String VESSEL_TRANSPORT_MEANS = "VesselTransportMeans";
+    public static final String SPEED_VALUE_MEASURE = "SpeedValueMeasure";
+    public static final String COURSE_VALUE_MEASURE = "CourseValueMeasure";
+    public static final String OBTAINED_OCCURRENCE_DATE_TIME = "ObtainedOccurrenceDateTime";
+    public static final String SPECIFIED_VESSEL_GEOGRAPHICAL_COORDINATE = "SpecifiedVesselGeographicalCoordinate";
+    public static final String LATITUDE_MEASURE = "LatitudeMeasure";
+    public static final String LONGITUDE_MEASURE = "LongitudeMeasure";
 }
