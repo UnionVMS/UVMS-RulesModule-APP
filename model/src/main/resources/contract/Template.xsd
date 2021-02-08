@@ -92,8 +92,6 @@
             <xsd:enumeration value="MOVEMENT_REPORT_DOC_OWNER_FLUX_PARTY_ID"/>
             <xsd:enumeration value="MOVEMENT_VESSEL_TRANSPORT_MEANS_ID"/>
             <xsd:enumeration value="MOVEMENT_SPECIFIED_VESSEL_POSITION_EVENT"/>
-            <xsd:enumeration value="MOVEMENT_VESSEL_TRANSPORT_MEANS_ID"/>
-            <xsd:enumeration value="MOVEMENT_SPECIFIED_VESSEL_POSITION_EVENT"/>
         </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>

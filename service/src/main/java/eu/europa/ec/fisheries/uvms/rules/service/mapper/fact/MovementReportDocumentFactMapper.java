@@ -34,13 +34,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocOwnerFluxPartyIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementSpecifiedVesselPositionEventFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementVesselTransportMeansIdFact;
-import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementSpecifiedVesselPositionEventFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +48,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.DateTimeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
+
 
 @Slf4j
 public class MovementReportDocumentFactMapper {

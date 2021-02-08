@@ -18,8 +18,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.MovementReportDocum
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.FLUXReportDocumentType;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselTransportMeansType;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.VesselTransportMeans;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +55,6 @@ public class MovementFactGenerator extends AbstractGenerator {
             facts.add(movementReportDocumentFactMapper.generateFactForMovementReportDocument(vesselPositionMessage));
             facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocumentId(vesselPositionMessage));
             facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocOwnerFluxPartyId(vesselPositionMessage));
-            facts.addAll(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeansId(vesselPositionMessage));
-            facts.addAll(movementReportDocumentFactMapper.generateFactForSpecifiedVesselPositionEvent(vesselPositionMessage));
             facts.addAll(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeansId(vesselPositionMessage));
             facts.addAll(movementReportDocumentFactMapper.generateFactForSpecifiedVesselPositionEvent(vesselPositionMessage));
         }
