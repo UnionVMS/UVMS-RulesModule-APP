@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.MOVEMENT_REPORT_DOCUMENT;
 
 public class MovementFactGenerator extends AbstractGenerator {
 
@@ -59,6 +58,7 @@ public class MovementFactGenerator extends AbstractGenerator {
             facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocumentId(vesselPositionMessage));
             facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocOwnerFluxPartyId(vesselPositionMessage));
             facts.addAll(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeansId(vesselPositionMessage));
+            facts.addAll(movementReportDocumentFactMapper.generateFactForSpecifiedVesselPositionEvent(vesselPositionMessage));
         }
 
         String df = (String) extraValueMap.get(DATA_FLOW);
