@@ -40,6 +40,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDoc
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementSpecifiedVesselPositionEventFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementVesselTransportMeansIdFact;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementSpecifiedVesselPositionEventFact;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import lombok.extern.slf4j.Slf4j;
