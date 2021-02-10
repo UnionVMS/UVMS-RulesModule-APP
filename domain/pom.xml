@@ -16,7 +16,7 @@
     <properties>
         <application.name>${project.parent.artifactId}</application.name>
         <application.version>${project.parent.version}</application.version>
-        <application.logfile>${project.parent.artifactId}/${project.parent.artifactId}.log</application.logfile>
+        <application.logfile>${project.parent.artifactId}.log</application.logfile>
         <application.logfile.message.pattern>%replace(%rEx){'[\r\n]+', '~~'}%nopex %n</application.logfile.message.pattern>
     </properties>
 
