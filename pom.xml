@@ -31,7 +31,7 @@
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <uvms.test.version>0.0.8</uvms.test.version>
 
-        <hibernate.version>5.1.9.Final</hibernate.version>
+        <hibernate.version>5.3.17.Final</hibernate.version>
 
         <!-- TODO: aren't these circular dependencies? -->
         <mobileterminal.model.version>4.0.13</mobileterminal.model.version>
@@ -95,22 +95,22 @@
                 <version>1.21</version>
                 <type>pom</type>
             </dependency>
-            <dependency>
-                <groupId>fish.focus.uvms.maven</groupId>
-                <artifactId>uvms-pom-gis-deps</artifactId>
-                <version>1.21</version>
-                <type>pom</type>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-entitymanager</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>fish.focus.uvms.maven</groupId>-->
+                <!--<artifactId>uvms-pom-gis-deps</artifactId>-->
+                <!--<version>1.21</version>-->
+                <!--<type>pom</type>-->
+                <!--<exclusions>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.hibernate</groupId>-->
+                        <!--<artifactId>hibernate-core</artifactId>-->
+                    <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>org.hibernate</groupId>-->
+                        <!--<artifactId>hibernate-entitymanager</artifactId>-->
+                    <!--</exclusion>-->
+                <!--</exclusions>-->
+            <!--</dependency>-->
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
@@ -119,6 +119,11 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-spatial</artifactId>
                 <version>${hibernate.version}</version>
             </dependency>
 			<dependency>
