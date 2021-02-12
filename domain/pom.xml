@@ -30,26 +30,26 @@
     </profiles>
 
     <dependencies>
-        <dependency>
-            <groupId>fish.focus.uvms.maven</groupId>
-            <artifactId>uvms-pom-gis-deps</artifactId>
-            <type>pom</type>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.vividsolutions</groupId>
-                    <artifactId>jts</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-entitymanager</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>fish.focus.uvms.maven</groupId>-->
+            <!--<artifactId>uvms-pom-gis-deps</artifactId>-->
+            <!--<type>pom</type>-->
+            <!--<scope>provided</scope>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>com.vividsolutions</groupId>-->
+                    <!--<artifactId>jts-core</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.hibernate</groupId>-->
+                    <!--<artifactId>hibernate-core</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.hibernate</groupId>-->
+                    <!--<artifactId>hibernate-entitymanager</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-spatial</artifactId>
-            <version>5.1.9.Final</version>
+            <version>5.3.17.Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>postgresql</groupId>
@@ -72,7 +72,7 @@
                 </exclusion>
                 <exclusion>
                     <groupId>com.vividsolutions</groupId>
-                    <artifactId>jts</artifactId>
+                    <artifactId>jts-core</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.postgis</groupId>
