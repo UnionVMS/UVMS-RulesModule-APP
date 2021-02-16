@@ -476,13 +476,6 @@ public class ActivityFactMapper {
         }
 
         String partialXpath = xPathUtil.append(FLUXFA_REPORT_MESSAGE).getValue();
-
-        if (fluxfaReportMessage.getFAReportDocuments() != null &&  !fluxfaReportMessage.getFAReportDocuments().isEmpty() &&
-                fluxfaReportMessage.getFAReportDocuments().get(0).getRelatedFLUXReportDocument() != null && fluxfaReportMessage.getFAReportDocuments().get(0).getRelatedFLUXReportDocument().getCreationDateTime() != null) {
-            fluxFaReportMessageFact.setReferenceDate(mapToJodaDateTime(fluxfaReportMessage.getFAReportDocuments().get(0).getRelatedFLUXReportDocument().getCreationDateTime()));
-            xPathUtil.appendWithoutWrapping(partialXpath).append(FA_REPORT_DOCUMENT,RELATED_FLUX_REPORT_DOCUMENT, CREATION_DATE_TIME).storeInRepo(fluxFaReportMessageFact, "referenceDate");
-        }
-
         Date date = getDate(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage));
 
         String dateXMLString = getDateXMLString(fluxfaReportMessageFLUXReportDocumentCreationDateTime(fluxfaReportMessage));
