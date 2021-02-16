@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-4975-fix" author="nomikosi">
+
+        <update tableName="rule">
+            <column name="property_names" value="ownerFluxPartyIds"/>
+            <where>rule_id = '628'</where>
+        </update>
+        <rollback>
+            <update tableName="rule">
+                <column name="property_names" value="relatedOwnerFluxPartyIds"/>
+                <where>rule_id = '628'</where>
+            </update>
+        </rollback>
+
+        <update tableName="context_expression">
+            <column name="expression" value="ownerFluxPartyIds != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(ownerFluxPartyIds,creationDateOfMessage)"/>
+            <where>rule_id = '628'</where>
+        </update>
+        <rollback>
+            <update tableName="context_expression">
+                <column name="expression" value="relatedOwnerFluxPartyIds != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(relatedOwnerFluxPartyIds,creationDateOfMessage)"/>
+                <where>rule_id = '628'</where>
+            </update>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
