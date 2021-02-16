@@ -2,14 +2,14 @@
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
     <changeSet id="UNIONVMS-4975" author="nomikosi">
 
-        <update tableName="context_expression">
-            <column name="expression" value="relatedOwnerFluxPartyIds != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(relatedOwnerFluxPartyIds,referenceDate)"/>
-            <where>id = '628'</where>
+        <update tableName="rule">
+            <column name="template_id" value="1"/>
+            <where>rule_id = '628'</where>
         </update>
         <rollback>
-            <update tableName="context_expression">
-                <column name="expression" value="relatedOwnerFluxPartyIds != null &amp;&amp; !mdrService.isIdTypePresentInMDRList(relatedOwnerFluxPartyIds,creationDateOfMessage)"/>
-                <where>id = '628'</where>
+            <update tableName="rule">
+                <column name="template_id" value="2"/>
+                <where>rule_id = '628'</where>
             </update>
         </rollback>
     </changeSet>
