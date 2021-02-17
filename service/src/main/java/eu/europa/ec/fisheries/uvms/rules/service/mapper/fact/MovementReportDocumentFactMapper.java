@@ -169,7 +169,7 @@ public class MovementReportDocumentFactMapper {
 
     public List<MovementSpecifiedVesselPositionEventFact> generateFactForSpecifiedVesselPositionEvent(FLUXVesselPositionMessage vesselPositionMessage) {
 
-        String partialXpath = xPathUtil.append(MOVEMENT_REPORT_DOCUMENT).append(VESSEL_TRANSPORT_MEANS).append(SPECIFIED_VESSELPOSITION_EVENT).getValue();
+        String partialXpath = xPathUtil.append(MOVEMENT_REPORT_DOCUMENT).append(VESSEL_TRANSPORT_MEANS).getValue();
         List<MovementSpecifiedVesselPositionEventFact> factList = new ArrayList<>();
 
         if(vesselPositionMessage == null || vesselPositionMessage.getVesselTransportMeans() == null || vesselPositionMessage.getVesselTransportMeans().getSpecifiedVesselPositionEvents().isEmpty()){
@@ -182,22 +182,36 @@ public class MovementReportDocumentFactMapper {
         int index = 1;
         for(VesselPositionEventType vesselPositionEventType: specifiedVesselPositionEvents) {
             MovementSpecifiedVesselPositionEventFact fact = new MovementSpecifiedVesselPositionEventFact();
-            fact.setTypeCode(vesselPositionEventType.getTypeCode());
             fact.setCreationDateTime(new DateTime(creationDate));
-            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(TYPE_CODE,index).storeInRepo(fact, "typeCode");
-            fact.setSpeedValue(vesselPositionEventType.getSpeedValueMeasure().getValue());
-            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPEED_VALUE_MEASURE,index).storeInRepo(fact, "speedValue");
-            fact.setCourseValue(vesselPositionEventType.getCourseValueMeasure().getValue());
-            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(COURSE_VALUE_MEASURE,index).storeInRepo(fact, "courseValue");
-            fact.setCreationDateTimeString(dateTimeAsString(vesselPositionEventType.getObtainedOccurrenceDateTime()));
-            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(OBTAINED_OCCURRENCE_DATE_TIME,index).storeInRepo(fact, "creationDateTimeString");
-            factList.add(fact);
-            if (vesselPositionEventType.getSpecifiedVesselGeographicalCoordinate() != null) {
-                fact.setLatitudeMeasure(vesselPositionEventType.getSpecifiedVesselGeographicalCoordinate().getLatitudeMeasure().getValue());
-                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_VESSEL_GEOGRAPHICAL_COORDINATE).appendWithIndex(LATITUDE_MEASURE,index).storeInRepo(fact, "latitudeMeasure");
-                fact.setLongitudeMeasure(vesselPositionEventType.getSpecifiedVesselGeographicalCoordinate().getLongitudeMeasure().getValue());
-                xPathUtil.appendWithoutWrapping(partialXpath).append(SPECIFIED_VESSEL_GEOGRAPHICAL_COORDINATE).appendWithIndex(LONGITUDE_MEASURE,index).storeInRepo(fact, "longitudeMeasure");
+
+            fact.setTypeCode(vesselPositionEventType.getTypeCode());
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).append(TYPE_CODE).storeInRepo(fact, "typeCode");
+
+            if (vesselPositionEventType.getSpeedValueMeasure() != null) {
+                fact.setSpeedValue(vesselPositionEventType.getSpeedValueMeasure().getValue());
+                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).append(SPEED_VALUE_MEASURE).storeInRepo(fact, "speedValue");
+            } else {
+                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).storeInRepo(fact, "speedValue");
             }
+
+
+            if (vesselPositionEventType.getCourseValueMeasure() != null) {
+                fact.setCourseValue(vesselPositionEventType.getCourseValueMeasure().getValue());
+                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).append(COURSE_VALUE_MEASURE).storeInRepo(fact, "courseValue");
+            } else {
+                fact.setCourseValue(null);
+                xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).storeInRepo(fact, "courseValue");
+            }
+
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).append(OBTAINED_OCCURRENCE_DATE_TIME).storeInRepo(fact, "creationDateTimeString");
+
+            fact.setLatitudeMeasure(vesselPositionEventType.getSpecifiedVesselGeographicalCoordinate().getLatitudeMeasure().getValue());
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).append(SPECIFIED_VESSEL_GEOGRAPHICAL_COORDINATE).append(LATITUDE_MEASURE).storeInRepo(fact, "latitudeMeasure");
+
+            fact.setLongitudeMeasure(vesselPositionEventType.getSpecifiedVesselGeographicalCoordinate().getLongitudeMeasure().getValue());
+            xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).append(SPECIFIED_VESSEL_GEOGRAPHICAL_COORDINATE).append(LONGITUDE_MEASURE).storeInRepo(fact, "longitudeMeasure");
+
+            factList.add(fact);
             index ++;
         }
 

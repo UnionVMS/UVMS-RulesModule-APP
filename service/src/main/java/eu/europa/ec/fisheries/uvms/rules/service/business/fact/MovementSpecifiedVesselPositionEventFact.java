@@ -4,7 +4,9 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselGeographicalCoordinateType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._18.DateTimeType;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
@@ -22,13 +24,16 @@ public class MovementSpecifiedVesselPositionEventFact extends AbstractFact {
     private BigDecimal latitudeMeasure;
     private BigDecimal longitudeMeasure;
 
-
     public boolean hasValidSpeedValue(BigDecimal speedValue) {
         return speedValue.signum() > 0 && speedValue.scale() < 3;
     }
 
     public boolean hasValidCourseValue(BigDecimal courseValue) {
         return courseValue.compareTo(new BigDecimal(360)) <= 0 && courseValue.compareTo(BigDecimal.ZERO) >= 0;
+    }
+
+    public boolean hasValidTypeCodeValueListID(CodeType typeCode) {
+        return typeCode.getListID().equals("FLUX_VESSEL_POSITION_TYPE");
     }
 
     public boolean hasValidCreationDateTime(String creationDateTimeString) {
