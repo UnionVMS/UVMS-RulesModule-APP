@@ -18,7 +18,10 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.DelimitedPeriod;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author padhyad
@@ -48,6 +51,30 @@ public class FaQueryFact extends AbstractFact {
 
     public FaQueryFact() {
         setFactType();
+    }
+
+
+    public boolean hasOnlyOneAssetOfTheGiven(String value1,String value2,List<CodeType> simpleFAQueryParameterTypeCodes){
+        Map<String,Integer> codeCounter = new HashMap<>();
+        for(CodeType typeCode:simpleFAQueryParameterTypeCodes){
+
+            Integer integer = codeCounter.get(typeCode.getValue());
+            if(integer == null){
+                codeCounter.put(typeCode.getValue(),1);
+            } else {
+                codeCounter.put(typeCode.getValue(),++integer);
+            }
+        }
+
+        if(Optional.ofNullable(codeCounter.get(value1)).orElse(0) == 1 && codeCounter.get(value2) == null){
+            return true;
+        }
+
+        if(Optional.ofNullable(codeCounter.get(value2)).orElse(0) == 1 && codeCounter.get(value1) == null){
+            return true;
+        }
+
+        return false;
     }
 
     @Override
