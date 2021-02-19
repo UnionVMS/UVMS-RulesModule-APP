@@ -5,7 +5,10 @@ import java.util.List;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
+import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetIdType;
 import lombok.Data;
+import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselCountryType;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselPositionEventType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
@@ -14,8 +17,10 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 public class MovementVesselTransportMeansFact extends AbstractFact {
 
     private List<IDType> ids;
+    private DateTime creationDateTime;
     private VesselCountryType registrationVesselCountry;
     private List<VesselPositionEventType> specifiedVesselPositionEvents;
+    private Asset asset;
     
     public boolean hasAtLeastTimesXNonEmptyIds(List<IDType> ids, int count) {
         return ids.stream().filter(id -> id.getValue() != null && !id.getValue().isEmpty()).count() >= count;
@@ -32,6 +37,14 @@ public class MovementVesselTransportMeansFact extends AbstractFact {
 
     public boolean hasAtLeastTimesXSpecifiedVesselPositionEvents(List<VesselPositionEventType> specifiedVesselPositionEvents, int count) {
         return specifiedVesselPositionEvents.size() >= count;
+    }
+
+    public boolean hasSchemeId(List<IDType> ids, String schemeID){
+        return ids.stream().anyMatch(id -> schemeID.equals(id.getSchemeID()));
+    }
+    
+    public boolean hasExistingAsset(Asset asset) {
+        return asset != null && asset.getAssetId() != null && AssetIdType.GUID.equals(asset.getAssetId().getType());
     }
     @Override
     public void setFactType() {

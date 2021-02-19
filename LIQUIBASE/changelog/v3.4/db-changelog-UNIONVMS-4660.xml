@@ -721,4 +721,168 @@
             </delete>
         </rollback>
     </changeSet>
+    
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0110" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="RegistrationVesselCountryId" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0110" />
+            <column name="rule_id" value="30110"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;CFR&quot;) &amp;&amp; hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; 
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <column name="failure_message" value="CFR provided but the vessel is not found in the vessel register or the information is inconsistent."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30110"/>
+            <column name="id" value="30110"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30110</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0110'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0111" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="RegistrationVesselCountryId" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0111" />
+            <column name="rule_id" value="30111"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="(hasSchemeId(ids, &quot;IRCS&quot;) || hasSchemeId(ids, &quot;EXT_MARK&quot;)) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; 
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <column name="failure_message" value="IRCS or External Marking provided but the vessel is not found in the vessel register or the information is inconsistent."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30111"/>
+            <column name="id" value="30111"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30111</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0111'</where>
+            </delete>
+        </rollback>
+    </changeSet>  
+    
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0112" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="RegistrationVesselCountryId" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0112" />
+            <column name="rule_id" value="30112"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;UVI&quot;) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; 
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <column name="failure_message" value="UVI is provided but the vessel is not found in the vessel register or the information is inconsistent."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30112"/>
+            <column name="id" value="30112"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30112</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0112'</where>
+            </delete>
+        </rollback>
+    </changeSet>    
+    
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0113" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="RegistrationVesselCountryId" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0113" />
+            <column name="rule_id" value="30113"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;ICCAT&quot;) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; 
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <column name="failure_message" value="ICCAT vessel ID is provided but the vessel is not found in the vessel register or the information is inconsistent."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30113"/>
+            <column name="id" value="30113"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30113</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0113'</where>
+            </delete>
+        </rollback>
+    </changeSet>    
+    
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0114" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="RegistrationVesselCountryId" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0114" />
+            <column name="rule_id" value="30114"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;GFCM&quot;) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; 
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <column name="failure_message" value="GFCM vessel ID is provided but the vessel is not found in the vessel register or the information is inconsistent."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30114"/>
+            <column name="id" value="30114"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30114</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0114'</where>
+            </delete>
+        </rollback>
+    </changeSet>
 </databaseChangeLog>

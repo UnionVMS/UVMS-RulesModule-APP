@@ -12,10 +12,12 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.MOVEMENT_VESSEL_MAP;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.MovementVesselMappingContext;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -48,6 +50,7 @@ public class MovementFactGenerator extends AbstractGenerator {
 
     @Override
     public List<AbstractFact> generateAllFacts() {
+        movementReportDocumentFactMapper.setMovementVesselMappingContext((MovementVesselMappingContext) extraValueMap.get(MOVEMENT_VESSEL_MAP));
         List<AbstractFact> facts = new ArrayList<>();
         FLUXReportDocumentType fluxReportDocument = vesselPositionMessage.getFLUXReportDocument();
 
