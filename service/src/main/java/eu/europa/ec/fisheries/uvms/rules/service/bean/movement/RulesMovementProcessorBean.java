@@ -114,6 +114,7 @@ import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.ap.internal.util.Strings;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
 
@@ -280,21 +281,25 @@ public class RulesMovementProcessorBean {
         try {
             // Enrich with MobilTerminal and Assets data. Get Mobile Terminal if it exists.
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
-            CreateMovementBatchResponse movementBatchResponse = sendBatchToMovement(enrichedWrapper.getAssetList(), rawMovements, username);
-            ExchangeLogStatusTypeType status;
-            if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getPermitted())) {
-                if (SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
-                    // Here when ready needs to happen the validation with the list returned from movements! movementBatchResponse.getMovements();
-                    status = ExchangeLogStatusTypeType.SUCCESSFUL;
+
+            Boolean isValidRequest = validateAsset(rawMovements, username, exchangeLogGuid, request, enrichedWrapper);
+            if (isValidRequest.equals(Boolean.TRUE)) {
+                CreateMovementBatchResponse movementBatchResponse = sendBatchToMovement(enrichedWrapper.getAssetList(), rawMovements, username);
+                ExchangeLogStatusTypeType status;
+                if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getPermitted())) {
+                    if (SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
+                        // Here when ready needs to happen the validation with the list returned from movements! movementBatchResponse.getMovements();
+                        status = ExchangeLogStatusTypeType.SUCCESSFUL;
+                    } else {
+                        status = ExchangeLogStatusTypeType.FAILED;
+                    }
                 } else {
                     status = ExchangeLogStatusTypeType.FAILED;
+                    updateValidationResultOnPermissionDenied(JAXBUtils.marshallJaxBObjectToString(movementBatchResponse), request, Rule9998Or9999ErrorType.PERMISSION_DENIED);
                 }
-            } else {
-                status = ExchangeLogStatusTypeType.FAILED;
-                updateValidationResultOnPermissionDenied(JAXBUtils.marshallJaxBObjectToString(movementBatchResponse), request, Rule9998Or9999ErrorType.PERMISSION_DENIED);
+                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
+                updateRequestMessageStatusInExchange(exchangeLogGuid, status);
             }
-            sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
-            updateRequestMessageStatusInExchange(exchangeLogGuid, status);
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | JAXBException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
@@ -1630,4 +1635,32 @@ public class RulesMovementProcessorBean {
         validationResultDto.setError(true);
         validationResultDto.setOk(false);
     }
+
+    private void updateValidationResultOnUnknownAsset(String rawMessage, RulesBaseRequest request) {
+        if (request == null) {
+            log.error("Could not send FLUXResponseMessage. Request is null.");
+            return;
+        }
+        RuleError ruleWarning;
+        ruleWarning = new RuleError("Unknown asset", "Request contains an invalid asset", "L01", Collections.<String>singletonList(null));
+
+        ValidationResult validationResultDto = rulePostProcessBean.checkAndUpdateValidationResultForGeneralBusinessRules(ruleWarning, rawMessage, request.getLogGuid(), MOVEMENT, request.getDate());
+        validationResultDto.setError(true);
+        validationResultDto.setOk(false);
+    }
+
+    private boolean validateAsset(List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request, EnrichedMovementWrapper enrichedWrapper) throws MessageException {
+        Asset assetData = null;
+        if (enrichedWrapper.getAssetList() != null && !enrichedWrapper.getAssetList().isEmpty() && enrichedWrapper.getAssetList().get(0) != null) {
+            assetData = enrichedWrapper.getAssetList().get(0);
+        }
+        if (assetData == null || assetData.getEventHistory() == null || Strings.isEmpty(assetData.getEventHistory().getEventId()) || assetData.getAssetId() == null || Strings.isEmpty(assetData.getAssetId().getValue())) {
+            sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
+            updateValidationResultOnUnknownAsset("", request);
+            updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
+            return false;
+        }
+        return true;
+    }
+
 }
