@@ -111,7 +111,7 @@ public class RulesExchangeServiceBean {
             Set<FADocumentID> idsFromIncommingMessage = fluxMessageHelper.mapToResponseToFADocumentID(fluxResponseMessageObj);
             List<FADocumentID> matchingIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
 
-            String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj, "UTF-8", false, new FANamespaceMapper());
+            String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessageObj, "UTF-8", false, null);
             Map<ExtraValueType, Object> extraValues = fluxMessageHelper.populateExtraValuesMap(fluxNationCode, matchingIdsFromDB);
             extraValues.put(XML, fluxResponse);
             extraValues.put(DATA_FLOW, df);
