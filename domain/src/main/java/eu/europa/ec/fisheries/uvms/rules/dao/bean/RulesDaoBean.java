@@ -33,6 +33,8 @@ import eu.europa.ec.fisheries.uvms.rules.constant.UvmsConstants;
 import eu.europa.ec.fisheries.uvms.rules.dao.FADocumentIDDAO;
 import eu.europa.ec.fisheries.uvms.rules.dao.FaDocumentIdLockDao;
 import eu.europa.ec.fisheries.uvms.rules.dao.FaIdsPerTripDao;
+import eu.europa.ec.fisheries.uvms.rules.dao.MovementDocumentIdDao;
+import eu.europa.ec.fisheries.uvms.rules.dao.MovementDocumentIdLockDao;
 import eu.europa.ec.fisheries.uvms.rules.dao.RawMessageDao;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.dao.TemplateDao;
@@ -41,6 +43,7 @@ import eu.europa.ec.fisheries.uvms.rules.entity.AlarmReport;
 import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.entity.FaIdsPerTrip;
+import eu.europa.ec.fisheries.uvms.rules.entity.MovementDocumentId;
 import eu.europa.ec.fisheries.uvms.rules.entity.PreviousReport;
 import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
 import eu.europa.ec.fisheries.uvms.rules.entity.RuleSubscription;
@@ -67,9 +70,13 @@ public class RulesDaoBean implements RulesDao {
     private ValidationMessageDao validationMessageDao;
     private FADocumentIDDAO fishingActivityIdDao;
     private FaIdsPerTripDao faIdsPerTripDao;
+    private MovementDocumentIdDao movementDocumentIdDao;
 
     @EJB
     private FaDocumentIdLockDao faDocumentIdLockDao;
+
+    @EJB
+    private MovementDocumentIdLockDao movementDocumentIdLockDao;
 
     @PersistenceContext(unitName = "rulesPostgresPU")
     public EntityManager em;
@@ -81,6 +88,7 @@ public class RulesDaoBean implements RulesDao {
         validationMessageDao = new ValidationMessageDao(em);
         fishingActivityIdDao = new FADocumentIDDAO(em);
         faIdsPerTripDao = new FaIdsPerTripDao(em);
+        movementDocumentIdDao = new MovementDocumentIdDao(em);
     }
 
     @Override
@@ -618,6 +626,11 @@ public class RulesDaoBean implements RulesDao {
     }
 
     @Override
+    public List<MovementDocumentId> loadMovementDocumentIDByIds(Set<MovementDocumentId> incomingIDs) {
+        return movementDocumentIdDao.loadMovementDocumentIDByIds(incomingIDs);
+    }
+
+    @Override
     public void takeNoteOfDocumentIds(Set<FADocumentID> incomingIDs) {
         incomingIDs.stream()
                 .map(FADocumentID::getUuid)
@@ -625,9 +638,25 @@ public class RulesDaoBean implements RulesDao {
                 .forEach(this::takeNoteOfDocumentIdAllowingDuplicates);
     }
 
+    @Override
+    public void takeNoteOfMovementDocumentIds(Set<MovementDocumentId> incomingIDs) {
+        incomingIDs.stream()
+                .map(MovementDocumentId::getUuid)
+                .sorted()
+                .forEach(this::takeNoteOfMovementDocumentIdAllowingDuplicates);
+    }
+
     private void takeNoteOfDocumentIdAllowingDuplicates(String documentId) {
         try {
             faDocumentIdLockDao.takeNoteOfDocumentIdInNewTx(documentId);
+        } catch( EntityExistsException eee ) {
+            // ignore it
+        }
+    }
+
+    private void takeNoteOfMovementDocumentIdAllowingDuplicates(String documentId) {
+        try {
+            movementDocumentIdLockDao.takeNoteOfDocumentIdInNewTx(documentId);
         } catch( EntityExistsException eee ) {
             // ignore it
         }
@@ -642,11 +671,27 @@ public class RulesDaoBean implements RulesDao {
     }
 
     @Override
+    public List<String> lockMovementDocumentIds(Set<MovementDocumentId> incomingIDs) {
+        return incomingIDs.stream()
+                .map(MovementDocumentId::getUuid)
+                .sorted()
+                .peek(movementDocumentIdLockDao::lock)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void createFaDocumentIdEntity(Set<FADocumentID> incomingIDsList) throws ServiceException {
         if(CollectionUtils.isNotEmpty(incomingIDsList)){
             for (FADocumentID faDocumentID : incomingIDsList) {
                 fishingActivityIdDao.createEntity(faDocumentID);
             }
+        }
+    }
+
+    @Override
+    public void createMovementDocumentIdEntity(Set<MovementDocumentId> incomingID) throws ServiceException {
+        for(MovementDocumentId movementDocumentId: incomingID) {
+            movementDocumentIdDao.createEntity(movementDocumentId);
         }
     }
 

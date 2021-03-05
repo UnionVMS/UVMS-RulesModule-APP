@@ -41,8 +41,10 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 @Slf4j
 public class MovementReportDocumentFactMapper {
 
-    private XPathStringWrapper xPathUtil;
     public static final String ID = "id";
+    
+    private XPathStringWrapper xPathUtil;
+    private List<String> existingIds;
 
 
     public MovementReportDocumentFactMapper() {
@@ -67,6 +69,7 @@ public class MovementReportDocumentFactMapper {
         fact.setCreationDateTime(getDate(creationDateTime));
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, XPathConstants.CREATION_DATE_TIME).storeInRepo(fact, CREATION_DATE_TIME);
         fact.setIds(vesselPositionMessage.getFLUXReportDocument().getIDS());
+        fact.setExistingIds(existingIds);
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, XPathConstants.ID).storeInRepo(fact, "id");
         CodeType purposeCode = vesselPositionMessage.getFLUXReportDocument().getPurposeCode();
         fact.setPurposeCode(purposeCode);
@@ -200,6 +203,9 @@ public class MovementReportDocumentFactMapper {
         return date;
     }
 
+    public void setExistingIds(List<String> existingIds) {
+        this.existingIds = existingIds;
+    }
 
 
 }

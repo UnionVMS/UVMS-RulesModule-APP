@@ -22,5 +22,6 @@ public enum ExtraValueType {
     CREATION_DATE_OF_MESSAGE,
     RESPONSE_IDS,
     XML,
-    DATA_FLOW
+    DATA_FLOW,
+    MOVEMENT_DOC_IDS
 }
