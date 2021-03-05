@@ -40,8 +40,12 @@ public class MovementReportDocumentFact extends AbstractFact {
     private VesselCountryType registrationVesselCountry;
     private IDType registrationVesselCountryIdType;
     private DateTime dateTime;
+    private List<String> existingIds;
 
-
+    public boolean hasDuplicateId(List<IDType> ids, List<String> existingIds) {
+        return ids.stream().map(IDType::getValue).anyMatch(existingIds::contains);
+    }
+    
     public boolean containsTypesOfIdXTimes(List<IDType> ids,String schemaType,int count){
 
         int counter = 0;

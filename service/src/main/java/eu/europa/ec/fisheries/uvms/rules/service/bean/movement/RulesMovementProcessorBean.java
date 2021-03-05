@@ -16,6 +16,7 @@ import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.MOVEMENT;
 import static eu.europa.ec.fisheries.uvms.movement.model.exception.ErrorCode.MOVEMENT_DUPLICATE_ERROR;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_MOVEMENT_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.MOVEMENT_DOC_IDS;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.XML;
 
@@ -74,6 +75,7 @@ import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.commons.notifications.NotificationMessage;
+import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
@@ -85,6 +87,10 @@ import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalMod
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementModelException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
+import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
+import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
+import eu.europa.ec.fisheries.uvms.rules.entity.MovementDocumentId;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.*;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
@@ -127,8 +133,11 @@ import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 
 import javax.annotation.PostConstruct;
@@ -218,6 +227,9 @@ public class RulesMovementProcessorBean {
     @AlarmReportCountEvent
     private Event<NotificationMessage> alarmReportCountEvent;
 
+    @Inject
+    private RulesDao rulesDaoBean;
+
     private Map<String, MovementTypeType> mapToMovementType;
 
     private RulesFLUXMessageHelper fluxMessageHelper;
@@ -281,10 +293,16 @@ public class RulesMovementProcessorBean {
                 return;
             }
 
+            Set<MovementDocumentId> idsFromIncomingMessage = fluxMessageHelper.mapToMovementDocumentID(fluxVesselPositionMessage);
+            rulesDaoBean.takeNoteOfMovementDocumentIds(idsFromIncomingMessage);
+            rulesDaoBean.lockMovementDocumentIds(idsFromIncomingMessage);
+            List<MovementDocumentId> storedIds = rulesDaoBean.loadMovementDocumentIDByIds(idsFromIncomingMessage);
+
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
             extraValues.put(XML, request.getRequest());
             extraValues.put(DATA_FLOW, request.getFluxDataFlow());
+            extraValues.put(MOVEMENT_DOC_IDS, storedIds);
             Collection<AbstractFact> factsResults = rulesEngine.evaluate(RECEIVING_MOVEMENT_MSG,fluxVesselPositionMessage,extraValues,null);
 
             final String reportId = fluxVesselPositionMessage.getFLUXReportDocument().getIDS().stream()
@@ -300,7 +318,8 @@ public class RulesMovementProcessorBean {
             }
             // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
             // processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
-            enrichAndSenMovementsAsBatch(validationResult, movementReportsList, userName, request.getLogGuid(), request, request.getLogGuid());
+            idsFromIncomingMessage.removeAll(storedIds);
+            enrichAndSenMovementsAsBatch(validationResult, movementReportsList, userName, request.getLogGuid(), request, request.getLogGuid(), idsFromIncomingMessage);
             // Send some response to Movement, if it originated from there (manual movement)
             if (MovementSourceType.MANUAL.equals(movementReportsList.get(0).getSource())) {// A person has created a position
                 ProcessedMovementAck response = MovementModuleResponseMapper.mapProcessedMovementAck(eu.europa.ec.fisheries.schema.movement.common.v1.AcknowledgeTypeType.OK,
@@ -312,7 +331,6 @@ public class RulesMovementProcessorBean {
         }
     }
 
-
     /**
      * This method is just up until the new movement flow is ready from Swe team!
      * It is actually avoiding validation process all together since it doesn't work as of now!
@@ -322,7 +340,7 @@ public class RulesMovementProcessorBean {
      * @param exchangeLogGuid
      * @throws RulesServiceException
      */
-    private void enrichAndSenMovementsAsBatch(ValidationResult validationResult, List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request, String reportId) throws RulesServiceException {
+    private void enrichAndSenMovementsAsBatch(ValidationResult validationResult, List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request, String reportId, Set<MovementDocumentId> idsFromIncomingMessage) throws RulesServiceException {
         try {
             // Enrich with MobilTerminal and Assets data. Get Mobile Terminal if it exists.
             EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(rawMovements);
@@ -330,6 +348,7 @@ public class RulesMovementProcessorBean {
             ExchangeLogStatusTypeType status;
             if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getPermitted())) {
                 if (SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
+                    rulesDaoBean.createMovementDocumentIdEntity(idsFromIncomingMessage);
                     status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
                 } else {
                     status = ExchangeLogStatusTypeType.FAILED;
@@ -340,7 +359,7 @@ public class RulesMovementProcessorBean {
             }
             sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
             updateRequestMessageStatusInExchange(exchangeLogGuid, status);
-        } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelException e) {
+        } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException | RulesModelException | ServiceException e) {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
