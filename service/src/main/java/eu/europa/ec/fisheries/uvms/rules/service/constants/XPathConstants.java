@@ -32,6 +32,7 @@ public class XPathConstants {
     public static final String OWNER_FLUX_PARTY = "OwnerFLUXParty";
     public static final String PURPOSE_CODE = "PurposeCode";
     public static final String REGISTRATION_VESSEL_COUNTRY = "RegistrationVesselCountry";
+    public static final String REGISTRATION_VESSEL_COUNTRY_ID = "RegistrationVesselCountryId";
     public static final String SPECIFIED_CONTACT_PARTY = "SpecifiedContactParty";
     public static final String SPECIFIED_CONTACT_PERSON = "SpecifiedContactPerson";
     public static final String ROLE_CODE = "RoleCode";
