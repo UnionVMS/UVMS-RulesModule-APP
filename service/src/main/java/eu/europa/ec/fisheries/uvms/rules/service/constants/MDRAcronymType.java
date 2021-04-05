@@ -87,7 +87,9 @@ public enum MDRAcronymType {
     TARGET_SPECIES_GROUP("TARGET_SPECIES_GROUP"),
     GENDER("GENDER"),
     FA_BR_DEF("FA_BR_DEF"),
-    SALE_BR_DEF("SALE_BR_DEF");
+    SALE_BR_DEF("SALE_BR_DEF"),
+    VP_BR("VP_BR"),
+    VP_BR_DEF("VP_BR_DEF");
 
     private final String value;
 

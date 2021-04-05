@@ -11,6 +11,17 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.generator;
 
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.MOVEMENT_VESSEL_MAP;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.MOVEMENT_DOC_IDS;
+import java.util.ArrayList;
+import java.util.List;
+
+import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.MovementVesselMappingContext;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import eu.europa.ec.fisheries.uvms.rules.entity.MovementDocumentId;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.MessageType;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
@@ -18,12 +29,6 @@ import eu.europa.ec.fisheries.uvms.rules.service.mapper.fact.MovementReportDocum
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathStringWrapper;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.FLUXReportDocumentType;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
-import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.MOVEMENT_REPORT_DOCUMENT;
 
 public class MovementFactGenerator extends AbstractGenerator {
 
@@ -49,16 +54,27 @@ public class MovementFactGenerator extends AbstractGenerator {
 
     @Override
     public List<AbstractFact> generateAllFacts() {
+        movementReportDocumentFactMapper.setMovementVesselMappingContext((MovementVesselMappingContext) extraValueMap.get(MOVEMENT_VESSEL_MAP));
         List<AbstractFact> facts = new ArrayList<>();
         FLUXReportDocumentType fluxReportDocument = vesselPositionMessage.getFLUXReportDocument();
+        movementReportDocumentFactMapper.setExistingIds(extractExistingIds());
 
         if (fluxReportDocument != null) {
-            facts.add(movementReportDocumentFactMapper.generateFactForMovementReportDocument(vesselPositionMessage));
+            if (fluxReportDocument != null) {
+                facts.add(movementReportDocumentFactMapper.generateFactForMovementReportDocument(vesselPositionMessage));
+                facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocumentId(vesselPositionMessage));
+                facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocOwnerFluxPartyId(vesselPositionMessage));
+                facts.addAll(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeansId(vesselPositionMessage));
+                facts.addAll(movementReportDocumentFactMapper.generateFactForSpecifiedVesselPositionEvent(vesselPositionMessage));
+                facts.add(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeans(vesselPositionMessage));
+            }
         }
 
         String df = (String) extraValueMap.get(DATA_FLOW);
         facts.forEach(fact -> fact.setMessageDataFlow(df));
+        xPathUtil.clear();
         return facts;
+
     }
 
     @Override
@@ -69,4 +85,14 @@ public class MovementFactGenerator extends AbstractGenerator {
         }
         this.vesselPositionMessage = (FLUXVesselPositionMessage) businessObject;
     }
-}
+
+    private List<String> extractExistingIds() {
+        @SuppressWarnings("unchecked")
+        List<MovementDocumentId> faDocumentIDS = Optional.ofNullable((List<MovementDocumentId>) extraValueMap.get(MOVEMENT_DOC_IDS)).orElse(new ArrayList<>());
+        return (faDocumentIDS)
+                .stream()
+                .map(MovementDocumentId::getUuid)
+                .collect(Collectors.toList());
+        }
+    }
+
