@@ -11,11 +11,6 @@ details. You should have received a copy of the GNU General Public License along
 
 package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
-import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
-import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
-import lombok.Data;
-
-import java.util.Date;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
@@ -82,13 +77,9 @@ public class MovementReportDocumentFact extends AbstractFact {
     }
 
     public boolean isDateInThePast(Date creationDateTime){
-
-        Calendar serverDate = Calendar.getInstance();
-        long t= serverDate.getTimeInMillis();
-        Date startDate = new Date(t - 10 * 60000);
-        new Date();
-
-        return creationDateTime.after(startDate) && creationDateTime.before(serverDate.getTime());
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, -10);
+        return creationDateTime.before(cal.getTime());
     }
 
     public boolean hasValidPurposeCodeListId(CodeType purposeCode, String defaultValue) {

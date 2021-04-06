@@ -304,22 +304,20 @@ public class RulesMovementProcessorBean {
             extraValues.put(MOVEMENT_VESSEL_MAP, ctx);
             extraValues.put(MOVEMENT_DOC_IDS, storedIds);
             Collection<AbstractFact> factsResults = rulesEngine.evaluate(RECEIVING_MOVEMENT_MSG,fluxVesselPositionMessage,extraValues,null);
-
+            idsFromIncomingMessage.removeAll(storedIds);
             final Optional<String> reportId = fluxVesselPositionMessage.getFLUXReportDocument().getIDS().stream()
                     .filter(id -> "UUID".equals(id.getSchemeID()))
                     .map(IDType::getValue)
                     .findFirst();
 
             String id = reportId.isPresent() ? reportId.get() : null;
-            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), id, RawMsgType.MOVEMENT);
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), request.getLogGuid(), RawMsgType.MOVEMENT);
 
             if(validationResult.isError()){
                 exchangeServiceBean.updateExchangeMessage(request.getLogGuid(), fluxMessageHelper.calculateMessageValidationStatus(validationResult));
-                return;
             }
             // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
             // processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
-            idsFromIncomingMessage.removeAll(storedIds);
             enrichAndSendMovementsAsBatch(enrichedWrapper, validationResult, movementReportsList, userName, request.getLogGuid(), request, request.getLogGuid(), idsFromIncomingMessage);
 
             // Send some response to Movement, if it originated from there (manual movement)
@@ -350,17 +348,19 @@ public class RulesMovementProcessorBean {
             if (isValidRequest.equals(Boolean.TRUE)) {
                 CreateMovementBatchResponse movementBatchResponse = sendBatchToMovement(enrichedWrapper.getAssetList(), rawMovements, username);
                 ExchangeLogStatusTypeType status;
-            if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getPermitted())) {
-                if (SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
-                    rulesDaoBean.createMovementDocumentIdEntity(idsFromIncomingMessage);
-                    status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
+                if (movementBatchResponse != null && SimpleResponse.OK.equals(movementBatchResponse.getPermitted())) {
+                    if (SimpleResponse.OK.equals(movementBatchResponse.getResponse())) {
+                        rulesDaoBean.createMovementDocumentIdEntity(idsFromIncomingMessage);
+                        status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
+                    } else {
+                        status = ExchangeLogStatusTypeType.FAILED;
+                    }
                 } else {
                     status = ExchangeLogStatusTypeType.FAILED;
                     updateValidationResultOnPermissionDenied(reportId, request, Rule9998Or9999ErrorType.PERMISSION_DENIED);
                 }
                 sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
                 updateRequestMessageStatusInExchange(exchangeLogGuid, status);
-            }
             }
         } catch (MessageException | RulesModelException | ServiceException e) {
             throw new RulesServiceException(e.getMessage(), e);
