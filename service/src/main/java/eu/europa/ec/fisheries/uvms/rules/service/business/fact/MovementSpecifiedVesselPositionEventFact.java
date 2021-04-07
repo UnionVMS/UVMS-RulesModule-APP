@@ -29,7 +29,7 @@ public class MovementSpecifiedVesselPositionEventFact extends AbstractFact {
     }
 
     public boolean hasValidCourseValue(BigDecimal courseValue) {
-        return courseValue.compareTo(new BigDecimal(360)) <= 0 && courseValue.compareTo(BigDecimal.ZERO) >= 0;
+        return courseValue.compareTo(new BigDecimal(360)) <= 0 && courseValue.compareTo(BigDecimal.ZERO) >= 0 && courseValue.scale() < 3;
     }
 
     public boolean hasValidTypeCodeValueListID(CodeType typeCode) {

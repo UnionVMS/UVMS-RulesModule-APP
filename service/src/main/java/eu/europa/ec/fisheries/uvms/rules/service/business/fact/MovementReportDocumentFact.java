@@ -28,6 +28,8 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 
+import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec;
+
 @Data
 public class MovementReportDocumentFact extends AbstractFact {
 
@@ -60,6 +62,7 @@ public class MovementReportDocumentFact extends AbstractFact {
     }
     
     public boolean hasValidCreationDateTime(String creationDateTimeString) {
+        try {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseStrict()
                 .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
@@ -68,9 +71,9 @@ public class MovementReportDocumentFact extends AbstractFact {
                 .optionalEnd()
                 .appendLiteral('Z')//timezone must always be utc, thus the literal Z
                 .parseStrict().toFormatter();
-        try {
+
             formatter.parse(creationDateTimeString);
-        } catch (DateTimeParseException e) {
+        } catch (Exception e) {
             return false;
         }
         return true;

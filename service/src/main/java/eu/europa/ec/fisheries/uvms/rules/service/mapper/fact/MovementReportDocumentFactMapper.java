@@ -159,9 +159,10 @@ public class MovementReportDocumentFactMapper {
     public List<MovementVesselTransportMeansIdFact> generateFactForMovementVesselTransportMeansId (FLUXVesselPositionMessage vesselPositionMessage){
         List<MovementVesselTransportMeansIdFact> factList = new ArrayList<>();
 
-        if (vesselPositionMessage == null || vesselPositionMessage.getVesselTransportMeans() == null || vesselPositionMessage.getVesselTransportMeans().getIDS().isEmpty()) {
+
+        if (vesselPositionMessage == null || vesselPositionMessage.getVesselTransportMeans() == null || vesselPositionMessage.getVesselTransportMeans().getIDS() == null || vesselPositionMessage.getVesselTransportMeans().getIDS().isEmpty()) {
             xPathUtil.clear();
-            return null;
+            return factList;
         }
 
         String partialXpath = xPathUtil.append(MOVEMENT_REPORT_DOCUMENT).append(VESSEL_TRANSPORT_MEANS).getValue();

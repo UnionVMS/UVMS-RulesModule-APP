@@ -60,14 +60,12 @@ public class MovementFactGenerator extends AbstractGenerator {
         movementReportDocumentFactMapper.setExistingIds(extractExistingIds());
 
         if (fluxReportDocument != null) {
-            if (fluxReportDocument != null) {
-                facts.add(movementReportDocumentFactMapper.generateFactForMovementReportDocument(vesselPositionMessage));
-                facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocumentId(vesselPositionMessage));
-                facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocOwnerFluxPartyId(vesselPositionMessage));
-                facts.addAll(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeansId(vesselPositionMessage));
-                facts.addAll(movementReportDocumentFactMapper.generateFactForSpecifiedVesselPositionEvent(vesselPositionMessage));
-                facts.add(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeans(vesselPositionMessage));
-            }
+            facts.add(movementReportDocumentFactMapper.generateFactForMovementReportDocument(vesselPositionMessage));
+            facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocumentId(vesselPositionMessage));
+            facts.addAll(movementReportDocumentFactMapper.generateFactForMovementReportDocOwnerFluxPartyId(vesselPositionMessage));
+            facts.addAll(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeansId(vesselPositionMessage));
+            facts.addAll(movementReportDocumentFactMapper.generateFactForSpecifiedVesselPositionEvent(vesselPositionMessage));
+            facts.add(movementReportDocumentFactMapper.generateFactForMovementVesselTransportMeans(vesselPositionMessage));
         }
 
         String df = (String) extraValueMap.get(DATA_FLOW);
