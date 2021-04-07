@@ -305,12 +305,7 @@ public class RulesMovementProcessorBean {
             extraValues.put(MOVEMENT_DOC_IDS, storedIds);
             Collection<AbstractFact> factsResults = rulesEngine.evaluate(RECEIVING_MOVEMENT_MSG,fluxVesselPositionMessage,extraValues,null);
             idsFromIncomingMessage.removeAll(storedIds);
-            final Optional<String> reportId = fluxVesselPositionMessage.getFLUXReportDocument().getIDS().stream()
-                    .filter(id -> "UUID".equals(id.getSchemeID()))
-                    .map(IDType::getValue)
-                    .findFirst();
 
-            String id = reportId.isPresent() ? reportId.get() : null;
             ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), request.getLogGuid(), RawMsgType.MOVEMENT);
 
             if(validationResult.isError()){
