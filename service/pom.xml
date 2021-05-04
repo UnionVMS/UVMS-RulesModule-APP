@@ -216,6 +216,12 @@
             <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
             <artifactId>asset-rest-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms</groupId>
+            <artifactId>config-library</artifactId>
+            <version>${uvms.config.library.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
