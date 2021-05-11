@@ -51,6 +51,12 @@
                         </jarModule>
                         <jarModule>
                             <groupId>eu.europa.ec.fisheries.uvms</groupId>
+                            <artifactId>usm4uvms</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                            <bundleDir>/</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>eu.europa.ec.fisheries.uvms</groupId>
                             <artifactId>config-library</artifactId>
                             <includeInApplicationXml>true</includeInApplicationXml>
                             <bundleDir>/</bundleDir>
