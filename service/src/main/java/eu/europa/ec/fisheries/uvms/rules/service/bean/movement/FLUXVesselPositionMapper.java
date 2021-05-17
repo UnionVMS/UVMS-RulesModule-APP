@@ -33,6 +33,7 @@ import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.MeasureType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class FLUXVesselPositionMapper {
      * @param registerClassName
      * @return
      */
-    public static List<RawMovementType> mapToRawMovementTypes(FLUXVesselPositionMessage fluxVesselPositionMessage, String registerClassName, String pluginType, Map<String, MovementTypeType> mapToMovementType) {
+    public static List<RawMovementType> mapToRawMovementTypes(FLUXVesselPositionMessage fluxVesselPositionMessage, MovementVesselMappingContext ctx, String registerClassName, String pluginType, Map<String, MovementTypeType> mapToMovementType) {
         VesselTransportMeansType positionReport = fluxVesselPositionMessage.getVesselTransportMeans();
         List<RawMovementType> rowMovements = new ArrayList<>();
         for (VesselPositionEventType col : positionReport.getSpecifiedVesselPositionEvents()) {
@@ -76,8 +77,25 @@ public class FLUXVesselPositionMapper {
             rawMovement.setPluginName(registerClassName);
             rawMovement.setDateRecieved(DateUtils.getNowDateUTC());
             rowMovements.add(rawMovement);
+            if(ctx != null) {
+                ctx.put(positionReport, rawMovement);
+            }
         }
         return rowMovements;
+    }    
+    
+    public static List<RawMovementType> mapToRawMovementTypesForEmptyMessage(FLUXVesselPositionMessage fluxVesselPositionMessage, String registerClassName, String pluginType, Map<String, MovementTypeType> mapToMovementType) {
+        VesselTransportMeansType positionReport = fluxVesselPositionMessage.getVesselTransportMeans();
+        MovementBaseType baseMovement = mapResponseForEmptyMovement(positionReport,pluginType ,mapToMovementType);
+        RawMovementType rawMovement = MovementMapper.getInstance().getMapper().map(baseMovement, RawMovementType.class);
+        final eu.europa.ec.fisheries.schema.rules.asset.v1.AssetId assetId = rawMovement.getAssetId();
+        if (assetId != null && assetId.getAssetIdList() != null) {
+            assetId.getAssetIdList().addAll(MovementMapper.mapAssetIdList(baseMovement.getAssetId().getAssetIdList()));
+        }
+        rawMovement.setPluginType(PluginType.FLUX.name());
+        rawMovement.setPluginName(registerClassName);
+        rawMovement.setDateRecieved(DateUtils.getNowDateUTC());
+        return Collections.singletonList(rawMovement);
     }
 
     private static MovementBaseType mapResponse(VesselPositionEventType response, VesselTransportMeansType report, String pluginType, Map<String, MovementTypeType> mapToMovementType) {
@@ -93,6 +111,18 @@ public class FLUXVesselPositionMapper {
             movement.setPositionTime(XMLDateUtils.xmlGregorianCalendarToDate(response.getObtainedOccurrenceDateTime().getDateTime()));
         }
         setCourseAndSpeed(response, movement);
+        movement.setComChannelType(MovementComChannelType.FLUX);
+        movement.setSource(MovementSourceType.MANUAL.name().equals(pluginType)? MovementSourceType.MANUAL : MovementSourceType.OTHER);
+        return movement;
+    }
+
+    private static MovementBaseType mapResponseForEmptyMovement(VesselTransportMeansType report, String pluginType, Map<String, MovementTypeType> mapToMovementType) {
+        MovementBaseType movement = new MovementBaseType();
+        HashMap<String, String> extractAssetIds = extractAssetIds(report.getIDS());
+        movement.setAssetId(mapToAssetId(extractAssetIds));
+        movement.setExternalMarking(extractAssetIds.get(ASSET_EXT_MARKING_CODE));
+        movement.setIrcs(extractAssetIds.get(ASSET_IRCS_CODE));
+        setFlagState(movement, report.getRegistrationVesselCountry());
         movement.setComChannelType(MovementComChannelType.FLUX);
         movement.setSource(MovementSourceType.MANUAL.name().equals(pluginType)? MovementSourceType.MANUAL : MovementSourceType.OTHER);
         return movement;

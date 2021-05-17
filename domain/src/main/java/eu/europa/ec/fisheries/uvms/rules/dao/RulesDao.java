@@ -15,10 +15,12 @@ import javax.ejb.Local;
 import java.util.List;
 import java.util.Set;
 
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.rules.entity.AlarmReport;
 import eu.europa.ec.fisheries.uvms.rules.entity.CustomRule;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
+import eu.europa.ec.fisheries.uvms.rules.entity.MovementDocumentId;
 import eu.europa.ec.fisheries.uvms.rules.entity.PreviousReport;
 import eu.europa.ec.fisheries.uvms.rules.entity.RawMessage;
 import eu.europa.ec.fisheries.uvms.rules.entity.RuleSubscription;
@@ -160,18 +162,28 @@ public interface RulesDao {
 
     void updateValidationMessagesWith(String rawMessageGuid, String type, ValidationMessage validationMessage) throws DaoException;
 
+    void createOrUpdateValidationMessagesWithPermission(String rawMessageGuid, String rawMessage, RawMsgType type, ValidationMessage validationMessage) throws DaoException;
+
     List<ValidationMessage> getValidationMessagesById(List<String> ids) throws DaoException;
 
     List<ValidationMessage> getValidationMessagesByRawMsgGuid(String rawMsgGuid, String type) throws DaoException;
 
     List<FADocumentID> loadFADocumentIDByIdsByIds(Set<FADocumentID> incomingIDs);
+    
+    List<MovementDocumentId> loadMovementDocumentIDByIds(Set<MovementDocumentId> incomingIDs);
 
     void takeNoteOfDocumentIds(Set<FADocumentID> incomingIDs);
+    
+    void takeNoteOfMovementDocumentIds(Set<MovementDocumentId> incomingIDs);
 
     List<String> lockDocumentIds(Set<FADocumentID> incomingIDs);
+    
+    List<String> lockMovementDocumentIds(Set<MovementDocumentId> incomingIDs);
 
     void createFaDocumentIdEntity(Set<FADocumentID> incomingID) throws ServiceException;
-
+    
+    void createMovementDocumentIdEntity(Set<MovementDocumentId> incomingID) throws ServiceException;
+    
     void saveFaIdsPerTripList(List<String> tripList);
 
     List<String> loadExistingFaIdsPerTrip(List<String> idsFromIncommingMessage);

@@ -82,13 +82,13 @@ public class MovementsRulesValidator {
             // Fetch sanity rules from DB
             List<SanityRuleType> sanityRules = validationService.getSanityRules();
             if (sanityRules != null && !sanityRules.isEmpty()) {
-              //  if (checkForChanges(sanityRules)) {
-                    currentSanityRules = sanityRules;
-                    // Add sanity rules
-                    String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
-                    sanityKfs = KieServices.Factory.get().newKieFileSystem();
-                    return drl;
-              //  }
+                //  if (checkForChanges(sanityRules)) {
+                currentSanityRules = sanityRules;
+                // Add sanity rules
+                String drl = generateSanityRuleDrl(SANITY_RULES_TEMPLATE, sanityRules);
+                sanityKfs = KieServices.Factory.get().newKieFileSystem();
+                return drl;
+                //  }
             }
         } catch (RulesServiceException | RulesFaultException  e) {
             log.error("[ Error when getting sanity rules ]");
@@ -172,7 +172,7 @@ public class MovementsRulesValidator {
     }
 
     @Lock(LockType.READ)
-    public void evaluate(List<MovementFact> factList, boolean justToAvoidErasure) {
+    public void evaluate(List<MovementFact> factList) {
         log.info("Verifying user defined rules");
         KieSession ksession = getKieSession();
         // TODO : decomment as soon as the "Unexpected global [validationService]" is resolved
@@ -186,7 +186,7 @@ public class MovementsRulesValidator {
 
 
     @Lock(LockType.READ)
-    public void evaluate(List<RawMovementFact> facts) {
+    public void evaluateRawList(List<RawMovementFact> facts) {
         KieSession ksession = getKieSession();
         ksession.setGlobal(LOGGER_STR, log);
         for (RawMovementFact fact : facts) {
