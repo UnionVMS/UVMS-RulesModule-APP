@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 public class XPathConstants {
 
     public static final String FLUXFA_REPORT_MESSAGE = "FLUXFAReportMessage";
+    public static final String MOVEMENT_REPORT_DOCUMENT = "FLUXVesselPositionMessage";
     public static final String FLUXFA_QUERY_MESSAGE = "FLUXFAQueryMessage";
     public static final String FA_REPORT_DOCUMENT = "FAReportDocument";
     public static final String SPECIFIED_FISHING_ACTIVITY = "SpecifiedFishingActivity";
@@ -31,6 +32,7 @@ public class XPathConstants {
     public static final String OWNER_FLUX_PARTY = "OwnerFLUXParty";
     public static final String PURPOSE_CODE = "PurposeCode";
     public static final String REGISTRATION_VESSEL_COUNTRY = "RegistrationVesselCountry";
+    public static final String REGISTRATION_VESSEL_COUNTRY_ID = "RegistrationVesselCountryId";
     public static final String SPECIFIED_CONTACT_PARTY = "SpecifiedContactParty";
     public static final String SPECIFIED_CONTACT_PERSON = "SpecifiedContactPerson";
     public static final String ROLE_CODE = "RoleCode";
@@ -38,6 +40,8 @@ public class XPathConstants {
     public static final String RELATED_FLUX_REPORT_DOCUMENT = "RelatedFLUXReportDocument";
     public static final String TYPE_CODE = "TypeCode";
     public static final String RELATED_REPORT_ID = "RelatedReportID";
+    public static final String VESSEL_TRANSPORT_MEANS = "VesselTransportMeans";
+    public static final String VESSEL_TRANSPORT_MEANS_ID = "VesselTransportMeansId";
     public static final String SPECIFIED_VESSEL_TRANSPORT_MEANS = "SpecifiedVesselTransportMeans";
     public static final String RELATED_FISHING_ACTIVITY = "RelatedFishingActivity";
     public static final String SPECIFIED_DELIMITED_PERIOD = "SpecifiedDelimitedPeriod";
@@ -115,5 +119,11 @@ public class XPathConstants {
     public static final String RESPONSE_CODE = "ResponseCode";
     public static final String RESPONDENT_FLUX_PARTY = "RespondentFLUXParty";
     public static final String SPECIFIED_VESSELPOSITION_EVENT = "SpecifiedVesselPositionEvent";
+    public static final String SPEED_VALUE_MEASURE = "SpeedValueMeasure";
+    public static final String COURSE_VALUE_MEASURE = "CourseValueMeasure";
 
+    public static final String OBTAINED_OCCURRENCE_DATE_TIME = "ObtainedOccurrenceDateTime";
+    public static final String SPECIFIED_VESSEL_GEOGRAPHICAL_COORDINATE = "SpecifiedVesselGeographicalCoordinate";
+    public static final String LATITUDE_MEASURE = "LatitudeMeasure";
+    public static final String LONGITUDE_MEASURE = "LongitudeMeasure";
 }
