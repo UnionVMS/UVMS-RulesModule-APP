@@ -20,6 +20,7 @@ import eu.europa.ec.fisheries.schema.rules.customrule.v1.SanityRuleType;
 import eu.europa.ec.fisheries.schema.rules.customrule.v1.UpdateSubscriptionType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMessageType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.CustomRuleQuery;
@@ -115,4 +116,6 @@ public interface RulesDomainModel {
     List<ValidationMessageType> getValidationMessagesByRawMsgGuid(String rawMsgGuid, String type) throws RulesModelException;
 
     void updateValidationMessagesWithPermission(ValidationMessageType validationMessage, String rawMsgGuid, String type) throws RulesModelException;
+
+    void createOrUpdateValidationMessagesWithPermission(ValidationMessageType validationMessage, String rawMsgGuid, String rawMessage, RawMsgType type) throws RulesModelException;
 }

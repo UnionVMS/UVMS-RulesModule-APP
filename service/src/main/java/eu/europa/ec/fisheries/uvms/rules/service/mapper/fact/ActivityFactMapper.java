@@ -324,7 +324,7 @@ public class ActivityFactMapper {
         fishingActivityFact.setFaReportDocumentTypeCode(mapToCodeType(faReportDocument != null ? faReportDocument.getTypeCode() : null));
         fishingActivityFact.setFaReportDocuments(fluxfaReportMessage.getFAReportDocuments());
         fishingActivityFact.setFaReportDocument(faReportDocument);
-        fishingActivityFact.setPurposeCode(mapToCodeType(faReportDocument.getRelatedFLUXReportDocument() == null ? null:faReportDocument.getRelatedFLUXReportDocument().getPurposeCode()));
+        fishingActivityFact.setPurposeCode(mapToCodeType(faReportDocument.getRelatedFLUXReportDocument() == null ? null : faReportDocument.getRelatedFLUXReportDocument().getPurposeCode()));
 
         String partialXpath = xPathUtil.getValue();
 
