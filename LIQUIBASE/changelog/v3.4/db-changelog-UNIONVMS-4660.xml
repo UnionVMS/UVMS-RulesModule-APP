@@ -1,32 +1,53 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
     <changeSet id="UNIONVMS-4660-template-for-MovementRules" author="nomikosi">
         <insert tableName="template">
             <column name="template_id" value="2000" />
             <column name="template_name" value="Movement report document" />
             <column name="fact_template" value="MOVEMENT_REPORT_DOCUMENT" />
         </insert>
+        <insert tableName="template">
+            <column name="template_id" value="2001" />
+            <column name="template_name" value="Movement report document id" />
+            <column name="fact_template" value="MOVEMENT_REPORT_DOCUMENT_ID" />
+        </insert>
+
+        <insert tableName="template">
+            <column name="template_id" value="3003" />
+            <column name="template_name" value="Movement Vessel Transport Means Id" />
+            <column name="fact_template" value="MOVEMENT_VESSEL_TRANSPORT_MEANS_ID" />
+        </insert>
+
+        <rollback>
+            <delete tableName="template">
+                <where>template_id = 3003</where>
+            </delete>
+        </rollback>
 
         <rollback>
             <delete tableName="template">
                 <where>template_id = 2000</where>
             </delete>
+            <delete tableName="template">
+                <where>template_id = 2001</where>
+            </delete>
         </rollback>
     </changeSet>
 
-    <changeSet id="UNIONVMS-4660-update-MO-R01-00-0001" author="nomikosi">
+    <changeSet id="UNIONVMS-4660-update-VP-L00-00-0001" author="nomikosi">
         <insert tableName="rule">
             <column name="template_id" value="2000" />
-            <column name="property_names" value="creationDateTime" />
+            <column name="property_names" value="id" />
             <column name="note" value="Check presence. Must be present." />
             <column name="level" value="L00" />
             <column name="error_type" value="ERROR" />
             <column name="disabled" value="false" />
-            <column name="br_id" value="MO-R01-00-0001" />
+            <column name="br_id" value="VP-L00-00-0001" />
             <column name="rule_id" value="20001"/>
         </insert>
         <insert tableName="context_expression">
-            <column name="expression" value="creationDateTime == null "/>
+            <column name="expression" value="ids == null || ids.isEmpty()"/>
             <column name="failure_message" value="Message creation date/time missing."/>
             <column name="context" value="EU"/>
             <column name="rule_id" value="20001"/>
@@ -38,24 +59,24 @@
                 <where>rule_id = 20001</where>
             </delete>
             <delete tableName="rule">
-                <where>br_id = 'MO-R01-00-0001'</where>
+                <where>br_id = 'VP-L00-00-0001'</where>
             </delete>
         </rollback>
     </changeSet>
 
-    <changeSet id="UNIONVMS-4660-update-MO-R01-00-0002" author="nomikosi">
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0002" author="nomikosi">
         <insert tableName="rule">
             <column name="template_id" value="2000" />
-            <column name="property_names" value="creationDateTime" />
+            <column name="property_names" value="id" />
             <column name="note" value="Format must be date in UTC according to ISO8601" />
             <column name="level" value="L01" />
             <column name="error_type" value="ERROR" />
             <column name="disabled" value="false" />
-            <column name="br_id" value="MO-R01-00-0002" />
+            <column name="br_id" value="VP-L01-00-0002" />
             <column name="rule_id" value="20002"/>
         </insert>
         <insert tableName="context_expression">
-            <column name="expression" value="!isEmpty(creationDateTimeString) &amp;&amp; !isIsoDateStringValidFormat(creationDateTimeString)"/>
+            <column name="expression" value="ids != null &amp;&amp; !ids.isEmpty() &amp;&amp; !containsTypesOfIdXTimes(ids,&quot;UUID&quot;,1)"/>
             <column name="failure_message" value="Invalid message creation date/time."/>
             <column name="context" value="EU"/>
             <column name="rule_id" value="20002"/>
@@ -67,25 +88,25 @@
                 <where>rule_id = 20002</where>
             </delete>
             <delete tableName="rule">
-                <where>br_id = 'MO-R01-00-0002'</where>
+                <where>br_id = 'VP-L01-00-0002'</where>
             </delete>
         </rollback>
     </changeSet>
 
-    <changeSet id="UNIONVMS-4660-update-MO-R01-00-0003" author="nomikosi">
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0003" author="nomikosi">
         <insert  tableName="rule">
-            <column name="template_id" value="2000" />
-            <column name="property_names" value="creationDateTime" />
-            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
-            <column name="level" value="L03" />
-            <column name="error_type" value="WARNING" />
+            <column name="template_id" value="2001" />
+            <column name="property_names" value="id" />
+            <column name="note" value="Check Format of the value. Must be according to the specified schemeID." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
             <column name="disabled" value="false" />
-            <column name="br_id" value="MO-R01-00-0003" />
+            <column name="br_id" value="VP-L01-00-0003" />
             <column name="rule_id" value="20003"/>
         </insert >
         <insert  tableName="context_expression">
-            <column name="expression" value="creationDateTime != null &amp;&amp; dateNotInPast(creationDateTime, 10)"/>
-            <column name="failure_message" value="Message creation date/time not in the past."/>
+            <column name="expression" value="id != null &amp;&amp; !uuidValidateRegex(id)"/>
+            <column name="failure_message" value="Check Format of the value. Must be according to the specified schemeID."/>
             <column name="context" value="EU"/>
             <column name="rule_id" value="20003"/>
             <column name="id" value="20003"/>
@@ -96,8 +117,1155 @@
                 <where>rule_id = 20003</where>
             </delete>
             <delete tableName="rule">
-                <where>br_id = 'MO-R01-00-0003'</where>
+                <where>br_id = 'VP-L01-00-0003'</where>
             </delete>
         </rollback>
     </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0006" author="gmanifavas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2000" />
+            <column name="property_names" value="creationDateTime" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0006" />
+            <column name="rule_id" value="20006"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="creationDateTimeString != null &amp;&amp; !hasValidCreationDateTime(creationDateTimeString)"/>
+            <column name="failure_message" value="Message creation date/time must be a valid UTC date/time in the correct format."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20006"/>
+            <column name="id" value="20006"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20006</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0006'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0007" author="nomikosi">
+        <insert  tableName="rule">
+            <column name="template_id" value="2000" />
+            <column name="property_names" value="CreationDateTime" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0007" />
+            <column name="rule_id" value="20007"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="creationDateTime != null &amp;&amp; !isDateInThePast(creationDateTime)"/>
+            <column name="failure_message" value="Message creation date/time not in the past."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20007"/>
+            <column name="id" value="20007"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20007</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0007'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L00-00-0006" author="gmanifavas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2000" />
+            <column name="property_names" value="purposeCode" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L00" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L00-00-0006" />
+            <column name="rule_id" value="30006"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="purposeCode == null || purposeCode.getValue() == null || purposeCode.getValue().trim().isEmpty()"/>
+            <column name="failure_message" value="Message PurposeCode missing."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30006"/>
+            <column name="id" value="30006"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30006</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L00-00-0006'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0009" author="gmanifavas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2000" />
+            <column name="property_names" value="purposeCode" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0009" />
+            <column name="rule_id" value="20009"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="purposeCode != null &amp;&amp; !hasValidPurposeCodeListId(purposeCode, &quot;FLUX_GP_PURPOSE&quot;)"/>
+            <column name="failure_message" value="PurposeCode has an invalid listID."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20009"/>
+            <column name="id" value="20009"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20009</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0009'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0010" author="gmanifavas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2000" />
+            <column name="property_names" value="purposeCode" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0010" />
+            <column name="rule_id" value="20010"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="purposeCode != null &amp;&amp; purposeCode.getValue() != null &amp;&amp; !purposeCode.getValue().trim().isEmpty() &amp;&amp; !hasValidPurposeCodeValue(purposeCode, &quot;9&quot;)"/>
+            <column name="failure_message" value="PurposeCode has an invalid value."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20010"/>
+            <column name="id" value="20010"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20010</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0010'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L00-00-0020" author="gmanifavas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2000" />
+            <column name="property_names" value="OwnerFLUXParty" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L00" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L00-00-0020" />
+            <column name="rule_id" value="30020"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="ownerFLUXParty == null || (ownerFLUXParty.getIDS() != null &amp;&amp; ownerFLUXParty.getIDS().isEmpty())"/>
+            <column name="failure_message" value="Message Owner ID missing."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30020"/>
+            <column name="id" value="30020"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30020</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L00-00-0020'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="UNIONVMS-4660-update-template-2002" author="gmanifavas">
+        <insert tableName="template">
+            <column name="template_id" value="2002" />
+            <column name="template_name" value="Movement Report Document Owner Flux Party Id" />
+            <column name="fact_template" value="MOVEMENT_REPORT_DOC_OWNER_FLUX_PARTY_ID" />
+        </insert>
+
+        <rollback>
+            <delete tableName="template">
+                <where>template_id = 2002</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0021" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="2002" />
+            <column name="property_names" value="ownerFluxPartyId" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0021" />
+            <column name="rule_id" value="20021"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="id != null &amp;&amp; !hasValidSchemeID(id, &quot;FLUX_GP_PARTY&quot;)"/>
+            <column name="failure_message" value="Message Owner ID has an invalid schemeID."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20021"/>
+            <column name="id" value="20021"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20021</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0021'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0022" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="2002" />
+            <column name="property_names" value="ownerFluxPartyId" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0022" />
+            <column name="rule_id" value="20022"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="id != null &amp;&amp; !mdrService.isPresentInMDRList(id.getSchemeID(), id.getValue(), creationDateTime)"/>
+            <column name="failure_message" value="Message Owner ID does not exist."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20022"/>
+            <column name="id" value="20022"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20022</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0022'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L00-00-0200" author="cpapatheodorou">
+        <insert tableName="rule">
+            <column name="template_id" value="2000"/>
+            <column name="property_names" value="RegistrationVesselCountry"/>
+            <column name="note"
+                    value="Registration vessel country ID missing."/>
+            <column name="level" value="L00"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="disabled" value="false"/>
+            <column name="br_id" value="VP-L00-00-0200"/>
+            <column name="rule_id" value="30200"/>
+        </insert>
+        <insert tableName="context_expression">
+            <column name="expression"
+                    value="registrationVesselCountry == null || registrationVesselCountry.getID() == null || registrationVesselCountry.getID().getValue() == null || registrationVesselCountry.getID().getValue().isEmpty()"/>
+            <column name="failure_message" value="Registration vessel country ID missing."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30200"/>
+            <column name="id" value="30200"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30200</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L00-00-0200'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0201" author="cpapatheodorou">
+        <insert tableName="rule">
+            <column name="template_id" value="2000"/>
+            <column name="property_names" value="registrationVesselCountryId"/>
+            <column name="note"
+                    value="Invalid schemeId for RegistrationVesselCountry/ID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="disabled" value="false"/>
+            <column name="br_id" value="VP-L01-00-0201"/>
+            <column name="rule_id" value="30201"/>
+        </insert>
+        <insert tableName="context_expression">
+            <column name="expression"
+                    value="hasValidIdType(registrationVesselCountryIdType) &amp;&amp; !hasValidSchemeId(registrationVesselCountryIdType.getSchemeID(), &quot;TERRITORY&quot;)"/>
+            <column name="failure_message" value="Invalid schemeId for RegistrationVesselCountry/ID"/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30201"/>
+            <column name="id" value="30201"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30201</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0201'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0202" author="cpapatheodorou">
+        <insert tableName="rule">
+            <column name="template_id" value="2000"/>
+            <column name="property_names" value="registrationVesselCountryId"/>
+            <column name="note"
+                    value="Invalid code for RegistrationVesselCountry/ID."/>
+            <column name="level" value="L01"/>
+            <column name="error_type" value="ERROR"/>
+            <column name="disabled" value="false"/>
+            <column name="br_id" value="VP-L01-00-0202"/>
+            <column name="rule_id" value="30202"/>
+        </insert>
+        <insert tableName="context_expression">
+            <column name="expression"
+                    value="hasValidIdType(registrationVesselCountryIdType) &amp;&amp; !mdrService.isPresentInMDRList(registrationVesselCountryIdType.getSchemeID(),registrationVesselCountryIdType.getValue(), dateTime)"/>
+            <column name="failure_message" value="Invalid code for RegistrationVesselCountry/ID"/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30202"/>
+            <column name="id" value="30202"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30202</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0202'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-template-2004" author="tpotopapas">
+        <insert tableName="template">
+            <column name="template_id" value="2004" />
+            <column name="template_name" value="Movement Vessel Position Event" />
+            <column name="fact_template" value="MOVEMENT_SPECIFIED_VESSEL_POSITION_EVENT" />
+        </insert>
+
+        <rollback>
+            <delete tableName="template">
+                <where>template_id = 2004</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0301" author="tprotopapas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="typeCode" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0301" />
+            <column name="rule_id" value="20301"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="typeCode != null &amp;&amp; !hasValidTypeCodeValueListID(typeCode)"/>
+            <column name="failure_message" value="Invalid schemeID for VesselPositionEvent/TypeCode."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20301"/>
+            <column name="id" value="20301"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20301</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0301'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0302" author="tprotopapas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="typeCode, creationDateTime" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0302" />
+            <column name="rule_id" value="20302"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="typeCode != null &amp;&amp; hasValidTypeCodeValueListID(typeCode) &amp;&amp; !mdrService.isPresentInMDRList(typeCode.listID, typeCode.value, creationDateTime)"/>
+            <column name="failure_message" value="Invalid code for VesselPositionEvent/TypeCode."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20302"/>
+            <column name="id" value="20302"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20302</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-20302'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0321" author="tprotopapas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="speedValue" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0321" />
+            <column name="rule_id" value="20321"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="speedValue != null &amp;&amp; !hasValidSpeedValue(speedValue)"/>
+            <column name="failure_message" value="Invalid speed value."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20321"/>
+            <column name="id" value="20321"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20321</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0321'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0331" author="tprotopapas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="courseValue" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0331" />
+            <column name="rule_id" value="20331"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="courseValue != null &amp;&amp; !hasValidCourseValue(courseValue)"/>
+            <column name="failure_message" value="Invalid course value."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20331"/>
+            <column name="id" value="20331"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20331</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0331'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0311" author="tprotopapas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="creationDateTimeString" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0311" />
+            <column name="rule_id" value="20311"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="creationDateTimeString != null &amp;&amp; !hasValidCreationDateTime(creationDateTimeString)"/>
+            <column name="failure_message" value="Occurrence date/time must be a valid UTC date/time in the correct format."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20311"/>
+            <column name="id" value="20311"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20311</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0311'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-template-2004" author="tpotopapas">
+        <insert tableName="template">
+            <column name="template_id" value="2004" />
+            <column name="template_name" value="Movement Vessel Position Event" />
+            <column name="fact_template" value="MOVEMENT_SPECIFIED_VESSEL_POSITION_EVENT" />
+        </insert>
+
+        <rollback>
+            <delete tableName="template">
+                <where>template_id = 2004</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0321" author="tprotopapas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="speedValue" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0321" />
+            <column name="rule_id" value="20321"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="speedValue != null &amp;&amp; !hasValidSpeedValue(speedValue)"/>
+            <column name="failure_message" value="Invalid speed value."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20321"/>
+            <column name="id" value="20321"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20321</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0321'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0331" author="tprotopapas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="courseValue" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0331" />
+            <column name="rule_id" value="20331"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="courseValue != null &amp;&amp; !hasValidCourseValue(courseValue)"/>
+            <column name="failure_message" value="Invalid course value."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20331"/>
+            <column name="id" value="20331"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20331</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0331'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0401" author="tprotopapas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="latitudeMeasure" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0401" />
+            <column name="rule_id" value="20401"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="latitudeMeasure != null &amp;&amp; !hasValidLatitudeMeasure(latitudeMeasure)"/>
+            <column name="failure_message" value="Invalid latitude measure."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20401"/>
+            <column name="id" value="20401"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20401</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0401'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0411" author="tprotopapas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="longitudeMeasure" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0411" />
+            <column name="rule_id" value="20411"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="longitudeMeasure != null &amp;&amp; !hasValidLongitudeMeasure(longitudeMeasure)"/>
+            <column name="failure_message" value="Invalid longitude measure."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20411"/>
+            <column name="id" value="20411"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20411</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0411'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0330" author="tprotopapas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="courseValue" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0330" />
+            <column name="rule_id" value="20330"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="courseValue == null"/>
+            <column name="failure_message" value="Course value missing."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20330"/>
+            <column name="id" value="20330"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20330</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0330'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0320" author="tprotopapas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2004" />
+            <column name="property_names" value="speedValue" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0320" />
+            <column name="rule_id" value="20320"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="speedValue == null"/>
+            <column name="failure_message" value="Speed value missing."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20320"/>
+            <column name="id" value="20320"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20320</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0320'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0101" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3003" />
+            <column name="property_names" value="VesselTransportMeansId" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0101" />
+            <column name="rule_id" value="20101"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="id.getSchemeID() != null &amp;&amp; !mdrService.isPresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, id.getSchemeID(), creationDateTime)"/>
+            <column name="failure_message" value="Vessel ID has an invalid schemeID."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20101"/>
+            <column name="id" value="20101"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20101</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0101'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-template-3004" author="gmanifavas">
+        <insert tableName="template">
+            <column name="template_id" value="3004" />
+            <column name="template_name" value="Movement Vessel Transport Means" />
+            <column name="fact_template" value="MOVEMENT_VESSEL_TRANSPORT_MEANS" />
+        </insert>
+
+        <rollback>
+            <delete tableName="template">
+                <where>template_id = 3004</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L00-00-0100" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="VesselTransportMeans" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L00" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L00-00-0100" />
+            <column name="rule_id" value="30100"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="ids != null &amp;&amp; !hasAtLeastTimesXNonEmptyIds(ids,1)"/>
+            <column name="failure_message" value="No vessel ID provided."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30100"/>
+            <column name="id" value="30100"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30100</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L00-00-0100'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0102" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3003" />
+            <column name="property_names" value="VesselTransportMeansId" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0102" />
+            <column name="rule_id" value="20102"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="id != null &amp;&amp; id.getSchemeID() != null  &amp;&amp; mdrService.isPresentInMDRList(&quot;FLUX_VESSEL_ID_TYPE&quot;, id.getSchemeID(), creationDateTime) &amp;&amp; !mdrService.validateIdFormatForMovementMessage(id, creationDateTime)"/>
+            <column name="failure_message" value="Format of the vessel ID value is not according to schemeID."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20102"/>
+            <column name="id" value="20102"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20102</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0102'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0103" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="VesselTransportMeans" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0103" />
+            <column name="rule_id" value="20103"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="ids != null &amp;&amp; !hasAtLeastOneOfTheSchemeIds(ids, &quot;CFR&quot;, &quot;IRCS&quot;)"/>
+            <column name="failure_message" value="Both CFR and IRCS missing."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20103"/>
+            <column name="id" value="20103"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20103</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0103'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L02-00-0104" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="VesselTransportMeans" />
+            <column name="note" value="A threshold to compensate for incorrect clock synchronization of the exchanging systems must be taken into account." />
+            <column name="level" value="L02" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L02-00-0104" />
+            <column name="rule_id" value="20104"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="ids != null &amp;&amp; !hasBothSchemeIdsOrNone(ids, &quot;EXT_MARK&quot;, &quot;IRCS&quot;)"/>
+            <column name="failure_message" value="IRCS or external marking missing."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20104"/>
+            <column name="id" value="20104"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20104</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L02-00-0104'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L01-00-0105" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3003" />
+            <column name="property_names" value="VesselTransportMeansId" />
+            <column name="note" value="" />
+            <column name="level" value="L01" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L01-00-0105" />
+            <column name="rule_id" value="20105"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="id.getSchemeID().equals(&quot;UVI&quot;) &amp;&amp; id.getValue() != null &amp;&amp; id.getValue().length() == 7 &amp;&amp; !hasValidUvi(id)"/>
+            <column name="failure_message" value="Invalid UVI ID."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20105"/>
+            <column name="id" value="20105"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20105</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L01-00-0105'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L00-00-0130" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="VesselTransportMeans" />
+            <column name="note" value="" />
+            <column name="level" value="L00" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L00-00-0130" />
+            <column name="rule_id" value="30130"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="registrationVesselCountry == null"/>
+            <column name="failure_message" value="Flag state information missing."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30130"/>
+            <column name="id" value="30130"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30130</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L00-00-0130'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L00-00-0131" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="VesselTransportMeans" />
+            <column name="note" value="" />
+            <column name="level" value="L00" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L00-00-0131" />
+            <column name="rule_id" value="30131"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="registrationVesselCountry != null &amp;&amp; !hasAtLeastTimesXSpecifiedVesselPositionEvents(specifiedVesselPositionEvents, 1)"/>
+            <column name="failure_message" value="Message does not contain any vessel position events."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30131"/>
+            <column name="id" value="30131"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30131</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L00-00-0131'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0110" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="RegistrationVesselCountryId" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0110" />
+            <column name="rule_id" value="30110"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;CFR&quot;) &amp;&amp; hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp;
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <column name="failure_message" value="CFR provided but the vessel is not found in the vessel register or the information is inconsistent."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30110"/>
+            <column name="id" value="30110"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30110</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0110'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0111" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="RegistrationVesselCountryId" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0111" />
+            <column name="rule_id" value="30111"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="(hasSchemeId(ids, &quot;IRCS&quot;) || hasSchemeId(ids, &quot;EXT_MARK&quot;)) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp;
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <column name="failure_message" value="IRCS or External Marking provided but the vessel is not found in the vessel register or the information is inconsistent."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30111"/>
+            <column name="id" value="30111"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30111</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0111'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0112" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="RegistrationVesselCountryId" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0112" />
+            <column name="rule_id" value="30112"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;UVI&quot;) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp;
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <column name="failure_message" value="UVI is provided but the vessel is not found in the vessel register or the information is inconsistent."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30112"/>
+            <column name="id" value="30112"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30112</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0112'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0113" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="RegistrationVesselCountryId" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0113" />
+            <column name="rule_id" value="30113"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;ICCAT&quot;) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp;
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <column name="failure_message" value="ICCAT vessel ID is provided but the vessel is not found in the vessel register or the information is inconsistent."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30113"/>
+            <column name="id" value="30113"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30113</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0113'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0114" author="gmanifavas">
+
+        <insert  tableName="rule">
+            <column name="template_id" value="3004" />
+            <column name="property_names" value="RegistrationVesselCountryId" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="WARNING" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0114" />
+            <column name="rule_id" value="30114"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;GFCM&quot;) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp;
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <column name="failure_message" value="GFCM vessel ID is provided but the vessel is not found in the vessel register or the information is inconsistent."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="30114"/>
+            <column name="id" value="30114"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 30114</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0114'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="UNIONVMS-4660-update-VP-L03-00-0004" author="gmanifavas">
+        <insert  tableName="rule">
+            <column name="template_id" value="2000" />
+            <column name="property_names" value="id" />
+            <column name="note" value="" />
+            <column name="level" value="L03" />
+            <column name="error_type" value="ERROR" />
+            <column name="disabled" value="false" />
+            <column name="br_id" value="VP-L03-00-0004" />
+            <column name="rule_id" value="20004"/>
+        </insert >
+        <insert  tableName="context_expression">
+            <column name="expression" value="!isEmpty(existingIds) &amp;&amp; hasDuplicateId(ids, existingIds)"/>
+            <column name="failure_message" value="Message ID already exists."/>
+            <column name="context" value="EU"/>
+            <column name="rule_id" value="20004"/>
+            <column name="id" value="20004"/>
+        </insert >
+
+        <rollback>
+            <delete tableName="context_expression">
+                <where>rule_id = 20004</where>
+            </delete>
+            <delete tableName="rule">
+                <where>br_id = 'VP-L03-00-0004'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>

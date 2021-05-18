@@ -77,9 +77,6 @@ public class RuleApplicabilityChecker {
      * @return
      */
     public boolean isApplicable(String thisRulesBrId, String ruleContext, String messageDataFlow, DateTime messageCreationDate, MDRCacheRuleService mdrService) {
-        if (thisRulesBrId != null && thisRulesBrId.startsWith("MO-")) {
-            return true;
-        }
         String msgContext = mdrService.findContextForDf(messageDataFlow);
         if (StringUtils.isEmpty(msgContext)) {
             return false;

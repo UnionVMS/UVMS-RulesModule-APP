@@ -10,39 +10,6 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
-import javax.xml.XMLConstants;
-import javax.xml.bind.UnmarshalException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import java.net.URL;
-import java.util.*;
-import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
-import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
-import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
-import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
-import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
-import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
-import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
-import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
-import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.xml.sax.SAXException;
-import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
-import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
-import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.*;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_QUERY;
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_REPORT;
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_RESPONSE;
@@ -52,6 +19,55 @@ import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.RE
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 import static eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.SchemaInitializer.SCHEMA_MAP;
 import static java.util.Collections.singletonList;
+
+import javax.xml.bind.UnmarshalException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesModuleMethod;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
+import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
+import eu.europa.ec.fisheries.uvms.rules.entity.FAUUIDType;
+import eu.europa.ec.fisheries.uvms.rules.entity.MovementDocumentId;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
+import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
+import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
+import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.FLUXReportDocumentType;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAQuery;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FAReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXParty;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXReportDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXResponseDocument;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingActivity;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FishingTrip;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationQualityAnalysis;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.ValidationResultDocument;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.CodeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.TextType;
 
 @Slf4j
 public class RulesFLUXMessageHelper {
@@ -128,6 +144,17 @@ public class RulesFLUXMessageHelper {
         return ids;
     }
 
+    public Set<MovementDocumentId> mapToMovementDocumentID(FLUXVesselPositionMessage fluxVesselPositionMessage) {
+        Set<MovementDocumentId> ids = new HashSet<>();
+        if (fluxVesselPositionMessage != null){
+            FLUXReportDocumentType fluxReportDocument = fluxVesselPositionMessage.getFLUXReportDocument();
+            if (fluxReportDocument != null){
+                mapFluxReportDocumentIDS(ids, fluxReportDocument);
+            }
+        }
+        return ids;
+    }
+
     private void mapFaReportDocuments(Set<FADocumentID> ids, List<FAReportDocument> faReportDocuments) {
         if (CollectionUtils.isNotEmpty(faReportDocuments)){
             for (FAReportDocument faReportDocument : faReportDocuments) {
@@ -152,6 +179,19 @@ public class RulesFLUXMessageHelper {
                     faDocumentID.setType(FA_REPORT_REF_ID);
                     ids.add(faDocumentID);
                 }
+            }
+        }
+    }
+    
+    private void mapFluxReportDocumentIDS(Set<MovementDocumentId> ids, FLUXReportDocumentType fluxReportDocument) {
+        if (fluxReportDocument != null){
+            List<un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType> fluxReportDocumentIDS = fluxReportDocument.getIDS();
+            if (CollectionUtils.isNotEmpty(fluxReportDocumentIDS)){
+                un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType idType = fluxReportDocumentIDS.get(0);
+                if (idType != null){
+                    ids.add(new MovementDocumentId(idType.getValue()));
+                }
+               
             }
         }
     }
