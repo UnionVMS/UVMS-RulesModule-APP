@@ -180,6 +180,21 @@ public class RulesEngineBean {
                 globals.put("appliChecker", appliChecker);
 
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.SALES), globals, extraValues);
+            } else if (businessObjectType == BusinessObjectType.RECEIVING_MOVEMENT_MSG){
+                StopWatch stopWatch = StopWatch.createStarted();
+                AbstractGenerator generator = new MovementFactGenerator(PUSH);
+                generator.setBusinessObjectMessage(businessObject);
+                generator.setExtraValueMap(extraValues);
+
+                List<AbstractFact> facts = generator.generateAllFacts();
+                log.info("Flow Report, Generating the facts took: {} ms", stopWatch.getTime());
+                stopWatch.reset();
+                stopWatch.start();
+
+                Map<String, Object> globals = new HashMap<>();
+                globals.put("mdrService", mdrCacheRuleService);
+                globals.put("appliChecker", appliChecker);
+                return validateFacts(facts, initializer.getContainerByType(ContainerType.MOVEMENTS), globals, extraValues);
             }
 
             log.info(String.format("It took %s to evaluate the message.", stopwatch));
