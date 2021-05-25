@@ -249,7 +249,7 @@ public class RulesFaReportServiceBean {
             if (faReportValidationResult != null && !faReportValidationResult.isError()) {
                 log.info(" The Validation of FLUXFAReportMessage is successful, forwarding message to Exchange");
                 sendToExchange(ExchangeModuleRequestMapper.createSendFaReportMessageRequest(request.getRequest(), "movement", logGuid, request.getFluxDataFlow(),
-                        request.getSenderOrReceiver(), request.getOnValue(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", request.getAd() == null ? "IMPLEMENTTO_FROM_REQUEST" : request.getAd()));
+                        request.getSenderOrReceiver(), request.getOnValue(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", request.getAd() == null ? "IMPLEMENTTO_FROM_REQUEST" : request.getAd(),fluxMessageHelper.calculateMessageValidationStatus(faReportValidationResult)));
             } else {
                 log.info(" Validation resulted in errors. Not going to send msg to Exchange module..");
             }
