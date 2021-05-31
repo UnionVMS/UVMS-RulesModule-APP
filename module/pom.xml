@@ -22,15 +22,15 @@
                 <configuration>
                     <modules>
                         <ejbModule>
-                            <groupId>${project.groupId}</groupId>
+                            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
                             <artifactId>rules-dbaccess-domain</artifactId>
                         </ejbModule>
                         <ejbModule>
-                            <groupId>${project.groupId}</groupId>
+                            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
                             <artifactId>rules-message</artifactId>
                         </ejbModule>
                         <ejbModule>
-                            <groupId>${project.groupId}</groupId>
+                            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
                             <artifactId>rules-service</artifactId>
                         </ejbModule>
                         <jarModule>
@@ -38,13 +38,32 @@
                             <artifactId>rules-model</artifactId>
                         </jarModule>
                         <webModule>
-                            <groupId>${project.groupId}</groupId>
-                            <context-root>${context.root}${project.parent.artifactId}</context-root>
+                            <groupId>eu.europa.ec.fisheries.uvms.rules</groupId>
                             <artifactId>rules-rest</artifactId>
+                            <context-root>${context.root}${project.parent.artifactId}</context-root>
                         </webModule>
+                        <jarModule>
+                            <groupId>eu.europa.ec.mare.usm</groupId>
+                            <artifactId>jwt-handler-impl</artifactId>
+                            <bundleFileName>jw-handler-impl.jar</bundleFileName>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                            <bundleDir>/</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>eu.europa.ec.fisheries.uvms</groupId>
+                            <artifactId>usm4uvms</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                            <bundleDir>/</bundleDir>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>eu.europa.ec.fisheries.uvms</groupId>
+                            <artifactId>config-library</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                            <bundleDir>/</bundleDir>
+                        </jarModule>
                     </modules>
                     <skinnyWars>true</skinnyWars>
-                    <defaultLibBundleDir>APP-INF/lib</defaultLibBundleDir>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
                 </configuration>
             </plugin>
         </plugins>
@@ -92,7 +111,6 @@
             	</exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-message</artifactId>
@@ -120,7 +138,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms</groupId>
             <artifactId>usm4uvms</artifactId>
@@ -135,6 +152,16 @@
                     <artifactId>ehcache</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.mare.usm</groupId>
+            <artifactId>jwt-handler-impl</artifactId>
+            <version>${usm.jwt-handler.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.fisheries.uvms</groupId>
+            <artifactId>config-library</artifactId>
+            <version>${uvms.config.library.version}</version>
         </dependency>
 
         <!-- TEST DEPENDENCIES -->
