@@ -208,12 +208,13 @@ public class RulesFaQueryServiceBean {
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
             extraValues.put(XML, requestStr);
+            extraValues.put(DATA_FLOW, request.getFluxDataFlow());
             Collection<AbstractFact> faQueryFacts = rulesEngine.evaluate(RECEIVING_FA_QUERY_MSG, faQueryMessage, extraValues);
             ValidationResult faQueryValidationReport = rulePostProcessBean.checkAndUpdateValidationResult(faQueryFacts, requestStr, logGuid, RawMsgType.FA_QUERY);
             if (faQueryValidationReport != null && !faQueryValidationReport.isError()) {
                 log.debug("The Validation of FaQueryMessage is successful, forwarding message to Exchange");
                 String exchangeReq = ExchangeModuleRequestMapper.createSendFaQueryMessageRequest(request.getRequest(),
-                        "movement", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", request.getAd() == null ? "IMPLEMENTTO_FROM_REQUEST" : request.getAd());
+                        "movement", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", request.getAd() == null ? "IMPLEMENTTO_FROM_REQUEST" : request.getAd(),fluxMessageHelper.calculateMessageValidationStatus(faQueryValidationReport));
                 sendToExchange(exchangeReq);
             } else {
                 log.debug("Validation resulted in errors. Not going to send msg to Exchange module..");
