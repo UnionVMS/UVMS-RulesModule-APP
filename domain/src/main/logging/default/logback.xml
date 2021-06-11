@@ -1,13 +1,7 @@
 <configuration debug="false" scan="false" scanPeriod="60 seconds">
-    
-    <property resource="logging.properties" />
-    
+    <property resource="logging.properties"/>
     <contextName>${application.name}</contextName>
-    
-    <jmxConfigurator />
-
-    <variable name="LOG_FILE_BASE_PATH" value="${application.logfile.base.path:-/app/logs}" />
-
+    <variable name="LOG_FILE_BASE_PATH" value="${application.logfile.base.path:-/app/logs}"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <append>true</append>
         <file>${LOG_FILE_BASE_PATH}/${application.logfile}</file>
@@ -21,13 +15,11 @@
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %X{mdcvars:--} %-5level %logger{35} - %msg ${application.logfile.message.pattern}</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %X{mdcvars:--} %-5level %logger{35} - %msg%n</pattern>
         </encoder>
     </appender>
-    <logger name="eu.europa.ec.fisheries.uvms" level="INFO" additivity="false">
-        <appender-ref ref="FILE" />
-    </logger>
+    <logger name="eu.europa.ec.fisheries.uvms" level="INFO"/>
     <root level="ERROR">
-        <appender-ref ref="FILE" />
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>

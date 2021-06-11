@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rules-service</artifactId>
@@ -22,6 +23,49 @@
         </application.error.logfile>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>logging-default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <filtering>true</filtering>
+                        <directory>src/main/logging/default</directory>
+                        <targetPath>${project.build.outputDirectory}</targetPath>
+                        <includes>
+                            <include>logback.xml</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>logging-cloud</id>
+            <build>
+                <resources>
+                    <resource>
+                        <filtering>true</filtering>
+                        <directory>src/main/logging/cloud</directory>
+                        <targetPath>${project.build.outputDirectory}</targetPath>
+                        <includes>
+                            <include>logback.xml</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.j256.cloudwatchlogbackappender</groupId>
+                    <artifactId>cloudwatchlogbackappender</artifactId>
+                    <version>2.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -31,11 +75,11 @@
                 <version>${drools.version}</version>
                 <scope>import</scope>
             </dependency>
- 			<dependency>
-			    <groupId>com.thoughtworks.xstream</groupId>
-			    <artifactId>xstream</artifactId>
+            <dependency>
+                <groupId>com.thoughtworks.xstream</groupId>
+                <artifactId>xstream</artifactId>
                 <version>1.4.10</version>
-			</dependency>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -94,27 +138,22 @@
             <artifactId>audit-model</artifactId>
             <version>${audit.model.version}</version>
         </dependency>
-
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>${joda-time.version}</version>
         </dependency>
-
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.mdr</groupId>
             <artifactId>mdr-model</artifactId>
             <version>${mdr.model.version}</version>
         </dependency>
-
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.config</groupId>
             <artifactId>config-model</artifactId>
             <version>${uvms.config.model.version}</version>
         </dependency>
-
         <!-- START Drools dependencies -->
-
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-core</artifactId>
@@ -132,10 +171,9 @@
             <version>${drools.version}</version>
         </dependency>
         <dependency>
-			<groupId>com.thoughtworks.xstream</groupId>
-			<artifactId>xstream</artifactId>
-		</dependency>
-
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-compiler</artifactId>
@@ -151,9 +189,7 @@
             <artifactId>drools-templates</artifactId>
             <version>${drools.version}</version>
         </dependency>
-
         <!-- END DROOLS Dependencies -->
-
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-message</artifactId>
@@ -163,7 +199,7 @@
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-date</artifactId>
             <version>${uvms.commons.version}</version>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
             <artifactId>uvms-commons-notification</artifactId>
@@ -174,10 +210,10 @@
             <artifactId>activity-model</artifactId>
             <version>${activity.model.version}</version>
             <exclusions>
-            	<exclusion>
-            		<groupId>org.mockito</groupId>
-  					<artifactId>mockito-all</artifactId>            		
-            	</exclusion>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-all</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -188,14 +224,14 @@
         </dependency>
         <dependency>
             <groupId>org.mvel</groupId>
-    		<artifactId>mvel2</artifactId>
-    		<version>2.2.8.Final</version>
+            <artifactId>mvel2</artifactId>
+            <version>2.2.8.Final</version>
         </dependency>
         <dependency>
-		    <groupId>commons-io</groupId>
-		    <artifactId>commons-io</artifactId>
-		    <version>2.6</version>
-		</dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
         <dependency>
             <groupId>eu.europa.ec.fisheries.uvms.subscription</groupId>
             <artifactId>subscription-model</artifactId>
@@ -226,6 +262,12 @@
 
     <build>
         <finalName>${project.name}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <!-- Unpack the jar into target directory -->
@@ -276,12 +318,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <filtering>true</filtering>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
     </build>
 
 </project>
