@@ -1,0 +1,28 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+	<changeSet id="UNIONVMS-4945-movement-id-tables" author="gmanifavas">
+		<createTable tableName="movement_doc_id_lock">
+			<column name="uuid" type="varchar(50)">
+				<constraints primaryKey="true" primaryKeyName="movement_doc_id_lock_pk"/>
+			</column>
+		</createTable>
+
+		<createTable tableName="movement_doc_id">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="movement_doc_id_pk"/>
+			</column>
+			<column name="uuid" type="TEXT">
+				<constraints nullable="false"/>
+			</column>
+			<column name="created_on" type="TIMESTAMP">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createIndex tableName="movement_doc_id" indexName="movement_doc_id_guid_inx">
+			<column name="uuid"/>
+		</createIndex>
+	</changeSet>
+</databaseChangeLog>

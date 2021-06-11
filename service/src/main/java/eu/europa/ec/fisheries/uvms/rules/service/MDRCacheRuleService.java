@@ -91,4 +91,6 @@ public interface MDRCacheRuleService {
     boolean doesRuleExistInRulesTable(String brId, String context);
 
     String findContextForDf(String dataFlow);
+    
+    boolean validateIdFormatForMovementMessage(un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType id, DateTime dateTime);
 }
