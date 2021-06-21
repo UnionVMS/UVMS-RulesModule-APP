@@ -1704,8 +1704,8 @@ public class RulesMovementProcessorBean {
         }
         if (assetData == null || assetData.getEventHistory() == null || Strings.isEmpty(assetData.getEventHistory().getEventId()) || assetData.getAssetId() == null || Strings.isEmpty(assetData.getAssetId().getValue())) {
             sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
-            updateValidationResultOnUnknownAsset("", request);
-            updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
+//            updateValidationResultOnUnknownAsset("", request);
+//            updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
             return false;
         }
         return true;
