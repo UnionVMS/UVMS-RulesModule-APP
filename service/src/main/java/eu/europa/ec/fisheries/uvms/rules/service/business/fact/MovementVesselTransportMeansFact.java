@@ -2,6 +2,7 @@ package eu.europa.ec.fisheries.uvms.rules.service.business.fact;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
@@ -45,6 +46,21 @@ public class MovementVesselTransportMeansFact extends AbstractFact {
     
     public boolean hasExistingAsset(Asset asset) {
         return asset != null && asset.getAssetId() != null && AssetIdType.GUID.equals(asset.getAssetId().getType());
+    }
+
+    public boolean schemeIdMatchesAsset(Asset asset,List<IDType> ids){
+
+        List<IDType> collectedExtMarking = ids.stream().filter(id -> "EXT_MARK".equals(id.getSchemeID())).filter(t -> t.getValue().equals(asset.getExternalMarking())).collect(Collectors.toList());
+        List<IDType> collectedIrcs = ids.stream().filter(id -> "IRCS".equals(id.getSchemeID())).filter(t -> t.getValue().equals(asset.getIrcs())).collect(Collectors.toList());
+        return !collectedExtMarking.isEmpty() && !collectedIrcs.isEmpty();
+    }
+
+    public boolean hasCorrectCountry(Asset asset, String countryCode){
+        if(asset == null || asset.getCountryCode() == null ){
+            return false;
+        }
+
+        return countryCode.equals(asset.getCountryCode());
     }
     @Override
     public void setFactType() {

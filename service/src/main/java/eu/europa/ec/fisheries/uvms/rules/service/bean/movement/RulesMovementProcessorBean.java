@@ -338,7 +338,7 @@ public class RulesMovementProcessorBean {
      */
     private void enrichAndSendMovementsAsBatch(EnrichedMovementWrapper enrichedWrapper,ValidationResult validationResult, List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request, String reportId, Set<MovementDocumentId> idsFromIncomingMessage) throws RulesServiceException {
         try {
-            Boolean isValidRequest = validateAsset(rawMovements, username, exchangeLogGuid, request, enrichedWrapper);
+            Boolean isValidRequest = validateAsset(rawMovements, username, exchangeLogGuid, request, enrichedWrapper,validationResult);
             if (isValidRequest.equals(Boolean.TRUE)) {
                 CreateMovementBatchResponse movementBatchResponse = sendBatchToMovement(enrichedWrapper.getAssetList(), rawMovements, username);
                 ExchangeLogStatusTypeType status;
@@ -1697,15 +1697,21 @@ public class RulesMovementProcessorBean {
         validationResultDto.setOk(false);
     }
 
-    private boolean validateAsset(List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request, EnrichedMovementWrapper enrichedWrapper) throws MessageException {
+    private boolean validateAsset(List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request, EnrichedMovementWrapper enrichedWrapper, ValidationResult validationResult) throws MessageException {
         Asset assetData = null;
         if (enrichedWrapper.getAssetList() != null && !enrichedWrapper.getAssetList().isEmpty() && enrichedWrapper.getAssetList().get(0) != null) {
             assetData = enrichedWrapper.getAssetList().get(0);
         }
         if (assetData == null || assetData.getEventHistory() == null || Strings.isEmpty(assetData.getEventHistory().getEventId()) || assetData.getAssetId() == null || Strings.isEmpty(assetData.getAssetId().getValue())) {
             sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
-//            updateValidationResultOnUnknownAsset("", request);
-//            updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
+            if(validationResult.isError() || validationResult.isWarning()){
+                ExchangeLogStatusTypeType status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
+                updateRequestMessageStatusInExchange(exchangeLogGuid, status);
+
+            } else {
+                updateValidationResultOnUnknownAsset("", request);
+                updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
+            }
             return false;
         }
         return true;

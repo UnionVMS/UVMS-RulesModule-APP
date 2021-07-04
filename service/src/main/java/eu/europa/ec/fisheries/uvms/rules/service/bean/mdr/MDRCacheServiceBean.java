@@ -856,6 +856,10 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Override
     public boolean validateIdFormatForMovementMessage(un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType id, DateTime dateTime) {
+        if(id == null ){
+            return true;
+        }
+
         FormatExpression formatExpression = cache.getFormatsByIdentifier().get(id.getSchemeID());
         return formatExpression != null &&
                 !StringUtils.isEmpty(formatExpression.getExpression()) &&
