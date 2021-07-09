@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="movement rules patches v1.0" author="nomikosi">
+
+
+        <update tableName="context_expression">
+            <column name="expression" value="!isEmpty(ids) &amp;&amp; hasSchemeId(ids, &quot;CFR&quot;)  &amp;&amp; (!hasExistingAsset(asset) ||  !(registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() != null &amp;&amp;  mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime) &amp;&amp; hasCorrectCountry(asset,registrationVesselCountry.getID().getValue())))"/>
+            <where>id = '30110'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="((hasSchemeId(ids, &quot;IRCS&quot;) &amp;&amp; hasSchemeId(ids, &quot;EXT_MARK&quot;)) &amp;&amp; (!hasExistingAsset(asset) || !schemeIdMatchesAsset(asset,ids))) || (registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; (!hasCorrectCountry(asset,registrationVesselCountry.getID().getValue()) ||  !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)))"/>
+            <where>id = '30111'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="registrationVesselCountry != null &amp;&amp; (registrationVesselCountry.getID() == null || registrationVesselCountry.getID().getValue() == null || registrationVesselCountry.getID().getValue().isEmpty())"/>
+            <where>id = '30200'</where>
+        </update>
+
+
+        <rollback>
+
+            <update tableName="context_expression">
+                <column name="expression" value="hasSchemeId(ids, &quot;CFR&quot;) &amp;&amp; hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp;
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+                <where>id = '30110'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="(hasSchemeId(ids, &quot;IRCS&quot;) || hasSchemeId(ids, &quot;EXT_MARK&quot;)) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp;
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+                <where>id = '30111'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="registrationVesselCountry == null || registrationVesselCountry.getID() == null || registrationVesselCountry.getID().getValue() == null || registrationVesselCountry.getID().getValue().isEmpty()"/>
+                <where>id = '30200'</where>
+            </update>
+
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
