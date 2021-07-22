@@ -861,8 +861,10 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         }
 
         FormatExpression formatExpression = cache.getFormatsByIdentifier().get(id.getSchemeID());
+        if(StringUtils.isEmpty(formatExpression.getExpression()) ){
+            return true;
+        }
         return formatExpression != null &&
-                !StringUtils.isEmpty(formatExpression.getExpression()) &&
                 id.getValue().matches(formatExpression.getExpression()) &&
                 isValidDate(dateTime, formatExpression.getStartDate(), formatExpression.getEndDate());
     }
