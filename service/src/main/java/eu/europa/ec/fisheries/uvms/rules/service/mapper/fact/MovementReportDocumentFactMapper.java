@@ -214,11 +214,12 @@ public class MovementReportDocumentFactMapper {
 
         List<VesselPositionEventType> specifiedVesselPositionEvents = vesselPositionMessage.getVesselTransportMeans().getSpecifiedVesselPositionEvents();
         Date creationDate = getDate(vesselPositionMessage.getFLUXReportDocument().getCreationDateTime());
+
         int index = 1;
         for (VesselPositionEventType vesselPositionEventType : specifiedVesselPositionEvents) {
             MovementSpecifiedVesselPositionEventFact fact = new MovementSpecifiedVesselPositionEventFact();
             fact.setCreationDateTime(new DateTime(creationDate));
-
+            fact.setRegistrationVesselCountry(vesselPositionMessage.getVesselTransportMeans().getRegistrationVesselCountry());
             fact.setTypeCode(vesselPositionEventType.getTypeCode());
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).append(TYPE_CODE).storeInRepo(fact, "typeCode");
 

@@ -294,7 +294,10 @@ public class RulesMovementProcessorBean {
             Set<MovementDocumentId> idsFromIncomingMessage = fluxMessageHelper.mapToMovementDocumentID(fluxVesselPositionMessage);
             rulesDaoBean.takeNoteOfMovementDocumentIds(idsFromIncomingMessage);
             rulesDaoBean.lockMovementDocumentIds(idsFromIncomingMessage);
-            List<MovementDocumentId> storedIds = rulesDaoBean.loadMovementDocumentIDByIds(idsFromIncomingMessage);
+            List<MovementDocumentId> storedIds = new ArrayList<>();
+            if(!(idsFromIncomingMessage.isEmpty() || idsFromIncomingMessage == null || ommitNullIds(idsFromIncomingMessage).isEmpty())) {
+                storedIds = rulesDaoBean.loadMovementDocumentIDByIds(idsFromIncomingMessage);
+            }
 
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
@@ -308,11 +311,13 @@ public class RulesMovementProcessorBean {
             ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), request.getLogGuid(), RawMsgType.MOVEMENT);
 
             if(validationResult.isError()){
+                sendBatchBackToExchange(request.getLogGuid(), movementReportsList, MovementRefTypeType.MOVEMENT, userName);
                 exchangeServiceBean.updateExchangeMessage(request.getLogGuid(), fluxMessageHelper.calculateMessageValidationStatus(validationResult));
+            } else {
+                // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
+                // processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
+                enrichAndSendMovementsAsBatch(enrichedWrapper, validationResult, movementReportsList, userName, request.getLogGuid(), request, request.getLogGuid(), idsFromIncomingMessage);
             }
-            // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
-            // processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
-            enrichAndSendMovementsAsBatch(enrichedWrapper, validationResult, movementReportsList, userName, request.getLogGuid(), request, request.getLogGuid(), idsFromIncomingMessage);
 
             // Send some response to Movement, if it originated from there (manual movement)
             if (MovementSourceType.MANUAL.equals(movementReportsList.get(0).getSource())) {// A person has created a position
@@ -326,6 +331,19 @@ public class RulesMovementProcessorBean {
             log.error("Error while processing received movement", e);
         }
     }
+
+    private Set<MovementDocumentId> ommitNullIds(Set<MovementDocumentId> idsFromIncomingMessage){
+
+        Set<MovementDocumentId> slimSet = new HashSet<>();
+        for(MovementDocumentId movementDocumentId : idsFromIncomingMessage){
+            if(!(movementDocumentId.getUuid() == null || movementDocumentId.getUuid().isEmpty())){
+                slimSet.add(movementDocumentId);
+            }
+        }
+
+        return slimSet;
+    }
+
 
     /**
      * This method is just up until the new movement flow is ready from Swe team!

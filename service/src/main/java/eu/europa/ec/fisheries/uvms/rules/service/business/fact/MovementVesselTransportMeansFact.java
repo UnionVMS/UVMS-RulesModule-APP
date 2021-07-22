@@ -48,6 +48,42 @@ public class MovementVesselTransportMeansFact extends AbstractFact {
         return asset != null && asset.getAssetId() != null && AssetIdType.GUID.equals(asset.getAssetId().getType());
     }
 
+    public boolean hasValidGFCM(Asset asset,List<IDType> ids){
+         if(ids.stream().noneMatch(id -> "GFCM".equals(id.getSchemeID()))){
+             return true;
+        }
+        List<IDType> collectedIds = ids.stream().filter(id -> "GFCM".equals(id.getSchemeID())).collect(Collectors.toList());
+
+        if(collectedIds.get(0) == null || asset.getGfcm() == null){
+            return  true;
+        }
+        return  asset.getGfcm().equals(collectedIds.get(0).getValue());
+    }
+
+    public boolean hasValidUVI(Asset asset,List<IDType> ids){
+        if(ids.stream().noneMatch(id -> "UVI".equals(id.getSchemeID()))){
+            return true;
+        }
+        List<IDType> collectedIds = ids.stream().filter(id -> "UVI".equals(id.getSchemeID())).collect(Collectors.toList());
+
+        if(collectedIds.get(0) == null || asset.getUvi() == null){
+            return  true;
+        }
+        return  asset.getUvi().equals(collectedIds.get(0).getValue());
+    }
+
+    public boolean hasValidICCAT(Asset asset,List<IDType> ids){
+        if(ids.stream().noneMatch(id -> "ICCAT".equals(id.getSchemeID()))){
+            return true;
+        }
+        List<IDType> collectedIds = ids.stream().filter(id -> "ICCAT".equals(id.getSchemeID())).collect(Collectors.toList());
+
+        if(collectedIds.get(0) == null || asset.getIccat() == null){
+            return  true;
+        }
+        return  asset.getIccat().equals(collectedIds.get(0).getValue());
+    }
+
     public boolean schemeIdMatchesAsset(Asset asset,List<IDType> ids){
 
         List<IDType> collectedExtMarking = ids.stream().filter(id -> "EXT_MARK".equals(id.getSchemeID())).filter(t -> t.getValue().equals(asset.getExternalMarking())).collect(Collectors.toList());

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="movement rules patches v1.1" author="nomikosi">
+
+
+        <update tableName="context_expression">
+            <column name="expression" value="courseValue == null &amp;&amp; registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <where>id = '20330'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="failure_message" value="Message creation date/time not in tha past."/>
+            <where>id = '20007'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="speedValue == null &amp;&amp; registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <where>id = '20320'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;GFCM&quot;) &amp;&amp; !hasValidGFCM(asset,ids) &amp;&amp; hasExistingAsset(asset) &amp;&amp; registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <where>id = '30114'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;UVI&quot;) &amp;&amp;  !hasValidUVI(asset,ids) &amp;&amp;  hasExistingAsset(asset) &amp;&amp; registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <where>id = '30112'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;ICCAT&quot;) &amp;&amp; !hasValidICCAT(asset,ids) &amp;&amp; hasExistingAsset(asset) &amp;&amp; registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+            <where>id = '30113'</where>
+        </update>
+
+
+        <rollback>
+
+            <update tableName="context_expression">
+                <column name="expression" value="courseValue == null"/>
+                <where>id = '20330'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="speedValue == null"/>
+                <where>id = '20320'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="hasSchemeId(ids, &quot;GFCM&quot;) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp;
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+                <where>id = '30114'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="hasSchemeId(ids, &quot;UVI&quot;) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp;
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime)"/>
+                <where>id = '30112'</where>
+            </update>
+
+            <update tableName="context_expression">
+                <column name="expression" value="hasSchemeId(ids, &quot;ICCAT&quot;) &amp;&amp;
+                                             hasExistingAsset(asset) &amp;&amp;
+                                             registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp;
+                                             !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime"/>
+                <where>id = '30113'</where>
+            </update>
+
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
