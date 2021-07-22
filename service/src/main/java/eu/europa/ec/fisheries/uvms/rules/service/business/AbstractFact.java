@@ -1378,7 +1378,7 @@ public abstract class AbstractFact {
         EXT_MARK(".{1,14}"),
         IRCS("[a-zA-Z0-9]{1,7}"),
         CFR("[a-zA-Z]{3}[a-zA-Z0-9]{9}"),
-        UVI("[a-zA-Z0-9]{7}"),
+        UVI("^[1-9]{1}[0-9]{6}$"),
         ICCAT("AT[a-zA-Z0-9]{3}[a-zA-Z0-9]{3}[a-zA-Z0-9]{5}"),
         GFCM("[a-zA-Z0-9]{1,13}"),
         JFO("^(19|20)\\d{2}-[0-9]{3}$"),

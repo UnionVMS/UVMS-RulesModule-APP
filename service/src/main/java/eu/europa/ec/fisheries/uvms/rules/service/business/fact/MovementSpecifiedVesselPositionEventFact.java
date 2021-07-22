@@ -4,6 +4,7 @@ import eu.europa.ec.fisheries.schema.rules.template.v1.FactType;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import org.joda.time.DateTime;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselCountryType;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselGeographicalCoordinateType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.DateTimeType;
@@ -23,6 +24,7 @@ public class MovementSpecifiedVesselPositionEventFact extends AbstractFact {
     private String creationDateTimeString;
     private BigDecimal latitudeMeasure;
     private BigDecimal longitudeMeasure;
+    private VesselCountryType registrationVesselCountry;
 
     public boolean hasValidSpeedValue(BigDecimal speedValue) {
         return speedValue.signum() > 0 && speedValue.scale() < 3;
