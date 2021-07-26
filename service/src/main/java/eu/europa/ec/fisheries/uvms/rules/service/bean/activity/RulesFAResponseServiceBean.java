@@ -50,6 +50,7 @@ import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_QUERY;
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_RESPONSE;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_FA_RESPONSE_MSG;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.SENDER_RECEIVER;
 
 @Stateless
 @LocalBean
@@ -97,6 +98,7 @@ public class RulesFAResponseServiceBean {
             fluxResponseMessage = fluxMessageHelper.unMarshallFluxResponseMessage(requestStr);
             Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
             extraValues.put(DATA_FLOW, dataFlow);
+            extraValues.put(SENDER_RECEIVER,request.getSenderOrReceiver());
 
             Collection<AbstractFact> fluxFaResponseFacts = rulesEngine.evaluate(RECEIVING_FA_RESPONSE_MSG, fluxResponseMessage, extraValues, String.valueOf(fluxResponseMessage.getFLUXResponseDocument().getIDS()));
             ValidationResult fluxResponseValidResults = ruleService.checkAndUpdateValidationResult(fluxFaResponseFacts, requestStr, logGuid, FA_RESPONSE);
