@@ -14,6 +14,7 @@ import java.util.List;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.module.GetAssetModuleRequest;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteria;
 import eu.europa.ec.fisheries.wsdl.asset.types.AssetListQuery;
 import eu.europa.ec.fisheries.wsdl.asset.types.BatchAssetListResponseElement;
 
@@ -27,4 +28,6 @@ public interface AssetGateway {
     Asset getAsset(GetAssetModuleRequest getAssetModuleRequest);
 
     List<AssetGroup> getAssetGroupListByAssetGuid(String assetGuid);
+
+    Asset getAssetByIdentifierPrecedence(AssetListCriteria criteria);
 }

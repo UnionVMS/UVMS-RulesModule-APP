@@ -17,6 +17,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.VesselTransportMeansDt
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.module.GetAssetModuleRequest;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteria;
 import eu.europa.ec.fisheries.wsdl.asset.types.AssetListQuery;
 import eu.europa.ec.fisheries.wsdl.asset.types.BatchAssetListResponseElement;
 import lombok.extern.slf4j.Slf4j;
@@ -194,5 +195,9 @@ public class AssetClientBean {
 
     public List<AssetGroup> getAssetGroupListByAssetGuid(String assetGuid) {
         return assetGateway.getAssetGroupListByAssetGuid(assetGuid);
+    }
+
+    public Asset getAssetByIdentifierPrecedence(AssetListCriteria criteria) {
+        return assetGateway.getAssetByIdentifierPrecedence(criteria);
     }
 }

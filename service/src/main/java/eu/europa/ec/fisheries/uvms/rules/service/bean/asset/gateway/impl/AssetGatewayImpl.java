@@ -19,6 +19,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.gateway.AssetGateway
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.module.GetAssetModuleRequest;
 import eu.europa.ec.fisheries.wsdl.asset.types.Asset;
+import eu.europa.ec.fisheries.wsdl.asset.types.AssetListCriteria;
 import eu.europa.ec.fisheries.wsdl.asset.types.AssetListQuery;
 import eu.europa.ec.fisheries.wsdl.asset.types.BatchAssetListResponseElement;
 import lombok.extern.slf4j.Slf4j;
@@ -78,5 +79,10 @@ public class AssetGatewayImpl implements AssetGateway {
             log.error("Error in communication with asset: " + e.getMessage());
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public Asset getAssetByIdentifierPrecedence(AssetListCriteria criteria) {
+        return assetClient.getAssetByIdentifierPrecedence(criteria);
     }
 }
