@@ -74,6 +74,8 @@ import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.commons.notifications.NotificationMessage;
@@ -89,6 +91,7 @@ import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalMod
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementModelException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
+import eu.europa.ec.fisheries.uvms.movement.model.util.DateUtil;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.entity.MovementDocumentId;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -102,6 +105,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -109,6 +113,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
@@ -133,6 +138,7 @@ import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.ap.internal.conversion.JodaDateTimeToCalendarConversion;
 import org.mapstruct.ap.internal.util.Strings;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -226,6 +232,9 @@ public class RulesMovementProcessorBean {
 
     @Inject
     private RulesDao rulesDaoBean;
+
+    @EJB
+    private MDRCacheRuleService mdrService;
 
     private Map<String, MovementTypeType> mapToMovementType;
 
@@ -442,7 +451,7 @@ public class RulesMovementProcessorBean {
         } else {
             // Get Assets data, at this point as of now the loop is unavoidable since getAssetByCfrIrcs()
             for (RawMovementType rawMovementType : rawMovementList) {
-                Asset asset = getAssetByCfrIrcs(rawMovementType.getAssetId());
+                Asset asset = this.getAssetByIdentifierPrecedence(rawMovementType, rawMovementType.getPositionTime());
                 assetList.add(asset);
                 ctx.put(rawMovementType, asset);
                 if (isPluginTypeWithoutMobileTerminal(rawMovementType.getPluginType()) && asset != null) {
@@ -682,6 +691,49 @@ public class RulesMovementProcessorBean {
             log.warn("Could not find asset!");
         }
         return null;
+    }
+
+    private Asset getAssetByIdentifierPrecedence(RawMovementType type, Date positionTime) {
+        AssetId assetId =  type.getAssetId();
+
+        //If a CFR is in the message, it should be for an EU country
+        AssetIdList cfr = assetId.getAssetIdList().stream()
+                .filter(a->ConfigSearchField.CFR ==ConfigSearchField.valueOf(a.getIdType().name()))
+                .findAny().orElse(null);
+
+        if (cfr != null) {
+            boolean isMemberState =  mdrService.isPresentInMDRList("MEMBER_STATE",type.getFlagState(), new org.joda.time.DateTime(positionTime));
+            if (!isMemberState) {
+                //remove cfr from criteria
+                assetId.getAssetIdList().remove(cfr);
+            }
+        }
+
+       AssetListCriteria criteria = new AssetListCriteria();
+       for (AssetIdList id : assetId.getAssetIdList()) {
+           AssetListCriteriaPair pair = new AssetListCriteriaPair();
+           try {
+               pair.setKey(ConfigSearchField.valueOf(id.getIdType().name()));
+               pair.setValue(id.getValue());
+           } catch (Exception e) {
+               //no action here
+           }
+           criteria.getCriterias().add(pair);
+       }
+
+       //Add the flagstate criterion
+       AssetListCriteriaPair flagStatePair = new AssetListCriteriaPair();
+       flagStatePair.setKey(ConfigSearchField.FLAG_STATE);
+       flagStatePair.setValue(type.getFlagState());
+       criteria.getCriterias().add(flagStatePair);
+
+       //Add the creation date criterion
+       AssetListCriteriaPair datePair = new AssetListCriteriaPair();
+       datePair.setKey(ConfigSearchField.DATE);
+       datePair.setValue(DateUtils.dateToString(positionTime));
+       criteria.getCriterias().add(datePair);
+
+       return  assetClientBean.getAssetByIdentifierPrecedence(criteria);
     }
 
     private Asset getAsset(AssetIdType type, String value) throws AssetModelMapperException, MessageException {
