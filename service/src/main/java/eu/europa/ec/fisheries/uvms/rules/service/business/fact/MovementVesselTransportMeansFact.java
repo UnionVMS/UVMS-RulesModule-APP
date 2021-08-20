@@ -54,8 +54,12 @@ public class MovementVesselTransportMeansFact extends AbstractFact {
         }
         List<IDType> collectedIds = ids.stream().filter(id -> "GFCM".equals(id.getSchemeID())).collect(Collectors.toList());
 
-        if(collectedIds.get(0) == null || asset.getGfcm() == null){
+        if(collectedIds.get(0) == null ){
             return  true;
+        }
+
+        if(asset.getGfcm() == null){
+            return false;
         }
         return  asset.getGfcm().equals(collectedIds.get(0).getValue());
     }
@@ -66,8 +70,12 @@ public class MovementVesselTransportMeansFact extends AbstractFact {
         }
         List<IDType> collectedIds = ids.stream().filter(id -> "UVI".equals(id.getSchemeID())).collect(Collectors.toList());
 
-        if(collectedIds.get(0) == null || asset.getUvi() == null){
+        if(collectedIds.get(0) == null){
             return  true;
+        }
+
+        if (asset.getUvi() == null) {
+            return false;
         }
         return  asset.getUvi().equals(collectedIds.get(0).getValue());
     }
@@ -78,9 +86,13 @@ public class MovementVesselTransportMeansFact extends AbstractFact {
         }
         List<IDType> collectedIds = ids.stream().filter(id -> "ICCAT".equals(id.getSchemeID())).collect(Collectors.toList());
 
-        if(collectedIds.get(0) == null || asset.getIccat() == null){
+        if(collectedIds.get(0) == null ){
             return  true;
         }
+        if (asset.getIccat() == null) {
+            return false;
+        }
+
         return  asset.getIccat().equals(collectedIds.get(0).getValue());
     }
 

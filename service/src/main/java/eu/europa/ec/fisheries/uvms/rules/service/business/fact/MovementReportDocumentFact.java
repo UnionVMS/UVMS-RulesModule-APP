@@ -24,6 +24,7 @@ import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentit
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselCountryType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 @Data
 public class MovementReportDocumentFact extends AbstractFact {
@@ -38,6 +39,7 @@ public class MovementReportDocumentFact extends AbstractFact {
     private IDType registrationVesselCountryIdType;
     private DateTime dateTime;
     private List<String> existingIds;
+    private DateTimeType creationDateTimeType;
 
     public boolean hasDuplicateId(List<IDType> ids, List<String> existingIds) {
         return ids.stream().map(IDType::getValue).anyMatch(existingIds::contains);

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="movement rules patches v1.2" author="nomikosi">
+
+
+        <update tableName="context_expression">
+            <column name="expression" value="obtainedDateTimeType != null &amp;&amp; !isValid(obtainedDateTimeType)"/>
+            <where>id = '20311'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="creationDateTimeType != null &amp;&amp; !isValid(creationDateTimeType)"/>
+            <where>id = '20006'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;IRCS&quot;) &amp;&amp; hasSchemeId(ids, &quot;EXT_MARK&quot;) &amp;&amp; ((!hasExistingAsset(asset) || !schemeIdMatchesAsset(asset,ids)) || (registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; (!hasCorrectCountry(asset,registrationVesselCountry.getID().getValue()) ||  !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime))))"/>
+            <where>id = '30111'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;GFCM&quot;) &amp;&amp; ((!hasValidGFCM(asset,ids) &amp;&amp; hasExistingAsset(asset)) || (registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; (!hasCorrectCountry(asset,registrationVesselCountry.getID().getValue()) ||  !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime))))"/>
+            <where>id = '30114'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;UVI&quot;) &amp;&amp;  ((!hasValidUVI(asset,ids) &amp;&amp;  hasExistingAsset(asset)) || (registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; (!hasCorrectCountry(asset,registrationVesselCountry.getID().getValue()) ||  !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime))))"/>
+            <where>id = '30112'</where>
+        </update>
+
+        <update tableName="context_expression">
+            <column name="expression" value="hasSchemeId(ids, &quot;ICCAT&quot;) &amp;&amp; ((!hasValidICCAT(asset,ids) &amp;&amp; hasExistingAsset(asset)) || (registrationVesselCountry != null &amp;&amp; registrationVesselCountry.getID() !=null &amp;&amp; (!hasCorrectCountry(asset,registrationVesselCountry.getID().getValue()) ||  !mdrService.isPresentInMDRList(&quot;MEMBER_STATE&quot;, registrationVesselCountry.getID().getValue(), creationDateTime))))"/>
+            <where>id = '30113'</where>
+        </update>
+
+    </changeSet>
+</databaseChangeLog>
