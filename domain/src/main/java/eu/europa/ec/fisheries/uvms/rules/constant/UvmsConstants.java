@@ -40,6 +40,8 @@ public final class UvmsConstants {
     public static final String DESTINATION_TYPE_QUEUE = "javax.jms.Queue";
     // Rule for not sending transponders
     public static final String ASSET_NOT_SENDING_RULE = "Asset not sending";
+    public static final String RESPONSEMESSAGERULE_FIND_ALL = "ResponsemessageRule.findAll";
+
 
     private UvmsConstants() {
     }

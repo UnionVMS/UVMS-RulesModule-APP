@@ -24,6 +24,8 @@ import eu.europa.ec.fisheries.schema.exchange.movement.mobileterminal.v1.IdType;
 import eu.europa.ec.fisheries.schema.exchange.movement.mobileterminal.v1.MobileTerminalId;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.*;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogResponseStatusEnum;
+import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
@@ -32,7 +34,7 @@ import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshal
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
+
 
 public class ExchangeMovementMapper {
 
@@ -119,7 +121,7 @@ public class ExchangeMovementMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static String mapToProcessedMovementResponseBatch(List<SetReportMovementType> setReportMovementType, List<MovementRefType> movTypeList, String username) throws ExchangeModelMarshallException {
+    public static String mapToProcessedMovementResponseBatch(List<SetReportMovementType> setReportMovementType, List<MovementRefType> movTypeList, String username, ExchangeLogStatusTypeType status, ExchangeLogResponseStatusEnum responseStatus) throws ExchangeModelMarshallException {
         ProcessedMovementResponseBatch response = new ProcessedMovementResponseBatch();
         response.setMethod(ExchangeModuleMethod.PROCESSED_MOVEMENT_BATCH);
         int index = 0;
@@ -129,6 +131,8 @@ public class ExchangeMovementMapper {
             index++;
         }
         response.setUsername(username);
+        response.setStatus(status);
+        response.setResponseStatus(responseStatus);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
