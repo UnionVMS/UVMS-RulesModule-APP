@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+	<changeSet author="zoustam" id="Create the response message rules table">
+
+		<createSequence cycle="false" incrementBy="1" maxValue="9223372036854775807" minValue="1"
+						sequenceName="responsemessagerule_seq" startValue="1"/>
+
+		<createTable remarks="Table containing the rules to be applied to response messages" tableName="responsemessagerule">
+			<column name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="responsemessagerule_pk"/>
+			</column>
+			<column name="data_flow" remarks="The dataflow" type="VARCHAR(1000)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="message_type" remarks= "The type of response message" type="VARCHAR(1000)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="receiver" remarks="The message receiver" type="VARCHAR(1000)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addDefaultValue
+				columnName="id"
+				tableName="responsemessagerule"
+				defaultValueSequenceNext="responsemessagerule_seq"/>
+
+		<rollback>
+			<dropTable tableName="responsemessagerule" cascadeConstraints="true"/>
+			<dropSequence schemaName="exchange" sequenceName="responsemessagerule_seq"/>
+		</rollback>
+	</changeSet>
+
+</databaseChangeLog>

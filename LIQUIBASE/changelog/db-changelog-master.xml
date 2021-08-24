@@ -110,4 +110,5 @@
     <include file="changelog/v3.4/db-changelog-UNIONVMS-5168.xml" />
     <include file="changelog/v3.4/db-changelog-UNIONVMS-5117.xml" />
     <include file="changelog/v3.4/db-changelog-Movement-Rules-patch_V1.2.xml" />
+    <include file="changelog/v3.4/db-changelog-UNIONVMS-5183.xml" />
 </databaseChangeLog>

@@ -29,6 +29,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogResponseStatusEnum;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.mobileterminal.module.v1.MobileTerminalBatchListElement;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
@@ -311,7 +312,7 @@ public class RulesMovementProcessorBean {
             ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), request.getLogGuid(), RawMsgType.MOVEMENT);
 
             if(validationResult.isError()){
-                sendBatchBackToExchange(request.getLogGuid(), movementReportsList, MovementRefTypeType.MOVEMENT, userName);
+                sendBatchBackToExchange(request.getLogGuid(), movementReportsList, MovementRefTypeType.MOVEMENT, userName,ExchangeLogStatusTypeType.FAILED, null);
                 exchangeServiceBean.updateExchangeMessage(request.getLogGuid(), fluxMessageHelper.calculateMessageValidationStatus(validationResult));
             } else {
                 // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
@@ -371,7 +372,13 @@ public class RulesMovementProcessorBean {
                     status = ExchangeLogStatusTypeType.FAILED;
                     updateValidationResultOnPermissionDenied(reportId, request, Rule9998Or9999ErrorType.PERMISSION_DENIED);
                 }
-                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
+
+                ExchangeLogResponseStatusEnum responseStatus = exchangeServiceBean.executeResponseMessageRules(
+                        request.getMethod().name(),
+                        request.getFluxDataFlow(),
+                        fluxMessageHelper.getRespondedFluxParty(),
+                        status);
+                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, responseStatus);
                 updateRequestMessageStatusInExchange(exchangeLogGuid, status);
             }
         } catch (MessageException | RulesModelException | ServiceException e) {
@@ -395,16 +402,16 @@ public class RulesMovementProcessorBean {
                 ExchangeLogStatusTypeType status;
                 if (CollectionUtils.isNotEmpty(movementFactList)) {
                     status = ExchangeLogStatusTypeType.SUCCESSFUL;
-                    sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
+                    sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, null);
                 } else {
                     status = ExchangeLogStatusTypeType.ERROR;
-                    sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
+                    sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, null);
                 }
                 updateRequestMessageStatusInExchange(exchangeLogGuid, status);
             } else {
                 // Tell Exchange that the report caused an alarm
                 updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
-                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.ALARM, username);
+                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.ALARM, username,ExchangeLogStatusTypeType.FAILED, null);
             }
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException e) {
             throw new RulesServiceException(e.getMessage());
@@ -563,7 +570,7 @@ public class RulesMovementProcessorBean {
         return query;
     }
 
-    private void sendBatchBackToExchange(String guid, List<RawMovementType> rawMovement, MovementRefTypeType status, String username) throws MessageException {
+    private void sendBatchBackToExchange(String guid, List<RawMovementType> rawMovement, MovementRefTypeType status, String username, ExchangeLogStatusTypeType logStatus, ExchangeLogResponseStatusEnum responseStatus) throws MessageException {
         log.info("Sending back processed movement BATCH to exchange");
         List<MovementRefType> movTypeList = new ArrayList<>();
         for (RawMovementType rawMovementType : rawMovement) {
@@ -577,7 +584,7 @@ public class RulesMovementProcessorBean {
         // Map movement
         List<SetReportMovementType> setReportMovementType = ExchangeMovementMapper.mapExchangeMovementBatch(rawMovement);
         try {
-            String exchangeResponseText = ExchangeMovementMapper.mapToProcessedMovementResponseBatch(setReportMovementType, movTypeList, username);
+            String exchangeResponseText = ExchangeMovementMapper.mapToProcessedMovementResponseBatch(setReportMovementType, movTypeList, username, logStatus, responseStatus);
             exchangeProducer.sendModuleMessage(exchangeResponseText, consumer.getDestination());
         } catch (ExchangeModelMapperException e) {
             log.error(e.getMessage(), e);
@@ -1721,11 +1728,15 @@ public class RulesMovementProcessorBean {
             assetData = enrichedWrapper.getAssetList().get(0);
         }
         if (assetData == null || assetData.getEventHistory() == null || Strings.isEmpty(assetData.getEventHistory().getEventId()) || assetData.getAssetId() == null || Strings.isEmpty(assetData.getAssetId().getValue())) {
-            sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
+            ExchangeLogStatusTypeType status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
+            ExchangeLogResponseStatusEnum responseStatus = exchangeServiceBean.executeResponseMessageRules(
+                    request.getMethod().name(),
+                    request.getFluxDataFlow(),
+                    fluxMessageHelper.getRespondedFluxParty(),
+                    status);
+            sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, responseStatus);
             if(validationResult.isError() || validationResult.isWarning()){
-                ExchangeLogStatusTypeType status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
                 updateRequestMessageStatusInExchange(exchangeLogGuid, status);
-
             } else {
                 updateValidationResultOnUnknownAsset("", request);
                 updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
