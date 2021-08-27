@@ -219,9 +219,9 @@ public class RulesFaQueryServiceBean {
                 sendToExchange(exchangeReq);
             } else {
                 for (ValidationMessageType messageType:faQueryValidationReport.getValidationMessages()) {
-                    log.debug("Failed brId: " + messageType.getBrId() + " with message:  " + messageType.getMessage());
+                    log.error("Failed brId: " + messageType.getBrId() + " with message:  " + messageType.getMessage());
                 }
-                log.debug("Validation resulted in errors. Not going to send msg to Exchange module..");
+                log.error("Validation resulted in errors. Not going to send msg to Exchange module..");
             }
             XPathRepository.INSTANCE.clear(faQueryFacts);
             idsFromIncommingMessage.removeAll(faQueryIdsFromDb);
