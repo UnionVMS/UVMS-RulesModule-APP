@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.COURSE_VALUE_MEASURE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
@@ -89,7 +90,11 @@ public class MovementReportDocumentFactMapper {
         type.setDateTime(vesselPositionMessage.getFLUXReportDocument().getCreationDateTime().getDateTime());
         fact.setCreationDateTimeType(type);
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, XPathConstants.CREATION_DATE_TIME).storeInRepo(fact, CREATION_DATE_TIME);
-        fact.setIds(vesselPositionMessage.getFLUXReportDocument().getIDS());
+        if(vesselPositionMessage.getFLUXReportDocument().getIDS() != null){
+            List<IDType> collectedIds = vesselPositionMessage.getFLUXReportDocument().getIDS().stream().filter(t -> t.getValue() != null && !t.getValue().isEmpty()).collect(Collectors.toList());
+            fact.setIds(collectedIds);
+        }
+
         fact.setExistingIds(existingIds);
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, XPathConstants.ID).storeInRepo(fact, "id");
         CodeType purposeCode = vesselPositionMessage.getFLUXReportDocument().getPurposeCode();
