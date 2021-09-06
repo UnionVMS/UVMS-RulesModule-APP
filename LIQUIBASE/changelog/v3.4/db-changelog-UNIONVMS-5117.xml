@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet id="UNIONVMS-5117" author="nomikosi">
+
+        <update tableName="context_expression">
+            <column name="expression" value="messageType == &quot;PUL&quot; &amp;&amp; referencedID == null"/>
+            <where>rule_id = '385'</where>
+        </update>
+        <update tableName="context_expression">
+            <column name="expression" value="messageType == &quot;PUL&quot; &amp;&amp; referencedID == null"/>
+            <where>rule_id = '20000385'</where>
+        </update>
+        <rollback>
+            <update tableName="context_expression">
+                <column name="expression" value="messageType == &quot;PULL&quot; &amp;&amp;  referencedID != null &amp;&amp;  (getValueForSchemeId(&quot;FA_QUERY_ID&quot;, idsExistinigInTheDb) == null) &amp;&amp;  (getValueForSchemeId(&quot;FA_MESSAGE_ID&quot;, idsExistinigInTheDb) == null)"/>
+                <where>rule_id = '385'</where>
+            </update>
+            <update tableName="context_expression">
+                <column name="expression" value="messageType == &quot;PULL&quot; &amp;&amp;  referencedID != null &amp;&amp;  (getValueForSchemeId(&quot;FA_QUERY_ID&quot;, idsExistinigInTheDb) == null) &amp;&amp;  (getValueForSchemeId(&quot;FA_MESSAGE_ID&quot;, idsExistinigInTheDb) == null)"/>
+                <where>rule_id = '20000385'</where>
+            </update>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

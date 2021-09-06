@@ -6,6 +6,7 @@ import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFLUXFAReportMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.module.v1.SetFaQueryMessageRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.uvms.activity.model.exception.ActivityModelMarshallException;
 import eu.europa.ec.fisheries.uvms.activity.model.mapper.ActivityModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.activity.model.schemas.MessageType;
@@ -217,7 +218,10 @@ public class RulesFaQueryServiceBean {
                         "movement", logGuid, request.getFluxDataFlow(), request.getSenderOrReceiver(), "IMPLEMENTTODT_FROM_REQUEST", "IMPLEMENTTO_FROM_REQUEST", request.getAd() == null ? "IMPLEMENTTO_FROM_REQUEST" : request.getAd(),fluxMessageHelper.calculateMessageValidationStatus(faQueryValidationReport));
                 sendToExchange(exchangeReq);
             } else {
-                log.debug("Validation resulted in errors. Not going to send msg to Exchange module..");
+                for (ValidationMessageType messageType:faQueryValidationReport.getValidationMessages()) {
+                    log.error("Failed brId: " + messageType.getBrId() + " with message:  " + messageType.getMessage());
+                }
+                log.error("Validation resulted in errors. Not going to send msg to Exchange module..");
             }
             XPathRepository.INSTANCE.clear(faQueryFacts);
             idsFromIncommingMessage.removeAll(faQueryIdsFromDb);

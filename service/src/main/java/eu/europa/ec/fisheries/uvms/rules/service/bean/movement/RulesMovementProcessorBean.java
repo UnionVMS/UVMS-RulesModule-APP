@@ -29,6 +29,7 @@ import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementRefTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.MovementTypeType;
 import eu.europa.ec.fisheries.schema.exchange.movement.v1.SetReportMovementType;
 import eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType;
+import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogResponseStatusEnum;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.mobileterminal.module.v1.MobileTerminalBatchListElement;
 import eu.europa.ec.fisheries.schema.mobileterminal.types.v1.*;
@@ -73,6 +74,8 @@ import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelMapperExcepti
 import eu.europa.ec.fisheries.uvms.asset.model.exception.AssetModelValidationException;
 import eu.europa.ec.fisheries.uvms.audit.model.exception.AuditModelMarshallException;
 import eu.europa.ec.fisheries.uvms.audit.model.mapper.AuditLogMapper;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.commons.notifications.NotificationMessage;
@@ -88,6 +91,7 @@ import eu.europa.ec.fisheries.uvms.mobileterminal.model.mapper.MobileTerminalMod
 import eu.europa.ec.fisheries.uvms.movement.model.exception.MovementModelException;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
+import eu.europa.ec.fisheries.uvms.movement.model.util.DateUtil;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
 import eu.europa.ec.fisheries.uvms.rules.entity.MovementDocumentId;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
@@ -101,6 +105,7 @@ import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMapperException;
 import eu.europa.ec.fisheries.uvms.rules.model.exception.RulesModelMarshallException;
 import eu.europa.ec.fisheries.uvms.rules.model.mapper.JAXBMarshaller;
+import eu.europa.ec.fisheries.uvms.rules.service.MDRCacheRuleService;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulePostProcessBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesConfigurationCache;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
@@ -108,6 +113,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
+import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.MDRAcronymType;
 import eu.europa.ec.fisheries.uvms.rules.service.constants.Rule9998Or9999ErrorType;
@@ -132,6 +138,7 @@ import eu.europa.ec.fisheries.wsdl.user.types.UserContextId;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.ap.internal.conversion.JodaDateTimeToCalendarConversion;
 import org.mapstruct.ap.internal.util.Strings;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -226,6 +233,9 @@ public class RulesMovementProcessorBean {
     @Inject
     private RulesDao rulesDaoBean;
 
+    @EJB
+    private MDRCacheRuleService mdrService;
+
     private Map<String, MovementTypeType> mapToMovementType;
 
     private RulesFLUXMessageHelper fluxMessageHelper;
@@ -311,7 +321,7 @@ public class RulesMovementProcessorBean {
             ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), request.getLogGuid(), RawMsgType.MOVEMENT);
 
             if(validationResult.isError()){
-                sendBatchBackToExchange(request.getLogGuid(), movementReportsList, MovementRefTypeType.MOVEMENT, userName);
+                sendBatchBackToExchange(request.getLogGuid(), movementReportsList, MovementRefTypeType.MOVEMENT, userName,ExchangeLogStatusTypeType.FAILED, null);
                 exchangeServiceBean.updateExchangeMessage(request.getLogGuid(), fluxMessageHelper.calculateMessageValidationStatus(validationResult));
             } else {
                 // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
@@ -371,7 +381,13 @@ public class RulesMovementProcessorBean {
                     status = ExchangeLogStatusTypeType.FAILED;
                     updateValidationResultOnPermissionDenied(reportId, request, Rule9998Or9999ErrorType.PERMISSION_DENIED);
                 }
-                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
+
+                ExchangeLogResponseStatusEnum responseStatus = exchangeServiceBean.executeResponseMessageRules(
+                        request.getMethod().name(),
+                        request.getFluxDataFlow(),
+                        fluxMessageHelper.getRespondedFluxParty(),
+                        status);
+                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, responseStatus);
                 updateRequestMessageStatusInExchange(exchangeLogGuid, status);
             }
         } catch (MessageException | RulesModelException | ServiceException e) {
@@ -395,16 +411,16 @@ public class RulesMovementProcessorBean {
                 ExchangeLogStatusTypeType status;
                 if (CollectionUtils.isNotEmpty(movementFactList)) {
                     status = ExchangeLogStatusTypeType.SUCCESSFUL;
-                    sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
+                    sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, null);
                 } else {
                     status = ExchangeLogStatusTypeType.ERROR;
-                    sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
+                    sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, null);
                 }
                 updateRequestMessageStatusInExchange(exchangeLogGuid, status);
             } else {
                 // Tell Exchange that the report caused an alarm
                 updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);
-                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.ALARM, username);
+                sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.ALARM, username,ExchangeLogStatusTypeType.FAILED, null);
             }
         } catch (MessageException | MobileTerminalModelMapperException | MobileTerminalUnmarshallException | JMSException | AssetModelMapperException e) {
             throw new RulesServiceException(e.getMessage());
@@ -435,7 +451,7 @@ public class RulesMovementProcessorBean {
         } else {
             // Get Assets data, at this point as of now the loop is unavoidable since getAssetByCfrIrcs()
             for (RawMovementType rawMovementType : rawMovementList) {
-                Asset asset = getAssetByCfrIrcs(rawMovementType.getAssetId());
+                Asset asset = this.getAssetByIdentifierPrecedence(rawMovementType, rawMovementType.getPositionTime());
                 assetList.add(asset);
                 ctx.put(rawMovementType, asset);
                 if (isPluginTypeWithoutMobileTerminal(rawMovementType.getPluginType()) && asset != null) {
@@ -563,7 +579,7 @@ public class RulesMovementProcessorBean {
         return query;
     }
 
-    private void sendBatchBackToExchange(String guid, List<RawMovementType> rawMovement, MovementRefTypeType status, String username) throws MessageException {
+    private void sendBatchBackToExchange(String guid, List<RawMovementType> rawMovement, MovementRefTypeType status, String username, ExchangeLogStatusTypeType logStatus, ExchangeLogResponseStatusEnum responseStatus) throws MessageException {
         log.info("Sending back processed movement BATCH to exchange");
         List<MovementRefType> movTypeList = new ArrayList<>();
         for (RawMovementType rawMovementType : rawMovement) {
@@ -577,7 +593,7 @@ public class RulesMovementProcessorBean {
         // Map movement
         List<SetReportMovementType> setReportMovementType = ExchangeMovementMapper.mapExchangeMovementBatch(rawMovement);
         try {
-            String exchangeResponseText = ExchangeMovementMapper.mapToProcessedMovementResponseBatch(setReportMovementType, movTypeList, username);
+            String exchangeResponseText = ExchangeMovementMapper.mapToProcessedMovementResponseBatch(setReportMovementType, movTypeList, username, logStatus, responseStatus);
             exchangeProducer.sendModuleMessage(exchangeResponseText, consumer.getDestination());
         } catch (ExchangeModelMapperException e) {
             log.error(e.getMessage(), e);
@@ -675,6 +691,49 @@ public class RulesMovementProcessorBean {
             log.warn("Could not find asset!");
         }
         return null;
+    }
+
+    private Asset getAssetByIdentifierPrecedence(RawMovementType type, Date positionTime) {
+        AssetId assetId =  type.getAssetId();
+
+        //If a CFR is in the message, it should be for an EU country
+        AssetIdList cfr = assetId.getAssetIdList().stream()
+                .filter(a->ConfigSearchField.CFR ==ConfigSearchField.valueOf(a.getIdType().name()))
+                .findAny().orElse(null);
+
+        if (cfr != null) {
+            boolean isMemberState =  mdrService.isPresentInMDRList("MEMBER_STATE",type.getFlagState(), new org.joda.time.DateTime(positionTime));
+            if (!isMemberState) {
+                //remove cfr from criteria
+                assetId.getAssetIdList().remove(cfr);
+            }
+        }
+
+       AssetListCriteria criteria = new AssetListCriteria();
+       for (AssetIdList id : assetId.getAssetIdList()) {
+           AssetListCriteriaPair pair = new AssetListCriteriaPair();
+           try {
+               pair.setKey(ConfigSearchField.valueOf(id.getIdType().name()));
+               pair.setValue(id.getValue());
+           } catch (Exception e) {
+               //no action here
+           }
+           criteria.getCriterias().add(pair);
+       }
+
+       //Add the flagstate criterion
+       AssetListCriteriaPair flagStatePair = new AssetListCriteriaPair();
+       flagStatePair.setKey(ConfigSearchField.FLAG_STATE);
+       flagStatePair.setValue(type.getFlagState());
+       criteria.getCriterias().add(flagStatePair);
+
+       //Add the creation date criterion
+       AssetListCriteriaPair datePair = new AssetListCriteriaPair();
+       datePair.setKey(ConfigSearchField.DATE);
+       datePair.setValue(DateUtils.dateToString(positionTime));
+       criteria.getCriterias().add(datePair);
+
+       return  assetClientBean.getAssetByIdentifierPrecedence(criteria);
     }
 
     private Asset getAsset(AssetIdType type, String value) throws AssetModelMapperException, MessageException {
@@ -1721,11 +1780,15 @@ public class RulesMovementProcessorBean {
             assetData = enrichedWrapper.getAssetList().get(0);
         }
         if (assetData == null || assetData.getEventHistory() == null || Strings.isEmpty(assetData.getEventHistory().getEventId()) || assetData.getAssetId() == null || Strings.isEmpty(assetData.getAssetId().getValue())) {
-            sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username);
+            ExchangeLogStatusTypeType status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
+            ExchangeLogResponseStatusEnum responseStatus = exchangeServiceBean.executeResponseMessageRules(
+                    request.getMethod().name(),
+                    request.getFluxDataFlow(),
+                    fluxMessageHelper.getRespondedFluxParty(),
+                    status);
+            sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, responseStatus);
             if(validationResult.isError() || validationResult.isWarning()){
-                ExchangeLogStatusTypeType status = ExchangeLogStatusTypeType.fromValue(fluxMessageHelper.calculateMessageValidationStatus(validationResult).value());
                 updateRequestMessageStatusInExchange(exchangeLogGuid, status);
-
             } else {
                 updateValidationResultOnUnknownAsset("", request);
                 updateRequestMessageStatusInExchange(exchangeLogGuid, ExchangeLogStatusTypeType.FAILED);

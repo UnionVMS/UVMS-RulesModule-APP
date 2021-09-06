@@ -5,9 +5,8 @@ import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import lombok.Data;
 import org.joda.time.DateTime;
 import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselCountryType;
-import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._18.VesselGeographicalCoordinateType;
 import un.unece.uncefact.data.standard.unqualifieddatatype._18.CodeType;
-import un.unece.uncefact.data.standard.unqualifieddatatype._18.DateTimeType;
+import un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +18,7 @@ import java.time.temporal.ChronoField;
 public class MovementSpecifiedVesselPositionEventFact extends AbstractFact {
     private CodeType typeCode;
     private DateTime creationDateTime;
+    private DateTimeType obtainedDateTimeType;
     private BigDecimal speedValue;
     private BigDecimal courseValue;
     private String creationDateTimeString;

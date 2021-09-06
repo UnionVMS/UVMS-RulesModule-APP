@@ -204,7 +204,7 @@ public class FLUXVesselPositionMapper {
                         assetIdList.add(mapToVesselId(AssetIdType.CFR, vesselId.getValue()));
                         break;
                     case ASSET_UVI_CODE:
-                        assetIdList.add(mapToVesselId(AssetIdType.IMO, vesselId.getValue()));
+                        assetIdList.add(mapToVesselId(AssetIdType.UVI, vesselId.getValue()));
                         break;
                     case ASSET_EXT_MARK:
                     case ASSET_EXT_MARKING_CODE:

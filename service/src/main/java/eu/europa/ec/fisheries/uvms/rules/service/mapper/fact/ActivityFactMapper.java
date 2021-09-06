@@ -566,6 +566,7 @@ public class ActivityFactMapper {
         int index = 1;
         String strToAppend = xPathUtil.getValue();
         for (VesselTransportMeans vesselTransportMean : vesselTransportMeans) {
+            xPathUtil.appendWithoutWrapping(strToAppend).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index);
             VesselTransportMeansFact vesselTransportMeansFact = generateFactForVesselTransportMean(vesselTransportMean, facts, fishActType, false);
             vesselTransportMeansFact.setIsFromParentFishingActivity(true);
             xPathUtil.appendWithoutWrapping(strToAppend).appendWithIndex(RELATED_VESSEL_TRANSPORT_MEANS, index).storeInRepo(vesselTransportMeansFact, "RoleCode");

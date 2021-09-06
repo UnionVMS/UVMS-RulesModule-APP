@@ -10,6 +10,7 @@ details. You should have received a copy of the GNU General Public License along
 package eu.europa.ec.fisheries.uvms.rules.service.mapper.fact;
 
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
+import eu.europa.ec.fisheries.uvms.commons.date.XMLDateUtils;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.movement.MovementVesselMappingContext;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocOwnerFluxPartyIdFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.MovementReportDocumentFact;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.COURSE_VALUE_MEASURE;
 import static eu.europa.ec.fisheries.uvms.rules.service.constants.XPathConstants.CREATION_DATE_TIME;
@@ -84,8 +86,15 @@ public class MovementReportDocumentFactMapper {
         DateTimeType creationDateTime = vesselPositionMessage.getFLUXReportDocument().getCreationDateTime();
         fact.setCreationDateTimeString(dateTimeAsString(creationDateTime));
         fact.setCreationDateTime(getDate(creationDateTime));
+        un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType type = new un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType();
+        type.setDateTime(vesselPositionMessage.getFLUXReportDocument().getCreationDateTime().getDateTime());
+        fact.setCreationDateTimeType(type);
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, XPathConstants.CREATION_DATE_TIME).storeInRepo(fact, CREATION_DATE_TIME);
-        fact.setIds(vesselPositionMessage.getFLUXReportDocument().getIDS());
+        if(vesselPositionMessage.getFLUXReportDocument().getIDS() != null){
+            List<IDType> collectedIds = vesselPositionMessage.getFLUXReportDocument().getIDS().stream().filter(t -> t.getValue() != null && !t.getValue().isEmpty()).collect(Collectors.toList());
+            fact.setIds(collectedIds);
+        }
+
         fact.setExistingIds(existingIds);
         xPathUtil.appendWithoutWrapping(partialXpath).append(FLUX_REPORT_DOCUMENT, XPathConstants.ID).storeInRepo(fact, "id");
         CodeType purposeCode = vesselPositionMessage.getFLUXReportDocument().getPurposeCode();
@@ -240,6 +249,9 @@ public class MovementReportDocumentFactMapper {
             }
 
             fact.setCreationDateTimeString(dateTimeAsString(vesselPositionEventType.getObtainedOccurrenceDateTime()));
+            un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType obtainedType = new un.unece.uncefact.data.standard.unqualifieddatatype._20.DateTimeType();
+            obtainedType.setDateTime(vesselPositionEventType.getObtainedOccurrenceDateTime() == null ? null:vesselPositionEventType.getObtainedOccurrenceDateTime().getDateTime());
+            fact.setObtainedDateTimeType(obtainedType);
             xPathUtil.appendWithoutWrapping(partialXpath).appendWithIndex(SPECIFIED_VESSELPOSITION_EVENT, index).append(OBTAINED_OCCURRENCE_DATE_TIME).storeInRepo(fact, "creationDateTimeString");
 
             fact.setLatitudeMeasure(vesselPositionEventType.getSpecifiedVesselGeographicalCoordinate().getLatitudeMeasure().getValue());

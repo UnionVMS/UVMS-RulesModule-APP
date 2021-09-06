@@ -10,22 +10,25 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean;
 
+import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogResponseStatusEnum;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType;
 import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
-import eu.europa.ec.fisheries.uvms.activity.model.mapper.FANamespaceMapper;
 import eu.europa.ec.fisheries.uvms.commons.message.api.MessageException;
 import eu.europa.ec.fisheries.uvms.commons.message.impl.JAXBUtils;
 import eu.europa.ec.fisheries.uvms.commons.service.exception.ServiceException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
+import eu.europa.ec.fisheries.uvms.rules.dto.ResponseMessageRuleDto;
 import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
+import eu.europa.ec.fisheries.uvms.rules.enums.ResponseMessageType;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.bean.ActivityOutQueueConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.RulesExchangeProducerBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.activity.RulesFAResponseServiceBean;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.responsemessagerule.ResponseMessageRuleServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.AbstractFact;
 import eu.europa.ec.fisheries.uvms.rules.service.business.RuleError;
 import eu.europa.ec.fisheries.uvms.rules.service.business.ValidationResult;
@@ -41,9 +44,11 @@ import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxfaquerymessage._3.FLUXFAQueryMessage;
 import un.unece.uncefact.data.standard.fluxfareportmessage._3.FLUXFAReportMessage;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
+import un.unece.uncefact.data.standard.reusableaggregatebusinessinformationentity._20.FLUXParty;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 import java.util.*;
 
@@ -82,6 +87,9 @@ public class RulesExchangeServiceBean {
 
     @EJB
     private RulesDao rulesDaoBean;
+
+    @Inject
+    private ResponseMessageRuleServiceBean rulesServiceBean;
 
     @PostConstruct
     public void init() {
@@ -122,8 +130,9 @@ public class RulesExchangeServiceBean {
             //Create Response
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, request.getSenderOrReceiver(), onValue, status, request.getSenderOrReceiver(), getExchangePluginType(pluginType), id);
-
+            FLUXParty party = fluxResponseMessageObj.getFLUXResponseDocument().getRespondentFLUXParty();
+            ExchangeLogResponseStatusEnum responseStatus = this.executeResponseMessageRules(request.getMethod().name(),request.getFluxDataFlow(), party,status);
+            String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, request.getSenderOrReceiver(), onValue, status, request.getSenderOrReceiver(), getExchangePluginType(pluginType), id, responseStatus);
             sendToExchange(fluxFAResponseText);
 
             XPathRepository.INSTANCE.clear(fluxResponseFacts);
@@ -138,6 +147,16 @@ public class RulesExchangeServiceBean {
             throw new RulesServiceException(e.getMessage(), e);
         }
     }
+
+    public ExchangeLogResponseStatusEnum executeResponseMessageRules(String method, String dataFlow, FLUXParty respondentFLUXParty, ExchangeLogStatusTypeType initialStatus) {
+        if (ExchangeLogStatusTypeType.FAILED == initialStatus){
+            return null;
+        }
+        ResponseMessageType resType = ResponseMessageType.valueOf(method);
+        ResponseMessageRuleDto dto = new ResponseMessageRuleDto(dataFlow, resType.getType(), respondentFLUXParty.getIDS().get(0).getValue());
+        return rulesServiceBean.applyRules(dto);
+    }
+
 
     public void sendFLUXResponseMessageOnException(String errorMessage, String rawMessage, RulesBaseRequest request, Object message) {
         if (request == null) {
