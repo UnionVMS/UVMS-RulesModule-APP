@@ -117,13 +117,16 @@ public class FaFishingOperationFact extends AbstractFact {
     }
 
     public boolean allDelimitedPeriodsHaveDurationMeasures(List<DelimitedPeriod> delimitedPeriods) {
-        if (CollectionUtils.isNotEmpty(delimitedPeriods)) {
+
+        if(CollectionUtils.isEmpty(delimitedPeriods)){
+            return false;
+        }
             for (DelimitedPeriod delimitedPeriod : delimitedPeriods) {
                 if (delimitedPeriod.getDurationMeasure() == null) {
                     return false;
                 }
             }
-        }
+
         return true;
     }
 
