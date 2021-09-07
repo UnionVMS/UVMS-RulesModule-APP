@@ -124,7 +124,7 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
                 FLUXReportDocument relatedFLUXReportDocument = faReportDocument.getRelatedFLUXReportDocument();
 
                 if (relatedFLUXReportDocument != null) { // Set the feReport creation date
-                    populateUniqueIDsAndFaReportDocumentDate(relatedFLUXReportDocument, factsByReport);
+                    populateUniqueIDsAndFaReportDocumentDate(fluxfaReportMessage, factsByReport);
                 }
 
                 facts.addAll(factsByReport);
@@ -492,11 +492,11 @@ public class ActivityFaReportFactGenerator extends AbstractGenerator {
      * @param fluxRepDoc
      * @param facts
      */
-    private void populateUniqueIDsAndFaReportDocumentDate(FLUXReportDocument fluxRepDoc, List<AbstractFact> facts) {
-        if (fluxRepDoc != null) {
-            List<String> strIDs = getIds(fluxRepDoc.getIDS());
+    private void populateUniqueIDsAndFaReportDocumentDate(FLUXFAReportMessage fluxRepDoc, List<AbstractFact> facts) {
+        if (fluxRepDoc != null && fluxRepDoc.getFAReportDocuments() != null && fluxRepDoc.getFAReportDocuments().get(0).getRelatedFLUXReportDocument() != null) {
+            List<String> strIDs = getIds(fluxRepDoc.getFAReportDocuments().get(0).getRelatedFLUXReportDocument().getIDS());
             facts.removeAll(Collections.singleton(null));
-            DateTime creationDateTime = activityFactMapper.mapToJodaDateTime(fluxRepDoc.getCreationDateTime());
+            DateTime creationDateTime = activityFactMapper.mapToJodaDateTime(fluxRepDoc.getFLUXReportDocument().getCreationDateTime());
             for (AbstractFact fact : facts) {
                 fact.setUniqueIds(strIDs);
                 fact.setCreationDateOfMessage(creationDateTime);
