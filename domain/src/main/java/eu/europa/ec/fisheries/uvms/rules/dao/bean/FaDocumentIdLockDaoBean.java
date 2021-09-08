@@ -33,7 +33,7 @@ public class FaDocumentIdLockDaoBean implements FaDocumentIdLockDao {
 
 	@Override
 	public void lock(String documentId) {
-		FaDocumentIdLock lock = em.find(FaDocumentIdLock.class, documentId, LockModeType.PESSIMISTIC_WRITE, ZERO_LOCK_TIMEOUT);
+		FaDocumentIdLock lock = em.find(FaDocumentIdLock.class, documentId, LockModeType.PESSIMISTIC_WRITE);
 		if( lock == null ) {
 			throw new IllegalStateException("lock " + documentId + " should have been created");
 		}
