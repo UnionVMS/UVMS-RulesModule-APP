@@ -1,5 +1,6 @@
 package eu.europa.ec.fisheries.uvms.rules.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @Table(name = "fa_doc_id_lock")
@@ -21,6 +23,7 @@ import javax.persistence.Table;
 @Data
 @EqualsAndHashCode
 @RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 public class FaDocumentIdLock {
 
@@ -30,4 +33,8 @@ public class FaDocumentIdLock {
 	@NonNull
 	@Column(name = "uuid")
 	private String uuid;
+
+	@Column(name = "thread")
+	private String thread;
+
 }
