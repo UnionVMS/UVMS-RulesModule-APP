@@ -49,10 +49,10 @@ public class ResponseMessageRuleProcessor {
             if (!matches(rule.getReceiver(), testReceiver)) continue;
 
             //If we are here, all parts of the rule have matched
-            return  ExchangeLogResponseStatusEnum.ALLOWED;
+            return  ExchangeLogResponseStatusEnum.BLOCKED;
         }
 
-        return ExchangeLogResponseStatusEnum.BLOCKED;
+        return ExchangeLogResponseStatusEnum.ALLOWED;
     }
 
 
