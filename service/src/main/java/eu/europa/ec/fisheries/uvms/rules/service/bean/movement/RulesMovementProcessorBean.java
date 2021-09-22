@@ -582,6 +582,7 @@ public class RulesMovementProcessorBean {
     private void sendBatchBackToExchange(String guid, List<RawMovementType> rawMovement, MovementRefTypeType status, String username, ExchangeLogStatusTypeType logStatus, ExchangeLogResponseStatusEnum responseStatus) throws MessageException {
         log.info("Sending back processed movement BATCH to exchange");
         List<MovementRefType> movTypeList = new ArrayList<>();
+        logStatus = ExchangeLogStatusTypeType.SUCCESSFUL;
         for (RawMovementType rawMovementType : rawMovement) {
             // Map response
             MovementRefType movementRef = new MovementRefType();
