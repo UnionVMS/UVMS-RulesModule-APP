@@ -58,7 +58,7 @@ public class MovementVesselTransportMeansFact extends AbstractFact {
             return  true;
         }
 
-        if(asset.getGfcm() == null){
+        if(asset == null || asset.getGfcm() == null){
             return false;
         }
         return  asset.getGfcm().equals(collectedIds.get(0).getValue());
@@ -74,7 +74,7 @@ public class MovementVesselTransportMeansFact extends AbstractFact {
             return  true;
         }
 
-        if (asset.getUvi() == null) {
+        if (asset == null || asset.getUvi() == null) {
             return false;
         }
         return  asset.getUvi().equals(collectedIds.get(0).getValue());
@@ -89,7 +89,7 @@ public class MovementVesselTransportMeansFact extends AbstractFact {
         if(collectedIds.get(0) == null ){
             return  true;
         }
-        if (asset.getIccat() == null) {
+        if (asset == null || asset.getIccat() == null) {
             return false;
         }
 
