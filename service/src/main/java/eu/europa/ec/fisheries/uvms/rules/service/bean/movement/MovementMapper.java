@@ -70,6 +70,9 @@ public class MovementMapper {
                 case UVI:
                     idType = AssetIdType.UVI;
                     break;
+                case GFCM:
+                    idType = AssetIdType.GFCM;
+                    break;
             }
             outAssetId.setIdType(idType);
             outAssetId.setValue(inAssetId.getValue());

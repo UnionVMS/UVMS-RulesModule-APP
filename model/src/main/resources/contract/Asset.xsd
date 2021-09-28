@@ -36,6 +36,7 @@
             <xsd:enumeration value="MMSI"/>
             <xsd:enumeration value="GUID"/>
             <xsd:enumeration value="UVI"/>
+            <xsd:enumeration value="GFCM"/>
         </xsd:restriction>
     </xsd:simpleType>
     

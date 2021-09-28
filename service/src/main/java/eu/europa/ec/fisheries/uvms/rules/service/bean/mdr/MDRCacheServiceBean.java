@@ -37,6 +37,9 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -693,11 +696,11 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         }
         try {
             String schemeId = id.getSchemeId();
-            FormatExpression formatExpression = cache.getFormatsByIdentifier().get(id.getSchemeId());
-            if(formatExpression == null){
+            List<FormatExpression> formatExpressions = cache.getFormatsByIdentifier().get(id.getSchemeId());
+            if(formatExpressions == null || formatExpressions.isEmpty()){
                 return false;
             }
-            if ("UUID".equalsIgnoreCase(schemeId) && "00000000-0000-0000-0000-000000000000".equals(id.getValue()) || !validateFormatFromExprObject(id.getValue(), formatExpression, creationDateOfMessage)) {
+            if ("UUID".equalsIgnoreCase(schemeId) && "00000000-0000-0000-0000-000000000000".equals(id.getValue()) || !validateFormatFromExprObject(id.getValue(), formatExpressions, creationDateOfMessage)) {
                 isInvalid = true;
             }
         } catch (IllegalArgumentException ex) {
@@ -717,7 +720,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
     public boolean validateFormat(CodeType codeType, DateTime creationDateOfMessage) {
         boolean isInvalid = false;
         if (codeType == null) {
-            return isInvalid;
+            return false;
         }
         try {
             if (!validateFormatFromExprObject(codeType.getValue(), cache.getFormatsByIdentifier().get(codeType.getListId()), creationDateOfMessage)) {
@@ -730,12 +733,41 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return isInvalid;
     }
 
-    private boolean validateFormatFromExprObject(String value, FormatExpression formatExpression, DateTime creationDateOfMessage) {
-        return formatExpression != null &&
-                !StringUtils.isEmpty(value) &&
-                !StringUtils.isEmpty(formatExpression.getExpression()) &&
-                value.matches(formatExpression.getExpression()) &&
-                isValidDate(creationDateOfMessage, formatExpression.getStartDate(), formatExpression.getEndDate());
+    private boolean validateFormatFromExprObject(String value, List<FormatExpression> formatExpressions, DateTime creationDateOfMessage) {
+        boolean condition;
+        for(FormatExpression formatExpression:formatExpressions){
+            condition = formatExpression != null &&
+                    !StringUtils.isEmpty(value) &&
+                    !StringUtils.isEmpty(formatExpression.getExpression()) &&
+                    value.matches(formatExpression.getExpression()) &&
+                    isValidDate(creationDateOfMessage, formatExpression.getStartDate(), formatExpression.getEndDate());
+
+            if (condition){
+                return true;
+            }
+        }
+       return false;
+    }
+
+
+    public Date atStartOfDay(Date date) {
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime startOfDay = localDateTime.with(LocalTime.MIN);
+        return localDateTimeToDate(startOfDay);
+    }
+
+    public Date atEndOfDay(Date date) {
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime endOfDay = localDateTime.with(LocalTime.MAX);
+        return localDateTimeToDate(endOfDay);
+    }
+
+    private LocalDateTime dateToLocalDateTime(Date date) {
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    }
+
+    private Date localDateTimeToDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     private boolean isValidDate(DateTime creationDateOfMessage, Date startDate, Date endDate) {
@@ -743,7 +775,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             return true;
         }
         Date date = creationDateOfMessage.toDate();
-        return date.after(startDate) && date.before(endDate);
+        return date.after(atStartOfDay(startDate)) && date.before(atEndOfDay(endDate));
     }
 
     // ################################ END : FORMAT VALIDATION #################################################
@@ -860,12 +892,19 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             return true;
         }
 
-        FormatExpression formatExpression = cache.getFormatsByIdentifier().get(id.getSchemeID());
-        if(StringUtils.isEmpty(formatExpression.getExpression()) ){
+        List<FormatExpression> formatExpressions = cache.getFormatsByIdentifier().get(id.getSchemeID());
+        if(formatExpressions == null || formatExpressions.isEmpty() || StringUtils.isEmpty(formatExpressions.get(0).getExpression()) ){
             return true;
         }
-        return formatExpression != null &&
-                id.getValue().matches(formatExpression.getExpression()) &&
-                isValidDate(dateTime, formatExpression.getStartDate(), formatExpression.getEndDate());
+        boolean condition;
+        for(FormatExpression formatExpression:formatExpressions) {
+            condition =
+                    id.getValue().matches(formatExpression.getExpression()) &&
+                    isValidDate(dateTime, formatExpression.getStartDate(), formatExpression.getEndDate());
+            if(condition){
+                return true;
+            }
+        }
+        return false;
     }
 }

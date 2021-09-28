@@ -47,6 +47,7 @@ public class FLUXVesselPositionMapper {
     private static final String ASSET_IRCS_CODE = "IRCS";
     private static final String ASSET_UVI_CODE = "UVI";
     private static final String ASSET_CFR_CODE = "CFR";
+    private static final String ASSET_GFCM_CODE = "GFCM";
 
     /**
      * The transformations happening in the
@@ -205,6 +206,9 @@ public class FLUXVesselPositionMapper {
                         break;
                     case ASSET_UVI_CODE:
                         assetIdList.add(mapToVesselId(AssetIdType.UVI, vesselId.getValue()));
+                        break;
+                    case ASSET_GFCM_CODE:
+                        assetIdList.add(mapToVesselId(AssetIdType.GFCM, vesselId.getValue()));
                         break;
                     case ASSET_EXT_MARK:
                     case ASSET_EXT_MARKING_CODE:
