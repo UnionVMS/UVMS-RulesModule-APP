@@ -60,7 +60,7 @@ public class MDRCache {
 
     private Map<String, List<RuleFromMDR>> enrichedBRMessageMap;
 
-    private Map<String, FormatExpression> formatsByIdentifier;
+    private Map<String, List<FormatExpression>> formatsByIdentifier;
 
     private Map<String, List<String>> dataFlowContexts;
 
@@ -409,7 +409,16 @@ public class MDRCache {
             if (StringUtils.isNotEmpty(code)) {
                 Date endDateDate = endDate != null ? DateUtils.parseToUTCDate(endDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.END_OF_TIME.toDate();
                 Date startDateDate = startDate != null ? DateUtils.parseToUTCDate(startDate, "yyyy-MM-dd HH:mm:ss.S") : DateUtils.START_OF_TIME.toDate();
-                formatsByIdentifier.put(code, new FormatExpression(expression, startDateDate, endDateDate));
+                if(formatsByIdentifier.get(code) == null) {
+                    FormatExpression formatExpression = new FormatExpression(expression, startDateDate, endDateDate);
+                    formatsByIdentifier.put(code, new ArrayList<>(Arrays.asList(formatExpression)));
+                } else {
+                    List<FormatExpression> formatExpressions = formatsByIdentifier.get(code);
+                    FormatExpression formatExpression = new FormatExpression(expression, startDateDate, endDateDate);
+                    formatExpressions.add(formatExpression);
+                    formatsByIdentifier.put(code, formatExpressions);
+
+                }
             }
         });
     }
@@ -450,7 +459,7 @@ public class MDRCache {
         return cache.size() > 10;
     }
 
-    public Map<String, FormatExpression> getFormatsByIdentifier() {
+    public Map<String, List<FormatExpression>> getFormatsByIdentifier() {
         loadAllMdrCodeLists(false);
         return formatsByIdentifier;
     }
