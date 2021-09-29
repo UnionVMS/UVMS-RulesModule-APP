@@ -297,54 +297,59 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      */
     @Override
     public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime validityDate, IdType farepDocSpecVesselTrpmRegVesselCountryId) {
-        Iterables.removeIf(specifiedFLUXLocations, Objects::isNull);
-        Iterables.removeIf(appliedAAPProcessTypeCodes, Objects::isNull);
-        String territory;
-        String rfmo;
-        String speciesCodeVal = speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY;
-        String presentation = StringUtils.EMPTY;
-        String preservationState = StringUtils.EMPTY;
-        String flagState = farepDocSpecVesselTrpmRegVesselCountryId != null ? farepDocSpecVesselTrpmRegVesselCountryId.getValue() : StringUtils.EMPTY;
-        String flagStateBis = XEU;
+      try {
+          Iterables.removeIf(specifiedFLUXLocations, Objects::isNull);
+          Iterables.removeIf(appliedAAPProcessTypeCodes, Objects::isNull);
+          String territory;
+          String rfmo;
+          String speciesCodeVal = speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY;
+          String presentation = StringUtils.EMPTY;
+          String preservationState = StringUtils.EMPTY;
+          String flagState = farepDocSpecVesselTrpmRegVesselCountryId != null ? farepDocSpecVesselTrpmRegVesselCountryId.getValue() : StringUtils.EMPTY;
+          String flagStateBis = XEU;
 
-        Map<String, String> terrManagMap = retrieveCountryFromLocationList(specifiedFLUXLocations, validityDate);
-        if(MapUtils.isEmpty(terrManagMap)){
-            return false; // Case 1 : Country cannot be determined.
-        }
-        territory = terrManagMap.get("territory");
-        rfmo = terrManagMap.get("managarea");
+          Map<String, String> terrManagMap = retrieveCountryFromLocationList(specifiedFLUXLocations, validityDate);
+          if (MapUtils.isEmpty(terrManagMap)) {
+              return false; // Case 1 : Country cannot be determined.
+          }
+          territory = terrManagMap.get("territory");
+          rfmo = terrManagMap.get("managarea");
 
-        // Determine FISH_PRESENTATION and FISH_PRESERVATION
-        if (CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)) {
-            for (CodeType presPreserv : appliedAAPProcessTypeCodes) {
-                if (FISH_PRESENTATION.equals(presPreserv.getListId())) {
-                    presentation = presPreserv.getValue();
-                }
-                if (FISH_PRESERVATION.equals(presPreserv.getListId())) {
-                    preservationState = presPreserv.getValue();
-                }
-            }
-        }
+          // Determine FISH_PRESENTATION and FISH_PRESERVATION
+          if (CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)) {
+              for (CodeType presPreserv : appliedAAPProcessTypeCodes) {
+                  if (FISH_PRESENTATION.equals(presPreserv.getListId())) {
+                      presentation = presPreserv.getValue();
+                  }
+                  if (FISH_PRESERVATION.equals(presPreserv.getListId())) {
+                      preservationState = presPreserv.getValue();
+                  }
+              }
+          }
 
-        // Pre-filtering (species, presentation, preservation) - this is common to all scenarios.
-        List<ObjectRepresentation> preFilteredList;
-        if (!(StringUtils.isBlank(speciesCodeVal) || StringUtils.isBlank(presentation) || StringUtils.isBlank(preservationState))) {
-            List<ObjectRepresentation> conversionFactorList = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
-            List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(conversionFactorList, CODE_COLUMN_NAME, speciesCodeVal);
-            List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "presentation", presentation);
-            preFilteredList = filterEntriesByColumn(filtered_2_list, "state", preservationState);
-        } else {
-            return false; // Case : some of the filters are empty!
-        }
+          // Pre-filtering (species, presentation, preservation) - this is common to all scenarios.
+          List<ObjectRepresentation> preFilteredList;
+          if (!(StringUtils.isBlank(speciesCodeVal) || StringUtils.isBlank(presentation) || StringUtils.isBlank(preservationState))) {
+              List<ObjectRepresentation> conversionFactorList = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
+              List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(conversionFactorList, CODE_COLUMN_NAME, speciesCodeVal);
+              List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "presentation", presentation);
+              preFilteredList = filterEntriesByColumn(filtered_2_list, "state", preservationState);
+          } else {
+              return false; // Case : some of the filters are empty!
+          }
 
-        if(CollectionUtils.isEmpty(preFilteredList)){
-            return false;
-        }
+          if (CollectionUtils.isEmpty(preFilteredList)) {
+              return false;
+          }
 
-        return (!StringUtils.isEmpty(territory) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, territory)))      // Case : "CF RFMO/SFPA/3rd party" exists
-                || (!StringUtils.isEmpty(rfmo) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, rfmo)))
-                || CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagStateBis))                                    // Case : "CF FLAG STATE" exists
-                || (!StringUtils.isEmpty(flagState) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagState))); // Case : "CF EU" exists
+          return (!StringUtils.isEmpty(territory) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, territory)))      // Case : "CF RFMO/SFPA/3rd party" exists
+                  || (!StringUtils.isEmpty(rfmo) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, rfmo)))
+                  || CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagStateBis))                                    // Case : "CF FLAG STATE" exists
+                  || (!StringUtils.isEmpty(flagState) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagState))); // Case : "CF EU" exists
+      }catch(Exception e){
+          log.error(e.getMessage(),e);
+          return true;
+      }
     }
 
 
