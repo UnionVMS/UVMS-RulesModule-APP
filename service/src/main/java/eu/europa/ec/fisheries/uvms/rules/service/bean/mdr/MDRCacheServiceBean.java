@@ -501,7 +501,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         List<ObjectRepresentation> matchingList = new ArrayList<>();
         for (ObjectRepresentation entry : entries) {
             for (ColumnDataType field : entry.getFields()) {
-                if (field.getColumnName().equals(columnName) && field.getColumnValue().equals(columnValue)) {
+                if (field.getColumnName() != null && field.getColumnName().equals(columnName) && field.getColumnValue() != null && field.getColumnValue().equals(columnValue)) {
                     matchingList.add(entry);
                 }
             }
