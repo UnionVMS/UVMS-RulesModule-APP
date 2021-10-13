@@ -425,7 +425,7 @@ public class RulesMovementProcessorBean {
                 ExchangeLogResponseStatusEnum responseStatus = exchangeServiceBean.executeResponseMessageRules(
                         request.getMethod().name(),
                         request.getFluxDataFlow(),
-                        fluxMessageHelper.getRespondedFluxParty(),
+                        request.getSenderOrReceiver(),
                         status);
                 sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, responseStatus);
                 updateRequestMessageStatusInExchange(exchangeLogGuid, status);
@@ -1825,7 +1825,7 @@ public class RulesMovementProcessorBean {
             ExchangeLogResponseStatusEnum responseStatus = exchangeServiceBean.executeResponseMessageRules(
                     request.getMethod().name(),
                     request.getFluxDataFlow(),
-                    fluxMessageHelper.getRespondedFluxParty(),
+                    request.getSenderOrReceiver(),
                     status);
             sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, responseStatus);
             if(validationResult.isError() || validationResult.isWarning()){

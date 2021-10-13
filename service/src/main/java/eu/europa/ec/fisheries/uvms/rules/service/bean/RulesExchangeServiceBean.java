@@ -130,8 +130,7 @@ public class RulesExchangeServiceBean {
             //Create Response
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            FLUXParty party = fluxResponseMessageObj.getFLUXResponseDocument().getRespondentFLUXParty();
-            ExchangeLogResponseStatusEnum responseStatus = this.executeResponseMessageRules(request.getMethod().name(),request.getFluxDataFlow(), party,status);
+            ExchangeLogResponseStatusEnum responseStatus = this.executeResponseMessageRules(request.getMethod().name(),request.getFluxDataFlow(), request.getSenderOrReceiver(),status);
             String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, request.getSenderOrReceiver(), onValue, status, request.getSenderOrReceiver(), getExchangePluginType(pluginType), id, responseStatus);
             sendToExchange(fluxFAResponseText);
 
@@ -148,12 +147,12 @@ public class RulesExchangeServiceBean {
         }
     }
 
-    public ExchangeLogResponseStatusEnum executeResponseMessageRules(String method, String dataFlow, FLUXParty respondentFLUXParty, ExchangeLogStatusTypeType initialStatus) {
+    public ExchangeLogResponseStatusEnum executeResponseMessageRules(String method, String dataFlow, String sender, ExchangeLogStatusTypeType initialStatus) {
         if (ExchangeLogStatusTypeType.FAILED == initialStatus){
             return null;
         }
         ResponseMessageType resType = ResponseMessageType.valueOf(method);
-        ResponseMessageRuleDto dto = new ResponseMessageRuleDto(dataFlow, resType.getType(), respondentFLUXParty.getIDS().get(0).getValue());
+        ResponseMessageRuleDto dto = new ResponseMessageRuleDto(dataFlow, resType.getType(),sender);
         return rulesServiceBean.applyRules(dto);
     }
 
