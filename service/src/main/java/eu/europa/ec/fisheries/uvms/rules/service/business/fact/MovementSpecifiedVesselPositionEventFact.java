@@ -27,7 +27,7 @@ public class MovementSpecifiedVesselPositionEventFact extends AbstractFact {
     private VesselCountryType registrationVesselCountry;
 
     public boolean hasValidSpeedValue(BigDecimal speedValue) {
-        return speedValue.signum() > 0 && speedValue.scale() < 3;
+        return speedValue.signum() >= 0 && speedValue.scale() < 3;
     }
 
     public boolean hasValidCourseValue(BigDecimal courseValue) {
