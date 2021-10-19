@@ -136,7 +136,7 @@ public class ExchangeMovementMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static String mapToFluxMovementReport(String fluxVesselPositionMessage, String username, String senderOrReceiver, String dataflow, String messageGuid,String ad) throws ExchangeModelMarshallException {
+    public static String mapToFluxMovementReport(String fluxVesselPositionMessage, String username, String senderOrReceiver, String dataflow, String messageGuid,String ad,ExchangeLogStatusTypeType logStatusType) throws ExchangeModelMarshallException {
         SendFLUXMovementReportRequest sendFLUXMovementReportRequest = new SendFLUXMovementReportRequest();
         sendFLUXMovementReportRequest.setMethod(ExchangeModuleMethod.SEND_MOVEMENT_REPORT);
         sendFLUXMovementReportRequest.setRequest(fluxVesselPositionMessage);
@@ -148,6 +148,7 @@ public class ExchangeMovementMapper {
         sendFLUXMovementReportRequest.setMessageGuid(messageGuid);
         sendFLUXMovementReportRequest.setDestination(ad);
         sendFLUXMovementReportRequest.setAd(ad);
+        sendFLUXMovementReportRequest.setValidation(logStatusType);
         return JAXBMarshaller.marshallJaxBObjectToString(sendFLUXMovementReportRequest);
     }
 
