@@ -60,6 +60,7 @@ import eu.europa.ec.fisheries.schema.rules.movement.v1.MovementSourceType;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
 import eu.europa.ec.fisheries.schema.rules.previous.v1.PreviousReportType;
 import eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType;
+import eu.europa.ec.fisheries.schema.rules.rule.v1.ValidationMessageType;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmListCriteria;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmQuery;
 import eu.europa.ec.fisheries.schema.rules.search.v1.AlarmSearchKey;
@@ -275,10 +276,49 @@ public class RulesMovementProcessorBean {
 
     public void sendMovementReport(SendFLUXMovementReportRequest request, String messageGuid) throws RulesServiceException {
         log.info("Sending Movement Report to exchange");
+        FLUXVesselPositionMessage fluxVesselPositionMessage;
+        String pluginType = request.getType().name();
+        String userName = request.getUsername();
+        String registeredPluginClassName = request.getRegisteredClassName();
+        MovementVesselMappingContext ctx = new MovementVesselMappingContext();
+
         try {
-            String exchangeMessageText = ExchangeMovementMapper.mapToFluxMovementReport(request.getRequest(), request.getUsername(), request.getSenderOrReceiver(), request.getFluxDataFlow(), request.getLogGuid(),request.getAd());
+
+            fluxVesselPositionMessage = JAXBUtils.unMarshallMessage(request.getRequest(), FLUXVesselPositionMessage.class, null);
+            List<RawMovementType> movementReportsList = FLUXVesselPositionMapper.mapToRawMovementTypes(fluxVesselPositionMessage, ctx, registeredPluginClassName,pluginType,mapToMovementType);
+
+            // Enrich with MobilTerminal and Assets data. Get Mobile Terminal if it exists.
+            EnrichedMovementWrapper enrichedWrapper = enrichBatchWithMobileTerminalAndAssets(movementReportsList, ctx);
+            Set<MovementDocumentId> idsFromIncomingMessage = fluxMessageHelper.mapToMovementDocumentID(fluxVesselPositionMessage);
+            List<MovementDocumentId> storedIds = new ArrayList<>();
+            if(!(idsFromIncomingMessage.isEmpty() || ommitNullIds(idsFromIncomingMessage).isEmpty())) {
+                storedIds = rulesDaoBean.loadMovementDocumentIDByIds(idsFromIncomingMessage);
+            }
+
+            Map<ExtraValueType, Object> extraValues = new EnumMap<>(ExtraValueType.class);
+            extraValues.put(SENDER_RECEIVER, request.getSenderOrReceiver());
+            extraValues.put(XML, request.getRequest());
+            extraValues.put(DATA_FLOW, request.getFluxDataFlow());
+            extraValues.put(MOVEMENT_VESSEL_MAP, ctx);
+            extraValues.put(MOVEMENT_DOC_IDS, storedIds);
+            Collection<AbstractFact> factsResults = rulesEngine.evaluate(RECEIVING_MOVEMENT_MSG,fluxVesselPositionMessage,extraValues,null);
+
+            ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), request.getLogGuid(), RawMsgType.SEND_MOVEMENT_REPORT);
+            String exchangeMessageText;
+            if(validationResult.isError()){
+                exchangeMessageText =  ExchangeMovementMapper.mapToFluxMovementReport(request.getRequest(), request.getUsername(), request.getSenderOrReceiver(), request.getFluxDataFlow(), request.getLogGuid(),request.getAd(),ExchangeLogStatusTypeType.FAILED);
+               for(ValidationMessageType validationMessageType:validationResult.getValidationMessages()) {
+                   log.error("Rule failed: " + validationMessageType.getBrId() + " with message: " + validationMessageType.getMessage() );
+               }
+            } else {
+                // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
+                // processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
+                ExchangeLogStatusTypeType type = validationResult.isWarning() ? ExchangeLogStatusTypeType.SUCCESSFUL_WITH_WARNINGS:ExchangeLogStatusTypeType.SUCCESSFUL;
+                exchangeMessageText = ExchangeMovementMapper.mapToFluxMovementReport(request.getRequest(), request.getUsername(), request.getSenderOrReceiver(), request.getFluxDataFlow(), request.getLogGuid(),request.getAd(),type);
+            }
+
             exchangeProducer.sendModuleMessage(exchangeMessageText, consumer.getDestination());
-        } catch (ExchangeModelMapperException | MessageException e) {
+        } catch (ExchangeModelMapperException | MessageException | JAXBException | RulesValidationException | AssetModelMapperException | MobileTerminalUnmarshallException | JMSException | MobileTerminalModelMapperException e) {
             log.error("Error while send movement report to exchange", e);
         }
     }
