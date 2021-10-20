@@ -49,6 +49,8 @@ public class FaQueryFact extends AbstractFact {
 
     private List<CodeType> simpleFAQueryParameterTypeCodes;
 
+    private Boolean manual;
+
     public FaQueryFact() {
         setFactType();
     }
@@ -162,4 +164,11 @@ public class FaQueryFact extends AbstractFact {
         this.nonUniqueIdsList = nonUniqueIdsList;
     }
 
+    public Boolean getManual() {
+        return manual;
+    }
+
+    public void setManual(Boolean manual) {
+        this.manual = manual;
+    }
 }

@@ -2107,6 +2107,7 @@ public class ActivityFactMapper {
 
         FaQueryFact faQueryFact = new FaQueryFact();
         faQueryFact.setSenderOrReceiver(senderReceiver);
+        faQueryFact.setManual(faQuery.isManual());
 
         faQueryFact.setId(mapToIdType(faQuery.getID()));
         xPathUtil.appendWithoutWrapping(partialXpath).append(ID).storeInRepo(faQueryFact, ID_PROP);
