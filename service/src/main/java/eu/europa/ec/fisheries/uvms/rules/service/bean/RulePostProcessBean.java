@@ -112,9 +112,10 @@ public class RulePostProcessBean {
         }
     }
 
-    public void createOrUpdateValidationResult(String rawMsgGuid, String rawMessage, RawMsgType type, RuleError ruleError) throws RulesModelException {
+    public ValidationMessageType createOrUpdateValidationResult(String rawMsgGuid, String rawMessage, RawMsgType type, RuleError ruleError) throws RulesModelException {
         final ValidationMessageType validationMessage = createValidationMessageFromParams(ruleError.getRuleId(), ErrorType.ERROR, ruleError.getMessage(), ruleError.getLevel(), Collections.emptyList(), ruleError.getXpaths(), new Date());
         rulesDomainModel.createOrUpdateValidationMessagesWithPermission(validationMessage, rawMsgGuid, rawMessage, type);
+        return validationMessage;
     }
 
     private void updateValidationResult(String rawMsgGuid, String type, ValidationMessageType validationMessage) throws RulesModelException {

@@ -361,6 +361,28 @@ public class RulesFLUXMessageHelper {
         return responseMessage;
     }
 
+
+    public FLUXResponseMessage generateFluxResponseMessageForMovement(ValidationResult validationResult, FLUXVesselPositionMessage positionMessage, String guid) {
+        FLUXResponseMessage responseMessage = new FLUXResponseMessage();
+        FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
+        responseMessage.setFLUXResponseDocument(fluxResponseDocument);
+
+        if (positionMessage != null && positionMessage.getFLUXReportDocument() != null) {
+            IDType referenceId = positionMessage.getFLUXReportDocument().getIDS().stream()
+                        .findFirst()
+                        .map(r->new IDType(r.getValue(), r.getSchemeID(), r.getSchemeName(), r.getSchemeAgencyID(),r.getSchemeAgencyName(), r.getSchemeVersionID(),r.getSchemeDataURI(), r.getSchemeURI()))
+                        .orElse(new IDType());
+            fluxResponseDocument.setReferencedID(referenceId);
+        }
+
+        try {
+            populateFluxResponseDocument(validationResult, fluxResponseDocument);
+        } catch (DatatypeConfigurationException e) {
+            log.error(e.getMessage());
+        }
+        return  responseMessage;
+    }
+
     public boolean isCorrectUUID(List<IDType> ids) {
         boolean uuidIsCorrect = false;
         String uuidString = null;
@@ -408,44 +430,46 @@ public class RulesFLUXMessageHelper {
         validationResultDocument.setValidatorID(idType);
 
         List<ValidationQualityAnalysis> validationQuality = new ArrayList<>();
-        for (ValidationMessageType validationMessage : faReportValidationResult.getValidationMessages()) {
-            ValidationQualityAnalysis analysis = new ValidationQualityAnalysis();
+        if (faReportValidationResult != null) {
+            for (ValidationMessageType validationMessage : faReportValidationResult.getValidationMessages()) {
+                ValidationQualityAnalysis analysis = new ValidationQualityAnalysis();
 
-            IDType identification = new IDType();
-            identification.setValue(validationMessage.getBrId());
-            identification.setSchemeID("FA_BR");
-            analysis.setID(identification);
+                IDType identification = new IDType();
+                identification.setValue(validationMessage.getBrId());
+                identification.setSchemeID("FA_BR");
+                analysis.setID(identification);
 
-            CodeType level = new CodeType();
-            level.setValue(validationMessage.getLevel());
-            level.setListID("FLUX_GP_VALIDATION_LEVEL");
-            analysis.setLevelCode(level);
+                CodeType level = new CodeType();
+                level.setValue(validationMessage.getLevel());
+                level.setListID("FLUX_GP_VALIDATION_LEVEL");
+                analysis.setLevelCode(level);
 
-            eu.europa.ec.fisheries.uvms.rules.service.constants.ErrorType errorType = codeTypeMapper.mapErrorType(validationMessage.getErrorType());
+                eu.europa.ec.fisheries.uvms.rules.service.constants.ErrorType errorType = codeTypeMapper.mapErrorType(validationMessage.getErrorType());
 
-            if (errorType != null){
-                CodeType type = new CodeType();
-                type.setValue(errorType.name());
-                type.setListID("FLUX_GP_VALIDATION_TYPE");
-                analysis.setTypeCode(type);
-            }
-
-            TextType text = new TextType();
-            text.setValue(validationMessage.getMessage());
-            text.setLanguageID("GBR");
-            analysis.getResults().add(text);
-
-            List<String> xpaths = validationMessage.getXpaths();
-            if (CollectionUtils.isNotEmpty(xpaths)) {
-                for (String xpath : xpaths) {
-                    TextType referenceItem = new TextType();
-                    referenceItem.setValue(xpath);
-                    referenceItem.setLanguageID("XPATH");
-                    analysis.getReferencedItems().add(referenceItem);
+                if (errorType != null) {
+                    CodeType type = new CodeType();
+                    type.setValue(errorType.name());
+                    type.setListID("FLUX_GP_VALIDATION_TYPE");
+                    analysis.setTypeCode(type);
                 }
-            }
 
-            validationQuality.add(analysis);
+                TextType text = new TextType();
+                text.setValue(validationMessage.getMessage());
+                text.setLanguageID("GBR");
+                analysis.getResults().add(text);
+
+                List<String> xpaths = validationMessage.getXpaths();
+                if (CollectionUtils.isNotEmpty(xpaths)) {
+                    for (String xpath : xpaths) {
+                        TextType referenceItem = new TextType();
+                        referenceItem.setValue(xpath);
+                        referenceItem.setLanguageID("XPATH");
+                        analysis.getReferencedItems().add(referenceItem);
+                    }
+                }
+
+                validationQuality.add(analysis);
+            }
         }
         validationResultDocument.setRelatedValidationQualityAnalysises(validationQuality);
         return singletonList(validationResultDocument);
@@ -453,12 +477,14 @@ public class RulesFLUXMessageHelper {
 
     public void setFluxResponseDocumentResponseCode(ValidationResult faReportValidationResult, FLUXResponseDocument fluxResponseDocument) {
         CodeType responseCode = new CodeType();
-        if (faReportValidationResult.isError()) {
-            responseCode.setValue("NOK");
-        } else if (faReportValidationResult.isWarning()) {
-            responseCode.setValue("WOK");
-        } else {
-            responseCode.setValue("OK");
+        if (faReportValidationResult != null) {
+            if (faReportValidationResult.isError()) {
+                responseCode.setValue("NOK");
+            } else if (faReportValidationResult.isWarning()) {
+                responseCode.setValue("WOK");
+            } else {
+                responseCode.setValue("OK");
+            }
         }
         responseCode.setListID("FLUX_GP_RESPONSE");
         fluxResponseDocument.setResponseCode(responseCode); // Set response Code

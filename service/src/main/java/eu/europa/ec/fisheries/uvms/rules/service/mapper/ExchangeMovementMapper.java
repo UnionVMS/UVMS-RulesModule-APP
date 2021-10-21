@@ -13,10 +13,8 @@ package eu.europa.ec.fisheries.uvms.rules.service.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import eu.europa.ec.fisheries.schema.exchange.module.v1.ExchangeModuleMethod;
-import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponse;
-import eu.europa.ec.fisheries.schema.exchange.module.v1.ProcessedMovementResponseBatch;
-import eu.europa.ec.fisheries.schema.exchange.module.v1.SendFLUXMovementReportRequest;
+
+import eu.europa.ec.fisheries.schema.exchange.module.v1.*;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetId;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetIdType;
 import eu.europa.ec.fisheries.schema.exchange.movement.asset.v1.AssetType;
@@ -28,12 +26,15 @@ import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogResponseStatusEnum;
 import eu.europa.ec.fisheries.schema.exchange.v1.ExchangeLogStatusTypeType;
 import eu.europa.ec.fisheries.schema.rules.asset.v1.AssetIdList;
 import eu.europa.ec.fisheries.schema.rules.mobileterminal.v1.IdList;
+import eu.europa.ec.fisheries.schema.rules.module.v1.RulesBaseRequest;
 import eu.europa.ec.fisheries.schema.rules.movement.v1.RawMovementType;
+import eu.europa.ec.fisheries.uvms.commons.date.DateUtils;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMapperException;
 import eu.europa.ec.fisheries.uvms.exchange.model.exception.ExchangeModelMarshallException;
 import eu.europa.ec.fisheries.uvms.exchange.model.mapper.JAXBMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 
 
 public class ExchangeMovementMapper {
@@ -121,7 +122,22 @@ public class ExchangeMovementMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static String mapToProcessedMovementResponseBatch(List<SetReportMovementType> setReportMovementType, List<MovementRefType> movTypeList, String username, ExchangeLogStatusTypeType status, ExchangeLogResponseStatusEnum responseStatus,String destination) throws ExchangeModelMarshallException {
+
+    public static String mapToProcessedMovementResponseBatch(String message, String username, ExchangeLogStatusTypeType status, ExchangeLogResponseStatusEnum responseStatus, String senderReceiver, String messageGuid, String responseGuid) throws ExchangeModelMarshallException {
+        SetFLUXFAResponseMessageRequest request = new SetFLUXFAResponseMessageRequest();
+        request.setMethod(ExchangeModuleMethod.PROCESSED_MOVEMENT_BATCH);
+        request.setUsername(username);
+        request.setStatus(status);
+        request.setResponseStatus(responseStatus);
+        request.setRequest(message);
+        request.setSenderOrReceiver(senderReceiver);
+        request.setDate(DateUtils.nowUTC().toDate());
+        request.setMessageGuid(messageGuid);
+        request.setResponseMessageGuid(responseGuid);
+        return JAXBMarshaller.marshallJaxBObjectToString(request);
+    }
+
+    public static String mapToProcessedMovementResponseBatch(List<SetReportMovementType> setReportMovementType, List<MovementRefType> movTypeList, String username, ExchangeLogStatusTypeType status, ExchangeLogResponseStatusEnum responseStatus) throws ExchangeModelMarshallException {
         ProcessedMovementResponseBatch response = new ProcessedMovementResponseBatch();
         response.setMethod(ExchangeModuleMethod.PROCESSED_MOVEMENT_BATCH);
         int index = 0;
@@ -133,11 +149,10 @@ public class ExchangeMovementMapper {
         response.setUsername(username);
         response.setStatus(status);
         response.setResponseStatus(responseStatus);
-        response.setSenderOrReceiver(destination);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static String mapToFluxMovementReport(String fluxVesselPositionMessage, String username, String senderOrReceiver, String dataflow, String messageGuid,String ad,ExchangeLogStatusTypeType logStatusType) throws ExchangeModelMarshallException {
+    public static String mapToFluxMovementReport(String fluxVesselPositionMessage, String username, String senderOrReceiver, String dataflow, String messageGuid,String ad,  ExchangeLogStatusTypeType logStatusType) throws ExchangeModelMarshallException {
         SendFLUXMovementReportRequest sendFLUXMovementReportRequest = new SendFLUXMovementReportRequest();
         sendFLUXMovementReportRequest.setMethod(ExchangeModuleMethod.SEND_MOVEMENT_REPORT);
         sendFLUXMovementReportRequest.setRequest(fluxVesselPositionMessage);
