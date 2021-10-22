@@ -130,7 +130,7 @@ public class RulesExchangeServiceBean {
             //Create Response
             // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
             //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
-            ExchangeLogResponseStatusEnum responseStatus = this.executeResponseMessageRules(request.getMethod().name(),request.getFluxDataFlow(), request.getSenderOrReceiver(),status);
+            ExchangeLogResponseStatusEnum responseStatus = this.executeResponseMessageRules(request.getMethod().name(),request.getFluxDataFlow(), request.getSenderOrReceiver());
             String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAResponseRequestWithOnValue(fluxResponse, request.getUsername(), df, logGuid, request.getSenderOrReceiver(), onValue, status, request.getSenderOrReceiver(), getExchangePluginType(pluginType), id, responseStatus);
             sendToExchange(fluxFAResponseText);
 
@@ -147,10 +147,7 @@ public class RulesExchangeServiceBean {
         }
     }
 
-    public ExchangeLogResponseStatusEnum executeResponseMessageRules(String method, String dataFlow, String sender, ExchangeLogStatusTypeType initialStatus) {
-        if (ExchangeLogStatusTypeType.FAILED == initialStatus){
-            return null;
-        }
+    public ExchangeLogResponseStatusEnum executeResponseMessageRules(String method, String dataFlow, String sender) {
         ResponseMessageType resType = ResponseMessageType.valueOf(method);
         ResponseMessageRuleDto dto = new ResponseMessageRuleDto(dataFlow, resType.getType(),sender);
         return rulesServiceBean.applyRules(dto);

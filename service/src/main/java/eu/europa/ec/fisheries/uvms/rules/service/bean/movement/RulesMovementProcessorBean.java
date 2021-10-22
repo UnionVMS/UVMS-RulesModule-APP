@@ -360,13 +360,17 @@ public class RulesMovementProcessorBean {
 
             ValidationResult validationResult = rulePostProcessBean.checkAndUpdateValidationResult(factsResults, request.getRequest(), request.getLogGuid(), RawMsgType.MOVEMENT);
 
-            if(validationResult.isError()){
-                sendBatchBackToExchange(request.getLogGuid(), movementReportsList, MovementRefTypeType.MOVEMENT, userName,ExchangeLogStatusTypeType.FAILED, null);
+            ExchangeLogResponseStatusEnum responseStatus = exchangeServiceBean.executeResponseMessageRules(
+                    request.getMethod().name(),
+                    request.getFluxDataFlow(),
+                    request.getSenderOrReceiver());
+            if (validationResult.isError()){
+                sendBatchBackToExchange(request.getLogGuid(), movementReportsList, MovementRefTypeType.MOVEMENT, userName,ExchangeLogStatusTypeType.FAILED, responseStatus);
                 exchangeServiceBean.updateExchangeMessage(request.getLogGuid(), fluxMessageHelper.calculateMessageValidationStatus(validationResult));
             } else {
                 // Decomment this one and comment the other when validation is working! Still work needs to be done after this!
                 // processReceivedMovementsAsBatch(movementReportsList, pluginType, userName, request.getLogGuid());
-                enrichAndSendMovementsAsBatch(enrichedWrapper, validationResult, movementReportsList, userName, request.getLogGuid(), request, request.getLogGuid(), idsFromIncomingMessage);
+                enrichAndSendMovementsAsBatch(enrichedWrapper, validationResult, movementReportsList, userName, request.getLogGuid(), request, request.getLogGuid(), idsFromIncomingMessage, responseStatus);
             }
 
             // Send some response to Movement, if it originated from there (manual movement)
@@ -404,7 +408,7 @@ public class RulesMovementProcessorBean {
      * @param exchangeLogGuid
      * @throws RulesServiceException
      */
-    private void enrichAndSendMovementsAsBatch(EnrichedMovementWrapper enrichedWrapper,ValidationResult validationResult, List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request, String reportId, Set<MovementDocumentId> idsFromIncomingMessage) throws RulesServiceException {
+    private void enrichAndSendMovementsAsBatch(EnrichedMovementWrapper enrichedWrapper,ValidationResult validationResult, List<RawMovementType> rawMovements, String username, String exchangeLogGuid, SetFLUXMovementReportRequest request, String reportId, Set<MovementDocumentId> idsFromIncomingMessage, ExchangeLogResponseStatusEnum responseStatus) throws RulesServiceException {
         try {
             Boolean isValidRequest = validateAsset(rawMovements, username, exchangeLogGuid, request, enrichedWrapper,validationResult);
             if (isValidRequest.equals(Boolean.TRUE)) {
@@ -421,12 +425,6 @@ public class RulesMovementProcessorBean {
                     status = ExchangeLogStatusTypeType.FAILED;
                     updateValidationResultOnPermissionDenied(reportId, request, Rule9998Or9999ErrorType.PERMISSION_DENIED);
                 }
-
-                ExchangeLogResponseStatusEnum responseStatus = exchangeServiceBean.executeResponseMessageRules(
-                        request.getMethod().name(),
-                        request.getFluxDataFlow(),
-                        request.getSenderOrReceiver(),
-                        status);
                 sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, responseStatus);
                 updateRequestMessageStatusInExchange(exchangeLogGuid, status);
             }
@@ -1825,8 +1823,7 @@ public class RulesMovementProcessorBean {
             ExchangeLogResponseStatusEnum responseStatus = exchangeServiceBean.executeResponseMessageRules(
                     request.getMethod().name(),
                     request.getFluxDataFlow(),
-                    request.getSenderOrReceiver(),
-                    status);
+                    request.getSenderOrReceiver());
             sendBatchBackToExchange(exchangeLogGuid, rawMovements, MovementRefTypeType.MOVEMENT, username, status, responseStatus);
             if(validationResult.isError() || validationResult.isWarning()){
                 updateRequestMessageStatusInExchange(exchangeLogGuid, status);
