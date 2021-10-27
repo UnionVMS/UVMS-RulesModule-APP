@@ -121,7 +121,7 @@ public class ExchangeMovementMapper {
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
-    public static String mapToProcessedMovementResponseBatch(List<SetReportMovementType> setReportMovementType, List<MovementRefType> movTypeList, String username, ExchangeLogStatusTypeType status, ExchangeLogResponseStatusEnum responseStatus) throws ExchangeModelMarshallException {
+    public static String mapToProcessedMovementResponseBatch(List<SetReportMovementType> setReportMovementType, List<MovementRefType> movTypeList, String username, ExchangeLogStatusTypeType status, ExchangeLogResponseStatusEnum responseStatus,String destination) throws ExchangeModelMarshallException {
         ProcessedMovementResponseBatch response = new ProcessedMovementResponseBatch();
         response.setMethod(ExchangeModuleMethod.PROCESSED_MOVEMENT_BATCH);
         int index = 0;
@@ -133,6 +133,7 @@ public class ExchangeMovementMapper {
         response.setUsername(username);
         response.setStatus(status);
         response.setResponseStatus(responseStatus);
+        response.setSenderOrReceiver(destination);
         return JAXBMarshaller.marshallJaxBObjectToString(response);
     }
 
