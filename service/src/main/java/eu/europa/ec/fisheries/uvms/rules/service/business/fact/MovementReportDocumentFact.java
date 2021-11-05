@@ -77,9 +77,9 @@ public class MovementReportDocumentFact extends AbstractFact {
     }
 
     public boolean isDateInThePast(Date creationDateTime){
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, -10);
-        return creationDateTime.before(cal.getTime());
+        Calendar calAfter = Calendar.getInstance();
+        calAfter.add(Calendar.MINUTE, 10);
+        return creationDateTime.before(calAfter.getTime());
     }
 
     public boolean hasValidPurposeCodeListId(CodeType purposeCode, String defaultValue) {
