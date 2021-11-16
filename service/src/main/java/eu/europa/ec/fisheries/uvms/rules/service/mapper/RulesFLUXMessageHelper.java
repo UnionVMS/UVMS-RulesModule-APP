@@ -298,7 +298,7 @@ public class RulesFLUXMessageHelper {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         try {
             FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
-            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
+            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument,false);
             responseMessage.setFLUXResponseDocument(fluxResponseDocument);
             return responseMessage;
         } catch (DatatypeConfigurationException e) {
@@ -315,7 +315,7 @@ public class RulesFLUXMessageHelper {
                 List<IDType> ids = fluxResponseMessage.getFLUXResponseDocument().getIDS();
                 fluxResponseDocument.setReferencedID((CollectionUtils.isNotEmpty(ids)) ? ids.get(0) : null);
             }
-            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
+            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument,false);
             responseMessage.setFLUXResponseDocument(fluxResponseDocument);
         } catch (DatatypeConfigurationException e) {
             log.error(e.getMessage(), e);
@@ -331,7 +331,7 @@ public class RulesFLUXMessageHelper {
                 List<IDType> ids = fluxfaReportMessage.getFLUXReportDocument().getIDS();
                 fluxResponseDocument.setReferencedID((CollectionUtils.isNotEmpty(ids)) ? ids.get(0) : null);
             }
-            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
+            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument,false);
             responseMessage.setFLUXResponseDocument(fluxResponseDocument);
             return responseMessage;
 
@@ -354,7 +354,7 @@ public class RulesFLUXMessageHelper {
                     fillFluxTLOnValue(responseMessage, onValue);
                 }
             }
-            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument);
+            populateFluxResponseDocument(faReportValidationResult, fluxResponseDocument,false);
         } catch (DatatypeConfigurationException e) {
             log.error(e.getMessage(), e);
         }
@@ -376,7 +376,7 @@ public class RulesFLUXMessageHelper {
         }
 
         try {
-            populateFluxResponseDocument(validationResult, fluxResponseDocument);
+            populateFluxResponseDocument(validationResult, fluxResponseDocument,true);
         } catch (DatatypeConfigurationException e) {
             log.error(e.getMessage());
         }
@@ -404,17 +404,17 @@ public class RulesFLUXMessageHelper {
         return uuidIsCorrect;
     }
 
-    public void populateFluxResponseDocument(ValidationResult faReportValidationResult, FLUXResponseDocument fluxResponseDocument) throws DatatypeConfigurationException {
+    public void populateFluxResponseDocument(ValidationResult faReportValidationResult, FLUXResponseDocument fluxResponseDocument,boolean isMovement) throws DatatypeConfigurationException {
         setFluxResponseDocumentIDs(fluxResponseDocument);
         setFluxResponseCreationDate(fluxResponseDocument);
         setFluxResponseDocumentResponseCode(faReportValidationResult, fluxResponseDocument);
         // INFO : From IMPL DOC 2.2 This tag (RejectionReason) will not be there! Requested by DG MAre
         //setFluxResponseDocumentRejectionReason(faReportValidationResult, fluxResponseDocument);
-        fluxResponseDocument.setRelatedValidationResultDocuments(getValidationResultDocument(faReportValidationResult)); // Set validation result
+        fluxResponseDocument.setRelatedValidationResultDocuments(getValidationResultDocument(faReportValidationResult,isMovement)); // Set validation result
         fluxResponseDocument.setRespondentFLUXParty(getRespondedFluxParty()); // Set movement party in the response
     }
 
-    private List<ValidationResultDocument> getValidationResultDocument(ValidationResult faReportValidationResult) throws DatatypeConfigurationException {
+    private List<ValidationResultDocument> getValidationResultDocument(ValidationResult faReportValidationResult,boolean isMovement) throws DatatypeConfigurationException {
         ValidationResultDocument validationResultDocument = new ValidationResultDocument();
 
         GregorianCalendar date = DateTime.now(DateTimeZone.UTC).toGregorianCalendar();
@@ -436,7 +436,11 @@ public class RulesFLUXMessageHelper {
 
                 IDType identification = new IDType();
                 identification.setValue(validationMessage.getBrId());
-                identification.setSchemeID("FA_BR");
+                if(!isMovement) {
+                    identification.setSchemeID("FA_BR");
+                } else {
+                    identification.setSchemeID("VP_BR");
+                }
                 analysis.setID(identification);
 
                 CodeType level = new CodeType();
