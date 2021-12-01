@@ -362,7 +362,7 @@ public class RulesFLUXMessageHelper {
     }
 
 
-    public FLUXResponseMessage generateFluxResponseMessageForMovement(ValidationResult validationResult, FLUXVesselPositionMessage positionMessage, String guid) {
+    public FLUXResponseMessage generateFluxResponseMessageForMovement(ValidationResult validationResult, FLUXVesselPositionMessage positionMessage) {
         FLUXResponseMessage responseMessage = new FLUXResponseMessage();
         FLUXResponseDocument fluxResponseDocument = new FLUXResponseDocument();
         responseMessage.setFLUXResponseDocument(fluxResponseDocument);

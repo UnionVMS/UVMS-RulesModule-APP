@@ -12,9 +12,13 @@
 
 package eu.europa.ec.fisheries.uvms.rules.service.bean.movement;
 
+import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.FA_RESPONSE;
 import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.MOVEMENT;
+import static eu.europa.ec.fisheries.schema.rules.rule.v1.RawMsgType.MOVEMENT_RESPONSE;
 import static eu.europa.ec.fisheries.uvms.movement.model.exception.ErrorCode.MOVEMENT_DUPLICATE_ERROR;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.RECEIVING_MOVEMENT_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_FA_RESPONSE_MSG;
+import static eu.europa.ec.fisheries.uvms.rules.service.config.BusinessObjectType.SENDING_MOVEMENT_RESPONSE;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.DATA_FLOW;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.MOVEMENT_VESSEL_MAP;
 import static eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType.MOVEMENT_DOC_IDS;
@@ -94,7 +98,10 @@ import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleRequestMa
 import eu.europa.ec.fisheries.uvms.movement.model.mapper.MovementModuleResponseMapper;
 import eu.europa.ec.fisheries.uvms.movement.model.util.DateUtil;
 import eu.europa.ec.fisheries.uvms.rules.dao.RulesDao;
+import eu.europa.ec.fisheries.uvms.rules.dto.ResponseMessageRuleDto;
+import eu.europa.ec.fisheries.uvms.rules.entity.FADocumentID;
 import eu.europa.ec.fisheries.uvms.rules.entity.MovementDocumentId;
+import eu.europa.ec.fisheries.uvms.rules.enums.ResponseMessageType;
 import eu.europa.ec.fisheries.uvms.rules.message.consumer.RulesResponseConsumer;
 import eu.europa.ec.fisheries.uvms.rules.message.producer.bean.*;
 import eu.europa.ec.fisheries.uvms.rules.model.constant.AuditObjectTypeEnum;
@@ -113,6 +120,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesEngineBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.RulesExchangeServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.asset.client.impl.AssetClientBean;
 import eu.europa.ec.fisheries.uvms.rules.service.bean.mdr.MDRCache;
+import eu.europa.ec.fisheries.uvms.rules.service.bean.responsemessagerule.ResponseMessageRuleServiceBean;
 import eu.europa.ec.fisheries.uvms.rules.service.business.*;
 import eu.europa.ec.fisheries.uvms.rules.service.business.fact.IdTypeFact;
 import eu.europa.ec.fisheries.uvms.rules.service.config.ExtraValueType;
@@ -127,6 +135,7 @@ import eu.europa.ec.fisheries.uvms.rules.service.exception.InputArgumentExceptio
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesServiceException;
 import eu.europa.ec.fisheries.uvms.rules.service.exception.RulesValidationException;
 import eu.europa.ec.fisheries.uvms.rules.service.mapper.*;
+import eu.europa.ec.fisheries.uvms.rules.service.mapper.xpath.util.XPathRepository;
 import eu.europa.ec.fisheries.uvms.user.model.mapper.UserModuleRequestMapper;
 import eu.europa.ec.fisheries.wsdl.asset.group.AssetGroup;
 import eu.europa.ec.fisheries.wsdl.asset.module.GetAssetModuleRequest;
@@ -141,6 +150,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.ap.internal.conversion.JodaDateTimeToCalendarConversion;
 import org.mapstruct.ap.internal.util.Strings;
+import org.slf4j.MDC;
 import un.unece.uncefact.data.standard.fluxresponsemessage._6.FLUXResponseMessage;
 import un.unece.uncefact.data.standard.fluxvesselpositionmessage._4.FLUXVesselPositionMessage;
 import un.unece.uncefact.data.standard.mdr.communication.ObjectRepresentation;
@@ -212,6 +222,9 @@ public class RulesMovementProcessorBean {
 
     @EJB
     private RulesConfigurationCache ruleModuleCache;
+
+    @Inject
+    private ResponseMessageRuleServiceBean rulesServiceBean;
 
     @Inject
     private AssetClientBean assetClientBean;
@@ -625,16 +638,50 @@ public class RulesMovementProcessorBean {
 
     private void sendBatchBackToExchange(String guid, RulesBaseRequest request, FLUXVesselPositionMessage positionMessage, String username, ExchangeLogStatusTypeType logStatus, ExchangeLogResponseStatusEnum responseStatus, ValidationResult validationResult) throws MessageException {
         log.info("Sending back processed movement BATCH to exchange");
-        logStatus = ExchangeLogStatusTypeType.SUCCESSFUL;
         try {
-            FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForMovement(validationResult, positionMessage,guid);
+            FLUXResponseMessage fluxResponseMessage = fluxMessageHelper.generateFluxResponseMessageForMovement(validationResult, positionMessage);
             String id = fluxMessageHelper.getIDs(fluxResponseMessage);
+            String fluxNationCode = ruleModuleCache.getSingleConfig(RulesFLUXMessageHelper.FLUX_LOCAL_NATION_CODE);
+            Set<FADocumentID> idsFromIncommingMessage = fluxMessageHelper.mapToResponseToFADocumentID(fluxResponseMessage);
+            List<FADocumentID> matchingIdsFromDB = rulesDaoBean.loadFADocumentIDByIdsByIds(idsFromIncommingMessage);
             String fluxResponse = JAXBUtils.marshallJaxBObjectToString(fluxResponseMessage, "UTF-8", false, null);
-            String exchangeResponseText = ExchangeMovementMapper.mapToProcessedMovementResponseBatch(fluxResponse, username, logStatus, responseStatus, request.getSenderOrReceiver(), request.getLogGuid(), id);
-            exchangeProducer.sendModuleMessage(exchangeResponseText, consumer.getDestination());
-        } catch (JAXBException | ExchangeModelMarshallException e) {
+            Map<ExtraValueType, Object> extraValues = fluxMessageHelper.populateExtraValuesMap(fluxNationCode, matchingIdsFromDB);
+            extraValues.put(XML, fluxResponse);
+            extraValues.put(DATA_FLOW, request.getFluxDataFlow());
+
+
+            Collection<AbstractFact> fluxResponseFacts = rulesEngine.evaluate(SENDING_MOVEMENT_RESPONSE, fluxResponseMessage, extraValues);
+            ValidationResult fluxResponseValidationResult = rulePostProcessBean.checkAndUpdateValidationResult(fluxResponseFacts, fluxResponse, fluxResponseMessage.getFLUXResponseDocument().getIDS().get(0).getValue(), MOVEMENT_RESPONSE);
+            ExchangeLogStatusTypeType status = fluxMessageHelper.calculateMessageValidationStatus(fluxResponseValidationResult);
+            //Create Response
+            // We need to link the message that came in with the FLUXResponseMessage we're sending... That's the why of the commented line here..
+            //String messageGuid = ActivityFactMapper.getUUID(fluxResponseMessageType.getFLUXResponseDocument().getIDS());
+            responseStatus = this.executeResponseMessageRules(request.getMethod().name(),request.getFluxDataFlow(), request.getSenderOrReceiver());
+            String fluxFAResponseText = ExchangeModuleRequestMapper.createFluxFAMovementResponseRequestWithOnValue(fluxResponse, request.getUsername(), request.getFluxDataFlow(), fluxResponseMessage.getFLUXResponseDocument().getIDS().get(0).getValue(), request.getSenderOrReceiver(), request.getOnValue(), status, request.getSenderOrReceiver(), getExchangePluginType(eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType.FLUX), id, responseStatus);
+
+            XPathRepository.INSTANCE.clear(fluxResponseFacts);
+
+            idsFromIncommingMessage.removeAll(matchingIdsFromDB); // To avoid duplication in DB.
+            rulesDaoBean.createFaDocumentIdEntity(idsFromIncommingMessage);
+            exchangeProducer.sendModuleMessage(fluxFAResponseText, consumer.getDestination());
+        } catch (JAXBException | ExchangeModelMarshallException | RulesValidationException | ServiceException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+
+    private eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType getExchangePluginType(eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType pluginType) {
+        if (pluginType == eu.europa.ec.fisheries.schema.rules.exchange.v1.PluginType.BELGIAN_ACTIVITY) {
+            return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.BELGIAN_ACTIVITY;
+        } else {
+            return eu.europa.ec.fisheries.schema.exchange.plugin.types.v1.PluginType.FLUX;
+        }
+    }
+
+    public ExchangeLogResponseStatusEnum executeResponseMessageRules(String method, String dataFlow, String sender) {
+        ResponseMessageType resType = ResponseMessageType.valueOf(method);
+        ResponseMessageRuleDto dto = new ResponseMessageRuleDto(dataFlow, resType.getType(),sender);
+        return rulesServiceBean.applyRules(dto);
     }
 
     private void sendBatchBackToExchange(String guid, List<RawMovementType> rawMovement, MovementRefTypeType status, String username, ExchangeLogStatusTypeType logStatus, ExchangeLogResponseStatusEnum responseStatus) throws MessageException {
