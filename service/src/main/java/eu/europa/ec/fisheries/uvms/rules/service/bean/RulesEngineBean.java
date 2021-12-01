@@ -78,7 +78,7 @@ public class RulesEngineBean {
     }
 
     public Collection<AbstractFact> evaluate(BusinessObjectType businessObjectType, Object businessObject, Map<ExtraValueType, Object> extraValues, String identifier) throws RulesValidationException {
-        mdrCacheService.loadMDRCache(!BusinessObjectType.SENDING_FA_RESPONSE_MSG.equals(businessObjectType));
+        mdrCacheService.loadMDRCache(!BusinessObjectType.SENDING_FA_RESPONSE_MSG.equals(businessObjectType) && !BusinessObjectType.SENDING_MOVEMENT_RESPONSE.equals(businessObjectType) );
 
         if (businessObject != null) {
             log.info(String.format("Validating %s %s", businessObject.getClass().getSimpleName(), identifier));
@@ -111,7 +111,7 @@ public class RulesEngineBean {
                 globals.put("appliChecker", appliChecker);
                 return validateFacts(facts, initializer.getContainerByType(ContainerType.FA_REPORT), globals, extraValues);
 
-            } else if (businessObjectType == BusinessObjectType.RECEIVING_FA_RESPONSE_MSG) {
+            } else if (businessObjectType == BusinessObjectType.RECEIVING_FA_RESPONSE_MSG || businessObjectType == BusinessObjectType.SENDING_MOVEMENT_RESPONSE) {
 
                 String from = (String) extraValues.get(SENDER_RECEIVER);
                 List<IdType> idsFromDb = (List<IdType>) extraValues.get(RESPONSE_IDS);
