@@ -23,49 +23,6 @@
         </application.error.logfile>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>logging-default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <resources>
-                    <resource>
-                        <filtering>true</filtering>
-                        <directory>src/main/logging/default</directory>
-                        <targetPath>${project.build.outputDirectory}</targetPath>
-                        <includes>
-                            <include>logback.xml</include>
-                        </includes>
-                    </resource>
-                </resources>
-            </build>
-        </profile>
-        <profile>
-            <id>logging-cloud</id>
-            <build>
-                <resources>
-                    <resource>
-                        <filtering>true</filtering>
-                        <directory>src/main/logging/cloud</directory>
-                        <targetPath>${project.build.outputDirectory}</targetPath>
-                        <includes>
-                            <include>logback.xml</include>
-                        </includes>
-                    </resource>
-                </resources>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>com.j256.cloudwatchlogbackappender</groupId>
-                    <artifactId>cloudwatchlogbackappender</artifactId>
-                    <version>2.0</version>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

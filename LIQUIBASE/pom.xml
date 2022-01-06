@@ -9,7 +9,7 @@
 
     <artifactId>rules-liquibase</artifactId>
     <name>liquibase</name>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <properties>
         <project.scm.id>github</project.scm.id>
