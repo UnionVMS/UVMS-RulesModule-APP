@@ -37,10 +37,14 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -297,59 +301,59 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
      */
     @Override
     public boolean combinationExistsInConversionFactorList(List<FLUXLocation> specifiedFLUXLocations, List<CodeType> appliedAAPProcessTypeCodes, CodeType speciesCode, DateTime validityDate, IdType farepDocSpecVesselTrpmRegVesselCountryId) {
-      try {
-          Iterables.removeIf(specifiedFLUXLocations, Objects::isNull);
-          Iterables.removeIf(appliedAAPProcessTypeCodes, Objects::isNull);
-          String territory;
-          String rfmo;
-          String speciesCodeVal = speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY;
-          String presentation = StringUtils.EMPTY;
-          String preservationState = StringUtils.EMPTY;
-          String flagState = farepDocSpecVesselTrpmRegVesselCountryId != null ? farepDocSpecVesselTrpmRegVesselCountryId.getValue() : StringUtils.EMPTY;
-          String flagStateBis = XEU;
+        try {
+            Iterables.removeIf(specifiedFLUXLocations, Objects::isNull);
+            Iterables.removeIf(appliedAAPProcessTypeCodes, Objects::isNull);
+            String territory;
+            String rfmo;
+            String speciesCodeVal = speciesCode != null ? speciesCode.getValue() : StringUtils.EMPTY;
+            String presentation = StringUtils.EMPTY;
+            String preservationState = StringUtils.EMPTY;
+            String flagState = farepDocSpecVesselTrpmRegVesselCountryId != null ? farepDocSpecVesselTrpmRegVesselCountryId.getValue() : StringUtils.EMPTY;
+            String flagStateBis = XEU;
 
-          Map<String, String> terrManagMap = retrieveCountryFromLocationList(specifiedFLUXLocations, validityDate);
-          if (MapUtils.isEmpty(terrManagMap)) {
-              return false; // Case 1 : Country cannot be determined.
-          }
-          territory = terrManagMap.get("territory");
-          rfmo = terrManagMap.get("managarea");
+            Map<String, String> terrManagMap = retrieveCountryFromLocationList(specifiedFLUXLocations, validityDate);
+            if (MapUtils.isEmpty(terrManagMap)) {
+                return false; // Case 1 : Country cannot be determined.
+            }
+            territory = terrManagMap.get("territory");
+            rfmo = terrManagMap.get("managarea");
 
-          // Determine FISH_PRESENTATION and FISH_PRESERVATION
-          if (CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)) {
-              for (CodeType presPreserv : appliedAAPProcessTypeCodes) {
-                  if (FISH_PRESENTATION.equals(presPreserv.getListId())) {
-                      presentation = presPreserv.getValue();
-                  }
-                  if (FISH_PRESERVATION.equals(presPreserv.getListId())) {
-                      preservationState = presPreserv.getValue();
-                  }
-              }
-          }
+            // Determine FISH_PRESENTATION and FISH_PRESERVATION
+            if (CollectionUtils.isNotEmpty(appliedAAPProcessTypeCodes)) {
+                for (CodeType presPreserv : appliedAAPProcessTypeCodes) {
+                    if (FISH_PRESENTATION.equals(presPreserv.getListId())) {
+                        presentation = presPreserv.getValue();
+                    }
+                    if (FISH_PRESERVATION.equals(presPreserv.getListId())) {
+                        preservationState = presPreserv.getValue();
+                    }
+                }
+            }
 
-          // Pre-filtering (species, presentation, preservation) - this is common to all scenarios.
-          List<ObjectRepresentation> preFilteredList;
-          if (!(StringUtils.isBlank(speciesCodeVal) || StringUtils.isBlank(presentation) || StringUtils.isBlank(preservationState))) {
-              List<ObjectRepresentation> conversionFactorList = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
-              List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(conversionFactorList, CODE_COLUMN_NAME, speciesCodeVal);
-              List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "presentation", presentation);
-              preFilteredList = filterEntriesByColumn(filtered_2_list, "state", preservationState);
-          } else {
-              return false; // Case : some of the filters are empty!
-          }
+            // Pre-filtering (species, presentation, preservation) - this is common to all scenarios.
+            List<ObjectRepresentation> preFilteredList;
+            if (!(StringUtils.isBlank(speciesCodeVal) || StringUtils.isBlank(presentation) || StringUtils.isBlank(preservationState))) {
+                List<ObjectRepresentation> conversionFactorList = cache.getEntry(MDRAcronymType.CONVERSION_FACTOR);
+                List<ObjectRepresentation> filtered_1_list = filterEntriesByColumn(conversionFactorList, CODE_COLUMN_NAME, speciesCodeVal);
+                List<ObjectRepresentation> filtered_2_list = filterEntriesByColumn(filtered_1_list, "presentation", presentation);
+                preFilteredList = filterEntriesByColumn(filtered_2_list, "state", preservationState);
+            } else {
+                return false; // Case : some of the filters are empty!
+            }
 
-          if (CollectionUtils.isEmpty(preFilteredList)) {
-              return false;
-          }
+            if (CollectionUtils.isEmpty(preFilteredList)) {
+                return false;
+            }
 
-          return (!StringUtils.isEmpty(territory) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, territory)))      // Case : "CF RFMO/SFPA/3rd party" exists
-                  || (!StringUtils.isEmpty(rfmo) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, rfmo)))
-                  || CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagStateBis))                                    // Case : "CF FLAG STATE" exists
-                  || (!StringUtils.isEmpty(flagState) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagState))); // Case : "CF EU" exists
-      }catch(Exception e){
-          log.error(e.getMessage(),e);
-          return true;
-      }
+            return (!StringUtils.isEmpty(territory) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, territory)))      // Case : "CF RFMO/SFPA/3rd party" exists
+                    || (!StringUtils.isEmpty(rfmo) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, rfmo)))
+                    || CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagStateBis))                                    // Case : "CF FLAG STATE" exists
+                    || (!StringUtils.isEmpty(flagState) && CollectionUtils.isNotEmpty(filterEntriesByColumn(preFilteredList, PLACES_CODE_COLUMN, flagState))); // Case : "CF EU" exists
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return true;
+        }
     }
 
 
@@ -366,7 +370,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         String flagStateBis = XEU;
 
         Map<String, String> terrManagMap = retrieveCountryFromLocationList(specifiedFLUXLocations, validityDate);
-        if(terrManagMap == null){
+        if (terrManagMap == null) {
             return false; // Case 1 : Country cannot be determined.
         }
         territory = terrManagMap.get("territory");
@@ -419,14 +423,14 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         return greaterEqualsToOneCFExists.get();
     }
 
-   /*   * fail == return null
+    /*   * fail == return null
 
-     1. If no MANAGEMENT_AREA and no TERRITORY is provided => fail
-     2. If more then one MANAGEMENT_AREA or TERRITORY are provided => fail
-     3. If MANAGEMENT_AREA and TERRITORY are provided than MANAGEMENT_AREA takes precedence
-         3.1 If MANAGEMENT_AREA doesn't exist (in MDR) than take TERRITORY
-    */
-    private Map<String, String> retrieveCountryFromLocationList(List<FLUXLocation> fluxLocations, DateTime validityDate){
+      1. If no MANAGEMENT_AREA and no TERRITORY is provided => fail
+      2. If more then one MANAGEMENT_AREA or TERRITORY are provided => fail
+      3. If MANAGEMENT_AREA and TERRITORY are provided than MANAGEMENT_AREA takes precedence
+          3.1 If MANAGEMENT_AREA doesn't exist (in MDR) than take TERRITORY
+     */
+    private Map<String, String> retrieveCountryFromLocationList(List<FLUXLocation> fluxLocations, DateTime validityDate) {
         Map<String, String> contryManagAreaMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(fluxLocations)) {  // Country is the location ID (first one that has value in the schemdID="TERRITORY" or  schemdID="MANAGEMENT_AREA")
             List<IDType> allLocationIds = new ArrayList<>();
@@ -454,12 +458,12 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             }
             String managementAreaRFMOCode = (managArea == null) ? null : retrieveValueForSpecificColumnOfCodeListFilterByCodeValue(MANAGEMENT_AREA, managArea.getValue(), validityDate, PLACES_CODE_COLUMN);
             if (StringUtils.isNotEmpty(managementAreaRFMOCode)) {
-                contryManagAreaMap.put("managarea",managementAreaRFMOCode);
+                contryManagAreaMap.put("managarea", managementAreaRFMOCode);
             }
             if (territory != null && StringUtils.isNotEmpty(territory.getValue())) {
-                contryManagAreaMap.put("territory",territory.getValue());
+                contryManagAreaMap.put("territory", territory.getValue());
             }
-            if(contryManagAreaMap.isEmpty()){
+            if (contryManagAreaMap.isEmpty()) {
                 return null; // Case 1 : country filter cannot be determined (not provided in the XML)
             }
         }
@@ -607,10 +611,19 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             Optional<String> code = ObjectRepresentationHelper.getValueOfColumn(CODE_COLUMN_NAME, representation);
             Optional<String> startDate = ObjectRepresentationHelper.getValueOfColumn("startDate", representation);
             Optional<String> endDate = ObjectRepresentationHelper.getValueOfColumn("endDate", representation);
-            if (code.isPresent() && startDate.isPresent() && endDate.isPresent()
-                    && date.isAfter(ObjectRepresentationHelper.parseDate(startDate.get()))
-                    && date.isBefore(ObjectRepresentationHelper.parseDate(endDate.get()))) {
-                codeColumnValues.add(code.get());
+
+            if (code.isPresent() && startDate.isPresent() && endDate.isPresent()) {
+                DateTime validityStartDate = ObjectRepresentationHelper.parseDate(startDate.get());
+                Instant startInstant = Instant.ofEpochMilli(validityStartDate.getMillis());
+
+                DateTime validityEndDate = ObjectRepresentationHelper.parseDate(endDate.get());
+                Instant endInstant = Instant.ofEpochMilli(validityEndDate.getMillis());
+
+                Instant referenceInstant = Instant.ofEpochMilli(date.getMillis());
+
+                if (!referenceInstant.isBefore(startInstant) && !referenceInstant.isAfter(endInstant)){
+                    codeColumnValues.add(code.get());
+                }
             }
         }
         return codeColumnValues;
@@ -702,7 +715,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
         try {
             String schemeId = id.getSchemeId();
             List<FormatExpression> formatExpressions = cache.getFormatsByIdentifier().get(id.getSchemeId());
-            if(formatExpressions == null || formatExpressions.isEmpty()){
+            if (formatExpressions == null || formatExpressions.isEmpty()) {
                 return false;
             }
             if ("UUID".equalsIgnoreCase(schemeId) && "00000000-0000-0000-0000-000000000000".equals(id.getValue()) || !validateFormatFromExprObject(id.getValue(), formatExpressions, creationDateOfMessage)) {
@@ -740,18 +753,18 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     private boolean validateFormatFromExprObject(String value, List<FormatExpression> formatExpressions, DateTime creationDateOfMessage) {
         boolean condition;
-        for(FormatExpression formatExpression:formatExpressions){
+        for (FormatExpression formatExpression : formatExpressions) {
             condition = formatExpression != null &&
                     !StringUtils.isEmpty(value) &&
                     !StringUtils.isEmpty(formatExpression.getExpression()) &&
                     value.matches(formatExpression.getExpression()) &&
                     isValidDate(creationDateOfMessage, formatExpression.getStartDate(), formatExpression.getEndDate());
 
-            if (condition){
+            if (condition) {
                 return true;
             }
         }
-       return false;
+        return false;
     }
 
 
@@ -828,19 +841,19 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Override
     public String getErrorTypeStrForForBrIAndDFAndValidity(String brid, String context, Date msgDate) {
-        RuleFromMDR ruleDromMDR = findMdrFaBrForBrIdAndContextAndDate( brid, context, msgDate);
+        RuleFromMDR ruleDromMDR = findMdrFaBrForBrIdAndContextAndDate(brid, context, msgDate);
         return ruleDromMDR != null ? ruleDromMDR.getType() : StringUtils.EMPTY;
     }
 
     private RuleFromMDR findMdrFaBrForBrIdAndContextAndDate(String brId, String contextForDf, Date msgDate) {
         RuleFromMDR mdrRule = null;
-        if(msgDate == null){ // Compatibility with old data that didn't have the dates set.
+        if (msgDate == null) { // Compatibility with old data that didn't have the dates set.
             mdrRule = cache.getFaBrForBrIdAndContext(brId, contextForDf);
         } else {
             List<RuleFromMDR> faBrListForBrIdAndContext = getFaBrListForBrIdAndContext(brId, contextForDf);
-            if(CollectionUtils.isNotEmpty(faBrListForBrIdAndContext)){
+            if (CollectionUtils.isNotEmpty(faBrListForBrIdAndContext)) {
                 for (RuleFromMDR ruleFromMDR : faBrListForBrIdAndContext) {
-                    if(isDateInRange(msgDate, ruleFromMDR.getStartDate(), ruleFromMDR.getEndDate())){
+                    if (isDateInRange(msgDate, ruleFromMDR.getStartDate(), ruleFromMDR.getEndDate())) {
                         mdrRule = ruleFromMDR;
                         break;
                     }
@@ -874,7 +887,7 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
 
     @Override
     public String findContextForDf(String dataFlow) {
-        if(StringUtils.isEmpty(dataFlow)){
+        if (StringUtils.isEmpty(dataFlow)) {
             return null;
         }
         List<String> contexts = cache.getDataFlowContexts().get(dataFlow);
@@ -886,27 +899,27 @@ public class MDRCacheServiceBean implements MDRCacheService, MDRCacheRuleService
             return true;
         }
         Date endDateHours = DateUtils.setHours(endDate, 23);
-        Date finalEndDate = DateUtils.setMinutes(endDateHours,59);
-        finalEndDate = DateUtils.setSeconds(finalEndDate,59);
+        Date finalEndDate = DateUtils.setMinutes(endDateHours, 59);
+        finalEndDate = DateUtils.setSeconds(finalEndDate, 59);
         return (testDate.after(startDate) || testDate.equals(startDate)) && (testDate.before(finalEndDate) || testDate.equals(finalEndDate));
     }
 
     @Override
     public boolean validateIdFormatForMovementMessage(un.unece.uncefact.data.standard.unqualifieddatatype._18.IDType id, DateTime dateTime) {
-        if(id == null ){
+        if (id == null) {
             return true;
         }
 
         List<FormatExpression> formatExpressions = cache.getFormatsByIdentifier().get(id.getSchemeID());
-        if(formatExpressions == null || formatExpressions.isEmpty() || StringUtils.isEmpty(formatExpressions.get(0).getExpression()) ){
+        if (formatExpressions == null || formatExpressions.isEmpty() || StringUtils.isEmpty(formatExpressions.get(0).getExpression())) {
             return true;
         }
         boolean condition;
-        for(FormatExpression formatExpression:formatExpressions) {
+        for (FormatExpression formatExpression : formatExpressions) {
             condition =
                     id.getValue().matches(formatExpression.getExpression()) &&
-                    isValidDate(dateTime, formatExpression.getStartDate(), formatExpression.getEndDate());
-            if(condition){
+                            isValidDate(dateTime, formatExpression.getStartDate(), formatExpression.getEndDate());
+            if (condition) {
                 return true;
             }
         }
